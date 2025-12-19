@@ -1,0 +1,225 @@
+%%%%%%%% ICML 2025 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass[sigconf,anonymous,review]{article}
+\AtBeginDocument{%
+	\providecommand\BibTeX{{%
+			Bib\TeX}}}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+\usepackage{dsfont}
+
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2025} with \usepackage[nohyperref]{icml2025} above.
+\usepackage{hyperref}
+%\usepackage{icml2025}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% Use the following line for the initial blind version submitted for review:
+% \usepackage{icml2025}
+
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{icml2025}
+
+% For theorems and such
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{mathtools}
+%\usepackage{amsthm}
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%\newcommand{\eat}[1]{}
+
+
+%%%%commm
+
+% Todonotes is useful during development; simply uncomment the next line
+%    and comment out the line below the next line to turn off comments
+%\usepackage[disable,textsize=tiny]{todonotes}
+%\usepackage[textsize=tiny]{todonotes}
+
+
+\usepackage{latexsym}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+%\usepackage{amssymb}
+\usepackage{color}
+\usepackage{epsfig}
+\usepackage{xspace}
+\usepackage{graphicx}
+%\usepackage{subcaption}
+\usepackage{cleveref}
+%\usepackage{times}
+\usepackage{booktabs}
+\usepackage{diagbox}
+\usepackage{multirow}
+%\usepackage{cite}
+%\usepackage[pdftex]{graphicx}
+\usepackage{balance}
+\usepackage{hhline}
+\usepackage{float}
+\usepackage{xcolor}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DO NOT DELETE!!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%s
+%\usepackage{tikz}
+%\usetikzlibrary{trees}
+
+\usepackage{epsfig}
+\usepackage{multirow}
+\usepackage{url}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Enumerate and Itemize modifications
+%\let\labelindent\relax
+
+%\usepackage{enumitem}
+
+%\sloppy
+
+%\setlist{topsep=0pt,noitemsep} \setitemize[1]{label=$\circ$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+%\icmltitlerunning{Submission and Formatting Instructions for ICML 2025}
+\input{commands}
+
+\begin{document}
+	\maketitle
+
+	\title{Improving Algorithms
+		for Subgraph Homomorphsim via Graph Neural Networks}
+	
+	% It is OKAY to include author information, even for blind
+	% submissions: the style file will automatically remove it for you
+	% unless you've provided the [accepted] option to the icml2025
+	% package.
+	
+	% List of affiliations: The first argument should be a (short)
+	% identifier you will use later to specify author affiliations
+	% Academic affiliations should list Department, University, City, Region, Country
+	% Industry affiliations should list Company, City, Region, Country
+	
+	% You can specify symbols, otherwise they are numbered in order.
+	% Ideally, you should not use this facility. Affiliations will be numbered
+	% in order of appearance and this is the preferred way.
+%	\icmlsetsymbol{equal}{*}
+	
+
+	
+%	\vskip 0.3in
+	
+	
+	% this must go after the closing bracket ] following \twocolumn[ ...
+	
+	% This command actually creates the footnote in the first column
+	% listing the affiliations and the copyright notice.
+	% The command takes one argument, which is text to display at the start of the footnote.
+	% The \icmlEqualContribution command is standard text for equal contribution.
+	% Remove it (just {}) if you do not need this facility.
+	
+	%\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
+%	\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
+
+
+
+
+
+\begin{abstract}
+Homomorphism is an important
+structure-preserving mapping between two graphs,
+and is widely used in constraint satisfaction problems, 
+social network analysis, and graph databases querying et. al.
+Given a graph $G$ and a pattern $Q$, 
+the subgraph homomorphism problem is to decide whether there exists
+a mapping $h$ from $Q$ to $G$ such that 
+if there exists an edge from $u$ to $v$ in $Q$,
+$G$ also has an edge from $h(u)$ to $h(v)$.
+Different from the classic isomorphic mapping 
+that is injective, 
+homomorphism %maps 
+\revise{may map} two \revise{distinct} vertices in $Q$
+to the same vertex in $G$, 
+and is more challenging than isomorphic mapping.
+There exist multiple Graph Neural Netowrks (GNNs)
+for (subgraph) ismomorphism, 
+but few models are developed for subgraph-homomorphism.
+We develop the first GNN-based framework 
+for subgraph homomorphism. We show that 
+the framework is more expressive than the vanilla GNN,
+\ie it can distinguish more graphs that are 
+not homomorphic.
+%Moreover, we improve the performance of algorithms
+%by plugging in the extended models.
+We also a generalization bound for the proposed framework.
+Using real-life and synthetic graphs, we 
+show that our framework is faster for subgraph matching,
+and its accuracy is also high.
+\end{abstract}
+%\textit{}
+
+%\newcommand{\HGIN}{\kw{HGIN}}
+
+
+%\eat{
+\input{sec-intro}
+\input{sec-work}
+\input{sec-prelim}
+\input{sec-model}
+\input{sec-proof}
+%\input{sec-framework}
+\input{sec-expt}
+\input{sec-conc}
+%}
+
+%%
+%% The acknowledgments section is defined using the "acks" environment
+%% (and NOT an unnumbered section). This ensures the proper
+%% identification of the section in the article metadata, and the
+%% consistent spelling of the heading.
+%\clearpage
+%\balance
+%\input{reference}
+
+
+%%
+%% If your work has an appendix, this is the place to put it.
+%\appendix
+
+
+%\clearpage
+%\balance
+%\bibliographystyle{abbrv}
+%\bibliographystyle{named}
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{paper}
+
+
+
+%\clearpage
+%\balance
+%\onecolumn
+%\begin{verbatim}
+	\appendix
+	\input{appendix}
+	%\input{appendix-bak}
+%\end{verbatim}
+
+\end{document}
+%%
+%% End of file `sample-sigconf.tex'.

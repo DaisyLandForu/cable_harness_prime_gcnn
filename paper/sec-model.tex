@@ -1,0 +1,39 @@
+\section{Framework for homomorphic mapping}
+\label{sec-model}
+
+
+We provide \HFrame, a framework~\revise{for the subgraph homomorphic problem,}
+by integrating algorithmic techniques and machine learning models.
+The framework is outlined in Figure~\ref{fig:workflow}.
+Given a graph $G$ and a pattern $Q$,
+(1) it first leverages \kw{DualSim}
+to refine the set ${\mathcal C}(u)$ of 
+candidates for each vertex $u$ in $Q$ and subsequently constructs $S_{(Q, G)}$.
+Recall that ${\mathcal C}(u)$ initially 
+	consists of vertices in $G$ that carry the same label as $u$
+	(see Section~\ref{sec-intro}).
+%
+(2) Then it checks whether ${\mathcal C}(u)$
+is empty \revise{for some vertex $u$ in $Q$};
+if so, then it returns \false, \ie 
+no homomorphic mapping from $Q$ to $G$ exists;
+otherwise,  
+it constructs a subgraph $G'$ of $G$ 
+	using only vertices appearing in $S_{(Q, G)}$; 
+intuitively, it removes irrelevant vertices and edges from $G$,
+which improves the performance of \HGIN (see Section~\ref{exp:sec-exp}).
+(3) Finally, it  picks a {\em pivot vertex} $u_0$ from $Q$, and invokes ML model \HGIN
+to check  
+the existence of a homomorphic mapping  
+$\varphi$ from $Q$ to $G'$
+ such that $\varphi(u_0)=v$
+for each 
+vertex $v$ in 
+${\mathcal C}(u_0)$, and 
+	returns \true if \HGIN predicts 
+	that such a mapping exists for some $v$ in $G'$.
+
+
+
+  
+

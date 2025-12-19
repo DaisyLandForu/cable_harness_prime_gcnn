@@ -1,0 +1,83 @@
+\stitle{Related work}. We categorized the related work as follows.
+
+\etitle{Graph pattern matching algorithm}.
+Algorithms for subgraph isomorphism have been
+extensively studied.
+Ullmann proposed the first backtracking-based algorithm for subgraph isomorphism~\cite{Iso-match-6}. 
+Subsequent research in algorithms for exact graph pattern 
+matching focuses on pruning methods~\cite{carletti2017introducing,carletti2019vf3}, 
+the application of index~\cite{CECI,sun2020subgraph}, 
+index methods based on data mining~\cite{yan2004graph,zhao2007graph}, and so on. 
+\looseness=-1
+
+Isomorphic mappings suffers from two major drawbacks:
+(1) the decision version of subgraph isomorphism is 
+NP-complete~\cite{cook2023complexity},
+(2) The requirement of  
+\revise{injective} map 
+could be too strict in many cases,
+especially when the data source is noisy~\cite{yuan2011efficient}. 
+ %
+To address these challenges, 
+(1) a series of studies focus on designing similarity functions and 
+deriving matching results through  
+top-k candidates or the establishment of a similarity threshold
+\cite{fan2010graph,cheng2013top,dutta2017neighbor,wu2013ontology,khan2013nema,zhao2013partition}. 
+(2) The other studies relax the  
+\revise{injective} map to less restrictive  
+relations.
+Bounded simulation 
+is developed to bound the lengths of 
+matching paths~\cite{fan2010grapha}.
+\revise{Dual simulation and } 
+Strong simulation \revise{are proposed}
+ in \cite{ma2011capturing}  to 
+\revise{bound directions of edges 
+	and 
+the distance of vertices in a match, 
+respectively}. 
+Subsequently, various simulation-based
+matching algorithms have been developed~\cite{fan2013incremental,fan2014distributed, fard2014distributed,gao2016prs,du2018personalized}.
+\looseness = -1
+
+
+\etitle{ML Models for graph pattern matching}.
+Multiple ML models are developed for graph pattern matching~\cite{NeuroMatch,Sub-ML-1,Sub-ML-2,Sub-ML-3,Sub-ML-4}.
+Most of these models are based on Graph Neural Networks (GNNs),
+to compute embeddings of vertices in a graph~\cite{scarselli2008graph},
+and make a prediction using the order-embedding space~\cite{NeuroMatch}
+or MLP~\cite{Sub-ML-1}.
+Most work focus on 
+enhancing GNNs architecture~\cite{wang2022twin,wang2022equivariant,zhang2021eigen,bouritsas2022improving,feng2022powerful},
+to learn more topological information. 
+Zhang et al. \cite{zhang2023expressive} 
+encoded distance information into vertex embeddings. 
+Geerts et al. \cite{geerts2022expressiveness} 
+proposed a model to aggregate information 
+from $k$-order neighbors using computational operators. 
+%
+You et al. \cite{you2021identity} injected a unique 
+color identity to nodes, 
+and performed heterogeneous message passing 
+to obtain the node embedding. 
+Xu et al. \cite{xu2018powerful} 
+optimized the aggregation function 
+by using multisets, 
+to generate distinct embeddings for different nodes. 
+Maron et al. \cite{maron2018invariant} 
+proposed a model consisting of 
+both equivariant linear layers and nonlinear activation layers. 
+
+There has also been work on
+studying properties of GNNs.
+(1) The expressive power of these GNN
+models can be bounded by 
+the Weisfeiler-Lehman (WL) hierarchy~\cite{xu2018powerful,morris2019weisfeiler,barcelo2022weisfeiler,zhang2023expressive,GNN-WL-C},
+descriptive complexity~\cite{Express-LICS},
+fragments of FO logic~\cite{Expressive-FOC2}
+and global feature map transformer~\cite{Express-GFMT}. 
+See~\cite{zhang2023expressive} for a recent survey.
+(2) The generalization error
+bound for GNNs can be measured by 
+Rademacher complexity~\cite{Gen-bound}, VC dimension~\cite{VC-GNN}
+and generalization gap~\cite{Generalization-gap,Generalization-gap}.

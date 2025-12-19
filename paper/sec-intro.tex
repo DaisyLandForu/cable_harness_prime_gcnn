@@ -1,0 +1,38 @@
+%\input{commands}
+\section{Introduction}
+\label{sec-intro}
+Graph pattern matching is 
+an important problem in computer 
+science, focusing on identifying instances of a pattern $Q$ 
+within a graph $G$.
+This topic has received 
+extensive interest across various fields,
+\eg 
+discovering motifs in biological network
+~\cite{chen2019hogmmnc, licheri2021grapes, tian2007saga}, 
+finding experts in social networks
+~\cite{shi2017multi, fei2013expfinder, brynielsson2010detecting}, 
+and reasoning on knowledge graph
+~\cite{xu2019cross, teru2020inductive, li2022hismatch}.
+
+There exist two semantics for graph pattern matching, 
+namely subgraph isomorphism and homomorphism.
+(1) The isomorphic semantics demands that
+the matched instance of $Q$  in 
+$G$ \revise{(\ie a subgraph of $G$)} must be the same as $Q$.
+The semantics has been widely studied, 
+\eg discovering motifs from biological network~\cite{chen2019hogmmnc, licheri2021grapes, tian2007saga}.
+(2) Homomorphic semantics,
+on the other hand, permits that 
+pattern $Q$ can be ``embedded'' into the 
+identified \revise{subgraph of $G$}, 
+allowing the  
+\revise{subgraph} to be deviated from $Q$.
+It has been widely used in graph query languages 
+like Cypher~\cite{Cypher} and SPARQL~\cite{SPARQL}.
+The difference between isomorphism and homomorphism
+lies in the possibility 
+of allowing different vertices in $Q$
+can be mapped to the same vertex in $Q$ (see Section~\ref{sec-pre}).
+\looseness = -1
+

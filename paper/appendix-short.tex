@@ -1,0 +1,916 @@
+\section{Appendix}
+%\clearpage
+%\onecolumn
+
+\begin{figure*}[h]
+	\begin{center}
+		\begin{minipage}[t]{0.8\textwidth}
+			%\hfill
+			\subfigure{{\includegraphics[width=\columnwidth]{fig/expressive-0.eps}}}
+			\hfill
+		\end{minipage}
+	\end{center}
+	\caption{Computation of embeddings %of $u$ and $v$
+		and \dual} 
+	\label{fig:anti-expressive-0}
+	%\vspace{-4ex}
+\end{figure*}
+
+\eat{
+\begin{figure}
+	%	\vspace{-6.7ex}
+    \centerline{\includegraphics[width=0.8\columnwidth]{fig/query-example-2.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Example of complex query}
+	\label{fig:query}
+	\vspace{-1.4ex}
+\end{figure}
+}
+
+\eat{
+\begin{figure}
+	%	\vspace{-6.7ex}
+	\centerline{\includegraphics[width=0.8\columnwidth]{fig/anti-symmetry.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Counter example of anti-symmetry} 
+	\label{fig:anti-anti-symmetry}
+	\vspace{-4ex}
+\end{figure}
+}
+
+\eat{
+\subsection{Analysis of the loss function}
+We show that when $M_1$ is sufficient large than 
+$M_0$, \HGIN is more accurate.
+
+
+\subsection{Gaps between embeddings of $Q$ and $G$}
+
+\begin{equation*}\begin{aligned}
+		P_{L} & \triangleq\quad\|T^Q_{L}(W_{1},\mathds{W})-T^G_{L}(W_{1},\mathds{W})\|_c \\
+		& =\quad\bigg\|\phi(W_{1}x^Q_{L}+\sum_{r\in R} W_r \underbrace{\rho(\sum_{j\in 
+				C^r(x^Q_{L})}g(T_{L-1,j}(W_{1},\mathds{W}))}_{\overset{\Delta}
+			{\operatorname*{\operatorname*{=}}}R(W_{1},\mathds{W},x^Q_{L},r)}) \\
+		& -\quad\phi(W_1x^G_L+\sum_{r\in R} W_r\rho(\sum_{j\in C^r(x^G_L)}g(T_{L-1,j}
+		(W_1,
+		\mathds{W}))))\bigg\|_c \\
+		& =\quad C_{\phi}\bigg\|W_{1}(x^Q_{L}-x^G_{L}) + \sum_{r\in R} W_r(R(W_{1},
+		\mathds{W},x^Q_{L},r)-R(W_{1},\mathds{W},x^G_{L},r))\bigg\|_c\\
+\end{aligned}\end{equation*}
+
+
+\stab
+(1) When there exists a match of $Q$ in $G$, 
+we need to consider the following two cases:
+either both $Q$ and $G$ contain the center vertex
+at level $L$.
+
+\stab
+(a) If $Q$ and $G$ contain the center vertices.
+
+\begin{equation*}\begin{aligned}
+		\|&R(W_1,\mathds{W},x^Q_L,r)-R(W_1,\mathds{W},x^G_L,r)\|_2 \\
+		&\leq \quad C_\rho\bigg\| - \sum_{j\in C^r(x_L)\land j \neq x_L}
+		W^j_R\bigg(g_0(T^G_{L-1,j}(W_1,\mathds{W})) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \\
+		&+ \bigg(\mathds{1}(x^Q_L\in C(x^Q_L))g_1(T^Q_{L-1,j}(W_1,\mathds{W})) 
+		-
+		\mathds{1}(x^G_L\in 
+		C(x^G_L))g_1(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)\bigg\|_c \\
+		&=\quad C_\rho\bigg\|-\sum_{j\in C^r(x_L)\land j \neq x_L}
+		W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \\
+		&+ g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -g_1(T^G_{L-1,j}(W_1,\mathds{W}))
+		\bigg\|_c 
+		\\
+		&=\quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -g_1(T^G_{L-1,j}
+		(W_1,
+		\mathds{W}))-\sum_{j\in C^r(x_L)\land j \neq 
+			x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) 
+		\bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) -
+		g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)\bigg\|_c \\
+		&\leq \quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -
+		g_1(T^G_{L-1,j}(W_1,
+		\mathds{W}))-\sum_{j\in C^r(x_L)\land j \neq 
+			x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) 
+		\bigg)\bigg\|_c \\
+		&+C_\rho\bigg\|\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}
+		(W_1,
+		\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg\|_c \\
+		&\leq \quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -
+		g_1(T^G_{L-1,j}(W_1,
+		\mathds{W}))-\sum_{j\in C^r(x_L)\land j \neq 
+			x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) 
+		\bigg)\bigg\|_c \\
+		&+d\max_{j\in C^r(x_L)}\bigg\|W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,\mathds{W})) -
+		g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)\bigg\|_c \\
+		&\leq \quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -
+		g_1(T^G_{L-1,j}(W_1,
+		\mathds{W}))\bigg\|_c+
+		\bigg\|-\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}
+		(W_1,W_c)) 
+		\bigg)\bigg\|_c \\
+		&+d\max_{j\in C^r(x_L)}\bigg\|W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,\mathds{W})) -
+		g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)\bigg\|_c \\
+\end{aligned}\end{equation*}
+
+\stab
+(a) If none of $Q$ and $G$ contain the center vertices.
+
+\begin{equation*}\begin{aligned}
+		\|&R(W_1,\mathds{W},x^Q_L,r)-R(W_1,\mathds{W},x^G_L,r)\|_2 \\
+		&=\quad C_\rho\bigg\| - \sum_{j\in C^r(x_L)\land j \neq x_L}
+		W^j_R\bigg(g_0(T^G_{L-1,j}(W_1,\mathds{W})) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \\
+		&+ \bigg(\mathds{1}(x^Q_L\in C(x^Q_L))g_1(T^Q_{L-1,j}(W_1,\mathds{W})) 
+		-
+		\mathds{1}(x^G_L\in 
+		C(x^G_L))g_1(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)\bigg\|_c \\
+		&=\quad C_\rho\bigg\|-\sum_{j\in C^r(x_L)\land j \neq x_L}
+		W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \bigg\|_c \\
+\end{aligned}\end{equation*}
+
+
+\eat{
+%	\clearpage
+	
+	\begin{equation*}\begin{aligned}
+			\|&R(W_1,\mathds{W},x^Q_L,r)-R(W_1,\mathds{W},x^G_L,r)\|_2 \\
+			&=\quad C_\rho\bigg\| - \sum_{j\in C^r(x_L)\land j \neq x_L}
+			W^j_R\bigg(g_0(T^G_{L-1,j}(W_1,\mathds{W})) \bigg) \\
+			&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+			\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \\
+			&+ \bigg(\mathds{1}(x^Q_L\in C(x^Q_L))g_1(T^Q_{L-1,j}(W_1,\mathds{W})) 
+			-
+			\mathds{1}(x^G_L\in 
+			C(x^G_L))g_1(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)\bigg\|_c \\
+			&=\quad C_\rho\bigg\|-\sum_{j\in C^r(x_L)\land j \neq x_L}
+			W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) \bigg) \\
+			&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+			\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \\
+			&+ g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -g_1(T^G_{L-1,j}(W_1,\mathds{W}))
+			\bigg\|_c 
+			\\
+			&=\quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -g_1(T^G_{L-1,j}
+			(W_1,
+			\mathds{W}))-\sum_{j\in C^r(x_L)\land j \neq 
+				x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) 
+			\bigg) \\
+			&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+			\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg\|_c \\
+			&-\quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -g_1(T^G_{L-1,j}
+			(W_1,
+			\mathds{W}))-\sum_{j\in C^r(x_L)\land j \neq 
+				x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) 
+			\bigg) \\
+			&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+			\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg\|_c \\
+			&\leq\quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W})) -g_1(T^G_{L-1,j}(W_1,
+			\mathds{W}))-\sum_{j\in C^r(x_L)\land j \neq 
+				x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,W_c)) 
+			\bigg) \\
+			&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,\mathds{W})) -
+			g_0(T^G_{L-1,j}(W_1,\mathds{W}) \\
+			&-g_1(T^Q_{L-1,j}(W'_1,W'_2)) -g_1(T^G_{L-1,j}(W'_1,W'_2))-\sum_{j\in C^r(x_L)\land j \neq 
+				x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W'_1,W'_c)) \bigg) \\
+			&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W'_1,W'_2)) -
+			g_0(T^G_{L-1,j}(W'_1,W'_2))\bigg\|_c \\
+	\end{aligned}\end{equation*}
+	
+	
+%	\clearpage
+}
+
+\stab
+(2) Otherwise, there does not have a match,
+that is, $Q$ has ID at the level, but $G$ does not.
+\begin{equation*}\begin{aligned}
+		\|&R(W_1,\mathds{W},x^Q_L,r)-R(W_1,\mathds{W},x^G_L,r)\|_2 \\
+		&= \quad C_\rho\bigg\|-\sum_{j\in C^r(x_L)\land j \neq x_L}
+		W^j_R\bigg(g_0(T^G_{L-1,j}(W_1,\mathds{W})) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) -g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \\
+		&+ \bigg(\mathds{1}(x^Q_L\in C(x^Q_L))g_1(T^Q_{L-1,j}(W_1,\mathds{W})) 
+		-
+		\mathds{1}(x^G_L\in C(x^G_L))g_1(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)
+		\bigg\|_c \\
+		&=\quad C_\rho\bigg\|-\sum_{j\in C^r(x_L)\land j \neq x_L}
+		W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,\mathds{W})) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) -
+		g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg) \\
+		&+g_1(T^Q_{L-1,j}(W_1,\mathds{W}))\bigg\|_c \\
+		&=\quad C_\rho\bigg\|g_1(T^Q_{L-1,j}(W_1,\mathds{W}))-\sum_{j\in C^r(x_L)\land j 
+			\neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,\mathds{W})) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,\mathds{W})) -
+		g_0(T^G_{L-1,j}(W_1,\mathds{W}))\bigg)\bigg\|_c \\
+\end{aligned}\end{equation*}
+
+%\clearpage
+
+\begin{equation*}\begin{aligned}
+		&\leq\quad C_\rho\bigg\|\sum_{j\in C^r(x_L)\land j \neq x_L}
+		W^j_R\bigg(g_0(T^Q_{L-1,j}(W_1,
+		\mathds{W})) \bigg) \\
+		&+\sum_{j\in C^r(x_L)\land j \neq x_L}\bigg(g_0(T_{L-1,j}(W_1,\mathds{W})) -
+		g_0(T_{L-1,j}
+		(W_1',\mathds{W}'))\bigg)\bigg\|_2 \\
+		&+ C_\rho\bigg\|\sum_{j\in C^r(x_L)\land j = x_L}\bigg(g_1(T_{L-1,j}(W_1,
+		\mathds{W})) -
+		g_1(T_{L-1,j}(W_1',\mathds{W}'))\bigg)\bigg\|_2 \\
+		&\leq\quad C_\rho C^0_g\sum_{j\in C^r(x_L)\land j \neq x_L}\bigg\|T_{L-1,j}
+		(W_1,
+		\mathds{W})-T_{L-1,j}(W_1',\mathds{W}')\bigg\| \\
+		&+  C_\rho C^1_g\sum_{j\in C^r(x_L)\land j = x_L}
+		\bigg\|T_{L-1,j}(W_1,\mathds{W})-T_{L-1,j}(W_1',\mathds{W}')\bigg\|\\
+		&=\quad C_\rho \bigg(C^0_g\sum_{j\in C^r(x_L)\land j\neq x_L}\Delta^0_{L-1,j} 
+		+ 
+		C^1_g\sum_{j\in C^r(x_L)\land j = x_L}\Delta^1_{L-1,j}\bigg)
+\end{aligned}\end{equation*}
+}
+
+
+
+\subsection{Proof of Theorem~\ref{thm-upper-bound}}
+Assume by contradiction 
+that there  exist a pattern $Q$, a graph $G$,
+a vertex $u$ in $Q$ and a vertex $v$ in $G$ 
+such that $\HGIN^\kw{v}$ returns \false, 
+but \dual returns \true, \ie $(u, v)$ exists
+in the relation $S_{(Q, G)}$ computed by \dual.
+We deduce a contradiction by analyzing 
+the computation of $\HGIN^\kw{v}$.
+Observe that
+(a) computing
+embeddings of $u$ and $v$ can be represented by
+trees of height $m$, where $m$ is 
+the number of layers in $\HGIN^\kw{v}$
+(\cite{Gen-bound}; see Figures~\ref{fig:anti-expressive-0}(a) and~\ref{fig:anti-expressive-0}(b)
+for an example);
+and (b) vertex $v$ may have more 
+adjacent edges in $G$ than $u$, 
+\eg paths colored in red in Figure~\ref{fig:anti-expressive-0}(b).
+When $\HGIN^\kw{v}$ returns \false, 
+the embedding of $v$ is not larger than that of $u$
+(see Section~\ref{sec-model}).
+Because all functions $\kw{MSG}^{k,r}$ and $\kw{AGG}^k$
+$(k\in \mathcal{L})$ in $\HGIN^v$
+are injective and monotonic,
+there exists a path $p_0$ in the tree representing the computation of 
+embedding of $u$ (\eg the path colored in blue
+in Figure~\ref{fig:anti-expressive-0}(a)), such that 
+no path from $v$ carries the same labels as $p_0$.
+However, if this holds, \dual can also identify 
+such path and returns \false.
+Indeed, the computation of \dual can also be represented
+as a tree (see Figures~\ref{fig:anti-expressive-0}(c)
+for an example).
+The match relation $S_{(Q, G)}$
+can be constructed from common parts 
+of trees roots at $u$ and $v$ (see Section~\ref{sec-pre}).
+When such a path $p_0$ exists in $G$, \dual can also identify 
+that $p_0$ is missed in the tree of $v$, 
+and $(u, v)$ is not contained in $S_{(Q, G)}$, 
+\ie~\dual returns \false, a contradiction.
+\looseness = -1
+
+\eat{
+Since $\HGIN^v$ also invokes \dual 
+to check whether $(u, v)$ exists in $S$, 
+$\HGIN^v$ returns \false due to
+the prediction function of the model, 
+\ie the embedding
+of $v$ is not smaller than that of $u$,
+from which we can deduce that 
+\dual also returns \false, a contradiction.
+}
+
+
+
+
+
+\subsection{Proof of Theorem~\ref{thm-hgin-dual}}
+%\begin{proof}
+	Consider graphs $G_2$ and $G_3$ in Figure~\ref{fig:difference}, 
+	which are extended from~\cite{you2021identity}.
+	We can verify that 
+	there does not exist a homomorpic mapping 
+	from $G_3$ to $G_2$, since $G_3$ contains
+	triangles (\ie the subgraph induced by 
+	$w_1, w_5$ and $w_6$), but $G_4$ does not have any triangles.
+    We next show that
+    given $G_3$, $G_2$, $v_1$
+    and $w_1$ as input,
+     (1) \HGIN returns \false 
+    but (2) $(v_1, w_1)\in S_{(G_3,G_2)}$.
+    If these hold, then 
+    \HGIN is more expressive than \dual,
+    \ie \HGIN can distinct more non-homomorphic
+    graphs.
+
+\eat{
+	\begin{figure}
+	%	\vspace{-6.7ex}
+	\centerline{\includegraphics[width=0.6\columnwidth]{fig/expressive-1-new.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Difference of isomorphism and homomorphism} 
+	\label{fig:difference-2}
+	\vspace{-4ex}
+\end{figure}
+}
+	
+	\stab
+	(1) We first prove that \HGIN returns \false.
+	This is because (a) $v_1$ is contained in a cycle ${\mathcal C}$ of length 3, 
+	while $w_1$ does not;
+	(b) \HGIN ensures that $\kw{MSG}^{k,r}_1$ is sufficiently 
+	larger than $\kw{MSG}^{k,r}_0$; and
+	(c) the cycle ${\mathcal C}$ ensures that 
+	computing the embedding of $v_1$ 
+	invokes more $\kw{MSG}^{k,r}_1$, 
+	which leads to that the embedding
+	of $v_1$ is larger than that of $w_1$.
+	Consider two trees in Figure~\ref{fig:express-4}, 
+	which represent the computation of embeddings of 
+	$v_1$ and $w_1$. The vertices, which message passing functions
+	are $\kw{MSG}^{k,r}_1$, is marked red.
+	We can see that
+	the computation of embedding of $v_1$ invokes
+	more functions $\kw{MSG}^{k,r}_1$.
+	\looseness = -1
+	
+\stab	
+	(2) We next show that 
+	$(v_1, w_1)\in S_{(G_3,G_2)}$.
+	That is, $(v_1, w_1)$ 
+	exists in the dual simulation of $G_3$ and $G_2$.
+	Observe that both  $G_3$ and $G_2$ are regular, 
+	and all vertices have the same number of
+	neighborhoods.
+	Therefore, all vertices pairs 
+	exist in $V_{G_3}\times V_{G_2}$.
+%\end{proof}
+
+\eat{
+\begin{figure}
+	%	\vspace{-6.7ex}
+	\centerline{\includegraphics[width=0.6\columnwidth]{fig/expressive-1-1.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Difference of isomorphism and homomorphism} 
+	\label{fig:difference-2}
+	\vspace{-4ex}
+\end{figure}
+}
+
+
+\begin{figure*}[h]
+%	\vspace{-5.7ex}
+	\begin{center}
+		\begin{minipage}[t]{0.8\textwidth}
+			%\hfill
+			\subfigure{{\includegraphics[width=0.4\columnwidth]{fig/expressive-1-new.eps}}}
+			\hfill
+			\subfigure{{\includegraphics[width=0.4\columnwidth]{fig/expressive-4.eps}}}
+			\hfill
+		\end{minipage}
+	\end{center}
+	\vspace{-3.4ex}
+	\caption{Proof of Theorem~\ref{thm-hgin-dual}} 
+    \label{fig:express-4}
+	\vspace{-3ex}
+\end{figure*}
+
+
+\eat{
+	\begin{figure}[h]
+	%	\vspace{-6.7ex}
+	\centerline{
+		\includegraphics[width=0.4\columnwidth]{fig/expressive-1-1.eps}
+		\includegraphics[width=0.3\columnwidth]{fig/expressive-4.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Proof of Theorem~\ref{thm-hgin-dual}} 
+	\label{fig:express-4}
+	\vspace{-4ex}
+\end{figure}
+}
+
+\subsection*{A3. Proof of Theorem~\ref{thm-more-expressive-1}}
+
+
+\begin{figure}
+	%	\vspace{-6.7ex}
+	\centerline{\includegraphics[width=0.7\columnwidth]{fig/example.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Example in Theorem~\ref{thm-more-expressive-1}} 
+	\label{fig:label-embedding}
+%	\vspace{-4ex}
+\end{figure}
+
+
+\eat{
+\begin{theorem}
+	When the embeddings are finite domain, 
+	then Dualsimulation is more expressive than vanilla
+	GNN.
+	\label{thm-more-expressive}
+\end{theorem}
+}
+
+%\proofS
+%(2) 
+Assume that the embeddings are finite dimension, 
+and let the embedding be $d$-dimension.
+We select $2d$ distinct edge labels
+$l_1, \ldots, l_{2d}$, 
+which embeddings are $e_1, \ldots, e_{2d}$, respectively.
+%and construct $2d$ vectors to represent these labels.
+Since the embeddings are $d$-dimension, 
+we can pick $d$ embeddings $e'_1, \ldots, e'_d$
+such that the $i$ index of $e'_i$ 
+is maximum among all $2d$ embeddings $e_1, \ldots, e_{2d}$.
+Let $l'_1, \ldots, l'_d$ be the labels, which embeddings
+are $e'_1, \ldots, e'_d$, respectively.
+Next we construct a star $Q$ 
+with $d$ edges, which labels 
+are the picked $d$ labels $l'_1, \ldots, l'_d$.
+We can deduce a contradiction by comparing
+the embeddings of $Q$ and all the $2d$ labels.
+(1) Because $Q$ consists of $d$ labels, 
+the embedding of $Q$ must be larger than 
+the embeddings of these $d$ labels, based on the 
+order-embedding space (see the prediction function
+of \HGIN);
+(2) each of these $d$ vectors 
+has the maximum value for at least one index,
+then the embedding of $Q$ must be larger than 
+the embeddings of all $2d$ labels,
+which is a contradiction, 
+since $Q$ has only $d$ labels,
+and $l_1, \ldots, l_{2d}$ are distinct.
+
+
+
+
+\eat{
+Since the order-embedding space is monotoncity, 
+
+each index of $Q$ is maximum, 
+So all $2d$ labels is a subgraphs of $Q$, which is a construction.
+}	
+
+Consider the six edge in Figure~\ref{fig:label-embedding}(1),
+which carry distinct labels
+$l_1, \ldots, l_6$. Their embeddings in two-dimensional space
+as shown in Figure~\ref{fig:label-embedding}(b).
+Since these labels are distinct, 
+none of these labels is homomorphic 
+to any of the other labels.
+Therefore, given any embeddings
+$e_1 = (a_1, a_2)$ and 
+$e_2 = (b_1, b_2)$ of two labels 
+$l_1$ and $l_2$, respectively,
+if $a_1\leq b_1$, then $a_2> b_2$;
+and if $a_2\leq b_2$, then $a_1> b_1$ 
+(see Figure~\ref{fig:label-embedding}(2)).
+Then we pick two labels 
+$l_3$ and $l_5$, which have the largest 
+values in the second dimension and the first dimension,
+respectively,
+and construct a pattern $Q_c$ in 
+Figure~\ref{fig:label-embedding}(3).
+We can verify that 
+(I) $Q_c$ is homomorphic
+to none of the edges in Figure~\ref{fig:label-embedding}(1).
+(II) %On the other hand, 
+since $l_3$ and $l_6$ have the largest 
+values in the second dimension and the first dimension,
+respectively,
+the embedding of $Q_c$ is larger than embeddings
+of all edges in Figure~\ref{fig:label-embedding}(1),
+\ie the six edges in Figure~\ref{fig:label-embedding}(1)
+can be homomorphic to $Q_c$,
+which contradicts the fact that 
+$l_1, \ldots, l_6$ are distinct.
+
+
+\subsection*{A4. Proof of Theorem~\ref{thm-generalization-bound}}
+We establish the Rademacher complexity  of \HFrame
+by extending the proof of 
+the Rademacher complexity for \GNNs~\cite{Gen-bound}.
+Since \dual does not have any parameters, 
+and works for any inputs, we only 
+bound the Rademacher complexity of \HGIN.
+We prove the bound in multiple steps:
+(1) represent the computation of \HGIN
+by a tree;
+(2) quantify the impact of change 
+of parameters on the embeddings;
+(3) bound the changes in prediction probability;
+(4) bound the covering numbers for \HGIN;
+and (5) finally bound the Rademacher complexity
+using the covering numbers.
+
+In the following, we
+show these steps one by one. 
+In the proof of Theorem~\ref{thm-upper-bound}, 
+the computation of \HGIN is represented by a 
+computation tree.
+It remains to prove steps (2)-(5).	
+	
+\stitle{$\bullet$ Step 2: Bound the impact of parameters}.
+We first construct a formula 
+to represent changes of embeddings, and then bound the changes.
+
+
+Based on Equations (1)-(4), 
+we can deduce the following upper bound
+for the changes of embeddings:
+\begin{small}
+\begin{align*}
+\Delta_{L}
+  \leq& \quad 2C_{\kw{COM}}\left\|(W_{1}-W_{1}^{\prime})x_{L}\right\|_{2} \\
+& +\quad C_{\kw{COM}}\sum_{r\in R}\|(W_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1},\mathds{W},x_{L}))\|_{2}\\
+& + C_{\kw{COM}}\sum_{r\in R}\|(W^{\prime}_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}\\
+& +\quad C_{\kw{COM}}\sum_{r\in R}\|(W_rR^-(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^-(W_{1},\mathds{W},x_{L}))\|_{2}\\
+& + C_{\kw{COM}}\sum_{r\in R}\|(W^{\prime}_rR^-(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^-(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2} \tag{11}
+\end{align*}
+\end{small}
+
+To bound $\Delta_{L}$, 
+we bound the following:
+\begin{itemize}
+\item[(a)] $\|(W_{1}{-}W_{1}^{\prime})x_{L}\|_{2}$;
+\item[(b)]  $\|W_rR^+(W_{1},\mathds{W},x_{L}){-}W_r^{\prime}R^+(W_{1},\mathds{W},x_{L})\|_{2}$;
+\item[(c)]  $\|W^{\prime}_rR^+(W_{1},\mathds{W},x_{L}){-}W_r^{\prime}R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$;
+\item[(d)]  $\|W_rR^-(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^-(W_{1},\mathds{W},x_{L})\|_{2}$;
+and 
+\item[(e)]  $\|(W^{\prime}_rR^-(W_{1},\mathds{W},x_{L}){-}W_r^{\prime}R^-(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+\end{itemize}
+%\looseness=-1
+
+For term (a), we can assume an upper bound
+for the norm of $W_1$ and $x_L$. 
+For (b), 
+we have 
+$\|W_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1},\mathds{W},x_{L})\|_{2}
+\leq \|(W_r-W_r^{\prime})R^+(W_{1},\mathds{W},x_{L})\|_{2}$.
+Then we only need to bound $\|R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+For (c), 
+we have that 
+$\|W^{\prime}_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}
+\leq \|W^{\prime}_r(R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$.
+Therefore, we bound 
+$\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+The cases (d) and (e) can be analyzed similarly.
+In the following, we only provide
+upper bounds for $\|R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$
+and $\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+
+\vspace{2ex}
+
+\etitle{Upper bound for $\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$}.
+We start with the upper bounds for term $\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$.
+Based on the definition of 
+$R^+(W_{1},\mathds{W},x_{L})$, we have the following.
+
+\begin{scriptsize}	
+%\vspace{-7ex}
+\begin{align*}
+&\|R^+(W_1,\mathds{W},x_L,r)-R^+(W_1',\mathds{W}',x_L,r)\|_2\\ % \tag{eq-1} 
+  &\leq C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in N_r^+(x_L)}\Delta_{L-1,j}\tag{12}
+\end{align*}
+\end{scriptsize}
+
+Equation (12) holds, since we assume that 
+the degrees of vertices in $G$ are bounded by 
+a constant $d$.
+\looseness = -1
+
+Observe that the upper bound for
+$\Delta_{L}$ depends on that of $\|R^+(W_1,\mathds{W},x_L,r)-R^+(W_1',\mathds{W}',x_L,r)\|_2$,
+which in turn dependents on $\Delta_{L-1,j}$.
+Then we deduce a bound for $\|R^+(W_1,\mathds{W},x_L,r)-R^+(W_1',\mathds{W}',x_L,r)\|_2$
+by expanding the bounds (see below). 
+
+
+\etitle{Upper bounds for $\|R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$}.
+Based on the definition of $\|R^+(W_{1},\mathds{W},x_{L},r)\|_{2}$, 
+we can deduce the following.
+
+\begin{align*}
+  \|R^+(W_{1},\mathds{W},x_{L},r)\|_{2} 
+ & \leq C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in N_r^+(x_L)}\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2
+\end{align*}
+
+
+The equations hold due to the reasons given above.
+Observe that $\|R^+(W_{1},\mathds{W},x_{L},r)\|_{2}$ 
+is bounded using $\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2$,
+\ie the changes of the predictions of neighbors.
+We continue to expand $\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2$
+as follows.
+
+\vfill\null
+\begin{align*}
+    &\quad\quad\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2\\
+    & \leq\quad 2C_{\kw{COM}}B_{1}B_{x}+C_{\kw{COM}}|R|B_{2}\bigg\|
+    R^+(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2}\\
+    &\quad\quad+C_{\kw{COM}}|R|B_{2}\bigg\|
+    R^-(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2}.  \tag{16}
+\end{align*}
+
+
+
+And Equation (16) holds, since 
+we assume that 
+the norms of $W_1$ and $X_i$
+is bounded by $B_1$ and $B_x$, respectively.
+%
+Using the above bound, we bound $\|R^+(W_1,\mathds{W},x_L,r)\|_2$ %can be bounded
+as follows.
+
+\begin{align*}
+&  \|R^+(W_1,\mathds{W},x_L,r)\|_2 \\
+ & \leq \quad 2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}C_{\kw{COM}} B_1B_xd\frac{(\mathcal{C}d)^L-1}{\mathcal{C}d-1}. \tag{13}
+\end{align*}
+
+Let ${\mathcal C} = 2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}C_{\kw{COM}} B_2 |R| d$.
+Denote $M$ as $\frac{\left(\mathcal{C}d\right)^{L}-1}{\mathcal{C}d-1}$.
+That is, $\|R^+(W_1,\mathds{W},x_L,r)\|_2  \leq {\mathcal C} B_1  B_xM$.
+
+
+\etitle{Upper bounds for $\Delta_{L}$}.
+Combining Equations (11), (12) and (13), 
+we get
+
+\eat{
+\begin{gather*}
+\Delta_{L}\quad\leq\quad MB_{x}\left\|W_{1}-W_{1}^{\prime}\right\|_{2} 
++ M||R(W_1,\mathds{W},x_L)||_2||\mathds{W}-\mathds{W}^{\prime}||_2.
+\end{gather*}
+}
+
+\begin{align*}
+	\Delta_{L} & \leq\quad 4M \bigg(2B_{x}||W_{1}-W_{1}^{\prime}||_{2}\\
+	&\quad+\max_{r\in R}\|W_r-
+	W_r^{\prime}\|_2(\|R^+(W_1,\mathds{W},x_L,r)\|_2\\
+	&\quad+\|R^-(W_1,\mathds{W},x_L,r)\|_2)\bigg) \tag{14}
+\end{align*}
+
+
+\stitle{$\bullet$ Step 3: Bound the prediction changes}.
+We first reform the change of 
+the prediction function as follows. 
+
+\begin{equation*}\begin{aligned}
+		P_{L} & \triangleq\quad\|T^Q_{L}(W_{1},\mathds{W})-T^G_{L}(W_{1},
+		\mathds{W})\|_c \\
+		& =\quad\bigg\|\kw{COM}(W_{1}x^Q_{L}+\sum_{r\in R} W_rR^+(W_{1},\mathds{W},x^Q_{L},r)), W_{1}x^Q_{L}\\
+		& \quad\quad+\sum_{r\in R} W_rR^-(W_{1},\mathds{W},x^Q_{L},r))\\
+			& \quad\quad-\kw{COM}(W_{1}x^G_{L}+\sum_{r\in R} W_rR^+(W_{1},\mathds{W},x^G_{L},r)), W_{1}x^G_{L}\\
+			&\quad\quad+\sum_{r\in R} W_rR^-(W_{1},\mathds{W},x^G_{L},r)) \bigg\|_c\\
+%		&=W_{1}(x^Q_{L}-x^G_{L}) + \sum_{r\in R} W_r(R(W_{1},
+%		\mathds{W},x^Q_{L},r)-R(W_{1},\mathds{W},x^G_{L},r))\bigg\|_c\\
+\end{aligned}\end{equation*}
+
+Then the change of prediction can be bounded as follows.
+
+\begin{scriptsize}
+\begin{align*}
+		\nabla_{L} & \triangleq \quad |P_L - P'_L|\\
+&\leq \quad 4M \bigg(2B_{x}||W_{1}-W_{1}^{\prime}||_{2}+M\max_{r\in R}\|W_r-
+W_r^{\prime}\|_2(\|R^+(W_1,\mathds{W},x_L,r)\|_2\\
+&\quad\quad+\|R^-(W_1,\mathds{W},x_L,r)\|_2)\bigg)\tag{15}
+\end{align*}
+\end{scriptsize}
+
+Equation (15) holds due to Equation (14) above.
+
+\eat{
+Here, we show that $\|a\|_c - \|b\|_c\leq \|a-b\|_c$.
+Assume that $\|a\|_c = a_i$ and $\|b\|_c=b_j$.
+Then $b_i\leq b_j$ and $-b_i\geq -b_j$. 
+Hence, $a_i-b_j\leq a_i-b_i \leq \max_{k\in [1, d]} a_i-b_i$.
+That is, $\|a\|_c - \|b\|_c\leq \|a-b\|_c$.
+}
+
+\stitle{$\bullet$ Step 4: Bound the covering numbers}.
+To bound the change in $\nabla_{L}$ by 
+a given threshold $\epsilon$, we use the covering number.
+Intuitively, given a set $\M$ of matrices
+that have a bound for the norm $\|\cdot\|_F$,
+\ie $\|M\|_F\leq \lambda$ for all $M\in \M$,
+and a number $\eta$, its covering 
+number ${\mathcal N}(\M, \eta, \|\cdot\|_F)$ is defined as the minimum number
+of balls of radius $\eta$, needed to cover
+all matrices in $\M$~\cite{Covering-number}.
+To bound the covering number, 
+we use a lemma from~\cite{Covering-1}, 
+which states that 
+$${\mathcal N}(\M, \eta, \|\cdot\|_F)\leq \bigg(1+\frac{2d\lambda}{\epsilon}\bigg)^{d^2}$$
+
+Here, $\varepsilon$ is a given threshold, $\lambda$
+is the bound for the norm of matrices in $\M$, 
+and $d$ is the dimension 
+of the matrix.
+
+Since the bound in Equation (20) has two kinds
+of learned matrices, \ie $W_1$ and matrices in $\mathds{W}$.
+Using this lemma, we deduce that 
+
+
+\begin{align*}\mathcal{N}\left(W_{1},\frac{\epsilon}{8MB_{x}},\|\cdot\|_{F}\right)
+\leq\left(1+\frac{16MB_{x}B_{1}\sqrt{d}}{\epsilon}\right)^{d^{2}}\end{align*}
+
+\begin{align*}\mathcal{N}\left(W_r,\frac{\epsilon}{8M{\mathcal R}},
+	\|\cdot\|_{F}\right)\leq\left(1+\frac{16M{\mathcal R}B_{2}\sqrt{d}}{\epsilon}
+	\right)^{d^{2}} \quad (r\in R)
+\end{align*}
+
+Here, ${\mathcal R} = \max(\|R^+(W_1,\mathds{W},x_L,r)\|_2,
+\|R^-(W_1,\mathds{W},x_L,r)\|_2) \leq {\mathcal C} B_1  B_xM$.
+Therefore, the overall covering number for \HGIN is bounded
+by the production of all these covering numbers~\cite{Gen-bound}.
+\begin{align*}P=\left(1+\frac{16M\sqrt d\max\{B_xB_1,{\mathcal R}B_2\}}
+{\epsilon}\right)^{2|R|d^2}\end{align*}
+
+Because $\varepsilon$ is sufficiently small, 
+\eg $\epsilon<4M\sqrt{d}\max\{B_xB_1,{\mathcal R}B_2\}$,
+we have that $\log P\leq 2|R|d^2\log\left(\frac{32M\sqrt{d}\max\{B_xB_1,{\mathcal R}
+B_2\}}{\epsilon}\right)$.
+We will use this upper bound to prove the Rademacher complexity.
+
+\eat{
+\begin{equation*}
+	3r^2\log\left(1+\frac{6M\sqrt{r}\max\{B_xB_1,\overline{R}B_2\}}{\epsilon}\right)
+\end{equation*}
+\begin{equation*}
+	\epsilon<4 M\sqrt{r}\max\{B_xB_1,\overline{R}B_2\}
+\end{equation*}
+\begin{equation*}
+	3r^2\log\left(\frac{8M\sqrt r\max\{B_xB_1,\overline{R}B_2\}}{\epsilon}\right)
+\end{equation*}
+}
+
+\stitle{$\bullet$ Step 5: Bound for the Rademacher complexity}.
+We finally can bound the Rademacher complexity.
+To this end, we also apply a lemma from~\cite{RB-1},
+which states that 
+given a function ${\mathcal F}$ taking values
+in $[0,1]$, 
+its Rademacher complexity 
+$\hat{\mathcal{R}}$ 
+is bounded by $\inf_{\alpha>0}\left(\frac{4\alpha}{\sqrt{N_T}}+\frac{12}{N_T}\int_{\alpha}^{\sqrt{N_T}}\sqrt{\log\mathcal{N}(\mathcal{F},\epsilon,\|\cdot\|_F)}d\epsilon\right)$,
+where $\mathcal{N}(\mathcal{F},\epsilon,\|\cdot\|_F)$ is the covering 
+number of $\mathcal{F}$, and
+$N_T$ is the number of training data.
+
+
+From Step-4, we know that the covering number ${\mathcal N}$
+is bounded by $\left(1+\frac{16M\sqrt d\max\{B_xB_1,{\mathcal R}B_2\}}
+{\epsilon}\right)^{2|R|d^2}$.
+
+Therefore, we can bound the covering number as follows.
+
+\begin{align*}
+\log \mathcal{N}(\mathcal{F},\epsilon,\|\cdot\|_F)&\leq 
+\log \mathcal{N}(P,\frac{\epsilon}{2},\|\cdot\|_F)\\
+&
+\leq 2|R|d^2\log\left(\frac{32M\sqrt{d}\max\{B_xB_1,\overline{R}
+	B_2\}}{\epsilon}\right)
+\end{align*}
+
+Setting $\alpha  = \frac{2}{\sqrt{N_T}}$, we have that 
+$\hat{\mathcal{R}}(\mathcal{T})\leq\frac{8}{N_T}+
+\frac{12}{\sqrt{N_T}}\sqrt{2|R|d^2\log T}$,
+where $T=16M\sqrt{{N_T}d}\max\{B_xB_1,{\mathcal R}B_2\}$,
+and $\mathcal{I}$ is the class of functions
+mapping the computation of embedding to the prediction function $\nabla_{L}$.
+
+We can verify that the max margin loss function 
+is 1-Lipschitz.
+Then ${\hat{\mathcal{R}}(\mathcal{J}_\gamma)}
+%\leq \hat{\mathcal{R}}
+%_T(\mathcal{I})
+\leq\frac{8}{N_T}+\frac{12d}{\sqrt{N_T}}
+\sqrt{2|R|d^2|R|\log T}$.
+
+\stitle{The 1-Lipschitz of the loss function}.
+We next show that the max margin loss function 
+is 1-Lipschitz, 
+\ie $|{\mathcal L}(h_u,h_v)-{\mathcal L}(h'_u,h'_v)|\leq 
+|{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$.
+Since the loss functions for positive data and negative data
+are different,
+we consider all possible four cases:
+(1) both $(h_u,h_v)$ and $(h'_u,h'_v)$ are positive;
+(2) both $(h_u,h_v)$ and $(h'_u,h'_v)$ are negative;
+(3) $(h_u,h_v)$ is positive and $(h'_u,h'_v)$ is negative; and
+(4) $(h_u,h_v)$ is negative and $(h'_u,h'_v)$ are positive.
+
+
+
+\stab
+(1) If both $(h_u,h_v)$ and $(h'_u,h'_v)$ are positive, 
+then their loss are $-\alpha$.
+Hence, 
+$|{\mathcal L}(h_u,h_v)-{\mathcal L}(h'_u,h'_v)| = 0\leq 
+|{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$.
+
+\eat{
+\stab
+(2) If both $(Q_1,G_1)$ and $(Q_2,G_2)$ are negative,
+and the margins between $(Q_1,G_1)$ and $(Q_2,G_2)$ are smaller than
+$\alpha$, then the inequality holds.
+
+\stab
+(3) If both $(Q_1,G_1)$ and $(Q_2,G_2)$ are negative,
+and the margins between $(Q_1,G_1)$ and $(Q_2,G_2)$ are larger than 
+$\alpha$, then the loss is 0, and the inequality holds.
+}
+
+\stab
+(2) If both $(h_u,h_v)$ and $(h'_u,h'_v)$ are negative,
+when both ${\mathcal M}(h_u,h_v)$
+and ${\mathcal M}(h'_u,h'_v)$ are not larger than 
+$\alpha$, we have that 
+
+\begin{align*}
+&{\mathcal L}(h_u,h_v)-{\mathcal L}(h'_u,h'_v)|\\
+&=(\alpha -\|\max(0,h_u-h_v)\|^2_2) - (\alpha - \|\max(0,h'_u-h'_v)\|^2_2)\\
+&=-\|h_u-h_v\|^2_2 + \|h'_u-h'_v\|^2_2 \\
+&\leq |{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)| \tag{16}
+\end{align*}
+
+Equation (21) holds, since 
+$\mathcal{M}(h_u, h_v) = \cdd{\max(0, h_u-h_v)}_2^2$.
+
+\vspace{2ex}
+When ${\mathcal M}(h_u,h_v)\geq \alpha$ or
+ ${\mathcal M}(h'_u,h'_v)\geq  \alpha$,
+ the proof is similar.
+
+
+\stab
+(3) If $(h_u,h_v)$ is positive and $(h'_u,h'_v)$ is negative,
+and ${\mathcal M}(h'_u,h'_v)\leq \alpha$, we have the following
+
+$\|\max(0,h_u - h_v)\|_2 - \alpha  - (\alpha - \|\max(0,h'_u - h'_v)\|)\\
+=   \|h'_u - h'_v \|_2- 2\alpha\\
+\leq \|h_u - h_v\|_2 +  \|h'_u - h'_v\|_2- 2\|h'_u - h'_v \|_2\\
+\leq \|h_u - h_v\|_2 - \|h'_u - h'_v \|_2\\
+\leq |{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$
+
+
+
+
+
+\stab
+(4) If $(h_u,h_v)$ is positive and $(h'_u,h'_v)$ is negative,
+and ${\mathcal M}(h'_u,h'_v)\geq \alpha$, then 
+we have 
+
+$
+\|\max(0,h_u - h_v)\|_2 - \alpha  - \max(0,\alpha - \|\max(0,h'_u - h'_v)\|)\\
+= - \alpha\\
+\leq |{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$
+
+
+% \clearpage
+\subsection*{A5. Complex queries}
+
+\begin{figure}[tb!]
+	%	\vspace{-6.7ex}
+	\centerline{\includegraphics[width=0.8\columnwidth]{fig/query-example-2.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Example of complex query}
+	\label{fig:query}
+	\vspace{-1.4ex}
+\end{figure}
+
+When patterns are complex (\eg with multiple cycles
+and large number of vertices),
+the exact algorithms can be much slow 
+and \HFrame is significantly faster than 
+them. 
+Consider a complex query extracted from Citeseerx,
+which is depicted in 
+Figure~\ref{fig:query}.
+\kw{SIM}-\kw{TD}, \kw{EJ} and \kw{PJ} take
+2.691s, 11.164s and 13.472s respectively to conduct the query,
+while \HFrame takes only 0.081s.
+

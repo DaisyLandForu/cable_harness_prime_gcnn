@@ -1,0 +1,61 @@
+\section{Preliminaries}
+\label{sec-pre}
+Let $\Gamma$ be a countably 
+infinite set of labels.
+
+\stitle{Graphs}. 
+Consider directed labeled graphs $G=(V, E, L)$,
+where (1) $V$ is a finite set of vertices;
+(2) $E\subseteq V\times \Gamma \times V $ is a finite set 
+of edges, 
+where $\langle v_1, r, v_2\rangle$ is an edge
+from $v_1$ to $v_2$,  
+\revise{carrying} label $r\in \Gamma$;
+and (3) $L$ is a labeling function that 
+assigns a label $L(v) \in \Gamma$
+to each vertex $v$ in $V$.
+Let $R_G$ be the set of all edge labels in $G$.
+\looseness=-1
+
+For each vertex $u {\in} V$, 
+denote by $N^+_r(u)$ (resp. $N^-_r(u)$) the set of 
+its  \revise{{\em outgoing} (resp. {\em incoming}) neighbors} $u_1$ of $u$
+\revise{such that there exists} an  
+edge labeled $r$ from $u$ to $u_1$
+(resp.  
+from $u_1$ to $u$).
+That is, $N^+_r(u) {=} \{u_1\mid \langle u, r, u_1\rangle {\in} E\}$
+and $N^-_r(u) {=} \{u_1\mid \langle u_1, r, u\rangle {\in} E\}$.
+Denote by $N(u)$ the set of all neighbors of $u$, 
+\ie $N(u) {=} \bigcup_{r\in R_G} (N^-_r(u) \cup N^+_r(u))$.
+
+ 
+
+\stitle{Isomorphism and homomorphism.} 
+We introduce the semantics of 
+subgraph
+isomorphism and homomorphism.
+\revise{Consider a pattern  
+$Q{=} (V_Q, E_Q, L_Q)$} and a graph $G {=} (V_G, E_G, L_G)$.
+Here, a pattern is also a directed 
+labeled graph, introduced
+to simplify the presentation.  
+\looseness=-1
+
+ 
+\etitle{Subgraph isomorphism}.
+An \textit{isomorphic mapping} from  
+\revise{$Q$ to $G$},
+denoted by 
+\revise{$Q \sqsubseteq G$} is an injective mapping $\varphi$
+from $V_Q$ to $V_G$  
+such that
+(1) for each $u{\in} V_Q$, $u$ and $\varphi(u)$ 
+carry the same label, \ie $L_Q(u) = L_G(\varphi(u))$; and
+(2) the adjacency relation \revise{preserves},  
+\ie~\revise{$\langle u, r, u'\rangle \in E_Q$ if and only 
+	if $\langle \varphi(u), r, \varphi(u')\rangle \in E_G$}. 
+When such an injective $\varphi$ exists, 
+we say that $Q$ is subgraph isomorphic to $G$. 
+ 
+ 

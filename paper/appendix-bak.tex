@@ -1,0 +1,690 @@
+
+%\subsection*{Proof of Theorem~\ref{thm-generalization-bound}}
+\subsection*{A4. Proof of Theorem~\ref{thm-generalization-bound}}
+We establish the Rademacher complexity  of \HFrame
+by extending the proof of 
+the Rademacher complexity for \GNNs~\cite{Gen-bound}.
+Since \dual does not have any parameters, 
+and works for any inputs, we only 
+bound the Rademacher complexity of \HGIN.
+We prove the bound in multiple steps:
+(1) represent the computation of \HGIN
+by a tree;
+(2) quantify the impact of change 
+of parameters on the embeddings;
+(3) bound the changes in prediction probability;
+(4) bound the covering numbers for \HGIN;
+and (5) finally bound the Rademacher complexity
+using the covering numbers.
+
+In the following, we
+show these steps one by one. 
+In the proof of Theorem~\ref{thm-upper-bound}, 
+the computation of \HGIN is represented by a 
+computation tree.
+It remains to prove steps (2)-(5).	
+	
+\stitle{$\bullet$ Step 2: Bound the impact of parameters}.
+We first construct a formula 
+to represent changes of embeddings, and then bound the changes.
+
+
+Based on Equations (1)-(4), 
+we can deduce the following upper bound
+for the changes of embeddings:
+\begin{small}
+\begin{align*}
+\Delta_{L}  \triangleq & \quad\|T_{L}(W_{1},\mathds{W})-T_{L}(W_{1}^{\prime},\mathds{W}^{\prime})\|_{2} \\
+  =&\quad\bigg\|\kw{COM}(W_{1}x_{L} + \sum_{r\in R} W_r\underbrace{\rho(\sum_{j\in  N^+_r(x_{L})}\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_{1},\mathds{W}))}_{\overset{\Delta}
+ {\operatorname*{\operatorname*{=}}}R^+(W_{1},\mathds{W},x_{L},r)}),\\
+ &\quad  W_{1}x_{L}+\sum_{r\in R} W_r\underbrace{\rho(\sum_{j\in 
+ 		N^-_r(x_{L})}\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_{1},\mathds{W}))}_{\overset{\Delta}
+ 	{\operatorname*{\operatorname*{=}}}R^-(W_{1},\mathds{W},x_{L},r)})\\
+ & -\quad\kw{COM}(W'_{1}x_{L}+\sum_{r\in R} W'_r\rho(\sum_{j\in 
+ 		N^+_r(x_{L})}\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W'_{1},\mathds{W}'))), \\
+ 		&\quad  W'_{1}x_{L}+\sum_{r\in R} W'_r\rho(\sum_{j\in 
+ 		N^-_r(x_{L})}\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W'_{1},\mathds{W}')))\bigg\|_{2} \\
+  \leq& \quad 2C_{\kw{COM}}\left\|(W_{1}-W_{1}^{\prime})x_{L}\right\|_{2} \\
+ & + C_{\kw{COM}}\sum_{r\in R}\|(W_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}\\
+ & +\quad C_{\kw{COM}}\sum_{r\in R}\|(W_rR^-(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^-(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}  \tag{10}\\
+  \leq& \quad 2C_{\kw{COM}}\left\|(W_{1}-W_{1}^{\prime})x_{L}\right\|_{2} \\
+& +\quad C_{\kw{COM}}\sum_{r\in R}\|(W_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1},\mathds{W},x_{L}))\|_{2}\\
+& + C_{\kw{COM}}\sum_{r\in R}\|(W^{\prime}_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}\\
+& +\quad C_{\kw{COM}}\sum_{r\in R}\|(W_rR^-(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^-(W_{1},\mathds{W},x_{L}))\|_{2}\\
+& + C_{\kw{COM}}\sum_{r\in R}\|(W^{\prime}_rR^-(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^-(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2} \tag{11}
+\end{align*}
+\end{small}
+
+Equation~(10) holds, since we assume that 
+ function \kw{COM} is $C_{\kw{COM}}$-Lipschitz.
+ 
+ 
+
+
+To bound $\Delta_{L}$, 
+we bound the following:
+\begin{itemize}
+\item[(a)] $\|(W_{1}{-}W_{1}^{\prime})x_{L}\|_{2}$;
+\item[(b)]  $\|W_rR^+(W_{1},\mathds{W},x_{L}){-}W_r^{\prime}R^+(W_{1},\mathds{W},x_{L})\|_{2}$;
+\item[(c)]  $\|W^{\prime}_rR^+(W_{1},\mathds{W},x_{L}){-}W_r^{\prime}R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$;
+\item[(d)]  $\|W_rR^-(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^-(W_{1},\mathds{W},x_{L})\|_{2}$;
+and 
+\item[(e)]  $\|(W^{\prime}_rR^-(W_{1},\mathds{W},x_{L}){-}W_r^{\prime}R^-(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+\end{itemize}
+%\looseness=-1
+
+For term (a), we can assume an upper bound
+for the norm of $W_1$ and $x_L$. 
+For (b), 
+we have 
+$\|W_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1},\mathds{W},x_{L})\|_{2}
+\leq \|(W_r-W_r^{\prime})R^+(W_{1},\mathds{W},x_{L})\|_{2}$.
+Then we only need to bound $\|R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+For (c), 
+we have that 
+$\|W^{\prime}_rR^+(W_{1},\mathds{W},x_{L})-W_r^{\prime}R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}
+\leq \|W^{\prime}_r(R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$.
+Therefore, we bound 
+$\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+The cases (d) and (e) can be analyzed similarly.
+In the following, we only provide
+upper bounds for $\|R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$
+and $\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L})\|_{2}$.
+
+\vspace{2ex}
+
+\eat{
+analyze the terms containing $R^+(W_{1},\mathds{W},x_{L})$.
+The terms containing $R^+(W_{1},\mathds{W},x_{L})$ 
+can be analyzed similarly.
+}
+
+
+\etitle{Upper bound for $\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$}.
+We start with the upper bounds for term $\|R^+(W_{1},\mathds{W},x_{L})-R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$.
+Based on the definition of 
+$R^+(W_{1},\mathds{W},x_{L})$, we have the following.
+
+\eat{
+\begin{equation*}\begin{aligned}
+&\|W_r^{\prime}R^+(W_1,\mathds{W},x_L)-W_r^{\prime}R^+(W_1^{\prime},\mathds{W}^{\prime},x_L)\|_2 
+\leq&\|W_r^{\prime}\|_2\|R^+(W_1,\mathds{W},x_L)-R^+(W_1^{\prime},\mathds{W}^{\prime},x_L)\|_2
+\end{aligned}\end{equation*}
+}
+
+
+\begin{scriptsize}	
+%\vspace{-7ex}
+\begin{align*}
+&\|R^+(W_1,\mathds{W},x_L,r)-R^+(W_1',\mathds{W}',x_L,r)\|_2\\ % \tag{eq-1} 
+  &\leq C_\rho\bigg\|\sum_{j\in N_r^+(x_L)}\bigg(\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_1,
+  \mathds{W})) -\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_1',\mathds{W}'))\bigg)\bigg\|_2  \tag{12}
+  \\
+ & \leq C_\rho\sum_{j\in N_r^+(x_L)}\bigg\|\bigg(\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_1,
+  \mathds{W})) -\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_1',\mathds{W}'))\bigg)\bigg\|_2 \nonumber
+  \\
+  &\leq C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}\sum_{j\in N_r^+(x_L)}\bigg\|T_{L-1,j}(W_1,\mathds{W})-
+  T_{L-1,j}(W_1',\mathds{W}')\bigg\|_2 \tag{13}\\
+  &= C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}\sum_{j\in N_r^+(x_L)}\Delta_{L-1,j}\\
+  &\leq C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in N_r^+(x_L)}\Delta_{L-1,j}\tag{14}
+\end{align*}
+\end{scriptsize}
+
+
+Equations (12) and (13) follow from the assumption 
+that Functions $\rho$, $\kw{MSG}^{k,r}_0$ and 
+$\kw{MSG}^{k,r}_0$ are $C_\rho$-Lipschitz, 
+$C_{\kw{MSG}_0}$-Lipschitz  and $C_{\kw{MSG}_1}$-Lipschitz,
+respectively.
+Equation (14) holds, since we assume that 
+the degrees of vertices in $G$ are bounded by 
+a constant $d$.
+\looseness = -1
+
+\eat{
+Since we assume that $\|W'_r\|\leq B_2$,
+we can deduce that the bound as follows.
+
+\begin{equation*}\begin{aligned}
+||W_r^{\prime}R(W_1,\mathds{W},x_L,r)  - W_r^{\prime}R(W_1^{\prime},\mathds{W}^{\prime},x_L,r)\|_2
+ &\leq B_2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}\sum_{j\in N_r^+(x_L)}\Delta_{L-1,j} \\
+ &\leq B_2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in N_r^+(x_L)}\Delta_{L-1,j}
+\end{aligned}\end{equation*}
+
+
+\begin{equation*}\begin{aligned}
+\Delta_{L} & \leq\quad 2C_{\kw{COM}} B_x\left\|(W_1-W_1^{\prime})\right\|_2 
+  +\quad C_{\kw{COM}} |R| B_2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in N_r^+(x_L)}\Delta_{L-1,j} \\
+ &\quad +\kw{COM}|R|\max_{r\in R}\|(W_r-W_r^{\prime})R^+(W_1,\mathds{W},x_L,r)||_2
+  + \kw{COM}|R|\max_{r\in R}\|(W_r-W_r^{\prime})R^-(W_1,\mathds{W},x_L,r)||_2
+\end{aligned}\end{equation*}
+}
+
+Observe that the upper bound for
+$\Delta_{L}$ depends on that of $\|R^+(W_1,\mathds{W},x_L,r)-R^+(W_1',\mathds{W}',x_L,r)\|_2$,
+which in turn dependents on $\Delta_{L-1,j}$.
+Then we deduce a bound for $\|R^+(W_1,\mathds{W},x_L,r)-R^+(W_1',\mathds{W}',x_L,r)\|_2$
+by expanding the bounds (see below). 
+
+
+% \begin{equation}
+% \begin{aligned}
+% \|R(W_1,\mathds{W},x_L)\|_2 \\ 
+% \leq\quad C_\rho C_gd\min\left\{b\sqrt{r},C_\phi B_1B_x\frac{(\mathcal{C}d)^L-1}{\mathcal{C}d-1}\right\}
+% \end{aligned}
+% \end{equation}
+
+
+
+\etitle{Upper bounds for $\|R^+(W_{1}^{\prime},\mathds{W}^{\prime},x_{L}))\|_{2}$}.
+Based on the definition of $\|R^+(W_{1},\mathds{W},x_{L},r)\|_{2}$, 
+we can deduce the following.
+
+\begin{align*}
+  \|R^+(W_{1},\mathds{W},x_{L},r)\|_{2} 
+ & =\bigg\|\rho\big(\sum_{j\in N_r^+(x_{L})}\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_{1},\mathds{W})
+ \big)\big)\bigg\|_{2} \\
+ & \leq C_\rho\bigg\|\sum_{j\in N_r^+(x_L)}\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_1,\mathds{W}))\bigg\|
+ _2 \\
+ & \leq C_\rho\sum_{j\in N_r^+(x_L)}\bigg\|\kw{MSG}_{{\bf 1}[j=v]}(T_{L-1,j}(W_1,
+ \mathds{W}))\\
+ &\quad\quad -\kw{MSG}_{{\bf 1}[j=v]}(0)\bigg\|_2 \\
+ & \leq C_{\rho}C_{\kw{MSG}_0}C_{\kw{MSG}_1}\sum_{j\in N_r^+(x_{L})}\bigg\|T_{L-1,j}(W_{1},\mathds{W})
+ \bigg\|_{2} \\
+ & \leq C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in N_r^+(x_L)}\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2
+\end{align*}
+
+
+The equations hold due to the reasons given above.
+Observe that $\|R^+(W_{1},\mathds{W},x_{L},r)\|_{2}$ 
+is bounded using $\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2$,
+\ie the changes of the predictions of neighbors.
+We continue to expand $\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2$
+as follows.
+
+
+\begin{align*}
+		&\quad\quad\bigg\|T_{L-1,j}(W_1,\mathds{W})\bigg\|_2\\
+		 &=\quad\bigg\|\kw{COM}(W_{1}x_{L}+\sum_{r\in R} W_r R^+(W_1,W_2,x_{L-1,j},r),
+		\\
+		&\quad\quad\quad W_{1}x_{L}+\sum_{r\in R} W_r R^-(W_1,W_2,x_{L-1,j},r)) \bigg\|
+_2 \\
+		& =\quad\bigg\|\kw{COM}(W_{1}x_{L}+\sum_{r\in R} W_r R^+(W_1,W_2,x_{L-1,j},r),
+W_{1}x_{L}\\
+&\quad\quad\quad+\sum_{r\in R} W_r R^-(W_1,W_2,x_{L-1,j},r)) -
+\kw{COM}(0,0) \bigg\|
+_2 \\
+		& \leq\quad C_{\kw{COM}}\bigg\|W_{1}x_{L-1,j}+\sum_{r\in R} W_r 
+		R^+(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2} \\
+		&\quad\quad+  C_{\kw{COM}}\bigg\|W_{1}x_{L-1,j}+\sum_{r\in R} W_r 
+R^-(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2} \tag{15} \\
+		& \leq\quad 2C_{\kw{COM}}\bigg\|W_{1}x_{L-1,j}\bigg\|_{2}+C_{\kw{COM}}\sum_{r\in R} \bigg\|
+		W_rR^+(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2} \\
+		&\quad\quad+ C_{\kw{COM}}\sum_{r\in R} \bigg\|
+		W_rR^-(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2}\\
+		& \leq\quad 2C_{\kw{COM}}B_{1}B_{x}+C_{\kw{COM}}|R|B_{2}\bigg\|
+		R^+(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2}\\
+		&\quad\quad+C_{\kw{COM}}|R|B_{2}\bigg\|
+		R^-(W_{1},W_{2},x_{L-1,j},r)\bigg\|_{2}.  \tag{16}
+\end{align*}
+
+
+Equation (15) holds, since $\kw{COM}$
+is $C_{\kw{COM}}$-Lipschitz.
+And Equation (16) holds, since 
+we assume that 
+the norms of $W_1$ and $X_i$
+is bounded by $B_1$ and $B_x$, respectively.
+%
+Using the above bound, we bound $\|R^+(W_1,\mathds{W},x_L,r)\|_2$ %can be bounded
+as follows.
+
+\begin{align*}
+&  \|R^+(W_1,\mathds{W},x_L,r)\|_2 \\
+ & \leq 2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}C_{\kw{COM}} B_1B_xd  \\
+ & +  C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}C_{\kw{COM}} |R| 
+ B_2d\max_{j\in C(x_L)}\bigg(\bigg\|R^+(W_1,
+ \mathds{W},x_{L-1,j})\bigg\|_2\\
+ &\quad\quad+\bigg\|R^-(W_1,
+ \mathds{W},x_{L-1,j})\bigg\|_2\bigg) \\
+ & \leq 2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}C_\phi B_1B_xd\sum_{\ell=0}^{L-1}(2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}
+ C_{\kw{COM}} B_2 |R| d)^\ell \\
+ & =\quad 2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}C_{\kw{COM}} B_1B_xd\frac{(\mathcal{C}d)^L-1}{\mathcal{C}d-1}. \tag{17}
+\end{align*}
+
+Let ${\mathcal C} = 2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}C_{\kw{COM}} B_2 |R| d$.
+Denote $M$ as $\frac{\left(\mathcal{C}d\right)^{L}-1}{\mathcal{C}d-1}$.
+That is, $\|R^+(W_1,\mathds{W},x_L,r)\|_2  \leq {\mathcal C} B_1  B_xM$.
+
+\eat{
+Moreover, since we assume that $\|x\|_\infty=|x_1|+\ldots+|x_r|\leq 
+b$ for each vector $x=(x_1, \ldots, x_r)\in R^r$, 
+$\|x\|_2\leq \sqrt{x^2_1+\ldots + x^2_r} \leq \sqrt{r}\|x\|_\infty$
+by the mean value inequality.
+We have that 
+$$\left\|T_{L-1,j}(W_1,\mathds{W})\right\|_2\leq b\sqrt{r}$$
+
+Moreover, we have that 
+
+\begin{align*}\|R^+(W_1,\mathds{W},x_L,r)\|_2\leq bdC_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}\sqrt{r}
+\end{align*}
+
+
+Combining \tbf and \tbf, we have that
+\begin{align*}\|R^+(W_1,\mathds{W},x_L,r)\|_2\leq C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\min\left\{b\sqrt{r},C_\kw{COM} 
+B_1B_x\frac{(\mathcal{C}d)^L-1}{\mathcal{C}d-1}\right\}\end{align*}
+}
+
+
+\etitle{Upper bounds for $\Delta_{L}$}.
+Combining Equations (11), (14) and (17), 
+we get
+
+\eat{
+\begin{gather*}
+\Delta_{L}\quad\leq\quad MB_{x}\left\|W_{1}-W_{1}^{\prime}\right\|_{2} 
++ M||R(W_1,\mathds{W},x_L)||_2||\mathds{W}-\mathds{W}^{\prime}||_2.
+\end{gather*}
+}
+
+\begin{align*}
+	\Delta_{L} & \leq\quad C_{\kw{COM}} B_x\|W_1-W_1^{\prime}\|_2 \\
+	&\quad + 2C_{\kw{COM}} |R| B_2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in C(x_L)}\Delta_{L-1,j} \\
+	&\quad + C_{\kw{COM}}|R|\max_{r\in R}\|W_r-W_r^{\prime}\|_2\|R^+(W_1,\mathds{W},x_L,r)\|_2\\
+	&\quad + C_{\kw{COM}}|R|\max_{r\in R}\|W_r-W_r^{\prime}||_2\|R^-(W_1,\mathds{W},x_L,r)\|_2\\
+% & \leq\quad C_{\kw{COM}} B_x\|W_1-W_1^{\prime}\|_2 \\
+%&\quad + 2C_{\kw{COM}} |R| B_2C_\rho C_{\kw{MSG}_0}C_{\kw{MSG}_1}d\max_{j\in C(x_L)}\Delta_{L-1,j} \\
+%&\quad + 2 C_{\kw{COM}} |R| {\mathcal C} B_1  B_xM \max_{r\in R}\|W_r-W_r^{\prime}||_2\\
+	&\leq\quad 4M \bigg(2B_{x}||W_{1}-W_{1}^{\prime}||_{2}\\
+	&\quad+\max_{r\in R}\|W_r-
+	W_r^{\prime}\|_2(\|R^+(W_1,\mathds{W},x_L,r)\|_2\\
+	&\quad+\|R^-(W_1,\mathds{W},x_L,r)\|_2)\bigg) \tag{18}
+\end{align*}
+
+
+
+\eat{
+\begin{equation}\Delta_L\leq MB_x\left|\left|W_1-W_1^{\prime}\right|\right|
+_2+M\overline{R}||
+W_r-W_r^{\prime}||_2\end{equation}
+}
+
+\stitle{$\bullet$ Step 3: Bound the prediction changes}.
+We first reform the change of 
+the prediction function as follows. 
+
+\begin{equation*}\begin{aligned}
+		P_{L} & \triangleq\quad\|T^Q_{L}(W_{1},\mathds{W})-T^G_{L}(W_{1},
+		\mathds{W})\|_c \\
+		& =\quad\bigg\|\kw{COM}(W_{1}x^Q_{L}+\sum_{r\in R} W_rR^+(W_{1},\mathds{W},x^Q_{L},r)), W_{1}x^Q_{L}\\
+		& \quad\quad+\sum_{r\in R} W_rR^-(W_{1},\mathds{W},x^Q_{L},r))\\
+			& \quad\quad-\kw{COM}(W_{1}x^G_{L}+\sum_{r\in R} W_rR^+(W_{1},\mathds{W},x^G_{L},r)), W_{1}x^G_{L}\\
+			&\quad\quad+\sum_{r\in R} W_rR^-(W_{1},\mathds{W},x^G_{L},r)) \bigg\|_c\\
+%		&=W_{1}(x^Q_{L}-x^G_{L}) + \sum_{r\in R} W_r(R(W_{1},
+%		\mathds{W},x^Q_{L},r)-R(W_{1},\mathds{W},x^G_{L},r))\bigg\|_c\\
+\end{aligned}\end{equation*}
+
+Then the change of prediction can be bounded as follows.
+
+\begin{scriptsize}
+\begin{align*}
+		\nabla_{L} & \triangleq \quad |P_L - P'_L|\\
+		& =\quad\bigg|\|T^Q_{L}(W_{1},\mathds{W})-T^G_{L}(W_{1},
+		\mathds{W})\|_c - \|T^Q_{L}(W'_{1},\mathds{W}')-T^G_{L}(W'_{1},
+		\mathds{W}')\|_c\bigg| \\
+		& \leq \quad\bigg|\|T^Q_{L}(W_{1},\mathds{W})-T^Q_{L}(W'_{1},
+		\mathds{W}')-  (T^G_{L}(W_{1},
+		\mathds{W})-T^G_{L}(W'_{1},
+\mathds{W}'))\|_c\bigg| \tag{19}\\
+		& \leq \quad\|T^Q_{L}(W_{1},\mathds{W})-T^Q_{L}(W'_{1},
+\mathds{W}')\|_2 +
+\|T^G_{L}(W_{1},
+\mathds{W})-T^G_{L}(W'_{1},
+\mathds{W}')\|_2 \\
+&\leq \quad 4M \bigg(2B_{x}||W_{1}-W_{1}^{\prime}||_{2}+M\max_{r\in R}\|W_r-
+W_r^{\prime}\|_2(\|R^+(W_1,\mathds{W},x_L,r)\|_2\\
+&\quad\quad+\|R^-(W_1,\mathds{W},x_L,r)\|_2)\bigg)\tag{20}
+\end{align*}
+\end{scriptsize}
+
+
+Equation (19) holds, due to the triangle inequality 
+of norm $\|\cdot\|_c$.
+And Equation (20) holds due to Equation (18) above.
+
+\eat{
+Here, we show that $\|a\|_c - \|b\|_c\leq \|a-b\|_c$.
+Assume that $\|a\|_c = a_i$ and $\|b\|_c=b_j$.
+Then $b_i\leq b_j$ and $-b_i\geq -b_j$. 
+Hence, $a_i-b_j\leq a_i-b_i \leq \max_{k\in [1, d]} a_i-b_i$.
+That is, $\|a\|_c - \|b\|_c\leq \|a-b\|_c$.
+}
+
+\stitle{$\bullet$ Step 4: Bound the covering numbers}.
+To bound the change in $\nabla_{L}$ by 
+a given threshold $\epsilon$, we use the covering number.
+Intuitively, given a set $\M$ of matrices
+that have a bound for the norm $\|\cdot\|_F$,
+\ie $\|M\|_F\leq \lambda$ for all $M\in \M$,
+and a number $\eta$, its covering 
+number ${\mathcal N}(\M, \eta, \|\cdot\|_F)$ is defined as the minimum number
+of balls of radius $\eta$, needed to cover
+all matrices in $\M$~\cite{Covering-number}.
+To bound the covering number, 
+we use a lemma from~\cite{Covering-1}, 
+which states that 
+$${\mathcal N}(\M, \eta, \|\cdot\|_F)\leq \bigg(1+\frac{2d\lambda}{\epsilon}\bigg)^{d^2}$$
+
+Here, $\varepsilon$ is a given threshold, $\lambda$
+is the bound for the norm of matrices in $\M$, 
+and $d$ is the dimension 
+of the matrix.
+
+Since the bound in Equation (20) has two kinds
+of learned matrices, \ie $W_1$ and matrices in $\mathds{W}$.
+Using this lemma, we deduce that 
+
+
+\begin{align*}\mathcal{N}\left(W_{1},\frac{\epsilon}{8MB_{x}},\|\cdot\|_{F}\right)
+\leq\left(1+\frac{16MB_{x}B_{1}\sqrt{d}}{\epsilon}\right)^{d^{2}}\end{align*}
+
+\begin{align*}\mathcal{N}\left(W_r,\frac{\epsilon}{8M{\mathcal R}},
+	\|\cdot\|_{F}\right)\leq\left(1+\frac{16M{\mathcal R}B_{2}\sqrt{d}}{\epsilon}
+	\right)^{d^{2}} \quad (r\in R)
+\end{align*}
+
+Here, ${\mathcal R} = \max(\|R^+(W_1,\mathds{W},x_L,r)\|_2,
+\|R^-(W_1,\mathds{W},x_L,r)\|_2) \leq {\mathcal C} B_1  B_xM$.
+Therefore, the overall covering number for \HGIN is bounded
+by the production of all these covering numbers~\cite{Gen-bound}.
+\begin{align*}P=\left(1+\frac{16M\sqrt d\max\{B_xB_1,{\mathcal R}B_2\}}
+{\epsilon}\right)^{2|R|d^2}\end{align*}
+
+Because $\varepsilon$ is sufficiently small, 
+\eg $\epsilon<4M\sqrt{d}\max\{B_xB_1,{\mathcal R}B_2\}$,
+we have that $\log P\leq 2|R|d^2\log\left(\frac{32M\sqrt{d}\max\{B_xB_1,{\mathcal R}
+B_2\}}{\epsilon}\right)$.
+We will use this upper bound to prove the Rademacher complexity.
+
+\eat{
+\begin{equation*}
+	3r^2\log\left(1+\frac{6M\sqrt{r}\max\{B_xB_1,\overline{R}B_2\}}{\epsilon}\right)
+\end{equation*}
+\begin{equation*}
+	\epsilon<4 M\sqrt{r}\max\{B_xB_1,\overline{R}B_2\}
+\end{equation*}
+\begin{equation*}
+	3r^2\log\left(\frac{8M\sqrt r\max\{B_xB_1,\overline{R}B_2\}}{\epsilon}\right)
+\end{equation*}
+}
+
+\stitle{$\bullet$ Step 5: Bound for the Rademacher complexity}.
+We finally can bound the Rademacher complexity.
+To this end, we also apply a lemma from~\cite{RB-1},
+which states that 
+given a function ${\mathcal F}$ taking values
+in $[0,1]$, 
+its Rademacher complexity 
+$\hat{\mathcal{R}}$ 
+is bounded by $\inf_{\alpha>0}\left(\frac{4\alpha}{\sqrt{N_T}}+\frac{12}{N_T}\int_{\alpha}^{\sqrt{N_T}}\sqrt{\log\mathcal{N}(\mathcal{F},\epsilon,\|\cdot\|_F)}d\epsilon\right)$,
+where $\mathcal{N}(\mathcal{F},\epsilon,\|\cdot\|_F)$ is the covering 
+number of $\mathcal{F}$, and
+$N_T$ is the number of training data.
+
+
+From Step-4, we know that the covering number ${\mathcal N}$
+is bounded by $\left(1+\frac{16M\sqrt d\max\{B_xB_1,{\mathcal R}B_2\}}
+{\epsilon}\right)^{2|R|d^2}$.
+
+Therefore, we can bound the covering number as follows.
+
+\begin{align*}
+\log \mathcal{N}(\mathcal{F},\epsilon,\|\cdot\|_F)&\leq 
+\log \mathcal{N}(P,\frac{\epsilon}{2},\|\cdot\|_F)\\
+&
+\leq 2|R|d^2\log\left(\frac{32M\sqrt{d}\max\{B_xB_1,\overline{R}
+	B_2\}}{\epsilon}\right)
+\end{align*}
+
+Setting $\alpha  = \frac{2}{\sqrt{N_T}}$, we have that 
+$\hat{\mathcal{R}}(\mathcal{T})\leq\frac{8}{N_T}+
+\frac{12}{\sqrt{N_T}}\sqrt{2|R|d^2\log T}$,
+where $T=16M\sqrt{{N_T}d}\max\{B_xB_1,{\mathcal R}B_2\}$,
+and $\mathcal{I}$ is the class of functions
+mapping the computation of embedding to the prediction function $\nabla_{L}$.
+
+We can verify that the max margin loss function 
+is 1-Lipschitz.
+Then ${\hat{\mathcal{R}}(\mathcal{J}_\gamma)}
+%\leq \hat{\mathcal{R}}
+%_T(\mathcal{I})
+\leq\frac{8}{N_T}+\frac{12d}{\sqrt{N_T}}
+\sqrt{2|R|d^2|R|\log T}$.
+
+\stitle{The 1-Lipschitz of the loss function}.
+We next show that the max margin loss function 
+is 1-Lipschitz, 
+\ie $|{\mathcal L}(h_u,h_v)-{\mathcal L}(h'_u,h'_v)|\leq 
+|{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$.
+Since the loss functions for positive data and negative data
+are different,
+we consider all possible four cases:
+(1) both $(h_u,h_v)$ and $(h'_u,h'_v)$ are positive;
+(2) both $(h_u,h_v)$ and $(h'_u,h'_v)$ are negative;
+(3) $(h_u,h_v)$ is positive and $(h'_u,h'_v)$ is negative; and
+(4) $(h_u,h_v)$ is negative and $(h'_u,h'_v)$ are positive.
+
+
+
+\stab
+(1) If both $(h_u,h_v)$ and $(h'_u,h'_v)$ are positive, 
+then their loss are $-\alpha$.
+Hence, 
+$|{\mathcal L}(h_u,h_v)-{\mathcal L}(h'_u,h'_v)| = 0\leq 
+|{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$.
+
+\eat{
+\stab
+(2) If both $(Q_1,G_1)$ and $(Q_2,G_2)$ are negative,
+and the margins between $(Q_1,G_1)$ and $(Q_2,G_2)$ are smaller than
+$\alpha$, then the inequality holds.
+
+\stab
+(3) If both $(Q_1,G_1)$ and $(Q_2,G_2)$ are negative,
+and the margins between $(Q_1,G_1)$ and $(Q_2,G_2)$ are larger than 
+$\alpha$, then the loss is 0, and the inequality holds.
+}
+
+\stab
+(2) If both $(h_u,h_v)$ and $(h'_u,h'_v)$ are negative,
+when both ${\mathcal M}(h_u,h_v)$
+and ${\mathcal M}(h'_u,h'_v)$ are not larger than 
+$\alpha$, we have that 
+
+\begin{align*}
+&{\mathcal L}(h_u,h_v)-{\mathcal L}(h'_u,h'_v)|\\
+&=(\alpha -\|\max(0,h_u-h_v)\|^2_2) - (\alpha - \|\max(0,h'_u-h'_v)\|^2_2)\\
+&=-\|h_u-h_v\|^2_2 + \|h'_u-h'_v\|^2_2 \\
+&\leq |{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)| \tag{21}
+\end{align*}
+
+Equation (21) holds, since 
+$\mathcal{M}(h_u, h_v) = \cdd{\max(0, h_u-h_v)}_2^2$.
+
+\vspace{2ex}
+When ${\mathcal M}(h_u,h_v)\geq \alpha$ or
+ ${\mathcal M}(h'_u,h'_v)\geq  \alpha$,
+ the proof is similar.
+
+
+
+
+
+
+
+
+
+
+
+\stab
+(3) If $(h_u,h_v)$ is positive and $(h'_u,h'_v)$ is negative,
+and ${\mathcal M}(h'_u,h'_v)\leq \alpha$, we have the following
+
+$\|\max(0,h_u - h_v)\|_2 - \alpha  - (\alpha - \|\max(0,h'_u - h'_v)\|)\\
+=   \|h'_u - h'_v \|_2- 2\alpha\\
+\leq \|h_u - h_v\|_2 +  \|h'_u - h'_v\|_2- 2\|h'_u - h'_v \|_2\\
+\leq \|h_u - h_v\|_2 - \|h'_u - h'_v \|_2\\
+\leq |{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$
+
+
+
+
+
+\stab
+(4) If $(h_u,h_v)$ is positive and $(h'_u,h'_v)$ is negative,
+and ${\mathcal M}(h'_u,h'_v)\geq \alpha$, then 
+we have 
+
+$
+\|\max(0,h_u - h_v)\|_2 - \alpha  - \max(0,\alpha - \|\max(0,h'_u - h'_v)\|)\\
+= - \alpha\\
+\leq |{\mathcal M}(h_u,h_v)-{\mathcal M}(h'_u,h'_v)|$
+
+\subsection*{A5. Complex queries}
+
+\begin{figure}[tb!]
+	%	\vspace{-6.7ex}
+	\centerline{\includegraphics[width=0.8\columnwidth]{fig/query-example-2.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Example of complex query}
+	\label{fig:query}
+	\vspace{-1.4ex}
+\end{figure}
+
+When patterns are complex (\eg with multiple cycles
+and large number of vertices),
+the exact algorithms can be much slow 
+and \HFrame is significantly faster than 
+them. 
+Consider a complex query extracted from Citeseerx,
+which is depicted in 
+Figure~\ref{fig:query}.
+\kw{SIM}-\kw{TD}, \kw{EJ} and \kw{PJ} take
+2.691s, 11.164s and 13.472s respectively to conduct the query,
+while \HFrame takes only 0.081s.
+
+\reviserdy{
+\subsection*{A6. The Application of \HFrame}
+We focus on the decision problem of the subgraph homomorphism problem, 
+which can be applied in frequent pattern mining, graph pattern depenedency discovery, 
+graph query evaluations, and accelerating subgraph enumerations. 
+
+We can extend our algorithms to generate exact subgraph instances in the following two ways:
+(1) plugging in the enumeration algorithm: 
+we can apply \HFrame to verify the candidates of the first pattern vertex in the matching order, 
+and apply exact algorithm to enumerate on the vertices, on which \HFrame returns true;
+or (2) applying \HFrame to filter candidates: 
+we can apply \HFrame to check whether there exists a match for each vertex v in C(u) for each pattern vertex u, 
+remove all vertices in C(u) that does not have a match, 
+and finally run the exact enumeration algorithm on the subgraph deduced by the remained vertices. 
+Taking PJ as an example, we adopt the second method, 
+and reports the results on Citation and DBLP as \ref{tab:app-filter}. 
+We can see that \HFrame trades off a marginal loss in accuracy for a significant gain in computational efficiency.
+\begin{table}[tb]
+	\caption{Effectiveness of \HFrame in candidate filtering}
+	\label{tab:app-filter}
+	\vspace{-1.5ex}
+	\centering
+	\resizebox{1.01\columnwidth}{!}{
+		\begin{tabular}{c||c|c|c|c} \hline
+			& \multicolumn{2}{c|}{\bf{Accuracy}}
+                & \multicolumn{2}{c}{\bf{Efficiency (s)}}\\
+			\hline
+			\diagbox{\bf{Method}}{\bf{Dataset}} &Citation&DBLP&Citation&DBLP\\\hline
+			\kw{Only PJ}              & 1.000 & 1.000 & 1.545 & 1.803 \\ %\hline
+			\kw{\HFrame+PJ}              & 0.815 & 0.832 & 0.562 & 0.547 \\ \hline
+		\end{tabular}
+	}
+	\vspace{-2ex}
+\end{table}
+
+Additionally, in frequent pattern mining and graph pattern dependency discovery, 
+the quality of patterns $Q$ is usually defined by the number of vertices matching the pivot of $Q$, 
+rather than the number of matches. 
+We have added an application of \HFrame in frequent pattern mining algorithm SPMiner\cite{ying2024representation}. 
+We evaluated the performance on Enzyme dataset same as SPMiner, 
+and calculated the median anchored frequency and grouped runtime by pattern size in \ref{tab:app-mining}. 
+We found that when plugging \HFrame in the existing frequent pattern mining, 
+\HFrame can discover high-quality patterns in a reasonable time.
+
+\begin{table}[b]
+        \caption{Effectiveness of \HFrame in frequent pattern mining}
+            \label{tab:app-mining}
+        \vspace{-1.5ex}
+        \centering
+        \resizebox{1.01\columnwidth}{!}{
+            \begin{tabular}{c|c|c|c|c|c|c} \hline
+                    \multicolumn{2}{c|}{} & \multicolumn{5}{c}{Pattern size} \\ \cline{3-7}
+                    \multicolumn{2}{c|}{} & 5 & 6 & 7 & 8 & 9 \\ \hline
+                    \multirow{2}{*}{Support} & SPMiner+\HFrame & 14,688 & 14,445 & 13,571 & 12,109 & 9,723 \\
+                             & SPMiner & 13,005 & 14,572 & 13,691 & 9,831 & 7,928 \\ \hline
+                    \multirow{2}{*}{Runtime(s)} & SPMiner+\HFrame & 160.85 & 193.77 & 226.01 & 256.43 & 292.16 \\
+                             & SPMiner & 151.89 & 182.38 & 212.66 & 244.02 & 275.40 \\ \hline
+            \end{tabular}
+        }
+        \vspace{-2ex}
+\end{table}
+}
+	
+\eat{
+
+\clearpage
+\subsection*{A5. Complex queries}
+
+\begin{figure}[tb!]
+	%	\vspace{-6.7ex}
+	\centerline{\includegraphics[width=0.8\columnwidth]{fig/query-example-2.eps}}
+	\centering
+	\vspace{-1.4ex}
+	\caption{Example of complex query}
+	\label{fig:query}
+	\vspace{-1.4ex}
+\end{figure}
+
+There exist some 
+
+\warn{Figure~\ref{fig:query} illustrates a complex query example 
+	that poses significant challenges for exact algorithms.}
+}
+
+
+
+\eat{
+\begin{align*}
+		\hat{\mathcal{R}}_{\mathcal{T}}(\mathcal{J}_{\gamma})\leq\frac{4}{\gamma m}+
+		\frac{16r}{\gamma\sqrt{m}}\sqrt{3\operatorname{log}Q},where \\
+		Q=16\sqrt{m}M\sqrt{r}\max\{B_{x}B_{1},\overline{R}B_{2}\}, \\
+		M=C_\phi\frac{\left(\mathcal{C}d\right)^L-1}{\mathcal{C}d-1}, \\
+		\overline{R}\leq C_{\rho}C_{g_0}C_{g_1}d\operatorname*{min}\left\{b\sqrt{r},B_{1}B_{x}
+		M\right\}.
+\end{align*}
+
+\begin{align*}e\leq 1\end{align*}
+\warn{Since we normalize the embeddings}
+
+Hence, the empirical Rademacher complexity of $\mathcal{J}_\gamma$ with respect to $\mathcal{T}$ is
+\begin{align*}\hat{\mathcal{R}}_{\mathcal{T}}(\mathcal{I})\leq\inf_{\alpha>0}\left(\frac{4\alpha}{\sqrt{m}}+\frac{12}{m}\int_{\alpha}^{2e\sqrt{m}}\sqrt{\log\mathcal{N}(\mathcal{I},\epsilon,\|\cdot\|)}d\epsilon\right)\end{align*}
+
+\begin{align*}
+		&\int_{\alpha}^{2e\sqrt{m}}\sqrt{\log\mathcal{N}(\mathcal{I},\epsilon,\|\cdot\|)}d\epsilon \\
+		&\leq\int_{\alpha}^{2e\sqrt{m}}\sqrt{\log\mathcal{N}(\mathcal{B},\frac{\epsilon}{2},dist(\cdot,\cdot))}d\epsilon \\
+		&\leq\int_{\alpha}^{2e\sqrt{m}}\sqrt{\log U}\leq2e\sqrt{m}\sqrt{\operatorname{log}U}
+		\quad=2\sqrt{m\operatorname{log}U}
+\end{align*}
+
+\begin{align*}2|R|r^2\log\left(\frac{16M\sqrt r\max\{B_xB_1,\overline{R}B_2\}}{\alpha}
+	\right)
+\end{align*}
+
+}
