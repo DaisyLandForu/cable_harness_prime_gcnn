@@ -1,83 +1,50 @@
-\stitle{Related work}. We categorized the related work as follows.
+\stitle{Related work}.
+Spacecraft wiring (cable harness) design is closely related to harness routing in automotive, aircraft, industrial panels, and other constrained 3D environments.
+Across these domains, the core computational task is to connect multiple terminal pairs (or nets) through a cluttered layout while respecting geometric and engineering rules and minimizing a physical cost (e.g., length, weight, risk).
+Below we organize the most relevant literature into modeling paradigms and algorithmic families, and highlight the gap addressed by this paper.
 
-\etitle{Graph pattern matching algorithm}.
-Algorithms for subgraph isomorphism have been
-extensively studied.
-Ullmann proposed the first backtracking-based algorithm for subgraph isomorphism~\cite{Iso-match-6}. 
-Subsequent research in algorithms for exact graph pattern 
-matching focuses on pruning methods~\cite{carletti2017introducing,carletti2019vf3}, 
-the application of index~\cite{CECI,sun2020subgraph}, 
-index methods based on data mining~\cite{yan2004graph,zhao2007graph}, and so on. 
-\looseness=-1
+\etitle{3D routing representations and geometric post-processing.}
+Most practical systems first convert a continuous 3D workspace into a discrete routing graph (regular grid, roadmap, or CAD-derived graph), where obstacles remove vertices/edges and engineering preferences are expressed as node/edge penalties (``cost fields'') \cite{karlsson2024cad}.
+In parallel, there is renewed interest in improving the efficiency and geometric quality of the underlying path-search primitives.
+Kim \etal{} proposed \emph{JPS--Theta*} for 3D cable routing, combining Jump Point Search and Theta* to accelerate search while allowing any-angle paths, and further applied B-spline optimization to produce natural, collision-free cable shapes \cite{kim2024jpstheta}.
+These works motivate our graph-based abstraction and also suggest a two-stage pipeline (topology first, geometry smoothing later) that is compatible with spacecraft harness design.
 
-Isomorphic mappings suffers from two major drawbacks:
-(1) the decision version of subgraph isomorphism is 
-NP-complete~\cite{cook2023complexity},
-(2) The requirement of  
-\revise{injective} map 
-could be too strict in many cases,
-especially when the data source is noisy~\cite{yuan2011efficient}. 
- %
-To address these challenges, 
-(1) a series of studies focus on designing similarity functions and 
-deriving matching results through  
-top-k candidates or the establishment of a similarity threshold
-\cite{fan2010graph,cheng2013top,dutta2017neighbor,wu2013ontology,khan2013nema,zhao2013partition}. 
-(2) The other studies relax the  
-\revise{injective} map to less restrictive  
-relations.
-Bounded simulation 
-is developed to bound the lengths of 
-matching paths~\cite{fan2010grapha}.
-\revise{Dual simulation and } 
-Strong simulation \revise{are proposed}
- in \cite{ma2011capturing}  to 
-\revise{bound directions of edges 
-	and 
-the distance of vertices in a match, 
-respectively}. 
-Subsequently, various simulation-based
-matching algorithms have been developed~\cite{fan2013incremental,fan2014distributed, fard2014distributed,gao2016prs,du2018personalized}.
-\looseness = -1
+\etitle{Harness topology optimization: multi-branch structures and bundling.}
+Beyond single-cable shortest paths, harness design requires reasoning about the \emph{shared trunk and branching structure}.
+Karlsson \etal{} formulated an optimization model that simultaneously (i) minimizes total cable length, (ii) rewards shared edges to promote bundling, and (iii) incorporates case-specific 3D environment information; they developed deterministic algorithms based on Lagrangian relaxation and local improvements, producing multiple topology candidates on industrial 3D cases \cite{karlsson2024cad}.
+Complementary heuristic approaches combine informed graph search with meta-heuristics for multi-branch harnesses.
+For example, Yang \etal{} proposed an A*--ant-colony hybrid for multi-branch cable layout, explicitly modeling routing cost components and showing improved solutions over classic A* or ACO variants \cite{yang2024astaraco}.
+Compared with these harness-routing studies, our spacecraft setting shares the ``multi-terminal routing + topology'' nature but differs in (i) using \emph{weight} as the primary cost driver and (ii) imposing an explicit global \emph{acyclicity} requirement (tree/forest wiring without redundant loops).
 
+\etitle{Optimization formulations, hardness, and exact solvers.}
+Many routing and interconnection-design problems can be expressed as variants of Steiner tree/forest, multi-commodity flow, or more general network-design formulations.
+These formulations are computationally intractable in general: Steiner tree is NP-complete \cite{garey1979computers}, and Steiner-forest-type connectivity objectives remain NP-hard \cite{goemans1995primal}.
+Karlsson \etal{} also noted that their objective reduces to Steiner tree in a special case, thereby inheriting NP-hardness \cite{karlsson2024cad}.
+For exact (or provably near-optimal) solutions on moderate instances, mixed-integer linear programming (MILP) with modern solvers remains a strong baseline.
+General-purpose solvers such as SCIP \cite{achterberg2009scip} and commercial optimizers (e.g., COPT \cite{copt2024}) provide branch-and-bound/branch-and-cut engines and can incorporate rich linear constraints.
+To enforce acyclicity, classic modeling tools include subtour-elimination constraints and ordering-based constraints such as Miller--Tucker--Zemlin (MTZ) \cite{miller1960integer}, as well as flow-based arborescence constraints.
+Our exact baseline follows this tradition, while also serving as a reference for validating heuristic solutions.
 
-\etitle{ML Models for graph pattern matching}.
-Multiple ML models are developed for graph pattern matching~\cite{NeuroMatch,Sub-ML-1,Sub-ML-2,Sub-ML-3,Sub-ML-4}.
-Most of these models are based on Graph Neural Networks (GNNs),
-to compute embeddings of vertices in a graph~\cite{scarselli2008graph},
-and make a prediction using the order-embedding space~\cite{NeuroMatch}
-or MLP~\cite{Sub-ML-1}.
-Most work focus on 
-enhancing GNNs architecture~\cite{wang2022twin,wang2022equivariant,zhang2021eigen,bouritsas2022improving,feng2022powerful},
-to learn more topological information. 
-Zhang et al. \cite{zhang2023expressive} 
-encoded distance information into vertex embeddings. 
-Geerts et al. \cite{geerts2022expressiveness} 
-proposed a model to aggregate information 
-from $k$-order neighbors using computational operators. 
-%
-You et al. \cite{you2021identity} injected a unique 
-color identity to nodes, 
-and performed heterogeneous message passing 
-to obtain the node embedding. 
-Xu et al. \cite{xu2018powerful} 
-optimized the aggregation function 
-by using multisets, 
-to generate distinct embeddings for different nodes. 
-Maron et al. \cite{maron2018invariant} 
-proposed a model consisting of 
-both equivariant linear layers and nonlinear activation layers. 
+\etitle{Deterministic heuristics with bounds and multi-solution generation.}
+When the graph or the number of terminal pairs grows, deterministic heuristics are often preferred for speed, controllability, and reproducibility.
+An effective pattern is \emph{relax-and-repair}: relax difficult coupling constraints (e.g., via Lagrangian relaxation), solve decomposed shortest-path subproblems, and then apply local search/repair to obtain feasible topologies.
+This is the central idea in \cite{karlsson2024cad}, where projected subgradient updates on dual multipliers guide the generation of diverse initial solutions, followed by routing heuristics that refine topology and approximate the Pareto front.
+Our method follows the same high-level philosophy but targets a different feasibility region: we incorporate an explicit acyclicity constraint and design a deterministic procedure that can return the best and near-best (suboptimal) \emph{acyclic} routing topologies for downstream engineering selection.
 
-There has also been work on
-studying properties of GNNs.
-(1) The expressive power of these GNN
-models can be bounded by 
-the Weisfeiler-Lehman (WL) hierarchy~\cite{xu2018powerful,morris2019weisfeiler,barcelo2022weisfeiler,zhang2023expressive,GNN-WL-C},
-descriptive complexity~\cite{Express-LICS},
-fragments of FO logic~\cite{Expressive-FOC2}
-and global feature map transformer~\cite{Express-GFMT}. 
-See~\cite{zhang2023expressive} for a recent survey.
-(2) The generalization error
-bound for GNNs can be measured by 
-Rademacher complexity~\cite{Gen-bound}, VC dimension~\cite{VC-GNN}
-and generalization gap~\cite{Generalization-gap,Generalization-gap}.
+\etitle{Learning-assisted routing and learning-based combinatorial optimization.}
+Recent work has explored learning for 3D cable routing in CAD workflows.
+Kim and Kwon investigated deep reinforcement learning for automatic cable routing in 3D electrical panels, integrating the agent into a CAD loop and reporting competitive path quality \cite{kim2025drlpanel}.
+In adjacent ``cable route planning'' domains, reinforcement learning has also been used for multi-objective submarine cable routing \cite{zhao2024submarine}.
+At a more abstract level, learning-based solvers for Steiner-type problems have progressed via neural-algorithmic hybrids (e.g., combining neural scoring with guided search) \cite{kahng2024nnsteiner} and instance-reduction/pruning strategies \cite{zhang2024prunesteiner}; benchmarks such as SteBen aim to standardize evaluation for neural Steiner solvers \cite{park2024steben}.
+These learning-based directions are promising for scalability and warm-starting, but often provide limited optimality guarantees.
+In contrast, our focus is a \emph{traditional}, fully deterministic algorithm that (i) admits an exact MILP formulation for correctness and benchmarking, and (ii) extends to a fast heuristic capable of generating multiple high-quality acyclic candidates.
+
+\etitle{Cable-specific feasibility constraints: tangling, loops, and topology control.}
+Finally, while many studies emphasize collision avoidance, cable systems also face cable-specific hazards such as snagging, tangling, and undesired loops.
+For tethered mobile robots, Shimada \etal{} proposed tangle- and contact-free path planning to mitigate entanglement risks \cite{shimada2024tcfpp}.
+Although our application differs, these results highlight that controlling loop-like behaviors is practically important.
+Our explicit acyclicity constraint can be viewed as a structural safeguard that rules out redundant loop segments in spacecraft harness topologies.
+
+\etitle{Positioning of this work.}
+In summary, existing harness routing literature provides strong foundations in (i) graph-based modeling with environment costs, (ii) MILP formulations with solver baselines, and (iii) deterministic relax-and-repair heuristics for scalable candidate generation.
+We contribute a spacecraft-oriented formulation that adds a global acyclicity constraint and a deterministic algorithmic framework that unifies: an exact solver-based baseline and a heuristic extension that returns the optimal and near-optimal acyclic routing solutions.
