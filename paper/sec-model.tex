@@ -1,39 +1,97 @@
-\section{Framework for homomorphic mapping}
-\label{sec-model}
+\section{Mathematical Model}
+\label{sec:model}
 
+We model spacecraft wiring layout as selecting an \emph{acyclic} subgraph that supports simultaneous connections for a set of device pairs.
+The model is graph-based and is compatible with both exact MILP solving (our baseline) and relaxation-based heuristics (our proposed fast algorithm).
 
-We provide \HFrame, a framework~\revise{for the subgraph homomorphic problem,}
-by integrating algorithmic techniques and machine learning models.
-The framework is outlined in Figure~\ref{fig:workflow}.
-Given a graph $G$ and a pattern $Q$,
-(1) it first leverages \kw{DualSim}
-to refine the set ${\mathcal C}(u)$ of 
-candidates for each vertex $u$ in $Q$ and subsequently constructs $S_{(Q, G)}$.
-Recall that ${\mathcal C}(u)$ initially 
-	consists of vertices in $G$ that carry the same label as $u$
-	(see Section~\ref{sec-intro}).
-%
-(2) Then it checks whether ${\mathcal C}(u)$
-is empty \revise{for some vertex $u$ in $Q$};
-if so, then it returns \false, \ie 
-no homomorphic mapping from $Q$ to $G$ exists;
-otherwise,  
-it constructs a subgraph $G'$ of $G$ 
-	using only vertices appearing in $S_{(Q, G)}$; 
-intuitively, it removes irrelevant vertices and edges from $G$,
-which improves the performance of \HGIN (see Section~\ref{exp:sec-exp}).
-(3) Finally, it  picks a {\em pivot vertex} $u_0$ from $Q$, and invokes ML model \HGIN
-to check  
-the existence of a homomorphic mapping  
-$\varphi$ from $Q$ to $G'$
- such that $\varphi(u_0)=v$
-for each 
-vertex $v$ in 
-${\mathcal C}(u_0)$, and 
-	returns \true if \HGIN predicts 
-	that such a mapping exists for some $v$ in $G'$.
+\stitle{Input graph and terminal pairs.}
+Let $G=(V,E)$ be an undirected graph representing feasible wiring locations (nodes) and allowable cable segments (edges).
+Each edge $e=\{i,j\}\in E$ has a nonnegative weight $w_e$ capturing physical cost (in our setting, the induced cable weight).
+The wiring requirements are given as a set of terminal pairs $\mathcal K = \{(s_k,t_k)\}_{k=1}^K$.
+Optionally, each pair can have a scaling factor $\omega_k$ (e.g., different cable gauges), which multiplies the cost contributed by that pair.
 
+\stitle{Decision variables.}
+We use a multi-commodity flow view to encode one path per required pair and a global edge-selection view to enforce acyclicity.
 
+\begin{itemize}
+  \item $f_{ij}^k \in [-1,1]$ for each ordered pair $(i,j)$ corresponding to an undirected edge $\{i,j\}\in E$ and each $k\in[K]$.
+  Intuitively, $f_{ij}^k=1$ means commodity $k$ uses edge $\{i,j\}$ in direction $i\to j$, and $f_{ij}^k=-1$ means it uses the reverse direction.
+  \item $g_{ij}^k\ge 0$ is an auxiliary variable used to linearize $|f_{ij}^k|$.
+  \item $x_{ij}\in\{0,1\}$ for each ordered edge $(i,j)$ (one direction chosen if the edge is used globally).
+  The set of globally selected directed edges induces the harness topology.
+  \item $y_i\in[0,1]$ is an ordering variable used to eliminate directed cycles in the selected topology.
+\end{itemize}
 
-  
+\stitle{Objective (minimum total weight).}
+We minimize the total weighted usage of edges across all required connections:
+\begin{equation}
+\label{eq:obj}
+\min \; \sum_{k=1}^K \sum_{\{i,j\}\in E} w_{ij}\,\omega_k\, g_{ij}^k.
+\end{equation}
+Here $w_{ij}=w_{\{i,j\}}$ and $g_{ij}^k$ represents $|f_{ij}^k|$.
 
+\stitle{Connectivity constraints (one unit flow per pair).}
+We enforce anti-symmetry and flow conservation to ensure each commodity forms an $s_k$--$t_k$ path:
+\begin{align}
+\label{eq:antisym}
+f_{ij}^k &= -f_{ji}^k, &&\forall \{i,j\}\in E,\; \forall k,\\
+\label{eq:flow}
+\sum_{j: \{i,j\}\in E} f_{ij}^k &=
+\begin{cases}
+\phantom{-}1, & i=s_k,\\
+-1, & i=t_k,\\
+\phantom{-}0, & \text{otherwise},
+\end{cases}
+&&\forall i\in V,\; \forall k.
+\end{align}
+The bounds $-1\le f_{ij}^k\le 1$ are implicit in the variable domain.
+
+\stitle{Linearization of $|f|$.}
+We replace $|f_{ij}^k|$ by $g_{ij}^k$ using standard linear constraints:
+\begin{align}
+\label{eq:abs}
+g_{ij}^k &\ge f_{ij}^k, & g_{ij}^k &\ge -f_{ij}^k, &&\forall \{i,j\}\in E,\; \forall k.
+\end{align}
+
+\stitle{Coupling ``per-pair routing'' with ``global topology''.}
+To ensure that an edge used by any commodity must be present in the global topology, we require
+\begin{equation}
+\label{eq:couple}
+g_{ij}^k \le x_{ij}+x_{ji},\qquad \forall \{i,j\}\in E,\; \forall k.
+\end{equation}
+That is, if any pair routes through $\{i,j\}$, at least one direction of this edge must be globally selected.
+
+\stitle{Acyclicity (no loops in the harness topology).}
+We enforce that the selected directed edges form a forest (no directed cycles).
+First, we select at most one direction for each undirected edge:
+\begin{equation}
+\label{eq:one-dir}
+x_{ij}+x_{ji}\le 1,\qquad \forall \{i,j\}\in E.
+\end{equation}
+Then we impose an ordering-based (MTZ-style) acyclicity constraint:
+\begin{equation}
+\label{eq:acyc}
+y_i - y_j + x_{ij} \le 1 - \varepsilon,\qquad \forall \{i,j\}\in E,\; i\ne j,
+\end{equation}
+where $\varepsilon>0$ is a small constant.
+If $x_{ij}=1$ then \eqref{eq:acyc} enforces $y_i<y_j$, and hence no directed cycle can exist.
+In practice we also use degree-style constraints to match engineering requirements (e.g., limiting the number of incoming ``parent'' edges per node) when needed.
+
+\stitle{NP-hardness.}
+\begin{lemma}
+The decision version of the spacecraft wiring problem is NP-hard.
+\end{lemma}
+\begin{proof}[Proof sketch]
+Consider the special case with a single cable type (all $\omega_k=1$) and replace the terminal-pair set $\mathcal K$ by a set of terminals that must be connected within one connected acyclic subgraph.
+This reduces to the (node-weight-free) Steiner tree problem on graphs, which is NP-complete \cite{garey1979computers}.
+More generally, allowing multiple terminal pairs subsumes Steiner forest, which is NP-hard \cite{goemans1995primal}.
+Therefore, our problem is NP-hard.
+\end{proof}
+
+\stitle{Solution extraction.}
+Given an optimal (or near-optimal) solution, for each pair $k$ we recover its route by taking the set of edges with $g_{ij}^k>0$ (or $|f_{ij}^k|>0$) and tracing the unique $s_k$--$t_k$ path.
+The union of globally selected edges $\{\{i,j\}\mid x_{ij}+x_{ji}=1\}$ forms an acyclic harness topology that satisfies all pairwise connectivity requirements.
+
+\stitle{Remark on extensions.}
+Our existing implementation uses a small number of ``layers'' to model routing choices and additional constraints.
+The formulation above is the core; adding layers introduces an additional index (e.g., $p\in[P]$) on $x$ and $y$ together with a per-pair layer selection variable, while preserving linearity and the acyclicity mechanism.
