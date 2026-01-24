@@ -1,0 +1,143 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{chen2019hogmmnc}
+J.~Chen, H.~Peng, G.~Han, H.~Cai, J.~Cai, Hogmmnc: a higher order graph
+  matching with multiple network constraints model for gene--drug regulatory
+  modules identification, Bioinformatics 35~(4) (2019) 602--610.
+
+\bibitem{licheri2021grapes}
+N.~Licheri, V.~Bonnici, M.~Beccuti, R.~Giugno, Grapes-dd: exploiting decision
+  diagrams for index-driven search in biological graph databases, BMC
+  bioinformatics 22 (2021) 1--24.
+
+\bibitem{tian2007saga}
+Y.~Tian, R.~C. Mceachin, C.~Santos, D.~J. States, J.~M. Patel, Saga: a subgraph
+  matching tool for biological graphs, Bioinformatics 23~(2) (2007) 232--239.
+
+\bibitem{shi2017multi}
+Q.~Shi, G.~Liu, K.~Zheng, A.~Liu, Z.~Li, L.~Zhao, X.~Zhou, Multi-constrained
+  top-k graph pattern matching in contextual social graphs, in: {ICWS}, 2017,
+  pp. 588--595.
+
+\bibitem{fei2013expfinder}
+W.~Fan, X.~Wang, Y.~Wu, Expfinder: Finding experts by graph pattern matching,
+  in: {ICDE}, 2013, pp. 1316--1319.
+
+\bibitem{brynielsson2010detecting}
+J.~Brynielsson, J.~H{\"o}gberg, L.~Kaati, C.~M{\aa}rtenson, P.~Svenson,
+  Detecting social positions using simulation, in: {ASONAM}, 2010, pp. 48--55.
+
+\bibitem{xu2019cross}
+K.~Xu, L.~Wang, M.~Yu, Y.~Feng, Y.~Song, Z.~Wang, D.~Yu, Cross-lingual
+  knowledge graph alignment via graph matching neural network, arXiv preprint
+  arXiv:1905.11605 (2019).
+
+\bibitem{teru2020inductive}
+K.~Teru, E.~Denis, W.~Hamilton, Inductive relation prediction by subgraph
+  reasoning, in: International Conference on Machine Learning, PMLR, 2020, pp.
+  9448--9457.
+
+\bibitem{li2022hismatch}
+Z.~Li, Z.~Hou, S.~Guan, X.~Jin, W.~Peng, L.~Bai, Y.~Lyu, W.~Li, J.~Guo,
+  X.~Cheng, Hismatch: Historical structure matching based temporal knowledge
+  graph reasoning, arXiv preprint arXiv:2210.09708 (2022).
+
+\bibitem{Cypher}
+N.~Dragovic, C.~Okulmus, M.~Ortiz, Rewriting ontology-mediated navigational
+  queries into cypher, in: {DL}, Vol. 3515, 2023.
+
+\bibitem{SPARQL}
+P.~Peng, S.~Ji, M.~T. {\"{O}}zsu, L.~Zou, Minimum motif-cut: a workload-aware
+  {RDF} graph partitioning strategy, {VLDB} J. 33~(5) (2024) 1517--1542.
+
+\bibitem{karlsson2024cad}
+T.~Karlsson, E.~{\AA}blad, T.~Hermansson, J.~S. Carlson, G.~Tenf{\"a}lt,
+  Automatic cable harness layout routing in a customizable 3d environment,
+  Computer-Aided Design 168 (2024) 103671.
+\newblock \href {https://doi.org/10.1016/j.cad.2023.103671}
+  {\path{doi:10.1016/j.cad.2023.103671}}.
+
+\bibitem{kim2024jpstheta}
+K.~Kim, Y.~Yoon, B.~C. Kim, J.~Kim, S.~Han, S.~Kwon, Automatic cable routing
+  based on improved pathfinding algorithm and {B}-spline optimization for
+  collision avoidance, Journal of Computational Design and Engineering 11~(5)
+  (2024) 303--317.
+\newblock \href {https://doi.org/10.1093/jcde/qwae085}
+  {\path{doi:10.1093/jcde/qwae085}}.
+
+\bibitem{yang2024astaraco}
+F.~Yang, X.~Zhao, J.~Huang, Z.~Liu, A*--ant colony optimization algorithm for
+  multi-branch cable harness layout routing, Electronics 13~(3) (2024) 529.
+\newblock \href {https://doi.org/10.3390/electronics13030529}
+  {\path{doi:10.3390/electronics13030529}}.
+
+\bibitem{garey1979computers}
+M.~R. Garey, D.~S. Johnson, Computers and Intractability: A Guide to the Theory
+  of NP-Completeness, W. H. Freeman, 1979.
+
+\bibitem{goemans1995primal}
+D.~P. Williamson, M.~X. Goemans, M.~Mihail, V.~V. Vazirani, A primal-dual
+  approximation algorithm for generalized {S}teiner network problems,
+  Combinatorica 15~(3) (1995) 435--454.
+\newblock \href {https://doi.org/10.1007/BF01299747}
+  {\path{doi:10.1007/BF01299747}}.
+
+\bibitem{achterberg2009scip}
+T.~Achterberg, {SCIP}: Solving constraint integer programs, Mathematical
+  Programming Computation 1~(1) (2009) 1--41.
+\newblock \href {https://doi.org/10.1007/s12532-008-0001-1}
+  {\path{doi:10.1007/s12532-008-0001-1}}.
+
+\bibitem{copt2024}
+D.~Ge, Q.~Huangfu, Z.~Wang, J.~Wu, Y.~Ye, Cardinal optimizer ({COPT}) user
+  guide, CoRR abs/2208.14314 (2022).
+\newblock \href {https://doi.org/10.48550/arXiv.2208.14314}
+  {\path{doi:10.48550/arXiv.2208.14314}}.
+
+\bibitem{miller1960integer}
+C.~E. Miller, A.~W. Tucker, R.~A. Zemlin, Integer programming formulation of
+  traveling salesman problems, Journal of the ACM 7~(4) (1960) 326--329.
+\newblock \href {https://doi.org/10.1145/321043.321046}
+  {\path{doi:10.1145/321043.321046}}.
+
+\bibitem{kim2025drlpanel}
+K.~Kim, S.~Kwon, Automatic cable routing in 3d electrical panels using deep
+  reinforcement learning, Korean Journal of Computational Design and
+  Engineering 30~(1) (2025) 122--135.
+\newblock \href {https://doi.org/10.7315/CDE.2025.122}
+  {\path{doi:10.7315/CDE.2025.122}}.
+
+\bibitem{zhao2024submarine}
+Z.~Zhao, H.~Zhang, Z.~Liu, et~al., Multi-objective optimization for submarine
+  optical cable route planning with machine-learning assistance, Journal of
+  Optical Communications and Networking 16~(10) (2024) 1018--1032.
+
+\bibitem{kahng2024nnsteiner}
+A.~B. Kahng, K.~Yao, Z.~Xu, et~al., {NN}-steiner: A mixed neural-algorithmic
+  approach for the rectilinear steiner minimum tree problem, in: Proceedings of
+  the AAAI Conference on Artificial Intelligence, 2024.
+\newblock \href {https://doi.org/10.1609/aaai.v38i12.29200}
+  {\path{doi:10.1609/aaai.v38i12.29200}}.
+
+\bibitem{zhang2024prunesteiner}
+J.~Zhang, D.~Tayebi, S.~Ray, D.~Ajwani, Learning to prune instances of steiner
+  tree problem in graphs, in: International Network Optimization Conference
+  (INOC), 2024.
+
+\bibitem{park2024steben}
+Y.~Park, et~al., Steben: Steiner tree problem benchmark for neural
+  combinatorial optimization, OpenReview preprint (2024).
+
+\bibitem{shimada2024tcfpp}
+R.~Shimada, et~al., Tangle- and contact-free path planning for a tethered
+  mobile robot using deep reinforcement learning, Frontiers in Robotics and AI
+  11 (2024).
+\newblock \href {https://doi.org/10.3389/frobt.2024.1388634}
+  {\path{doi:10.3389/frobt.2024.1388634}}.
+
+\end{thebibliography}

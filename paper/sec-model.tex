@@ -81,12 +81,13 @@ In practice we also use degree-style constraints to match engineering requiremen
 \begin{lemma}
 The decision version of the spacecraft wiring problem is NP-hard.
 \end{lemma}
-\begin{proof}[Proof sketch]
+%\begin{proof}
+[Proof sketch]
 Consider the special case with a single cable type (all $\omega_k=1$) and replace the terminal-pair set $\mathcal K$ by a set of terminals that must be connected within one connected acyclic subgraph.
 This reduces to the (node-weight-free) Steiner tree problem on graphs, which is NP-complete \cite{garey1979computers}.
 More generally, allowing multiple terminal pairs subsumes Steiner forest, which is NP-hard \cite{goemans1995primal}.
 Therefore, our problem is NP-hard.
-\end{proof}
+%\end{proof}
 
 \stitle{Solution extraction.}
 Given an optimal (or near-optimal) solution, for each pair $k$ we recover its route by taking the set of edges with $g_{ij}^k>0$ (or $|f_{ij}^k|>0$) and tracing the unique $s_k$--$t_k$ path.
