@@ -18,8 +18,10 @@
 #include <scip/scipdefplugins.h>
 #include <scip/struct_scip.h>
 #include <cctype>
+#include <xlslib.h>
 
 using namespace std;
+using namespace xlslib_core;
 
 int copy_num_dflt = 4;
 int copy_num = copy_num_dflt;
@@ -983,22 +985,23 @@ int print_pairs_to_path(std::vector<std::pair<int, int>> &pairs,
                         const std::string &suffix,
                         std::vector<std::vector<std::string>> pairs_col_info)
 {
-    std::ofstream outFile("./result/opt_result_" + suffix + "_pair_path.xls");
-    // std::stringstream outss;
+    std::string filename = "./result/opt_result_" + suffix + "_pair_path.xls";
 
-    if (!outFile.is_open())
-    {
-        std::cerr << "file open fail" << std::endl;
-        return 1;
-    }
+    // 1. 初始化 workbook 和 worksheet
+    workbook wb;
+    worksheet* ws = wb.sheet("Sheet1"); // 创建一个名为 Sheet1 的工作表
 
-    // 写入HTML表头信息，指定UTF-8编码
-    outFile << "<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:x=\"urn:schemas-microsoft-com:office:excel\" xmlns=\"http://www.w3.org/TR/REC-html40\">" << "\n";
-    outFile << "<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>" << "\n";
-    outFile << "<body><table>" << "\n";
-    // 写入表头
-    outFile << "<tr><td>id</td><td>harness_id</td><td>circuit_id</td><td>start</td><td>end</td><td>path</td></tr>" << "\n";
+    // 2. 写入表头 (参数顺序：行索引, 列索引, 内容)
+    ws->label(0, 0, "id");
+    ws->label(0, 1, "harness_id");
+    ws->label(0, 2, "circuit_id");
+    ws->label(0, 3, "start");
+    ws->label(0, 4, "end");
+    ws->label(0, 5, "path");
 
+    int row = 1; // 数据从第 2 行 (索引为 1) 开始写入
+
+    // 3. 遍历数据并写入
     for (const auto &pair2edges : pairs_to_ret_edges)
     {
         int pair_id = pair2edges.first;
@@ -1014,21 +1017,24 @@ int print_pairs_to_path(std::vector<std::pair<int, int>> &pairs,
 
         string path = find_path(pair_id, {start, 0}, {end, 0}, edges, id_to_node_name);
 
-        // 写入一行数据
-        outFile << "<tr>";
-        outFile << "<td>" << pair_id + 1 << "</td>";
-        outFile << "<td>" << col2 << "</td>";
-        outFile << "<td>" << col3 << "</td>";
-        outFile << "<td>" << id_to_node_name[start] << "</td>";
-        outFile << "<td>" << id_to_node_name[end] << "</td>";
-        outFile << "<td>" << path << "</td>";
-        outFile << "</tr>" << "\n";
-        // outss << pair_id+1 << "," << id_to_node_name[start] << "," << id_to_node_name[end] << "," << path << std::endl;
-    }
-    // 闭合标签
-    outFile << "</table></body></html>" << "\n";
+        // 写入当前行的数据
+        ws->number(row, 0, pair_id + 1);                       // number() 用于写入数字
+        ws->label(row, 1, col2.c_str());                       // label() 用于写入字符串
+        ws->label(row, 2, col3.c_str());
+        ws->label(row, 3, id_to_node_name[start].c_str());
+        ws->label(row, 4, id_to_node_name[end].c_str());
+        ws->label(row, 5, path.c_str());
 
-    outFile.close();
+        row++;
+    }
+
+    // 4. 将二进制流 Dump 到文件
+    int dump_status = wb.Dump(filename);
+    if (dump_status != 0) { // xlslib Dump 失败通常返回非0值
+        std::cerr << "Failed to dump Excel file. Make sure the file is not opened by another program." << std::endl;
+        return 1;
+    }
+
     return 0;
 }
 
