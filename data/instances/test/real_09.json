@@ -1,0 +1,49 @@
+{
+  "baseline": {
+    "dual_bound": 0.0022776,
+    "final_gap": 0,
+    "method": "default",
+    "nodes": 9,
+    "objective": 0.0022776,
+    "raw_json": "results/baseline/raw/instance_9_default_seed0.json",
+    "raw_log": "results/baseline/raw/instance_9_default_seed0.log",
+    "solving_time": 3.94603,
+    "status": "optimal",
+    "threads": 1,
+    "time_limit": 30,
+    "wall_time": 4.091064817
+  },
+  "baseline_seed": 0,
+  "business_parameters": {
+    "cables": 8,
+    "center_edges": 330,
+    "center_nodes": 287,
+    "edges": 340,
+    "nodes": 297
+  },
+  "copy_num": 4,
+  "generation_seed": null,
+  "generator": null,
+  "instance_id": "real_09",
+  "milp": {
+    "center_edges": 330,
+    "center_nodes": 287,
+    "cip": "data/instances/test/real_09.cip",
+    "cip_sha256": "3d1cc4c2b77e0d0cd13d5f3c9c459b93dd92862daab3fca040574818cbc7d669",
+    "commodities": 7,
+    "constraint_variable_ratio": 2.054252745207519,
+    "constraints": 22075,
+    "integer_variables": 2668,
+    "variables": 10746
+  },
+  "size": "small",
+  "source_files": {
+    "edges": "code/data/edges-9.csv",
+    "edges_sha256": "1654cc34cffd82caca703075e34b94dad6eb18acbfc51bde3d5e9a2d41be38e2",
+    "pairs": "code/data/pairs-9.csv",
+    "pairs_sha256": "ba47e1df31048f93e95efbbbd44815b147a422e52fe348f1847e6f74a5d5b338"
+  },
+  "source_scenario": "TESTJK01",
+  "source_type": "real",
+  "split": "test"
+}

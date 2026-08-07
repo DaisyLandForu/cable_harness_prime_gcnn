@@ -1,0 +1,57 @@
+{
+  "binary": "build/scip_tree",
+  "output_dir": "results/final/ablations/models",
+  "time_limit": 30.0,
+  "node_limit": -1,
+  "threads": 1,
+  "workers": 1,
+  "process_grace_seconds": 300.0,
+  "seeds": [0, 1, 2, 3, 4],
+  "protocols": ["controlled-bbmdp"],
+  "instances": [
+    {"instance_id": "real_08", "cli_id": "8", "split": "validation", "size": "medium"},
+    {"instance_id": "real_09", "cli_id": "9", "split": "test", "size": "small"}
+  ],
+  "methods": [
+    {
+      "name": "rl-gcnn-3step",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/gcnn/best_model_scripted.pt",
+      "device": "cuda",
+      "fallback": "relpscost",
+      "max_depth": -1
+    },
+    {
+      "name": "rl-gcnn-1step",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/ablations/gcnn_nstep1/best_model_scripted.pt",
+      "device": "cuda",
+      "fallback": "relpscost",
+      "max_depth": -1
+    },
+    {
+      "name": "rl-gcnn-hlgauss",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/ablations/gcnn_hlgauss/best_model_scripted.pt",
+      "device": "cuda",
+      "fallback": "relpscost",
+      "max_depth": -1
+    },
+    {
+      "name": "rl-gcnn-no-categories",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/ablations/gcnn_no_categories/best_model_scripted.pt",
+      "device": "cuda",
+      "fallback": "relpscost",
+      "max_depth": -1
+    },
+    {
+      "name": "rl-gcnn-no-global",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/ablations/gcnn_no_global/best_model_scripted.pt",
+      "device": "cuda",
+      "fallback": "relpscost",
+      "max_depth": -1
+    }
+  ]
+}

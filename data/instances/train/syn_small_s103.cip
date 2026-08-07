@@ -1,0 +1,1554 @@
+STATISTICS
+  Problem name     : MIPProblem
+  Variables        : 522 (160 binary, 0 integer, 0 implicit integer, 362 continuous)
+  Constraints      : 0 initial, 1023 maximal
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [binary] <m_0_0>: obj=0, original bounds=[0,1]
+  [binary] <m_0_1>: obj=0, original bounds=[0,1]
+  [binary] <m_0_2>: obj=0, original bounds=[0,1]
+  [binary] <m_0_3>: obj=0, original bounds=[0,1]
+  [binary] <m_1_0>: obj=0, original bounds=[0,1]
+  [binary] <m_1_1>: obj=0, original bounds=[0,1]
+  [binary] <m_1_2>: obj=0, original bounds=[0,1]
+  [binary] <m_1_3>: obj=0, original bounds=[0,1]
+  [binary] <m_2_0>: obj=0, original bounds=[0,1]
+  [binary] <m_2_1>: obj=0, original bounds=[0,1]
+  [binary] <m_2_2>: obj=0, original bounds=[0,1]
+  [binary] <m_2_3>: obj=0, original bounds=[0,1]
+  [binary] <m_3_0>: obj=0, original bounds=[0,1]
+  [binary] <m_3_1>: obj=0, original bounds=[0,1]
+  [binary] <m_3_2>: obj=0, original bounds=[0,1]
+  [binary] <m_3_3>: obj=0, original bounds=[0,1]
+  [binary] <m_4_0>: obj=0, original bounds=[0,1]
+  [binary] <m_4_1>: obj=0, original bounds=[0,1]
+  [binary] <m_4_2>: obj=0, original bounds=[0,1]
+  [binary] <m_4_3>: obj=0, original bounds=[0,1]
+  [binary] <m_5_0>: obj=0, original bounds=[0,1]
+  [binary] <m_5_1>: obj=0, original bounds=[0,1]
+  [binary] <m_5_2>: obj=0, original bounds=[0,1]
+  [binary] <m_5_3>: obj=0, original bounds=[0,1]
+  [binary] <z_0_1_0>: obj=0, original bounds=[0,1]
+  [binary] <z_1_0_0>: obj=0, original bounds=[0,1]
+  [binary] <z_0_1_1>: obj=0, original bounds=[0,1]
+  [binary] <z_1_0_1>: obj=0, original bounds=[0,1]
+  [binary] <z_0_1_2>: obj=0, original bounds=[0,1]
+  [binary] <z_1_0_2>: obj=0, original bounds=[0,1]
+  [binary] <z_0_1_3>: obj=0, original bounds=[0,1]
+  [binary] <z_1_0_3>: obj=0, original bounds=[0,1]
+  [binary] <z_1_2_0>: obj=0, original bounds=[0,1]
+  [binary] <z_2_1_0>: obj=0, original bounds=[0,1]
+  [binary] <z_1_2_1>: obj=0, original bounds=[0,1]
+  [binary] <z_2_1_1>: obj=0, original bounds=[0,1]
+  [binary] <z_1_2_2>: obj=0, original bounds=[0,1]
+  [binary] <z_2_1_2>: obj=0, original bounds=[0,1]
+  [binary] <z_1_2_3>: obj=0, original bounds=[0,1]
+  [binary] <z_2_1_3>: obj=0, original bounds=[0,1]
+  [binary] <z_2_3_0>: obj=0, original bounds=[0,1]
+  [binary] <z_3_2_0>: obj=0, original bounds=[0,1]
+  [binary] <z_2_3_1>: obj=0, original bounds=[0,1]
+  [binary] <z_3_2_1>: obj=0, original bounds=[0,1]
+  [binary] <z_2_3_2>: obj=0, original bounds=[0,1]
+  [binary] <z_3_2_2>: obj=0, original bounds=[0,1]
+  [binary] <z_2_3_3>: obj=0, original bounds=[0,1]
+  [binary] <z_3_2_3>: obj=0, original bounds=[0,1]
+  [binary] <z_3_4_0>: obj=0, original bounds=[0,1]
+  [binary] <z_4_3_0>: obj=0, original bounds=[0,1]
+  [binary] <z_3_4_1>: obj=0, original bounds=[0,1]
+  [binary] <z_4_3_1>: obj=0, original bounds=[0,1]
+  [binary] <z_3_4_2>: obj=0, original bounds=[0,1]
+  [binary] <z_4_3_2>: obj=0, original bounds=[0,1]
+  [binary] <z_3_4_3>: obj=0, original bounds=[0,1]
+  [binary] <z_4_3_3>: obj=0, original bounds=[0,1]
+  [binary] <z_4_5_0>: obj=0, original bounds=[0,1]
+  [binary] <z_5_4_0>: obj=0, original bounds=[0,1]
+  [binary] <z_4_5_1>: obj=0, original bounds=[0,1]
+  [binary] <z_5_4_1>: obj=0, original bounds=[0,1]
+  [binary] <z_4_5_2>: obj=0, original bounds=[0,1]
+  [binary] <z_5_4_2>: obj=0, original bounds=[0,1]
+  [binary] <z_4_5_3>: obj=0, original bounds=[0,1]
+  [binary] <z_5_4_3>: obj=0, original bounds=[0,1]
+  [binary] <z_5_6_0>: obj=0, original bounds=[0,1]
+  [binary] <z_6_5_0>: obj=0, original bounds=[0,1]
+  [binary] <z_5_6_1>: obj=0, original bounds=[0,1]
+  [binary] <z_6_5_1>: obj=0, original bounds=[0,1]
+  [binary] <z_5_6_2>: obj=0, original bounds=[0,1]
+  [binary] <z_6_5_2>: obj=0, original bounds=[0,1]
+  [binary] <z_5_6_3>: obj=0, original bounds=[0,1]
+  [binary] <z_6_5_3>: obj=0, original bounds=[0,1]
+  [binary] <z_6_7_0>: obj=0, original bounds=[0,1]
+  [binary] <z_7_6_0>: obj=0, original bounds=[0,1]
+  [binary] <z_6_7_1>: obj=0, original bounds=[0,1]
+  [binary] <z_7_6_1>: obj=0, original bounds=[0,1]
+  [binary] <z_6_7_2>: obj=0, original bounds=[0,1]
+  [binary] <z_7_6_2>: obj=0, original bounds=[0,1]
+  [binary] <z_6_7_3>: obj=0, original bounds=[0,1]
+  [binary] <z_7_6_3>: obj=0, original bounds=[0,1]
+  [binary] <z_0_6_0>: obj=0, original bounds=[0,1]
+  [binary] <z_6_0_0>: obj=0, original bounds=[0,1]
+  [binary] <z_0_6_1>: obj=0, original bounds=[0,1]
+  [binary] <z_6_0_1>: obj=0, original bounds=[0,1]
+  [binary] <z_0_6_2>: obj=0, original bounds=[0,1]
+  [binary] <z_6_0_2>: obj=0, original bounds=[0,1]
+  [binary] <z_0_6_3>: obj=0, original bounds=[0,1]
+  [binary] <z_6_0_3>: obj=0, original bounds=[0,1]
+  [binary] <z_1_5_0>: obj=0, original bounds=[0,1]
+  [binary] <z_5_1_0>: obj=0, original bounds=[0,1]
+  [binary] <z_1_5_1>: obj=0, original bounds=[0,1]
+  [binary] <z_5_1_1>: obj=0, original bounds=[0,1]
+  [binary] <z_1_5_2>: obj=0, original bounds=[0,1]
+  [binary] <z_5_1_2>: obj=0, original bounds=[0,1]
+  [binary] <z_1_5_3>: obj=0, original bounds=[0,1]
+  [binary] <z_5_1_3>: obj=0, original bounds=[0,1]
+  [binary] <z_1_6_0>: obj=0, original bounds=[0,1]
+  [binary] <z_6_1_0>: obj=0, original bounds=[0,1]
+  [binary] <z_1_6_1>: obj=0, original bounds=[0,1]
+  [binary] <z_6_1_1>: obj=0, original bounds=[0,1]
+  [binary] <z_1_6_2>: obj=0, original bounds=[0,1]
+  [binary] <z_6_1_2>: obj=0, original bounds=[0,1]
+  [binary] <z_1_6_3>: obj=0, original bounds=[0,1]
+  [binary] <z_6_1_3>: obj=0, original bounds=[0,1]
+  [binary] <z_0_7_0>: obj=0, original bounds=[0,1]
+  [binary] <z_7_0_0>: obj=0, original bounds=[0,1]
+  [binary] <z_0_7_1>: obj=0, original bounds=[0,1]
+  [binary] <z_7_0_1>: obj=0, original bounds=[0,1]
+  [binary] <z_0_7_2>: obj=0, original bounds=[0,1]
+  [binary] <z_7_0_2>: obj=0, original bounds=[0,1]
+  [binary] <z_0_7_3>: obj=0, original bounds=[0,1]
+  [binary] <z_7_0_3>: obj=0, original bounds=[0,1]
+  [binary] <z_6_8_0>: obj=0, original bounds=[0,1]
+  [binary] <z_8_6_0>: obj=0, original bounds=[0,1]
+  [binary] <z_6_8_1>: obj=0, original bounds=[0,1]
+  [binary] <z_8_6_1>: obj=0, original bounds=[0,1]
+  [binary] <z_6_8_2>: obj=0, original bounds=[0,1]
+  [binary] <z_8_6_2>: obj=0, original bounds=[0,1]
+  [binary] <z_6_8_3>: obj=0, original bounds=[0,1]
+  [binary] <z_8_6_3>: obj=0, original bounds=[0,1]
+  [binary] <z_3_9_0>: obj=0, original bounds=[0,1]
+  [binary] <z_9_3_0>: obj=0, original bounds=[0,1]
+  [binary] <z_3_9_1>: obj=0, original bounds=[0,1]
+  [binary] <z_9_3_1>: obj=0, original bounds=[0,1]
+  [binary] <z_3_9_2>: obj=0, original bounds=[0,1]
+  [binary] <z_9_3_2>: obj=0, original bounds=[0,1]
+  [binary] <z_3_9_3>: obj=0, original bounds=[0,1]
+  [binary] <z_9_3_3>: obj=0, original bounds=[0,1]
+  [binary] <z_5_10_0>: obj=0, original bounds=[0,1]
+  [binary] <z_10_5_0>: obj=0, original bounds=[0,1]
+  [binary] <z_5_10_1>: obj=0, original bounds=[0,1]
+  [binary] <z_10_5_1>: obj=0, original bounds=[0,1]
+  [binary] <z_5_10_2>: obj=0, original bounds=[0,1]
+  [binary] <z_10_5_2>: obj=0, original bounds=[0,1]
+  [binary] <z_5_10_3>: obj=0, original bounds=[0,1]
+  [binary] <z_10_5_3>: obj=0, original bounds=[0,1]
+  [binary] <z_3_11_0>: obj=0, original bounds=[0,1]
+  [binary] <z_11_3_0>: obj=0, original bounds=[0,1]
+  [binary] <z_3_11_1>: obj=0, original bounds=[0,1]
+  [binary] <z_11_3_1>: obj=0, original bounds=[0,1]
+  [binary] <z_3_11_2>: obj=0, original bounds=[0,1]
+  [binary] <z_11_3_2>: obj=0, original bounds=[0,1]
+  [binary] <z_3_11_3>: obj=0, original bounds=[0,1]
+  [binary] <z_11_3_3>: obj=0, original bounds=[0,1]
+  [binary] <z_7_12_0>: obj=0, original bounds=[0,1]
+  [binary] <z_12_7_0>: obj=0, original bounds=[0,1]
+  [binary] <z_7_12_1>: obj=0, original bounds=[0,1]
+  [binary] <z_12_7_1>: obj=0, original bounds=[0,1]
+  [binary] <z_7_12_2>: obj=0, original bounds=[0,1]
+  [binary] <z_12_7_2>: obj=0, original bounds=[0,1]
+  [binary] <z_7_12_3>: obj=0, original bounds=[0,1]
+  [binary] <z_12_7_3>: obj=0, original bounds=[0,1]
+  [binary] <z_4_13_0>: obj=0, original bounds=[0,1]
+  [binary] <z_13_4_0>: obj=0, original bounds=[0,1]
+  [binary] <z_4_13_1>: obj=0, original bounds=[0,1]
+  [binary] <z_13_4_1>: obj=0, original bounds=[0,1]
+  [binary] <z_4_13_2>: obj=0, original bounds=[0,1]
+  [binary] <z_13_4_2>: obj=0, original bounds=[0,1]
+  [binary] <z_4_13_3>: obj=0, original bounds=[0,1]
+  [binary] <z_13_4_3>: obj=0, original bounds=[0,1]
+  [continuous] <f_6_1_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_7_1>: obj=9.1e-05, original bounds=[0,1]
+  [continuous] <f_0_7_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_0_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_8_1>: obj=1.76e-05, original bounds=[0,1]
+  [continuous] <f_6_8_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_8_6_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_9_1>: obj=1.04e-05, original bounds=[0,1]
+  [continuous] <f_3_9_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_9_3_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_10_1>: obj=1.62e-05, original bounds=[0,1]
+  [continuous] <f_5_10_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_10_5_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_11_1>: obj=4.14e-05, original bounds=[0,1]
+  [continuous] <f_3_11_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_11_3_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_7_12_1>: obj=4.82e-05, original bounds=[0,1]
+  [continuous] <f_7_12_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_12_7_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_13_1>: obj=4.24e-05, original bounds=[0,1]
+  [continuous] <f_4_13_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_13_4_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_1_2>: obj=0.000178, original bounds=[0,1]
+  [continuous] <f_0_1_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_1_0_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_2_2>: obj=0.0001252, original bounds=[0,1]
+  [continuous] <f_1_2_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_2_1_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_2_3_2>: obj=0.0001792, original bounds=[0,1]
+  [continuous] <f_2_3_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_3_2_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_4_2>: obj=0.0001744, original bounds=[0,1]
+  [continuous] <f_3_4_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_4_3_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_5_2>: obj=0.0001824, original bounds=[0,1]
+  [continuous] <f_4_5_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_4_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_6_2>: obj=0.0001992, original bounds=[0,1]
+  [continuous] <f_5_6_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_5_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_7_2>: obj=7.6e-05, original bounds=[0,1]
+  [continuous] <f_6_7_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_6_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_6_2>: obj=6.92e-05, original bounds=[0,1]
+  [continuous] <f_0_6_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_0_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_5_2>: obj=0.0001844, original bounds=[0,1]
+  [continuous] <f_1_5_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_1_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_6_2>: obj=0.0001156, original bounds=[0,1]
+  [continuous] <f_1_6_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_1_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_7_2>: obj=0.000182, original bounds=[0,1]
+  [continuous] <f_0_7_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_0_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_8_2>: obj=3.52e-05, original bounds=[0,1]
+  [continuous] <f_6_8_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_8_6_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_9_2>: obj=2.08e-05, original bounds=[0,1]
+  [continuous] <f_3_9_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_9_3_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_10_2>: obj=3.24e-05, original bounds=[0,1]
+  [continuous] <f_5_10_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_10_5_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_11_2>: obj=8.28e-05, original bounds=[0,1]
+  [continuous] <f_3_11_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_11_3_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_7_12_2>: obj=9.64e-05, original bounds=[0,1]
+  [continuous] <f_7_12_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_12_7_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_13_2>: obj=8.48e-05, original bounds=[0,1]
+  [continuous] <f_4_13_2>: obj=0, original bounds=[-1,1]
+  [continuous] <f_13_4_2>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_1_3>: obj=4.45e-05, original bounds=[0,1]
+  [continuous] <f_0_1_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_1_0_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_2_3>: obj=3.13e-05, original bounds=[0,1]
+  [continuous] <f_1_2_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_2_1_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_2_3_3>: obj=4.48e-05, original bounds=[0,1]
+  [continuous] <f_2_3_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_3_2_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_4_3>: obj=4.36e-05, original bounds=[0,1]
+  [continuous] <f_3_4_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_4_3_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_5_3>: obj=4.56e-05, original bounds=[0,1]
+  [continuous] <f_4_5_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_4_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_6_3>: obj=4.98e-05, original bounds=[0,1]
+  [continuous] <f_5_6_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_5_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_7_3>: obj=1.9e-05, original bounds=[0,1]
+  [continuous] <f_6_7_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_6_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_6_3>: obj=1.73e-05, original bounds=[0,1]
+  [continuous] <f_0_6_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_0_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_5_3>: obj=4.61e-05, original bounds=[0,1]
+  [continuous] <f_1_5_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_1_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_6_3>: obj=2.89e-05, original bounds=[0,1]
+  [continuous] <f_1_6_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_1_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_7_3>: obj=4.55e-05, original bounds=[0,1]
+  [continuous] <f_0_7_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_0_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_8_3>: obj=8.8e-06, original bounds=[0,1]
+  [continuous] <f_6_8_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_8_6_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_9_3>: obj=5.2e-06, original bounds=[0,1]
+  [continuous] <f_3_9_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_9_3_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_10_3>: obj=8.1e-06, original bounds=[0,1]
+  [continuous] <f_5_10_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_10_5_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_11_3>: obj=2.07e-05, original bounds=[0,1]
+  [continuous] <f_3_11_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_11_3_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_7_12_3>: obj=2.41e-05, original bounds=[0,1]
+  [continuous] <f_7_12_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_12_7_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_13_3>: obj=2.12e-05, original bounds=[0,1]
+  [continuous] <f_4_13_3>: obj=0, original bounds=[-1,1]
+  [continuous] <f_13_4_3>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_1_4>: obj=8.9e-05, original bounds=[0,1]
+  [continuous] <f_0_1_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_1_0_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_2_4>: obj=6.26e-05, original bounds=[0,1]
+  [continuous] <f_1_2_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_2_1_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_2_3_4>: obj=8.96e-05, original bounds=[0,1]
+  [continuous] <f_2_3_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_3_2_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_4_4>: obj=8.72e-05, original bounds=[0,1]
+  [continuous] <f_3_4_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_4_3_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_5_4>: obj=9.12e-05, original bounds=[0,1]
+  [continuous] <f_4_5_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_4_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_6_4>: obj=9.96e-05, original bounds=[0,1]
+  [continuous] <f_5_6_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_5_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_7_4>: obj=3.8e-05, original bounds=[0,1]
+  [continuous] <f_6_7_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_6_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_6_4>: obj=3.46e-05, original bounds=[0,1]
+  [continuous] <f_0_6_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_0_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_5_4>: obj=9.22e-05, original bounds=[0,1]
+  [continuous] <f_1_5_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_1_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_6_4>: obj=5.78e-05, original bounds=[0,1]
+  [continuous] <f_1_6_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_1_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_7_4>: obj=9.1e-05, original bounds=[0,1]
+  [continuous] <f_0_7_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_0_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_8_4>: obj=1.76e-05, original bounds=[0,1]
+  [continuous] <f_6_8_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_8_6_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_9_4>: obj=1.04e-05, original bounds=[0,1]
+  [continuous] <f_3_9_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_9_3_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_10_4>: obj=1.62e-05, original bounds=[0,1]
+  [continuous] <f_5_10_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_10_5_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_11_4>: obj=4.14e-05, original bounds=[0,1]
+  [continuous] <f_3_11_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_11_3_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_7_12_4>: obj=4.82e-05, original bounds=[0,1]
+  [continuous] <f_7_12_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_12_7_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_13_4>: obj=4.24e-05, original bounds=[0,1]
+  [continuous] <f_4_13_4>: obj=0, original bounds=[-1,1]
+  [continuous] <f_13_4_4>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_1_5>: obj=0.000178, original bounds=[0,1]
+  [continuous] <f_0_1_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_1_0_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_2_5>: obj=0.0001252, original bounds=[0,1]
+  [continuous] <f_1_2_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_2_1_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_2_3_5>: obj=0.0001792, original bounds=[0,1]
+  [continuous] <f_2_3_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_3_2_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_4_5>: obj=0.0001744, original bounds=[0,1]
+  [continuous] <f_3_4_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_4_3_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_5_5>: obj=0.0001824, original bounds=[0,1]
+  [continuous] <f_4_5_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_4_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_6_5>: obj=0.0001992, original bounds=[0,1]
+  [continuous] <f_5_6_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_5_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_7_5>: obj=7.6e-05, original bounds=[0,1]
+  [continuous] <f_6_7_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_6_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_6_5>: obj=6.92e-05, original bounds=[0,1]
+  [continuous] <f_0_6_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_0_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_5_5>: obj=0.0001844, original bounds=[0,1]
+  [continuous] <f_1_5_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_1_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_6_5>: obj=0.0001156, original bounds=[0,1]
+  [continuous] <f_1_6_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_1_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_7_5>: obj=0.000182, original bounds=[0,1]
+  [continuous] <f_0_7_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_0_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_8_5>: obj=3.52e-05, original bounds=[0,1]
+  [continuous] <f_6_8_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_8_6_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_9_5>: obj=2.08e-05, original bounds=[0,1]
+  [continuous] <f_3_9_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_9_3_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_10_5>: obj=3.24e-05, original bounds=[0,1]
+  [continuous] <f_5_10_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_10_5_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_11_5>: obj=8.28e-05, original bounds=[0,1]
+  [continuous] <f_3_11_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_11_3_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_7_12_5>: obj=9.64e-05, original bounds=[0,1]
+  [continuous] <f_7_12_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_12_7_5>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_13_5>: obj=8.48e-05, original bounds=[0,1]
+  [continuous] <f_4_13_5>: obj=0, original bounds=[-1,1]
+  [continuous] <f_13_4_5>: obj=0, original bounds=[-1,1]
+  [continuous] <y_6_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_6_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_6_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_6_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_7_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_7_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_7_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_7_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_8_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_8_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_8_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_8_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_9_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_9_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_9_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_9_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_10_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_10_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_10_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_10_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_11_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_11_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_11_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_11_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_12_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_12_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_12_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_12_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_13_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_13_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_13_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_13_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_0_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_0_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_0_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_0_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_1_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_1_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_1_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_1_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_2_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_2_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_2_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_2_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_3_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_3_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_3_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_3_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_4_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_4_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_4_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_4_3>: obj=0, original bounds=[0,1]
+  [continuous] <y_5_0>: obj=0, original bounds=[0,1]
+  [continuous] <y_5_1>: obj=0, original bounds=[0,1]
+  [continuous] <y_5_2>: obj=0, original bounds=[0,1]
+  [continuous] <y_5_3>: obj=0, original bounds=[0,1]
+  [continuous] <absf_0_1_0>: obj=4.45e-05, original bounds=[0,1]
+  [continuous] <f_0_1_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_1_0_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_2_0>: obj=3.13e-05, original bounds=[0,1]
+  [continuous] <f_1_2_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_2_1_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_2_3_0>: obj=4.48e-05, original bounds=[0,1]
+  [continuous] <f_2_3_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_3_2_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_4_0>: obj=4.36e-05, original bounds=[0,1]
+  [continuous] <f_3_4_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_4_3_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_5_0>: obj=4.56e-05, original bounds=[0,1]
+  [continuous] <f_4_5_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_4_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_6_0>: obj=4.98e-05, original bounds=[0,1]
+  [continuous] <f_5_6_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_5_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_7_0>: obj=1.9e-05, original bounds=[0,1]
+  [continuous] <f_6_7_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_6_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_6_0>: obj=1.73e-05, original bounds=[0,1]
+  [continuous] <f_0_6_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_0_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_5_0>: obj=4.61e-05, original bounds=[0,1]
+  [continuous] <f_1_5_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_1_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_6_0>: obj=2.89e-05, original bounds=[0,1]
+  [continuous] <f_1_6_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_1_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_7_0>: obj=4.55e-05, original bounds=[0,1]
+  [continuous] <f_0_7_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_0_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_8_0>: obj=8.8e-06, original bounds=[0,1]
+  [continuous] <f_6_8_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_8_6_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_9_0>: obj=5.2e-06, original bounds=[0,1]
+  [continuous] <f_3_9_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_9_3_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_10_0>: obj=8.1e-06, original bounds=[0,1]
+  [continuous] <f_5_10_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_10_5_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_11_0>: obj=2.07e-05, original bounds=[0,1]
+  [continuous] <f_3_11_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_11_3_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_7_12_0>: obj=2.41e-05, original bounds=[0,1]
+  [continuous] <f_7_12_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_12_7_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_13_0>: obj=2.12e-05, original bounds=[0,1]
+  [continuous] <f_4_13_0>: obj=0, original bounds=[-1,1]
+  [continuous] <f_13_4_0>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_1_1>: obj=8.9e-05, original bounds=[0,1]
+  [continuous] <f_0_1_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_1_0_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_2_1>: obj=6.26e-05, original bounds=[0,1]
+  [continuous] <f_1_2_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_2_1_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_2_3_1>: obj=8.96e-05, original bounds=[0,1]
+  [continuous] <f_2_3_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_3_2_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_3_4_1>: obj=8.72e-05, original bounds=[0,1]
+  [continuous] <f_3_4_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_4_3_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_4_5_1>: obj=9.12e-05, original bounds=[0,1]
+  [continuous] <f_4_5_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_4_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_5_6_1>: obj=9.96e-05, original bounds=[0,1]
+  [continuous] <f_5_6_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_5_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_6_7_1>: obj=3.8e-05, original bounds=[0,1]
+  [continuous] <f_6_7_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_7_6_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_0_6_1>: obj=3.46e-05, original bounds=[0,1]
+  [continuous] <f_0_6_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_6_0_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_5_1>: obj=9.22e-05, original bounds=[0,1]
+  [continuous] <f_1_5_1>: obj=0, original bounds=[-1,1]
+  [continuous] <f_5_1_1>: obj=0, original bounds=[-1,1]
+  [continuous] <absf_1_6_1>: obj=5.78e-05, original bounds=[0,1]
+  [continuous] <f_1_6_1>: obj=0, original bounds=[-1,1]
+CONSTRAINTS
+  [linear] <fforbid>: <f_6_8_0>[C] == 0;
+  [linear] <fforbid>: <f_5_10_0>[C] == 0;
+  [linear] <fforbid>: <f_7_12_0>[C] == 0;
+  [linear] <fforbid>: <f_4_13_0>[C] == 0;
+  [linear] <fforbid>: <f_3_9_1>[C] == 0;
+  [linear] <fforbid>: <f_5_10_1>[C] == 0;
+  [linear] <fforbid>: <f_7_12_1>[C] == 0;
+  [linear] <fforbid>: <f_4_13_1>[C] == 0;
+  [linear] <fforbid>: <f_6_8_2>[C] == 0;
+  [linear] <fforbid>: <f_3_11_2>[C] == 0;
+  [linear] <fforbid>: <f_7_12_2>[C] == 0;
+  [linear] <fforbid>: <f_4_13_2>[C] == 0;
+  [linear] <fforbid>: <f_6_8_3>[C] == 0;
+  [linear] <fforbid>: <f_3_9_3>[C] == 0;
+  [linear] <fforbid>: <f_3_11_3>[C] == 0;
+  [linear] <fforbid>: <f_4_13_3>[C] == 0;
+  [linear] <fforbid>: <f_3_9_4>[C] == 0;
+  [linear] <fforbid>: <f_3_11_4>[C] == 0;
+  [linear] <fforbid>: <f_7_12_4>[C] == 0;
+  [linear] <fforbid>: <f_4_13_4>[C] == 0;
+  [linear] <fforbid>: <f_6_8_5>[C] == 0;
+  [linear] <fforbid>: <f_3_9_5>[C] == 0;
+  [linear] <fforbid>: <f_7_12_5>[C] == 0;
+  [linear] <fforbid>: <f_4_13_5>[C] == 0;
+  [linear] <abs1>: <absf_0_1_0>[C] -<f_0_1_0>[C] >= 0;
+  [linear] <abs2>: <absf_0_1_0>[C] +<f_0_1_0>[C] >= 0;
+  [linear] <abs1>: <absf_0_1_1>[C] -<f_0_1_1>[C] >= 0;
+  [linear] <abs2>: <absf_0_1_1>[C] +<f_0_1_1>[C] >= 0;
+  [linear] <abs1>: <absf_0_1_2>[C] -<f_0_1_2>[C] >= 0;
+  [linear] <abs2>: <absf_0_1_2>[C] +<f_0_1_2>[C] >= 0;
+  [linear] <abs1>: <absf_0_1_3>[C] -<f_0_1_3>[C] >= 0;
+  [linear] <abs2>: <absf_0_1_3>[C] +<f_0_1_3>[C] >= 0;
+  [linear] <abs1>: <absf_0_1_4>[C] -<f_0_1_4>[C] >= 0;
+  [linear] <abs2>: <absf_0_1_4>[C] +<f_0_1_4>[C] >= 0;
+  [linear] <abs1>: <absf_0_1_5>[C] -<f_0_1_5>[C] >= 0;
+  [linear] <abs2>: <absf_0_1_5>[C] +<f_0_1_5>[C] >= 0;
+  [linear] <abs1>: <absf_1_2_0>[C] -<f_1_2_0>[C] >= 0;
+  [linear] <abs2>: <absf_1_2_0>[C] +<f_1_2_0>[C] >= 0;
+  [linear] <abs1>: <absf_1_2_1>[C] -<f_1_2_1>[C] >= 0;
+  [linear] <abs2>: <absf_1_2_1>[C] +<f_1_2_1>[C] >= 0;
+  [linear] <abs1>: <absf_1_2_2>[C] -<f_1_2_2>[C] >= 0;
+  [linear] <abs2>: <absf_1_2_2>[C] +<f_1_2_2>[C] >= 0;
+  [linear] <abs1>: <absf_1_2_3>[C] -<f_1_2_3>[C] >= 0;
+  [linear] <abs2>: <absf_1_2_3>[C] +<f_1_2_3>[C] >= 0;
+  [linear] <abs1>: <absf_1_2_4>[C] -<f_1_2_4>[C] >= 0;
+  [linear] <abs2>: <absf_1_2_4>[C] +<f_1_2_4>[C] >= 0;
+  [linear] <abs1>: <absf_1_2_5>[C] -<f_1_2_5>[C] >= 0;
+  [linear] <abs2>: <absf_1_2_5>[C] +<f_1_2_5>[C] >= 0;
+  [linear] <abs1>: <absf_2_3_0>[C] -<f_2_3_0>[C] >= 0;
+  [linear] <abs2>: <absf_2_3_0>[C] +<f_2_3_0>[C] >= 0;
+  [linear] <abs1>: <absf_2_3_1>[C] -<f_2_3_1>[C] >= 0;
+  [linear] <abs2>: <absf_2_3_1>[C] +<f_2_3_1>[C] >= 0;
+  [linear] <abs1>: <absf_2_3_2>[C] -<f_2_3_2>[C] >= 0;
+  [linear] <abs2>: <absf_2_3_2>[C] +<f_2_3_2>[C] >= 0;
+  [linear] <abs1>: <absf_2_3_3>[C] -<f_2_3_3>[C] >= 0;
+  [linear] <abs2>: <absf_2_3_3>[C] +<f_2_3_3>[C] >= 0;
+  [linear] <abs1>: <absf_2_3_4>[C] -<f_2_3_4>[C] >= 0;
+  [linear] <abs2>: <absf_2_3_4>[C] +<f_2_3_4>[C] >= 0;
+  [linear] <abs1>: <absf_2_3_5>[C] -<f_2_3_5>[C] >= 0;
+  [linear] <abs2>: <absf_2_3_5>[C] +<f_2_3_5>[C] >= 0;
+  [linear] <abs1>: <absf_3_4_0>[C] -<f_3_4_0>[C] >= 0;
+  [linear] <abs2>: <absf_3_4_0>[C] +<f_3_4_0>[C] >= 0;
+  [linear] <abs1>: <absf_3_4_1>[C] -<f_3_4_1>[C] >= 0;
+  [linear] <abs2>: <absf_3_4_1>[C] +<f_3_4_1>[C] >= 0;
+  [linear] <abs1>: <absf_3_4_2>[C] -<f_3_4_2>[C] >= 0;
+  [linear] <abs2>: <absf_3_4_2>[C] +<f_3_4_2>[C] >= 0;
+  [linear] <abs1>: <absf_3_4_3>[C] -<f_3_4_3>[C] >= 0;
+  [linear] <abs2>: <absf_3_4_3>[C] +<f_3_4_3>[C] >= 0;
+  [linear] <abs1>: <absf_3_4_4>[C] -<f_3_4_4>[C] >= 0;
+  [linear] <abs2>: <absf_3_4_4>[C] +<f_3_4_4>[C] >= 0;
+  [linear] <abs1>: <absf_3_4_5>[C] -<f_3_4_5>[C] >= 0;
+  [linear] <abs2>: <absf_3_4_5>[C] +<f_3_4_5>[C] >= 0;
+  [linear] <abs1>: <absf_4_5_0>[C] -<f_4_5_0>[C] >= 0;
+  [linear] <abs2>: <absf_4_5_0>[C] +<f_4_5_0>[C] >= 0;
+  [linear] <abs1>: <absf_4_5_1>[C] -<f_4_5_1>[C] >= 0;
+  [linear] <abs2>: <absf_4_5_1>[C] +<f_4_5_1>[C] >= 0;
+  [linear] <abs1>: <absf_4_5_2>[C] -<f_4_5_2>[C] >= 0;
+  [linear] <abs2>: <absf_4_5_2>[C] +<f_4_5_2>[C] >= 0;
+  [linear] <abs1>: <absf_4_5_3>[C] -<f_4_5_3>[C] >= 0;
+  [linear] <abs2>: <absf_4_5_3>[C] +<f_4_5_3>[C] >= 0;
+  [linear] <abs1>: <absf_4_5_4>[C] -<f_4_5_4>[C] >= 0;
+  [linear] <abs2>: <absf_4_5_4>[C] +<f_4_5_4>[C] >= 0;
+  [linear] <abs1>: <absf_4_5_5>[C] -<f_4_5_5>[C] >= 0;
+  [linear] <abs2>: <absf_4_5_5>[C] +<f_4_5_5>[C] >= 0;
+  [linear] <abs1>: <absf_5_6_0>[C] -<f_5_6_0>[C] >= 0;
+  [linear] <abs2>: <absf_5_6_0>[C] +<f_5_6_0>[C] >= 0;
+  [linear] <abs1>: <absf_5_6_1>[C] -<f_5_6_1>[C] >= 0;
+  [linear] <abs2>: <absf_5_6_1>[C] +<f_5_6_1>[C] >= 0;
+  [linear] <abs1>: <absf_5_6_2>[C] -<f_5_6_2>[C] >= 0;
+  [linear] <abs2>: <absf_5_6_2>[C] +<f_5_6_2>[C] >= 0;
+  [linear] <abs1>: <absf_5_6_3>[C] -<f_5_6_3>[C] >= 0;
+  [linear] <abs2>: <absf_5_6_3>[C] +<f_5_6_3>[C] >= 0;
+  [linear] <abs1>: <absf_5_6_4>[C] -<f_5_6_4>[C] >= 0;
+  [linear] <abs2>: <absf_5_6_4>[C] +<f_5_6_4>[C] >= 0;
+  [linear] <abs1>: <absf_5_6_5>[C] -<f_5_6_5>[C] >= 0;
+  [linear] <abs2>: <absf_5_6_5>[C] +<f_5_6_5>[C] >= 0;
+  [linear] <abs1>: <absf_6_7_0>[C] -<f_6_7_0>[C] >= 0;
+  [linear] <abs2>: <absf_6_7_0>[C] +<f_6_7_0>[C] >= 0;
+  [linear] <abs1>: <absf_6_7_1>[C] -<f_6_7_1>[C] >= 0;
+  [linear] <abs2>: <absf_6_7_1>[C] +<f_6_7_1>[C] >= 0;
+  [linear] <abs1>: <absf_6_7_2>[C] -<f_6_7_2>[C] >= 0;
+  [linear] <abs2>: <absf_6_7_2>[C] +<f_6_7_2>[C] >= 0;
+  [linear] <abs1>: <absf_6_7_3>[C] -<f_6_7_3>[C] >= 0;
+  [linear] <abs2>: <absf_6_7_3>[C] +<f_6_7_3>[C] >= 0;
+  [linear] <abs1>: <absf_6_7_4>[C] -<f_6_7_4>[C] >= 0;
+  [linear] <abs2>: <absf_6_7_4>[C] +<f_6_7_4>[C] >= 0;
+  [linear] <abs1>: <absf_6_7_5>[C] -<f_6_7_5>[C] >= 0;
+  [linear] <abs2>: <absf_6_7_5>[C] +<f_6_7_5>[C] >= 0;
+  [linear] <abs1>: <absf_0_6_0>[C] -<f_0_6_0>[C] >= 0;
+  [linear] <abs2>: <absf_0_6_0>[C] +<f_0_6_0>[C] >= 0;
+  [linear] <abs1>: <absf_0_6_1>[C] -<f_0_6_1>[C] >= 0;
+  [linear] <abs2>: <absf_0_6_1>[C] +<f_0_6_1>[C] >= 0;
+  [linear] <abs1>: <absf_0_6_2>[C] -<f_0_6_2>[C] >= 0;
+  [linear] <abs2>: <absf_0_6_2>[C] +<f_0_6_2>[C] >= 0;
+  [linear] <abs1>: <absf_0_6_3>[C] -<f_0_6_3>[C] >= 0;
+  [linear] <abs2>: <absf_0_6_3>[C] +<f_0_6_3>[C] >= 0;
+  [linear] <abs1>: <absf_0_6_4>[C] -<f_0_6_4>[C] >= 0;
+  [linear] <abs2>: <absf_0_6_4>[C] +<f_0_6_4>[C] >= 0;
+  [linear] <abs1>: <absf_0_6_5>[C] -<f_0_6_5>[C] >= 0;
+  [linear] <abs2>: <absf_0_6_5>[C] +<f_0_6_5>[C] >= 0;
+  [linear] <abs1>: <absf_1_5_0>[C] -<f_1_5_0>[C] >= 0;
+  [linear] <abs2>: <absf_1_5_0>[C] +<f_1_5_0>[C] >= 0;
+  [linear] <abs1>: <absf_1_5_1>[C] -<f_1_5_1>[C] >= 0;
+  [linear] <abs2>: <absf_1_5_1>[C] +<f_1_5_1>[C] >= 0;
+  [linear] <abs1>: <absf_1_5_2>[C] -<f_1_5_2>[C] >= 0;
+  [linear] <abs2>: <absf_1_5_2>[C] +<f_1_5_2>[C] >= 0;
+  [linear] <abs1>: <absf_1_5_3>[C] -<f_1_5_3>[C] >= 0;
+  [linear] <abs2>: <absf_1_5_3>[C] +<f_1_5_3>[C] >= 0;
+  [linear] <abs1>: <absf_1_5_4>[C] -<f_1_5_4>[C] >= 0;
+  [linear] <abs2>: <absf_1_5_4>[C] +<f_1_5_4>[C] >= 0;
+  [linear] <abs1>: <absf_1_5_5>[C] -<f_1_5_5>[C] >= 0;
+  [linear] <abs2>: <absf_1_5_5>[C] +<f_1_5_5>[C] >= 0;
+  [linear] <abs1>: <absf_1_6_0>[C] -<f_1_6_0>[C] >= 0;
+  [linear] <abs2>: <absf_1_6_0>[C] +<f_1_6_0>[C] >= 0;
+  [linear] <abs1>: <absf_1_6_1>[C] -<f_1_6_1>[C] >= 0;
+  [linear] <abs2>: <absf_1_6_1>[C] +<f_1_6_1>[C] >= 0;
+  [linear] <abs1>: <absf_1_6_2>[C] -<f_1_6_2>[C] >= 0;
+  [linear] <abs2>: <absf_1_6_2>[C] +<f_1_6_2>[C] >= 0;
+  [linear] <abs1>: <absf_1_6_3>[C] -<f_1_6_3>[C] >= 0;
+  [linear] <abs2>: <absf_1_6_3>[C] +<f_1_6_3>[C] >= 0;
+  [linear] <abs1>: <absf_1_6_4>[C] -<f_1_6_4>[C] >= 0;
+  [linear] <abs2>: <absf_1_6_4>[C] +<f_1_6_4>[C] >= 0;
+  [linear] <abs1>: <absf_1_6_5>[C] -<f_1_6_5>[C] >= 0;
+  [linear] <abs2>: <absf_1_6_5>[C] +<f_1_6_5>[C] >= 0;
+  [linear] <abs1>: <absf_0_7_0>[C] -<f_0_7_0>[C] >= 0;
+  [linear] <abs2>: <absf_0_7_0>[C] +<f_0_7_0>[C] >= 0;
+  [linear] <abs1>: <absf_0_7_1>[C] -<f_0_7_1>[C] >= 0;
+  [linear] <abs2>: <absf_0_7_1>[C] +<f_0_7_1>[C] >= 0;
+  [linear] <abs1>: <absf_0_7_2>[C] -<f_0_7_2>[C] >= 0;
+  [linear] <abs2>: <absf_0_7_2>[C] +<f_0_7_2>[C] >= 0;
+  [linear] <abs1>: <absf_0_7_3>[C] -<f_0_7_3>[C] >= 0;
+  [linear] <abs2>: <absf_0_7_3>[C] +<f_0_7_3>[C] >= 0;
+  [linear] <abs1>: <absf_0_7_4>[C] -<f_0_7_4>[C] >= 0;
+  [linear] <abs2>: <absf_0_7_4>[C] +<f_0_7_4>[C] >= 0;
+  [linear] <abs1>: <absf_0_7_5>[C] -<f_0_7_5>[C] >= 0;
+  [linear] <abs2>: <absf_0_7_5>[C] +<f_0_7_5>[C] >= 0;
+  [linear] <abs1>: <absf_6_8_0>[C] -<f_6_8_0>[C] >= 0;
+  [linear] <abs2>: <absf_6_8_0>[C] +<f_6_8_0>[C] >= 0;
+  [linear] <abs1>: <absf_6_8_1>[C] -<f_6_8_1>[C] >= 0;
+  [linear] <abs2>: <absf_6_8_1>[C] +<f_6_8_1>[C] >= 0;
+  [linear] <abs1>: <absf_6_8_2>[C] -<f_6_8_2>[C] >= 0;
+  [linear] <abs2>: <absf_6_8_2>[C] +<f_6_8_2>[C] >= 0;
+  [linear] <abs1>: <absf_6_8_3>[C] -<f_6_8_3>[C] >= 0;
+  [linear] <abs2>: <absf_6_8_3>[C] +<f_6_8_3>[C] >= 0;
+  [linear] <abs1>: <absf_6_8_4>[C] -<f_6_8_4>[C] >= 0;
+  [linear] <abs2>: <absf_6_8_4>[C] +<f_6_8_4>[C] >= 0;
+  [linear] <abs1>: <absf_6_8_5>[C] -<f_6_8_5>[C] >= 0;
+  [linear] <abs2>: <absf_6_8_5>[C] +<f_6_8_5>[C] >= 0;
+  [linear] <abs1>: <absf_3_9_0>[C] -<f_3_9_0>[C] >= 0;
+  [linear] <abs2>: <absf_3_9_0>[C] +<f_3_9_0>[C] >= 0;
+  [linear] <abs1>: <absf_3_9_1>[C] -<f_3_9_1>[C] >= 0;
+  [linear] <abs2>: <absf_3_9_1>[C] +<f_3_9_1>[C] >= 0;
+  [linear] <abs1>: <absf_3_9_2>[C] -<f_3_9_2>[C] >= 0;
+  [linear] <abs2>: <absf_3_9_2>[C] +<f_3_9_2>[C] >= 0;
+  [linear] <abs1>: <absf_3_9_3>[C] -<f_3_9_3>[C] >= 0;
+  [linear] <abs2>: <absf_3_9_3>[C] +<f_3_9_3>[C] >= 0;
+  [linear] <abs1>: <absf_3_9_4>[C] -<f_3_9_4>[C] >= 0;
+  [linear] <abs2>: <absf_3_9_4>[C] +<f_3_9_4>[C] >= 0;
+  [linear] <abs1>: <absf_3_9_5>[C] -<f_3_9_5>[C] >= 0;
+  [linear] <abs2>: <absf_3_9_5>[C] +<f_3_9_5>[C] >= 0;
+  [linear] <abs1>: <absf_5_10_0>[C] -<f_5_10_0>[C] >= 0;
+  [linear] <abs2>: <absf_5_10_0>[C] +<f_5_10_0>[C] >= 0;
+  [linear] <abs1>: <absf_5_10_1>[C] -<f_5_10_1>[C] >= 0;
+  [linear] <abs2>: <absf_5_10_1>[C] +<f_5_10_1>[C] >= 0;
+  [linear] <abs1>: <absf_5_10_2>[C] -<f_5_10_2>[C] >= 0;
+  [linear] <abs2>: <absf_5_10_2>[C] +<f_5_10_2>[C] >= 0;
+  [linear] <abs1>: <absf_5_10_3>[C] -<f_5_10_3>[C] >= 0;
+  [linear] <abs2>: <absf_5_10_3>[C] +<f_5_10_3>[C] >= 0;
+  [linear] <abs1>: <absf_5_10_4>[C] -<f_5_10_4>[C] >= 0;
+  [linear] <abs2>: <absf_5_10_4>[C] +<f_5_10_4>[C] >= 0;
+  [linear] <abs1>: <absf_5_10_5>[C] -<f_5_10_5>[C] >= 0;
+  [linear] <abs2>: <absf_5_10_5>[C] +<f_5_10_5>[C] >= 0;
+  [linear] <abs1>: <absf_3_11_0>[C] -<f_3_11_0>[C] >= 0;
+  [linear] <abs2>: <absf_3_11_0>[C] +<f_3_11_0>[C] >= 0;
+  [linear] <abs1>: <absf_3_11_1>[C] -<f_3_11_1>[C] >= 0;
+  [linear] <abs2>: <absf_3_11_1>[C] +<f_3_11_1>[C] >= 0;
+  [linear] <abs1>: <absf_3_11_2>[C] -<f_3_11_2>[C] >= 0;
+  [linear] <abs2>: <absf_3_11_2>[C] +<f_3_11_2>[C] >= 0;
+  [linear] <abs1>: <absf_3_11_3>[C] -<f_3_11_3>[C] >= 0;
+  [linear] <abs2>: <absf_3_11_3>[C] +<f_3_11_3>[C] >= 0;
+  [linear] <abs1>: <absf_3_11_4>[C] -<f_3_11_4>[C] >= 0;
+  [linear] <abs2>: <absf_3_11_4>[C] +<f_3_11_4>[C] >= 0;
+  [linear] <abs1>: <absf_3_11_5>[C] -<f_3_11_5>[C] >= 0;
+  [linear] <abs2>: <absf_3_11_5>[C] +<f_3_11_5>[C] >= 0;
+  [linear] <abs1>: <absf_7_12_0>[C] -<f_7_12_0>[C] >= 0;
+  [linear] <abs2>: <absf_7_12_0>[C] +<f_7_12_0>[C] >= 0;
+  [linear] <abs1>: <absf_7_12_1>[C] -<f_7_12_1>[C] >= 0;
+  [linear] <abs2>: <absf_7_12_1>[C] +<f_7_12_1>[C] >= 0;
+  [linear] <abs1>: <absf_7_12_2>[C] -<f_7_12_2>[C] >= 0;
+  [linear] <abs2>: <absf_7_12_2>[C] +<f_7_12_2>[C] >= 0;
+  [linear] <abs1>: <absf_7_12_3>[C] -<f_7_12_3>[C] >= 0;
+  [linear] <abs2>: <absf_7_12_3>[C] +<f_7_12_3>[C] >= 0;
+  [linear] <abs1>: <absf_7_12_4>[C] -<f_7_12_4>[C] >= 0;
+  [linear] <abs2>: <absf_7_12_4>[C] +<f_7_12_4>[C] >= 0;
+  [linear] <abs1>: <absf_7_12_5>[C] -<f_7_12_5>[C] >= 0;
+  [linear] <abs2>: <absf_7_12_5>[C] +<f_7_12_5>[C] >= 0;
+  [linear] <abs1>: <absf_4_13_0>[C] -<f_4_13_0>[C] >= 0;
+  [linear] <abs2>: <absf_4_13_0>[C] +<f_4_13_0>[C] >= 0;
+  [linear] <abs1>: <absf_4_13_1>[C] -<f_4_13_1>[C] >= 0;
+  [linear] <abs2>: <absf_4_13_1>[C] +<f_4_13_1>[C] >= 0;
+  [linear] <abs1>: <absf_4_13_2>[C] -<f_4_13_2>[C] >= 0;
+  [linear] <abs2>: <absf_4_13_2>[C] +<f_4_13_2>[C] >= 0;
+  [linear] <abs1>: <absf_4_13_3>[C] -<f_4_13_3>[C] >= 0;
+  [linear] <abs2>: <absf_4_13_3>[C] +<f_4_13_3>[C] >= 0;
+  [linear] <abs1>: <absf_4_13_4>[C] -<f_4_13_4>[C] >= 0;
+  [linear] <abs2>: <absf_4_13_4>[C] +<f_4_13_4>[C] >= 0;
+  [linear] <abs1>: <absf_4_13_5>[C] -<f_4_13_5>[C] >= 0;
+  [linear] <abs2>: <absf_4_13_5>[C] +<f_4_13_5>[C] >= 0;
+  [linear] <flow_balance>: <f_0_1_0>[C] +<f_0_6_0>[C] +<f_0_7_0>[C] == 0;
+  [linear] <flow_balance>: <f_1_0_0>[C] +<f_1_2_0>[C] +<f_1_5_0>[C] +<f_1_6_0>[C] == 0;
+  [linear] <flow_balance>: <f_2_1_0>[C] +<f_2_3_0>[C] == 0;
+  [linear] <flow_balance>: <f_3_2_0>[C] +<f_3_4_0>[C] +<f_3_9_0>[C] +<f_3_11_0>[C] == 0;
+  [linear] <flow_balance>: <f_4_3_0>[C] +<f_4_5_0>[C] +<f_4_13_0>[C] == 0;
+  [linear] <flow_balance>: <f_5_1_0>[C] +<f_5_4_0>[C] +<f_5_6_0>[C] +<f_5_10_0>[C] == 0;
+  [linear] <flow_balance>: <f_6_0_0>[C] +<f_6_1_0>[C] +<f_6_5_0>[C] +<f_6_7_0>[C] +<f_6_8_0>[C] == 0;
+  [linear] <flow_balance>: <f_7_0_0>[C] +<f_7_6_0>[C] +<f_7_12_0>[C] == 0;
+  [linear] <flow_balance>: <f_8_6_0>[C] == 0;
+  [linear] <flow_balance>: <f_9_3_0>[C] == 1;
+  [linear] <flow_balance>: <f_10_5_0>[C] == 0;
+  [linear] <flow_balance>: <f_11_3_0>[C] == -1;
+  [linear] <flow_balance>: <f_12_7_0>[C] == 0;
+  [linear] <flow_balance>: <f_13_4_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_1_0>[C] +<f_1_0_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_2_0>[C] +<f_2_1_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_2_3_0>[C] +<f_3_2_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_4_0>[C] +<f_4_3_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_5_0>[C] +<f_5_4_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_6_0>[C] +<f_6_5_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_7_0>[C] +<f_7_6_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_6_0>[C] +<f_6_0_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_5_0>[C] +<f_5_1_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_6_0>[C] +<f_6_1_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_7_0>[C] +<f_7_0_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_8_0>[C] +<f_8_6_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_9_0>[C] +<f_9_3_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_10_0>[C] +<f_10_5_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_11_0>[C] +<f_11_3_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_7_12_0>[C] +<f_12_7_0>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_13_0>[C] +<f_13_4_0>[C] == 0;
+  [linear] <flow_balance>: <f_0_1_1>[C] +<f_0_6_1>[C] +<f_0_7_1>[C] == 0;
+  [linear] <flow_balance>: <f_1_0_1>[C] +<f_1_2_1>[C] +<f_1_5_1>[C] +<f_1_6_1>[C] == 0;
+  [linear] <flow_balance>: <f_2_1_1>[C] +<f_2_3_1>[C] == 0;
+  [linear] <flow_balance>: <f_3_2_1>[C] +<f_3_4_1>[C] +<f_3_9_1>[C] +<f_3_11_1>[C] == 0;
+  [linear] <flow_balance>: <f_4_3_1>[C] +<f_4_5_1>[C] +<f_4_13_1>[C] == 0;
+  [linear] <flow_balance>: <f_5_1_1>[C] +<f_5_4_1>[C] +<f_5_6_1>[C] +<f_5_10_1>[C] == 0;
+  [linear] <flow_balance>: <f_6_0_1>[C] +<f_6_1_1>[C] +<f_6_5_1>[C] +<f_6_7_1>[C] +<f_6_8_1>[C] == 0;
+  [linear] <flow_balance>: <f_7_0_1>[C] +<f_7_6_1>[C] +<f_7_12_1>[C] == 0;
+  [linear] <flow_balance>: <f_8_6_1>[C] == 1;
+  [linear] <flow_balance>: <f_9_3_1>[C] == 0;
+  [linear] <flow_balance>: <f_10_5_1>[C] == 0;
+  [linear] <flow_balance>: <f_11_3_1>[C] == -1;
+  [linear] <flow_balance>: <f_12_7_1>[C] == 0;
+  [linear] <flow_balance>: <f_13_4_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_1_1>[C] +<f_1_0_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_2_1>[C] +<f_2_1_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_2_3_1>[C] +<f_3_2_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_4_1>[C] +<f_4_3_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_5_1>[C] +<f_5_4_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_6_1>[C] +<f_6_5_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_7_1>[C] +<f_7_6_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_6_1>[C] +<f_6_0_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_5_1>[C] +<f_5_1_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_6_1>[C] +<f_6_1_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_7_1>[C] +<f_7_0_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_8_1>[C] +<f_8_6_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_9_1>[C] +<f_9_3_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_10_1>[C] +<f_10_5_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_11_1>[C] +<f_11_3_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_7_12_1>[C] +<f_12_7_1>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_13_1>[C] +<f_13_4_1>[C] == 0;
+  [linear] <flow_balance>: <f_0_1_2>[C] +<f_0_6_2>[C] +<f_0_7_2>[C] == 0;
+  [linear] <flow_balance>: <f_1_0_2>[C] +<f_1_2_2>[C] +<f_1_5_2>[C] +<f_1_6_2>[C] == 0;
+  [linear] <flow_balance>: <f_2_1_2>[C] +<f_2_3_2>[C] == 0;
+  [linear] <flow_balance>: <f_3_2_2>[C] +<f_3_4_2>[C] +<f_3_9_2>[C] +<f_3_11_2>[C] == 0;
+  [linear] <flow_balance>: <f_4_3_2>[C] +<f_4_5_2>[C] +<f_4_13_2>[C] == 0;
+  [linear] <flow_balance>: <f_5_1_2>[C] +<f_5_4_2>[C] +<f_5_6_2>[C] +<f_5_10_2>[C] == 0;
+  [linear] <flow_balance>: <f_6_0_2>[C] +<f_6_1_2>[C] +<f_6_5_2>[C] +<f_6_7_2>[C] +<f_6_8_2>[C] == 0;
+  [linear] <flow_balance>: <f_7_0_2>[C] +<f_7_6_2>[C] +<f_7_12_2>[C] == 0;
+  [linear] <flow_balance>: <f_8_6_2>[C] == 0;
+  [linear] <flow_balance>: <f_9_3_2>[C] == 1;
+  [linear] <flow_balance>: <f_10_5_2>[C] == -1;
+  [linear] <flow_balance>: <f_11_3_2>[C] == 0;
+  [linear] <flow_balance>: <f_12_7_2>[C] == 0;
+  [linear] <flow_balance>: <f_13_4_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_1_2>[C] +<f_1_0_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_2_2>[C] +<f_2_1_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_2_3_2>[C] +<f_3_2_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_4_2>[C] +<f_4_3_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_5_2>[C] +<f_5_4_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_6_2>[C] +<f_6_5_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_7_2>[C] +<f_7_6_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_6_2>[C] +<f_6_0_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_5_2>[C] +<f_5_1_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_6_2>[C] +<f_6_1_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_7_2>[C] +<f_7_0_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_8_2>[C] +<f_8_6_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_9_2>[C] +<f_9_3_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_10_2>[C] +<f_10_5_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_11_2>[C] +<f_11_3_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_7_12_2>[C] +<f_12_7_2>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_13_2>[C] +<f_13_4_2>[C] == 0;
+  [linear] <flow_balance>: <f_0_1_3>[C] +<f_0_6_3>[C] +<f_0_7_3>[C] == 0;
+  [linear] <flow_balance>: <f_1_0_3>[C] +<f_1_2_3>[C] +<f_1_5_3>[C] +<f_1_6_3>[C] == 0;
+  [linear] <flow_balance>: <f_2_1_3>[C] +<f_2_3_3>[C] == 0;
+  [linear] <flow_balance>: <f_3_2_3>[C] +<f_3_4_3>[C] +<f_3_9_3>[C] +<f_3_11_3>[C] == 0;
+  [linear] <flow_balance>: <f_4_3_3>[C] +<f_4_5_3>[C] +<f_4_13_3>[C] == 0;
+  [linear] <flow_balance>: <f_5_1_3>[C] +<f_5_4_3>[C] +<f_5_6_3>[C] +<f_5_10_3>[C] == 0;
+  [linear] <flow_balance>: <f_6_0_3>[C] +<f_6_1_3>[C] +<f_6_5_3>[C] +<f_6_7_3>[C] +<f_6_8_3>[C] == 0;
+  [linear] <flow_balance>: <f_7_0_3>[C] +<f_7_6_3>[C] +<f_7_12_3>[C] == 0;
+  [linear] <flow_balance>: <f_8_6_3>[C] == 0;
+  [linear] <flow_balance>: <f_9_3_3>[C] == 0;
+  [linear] <flow_balance>: <f_10_5_3>[C] == 1;
+  [linear] <flow_balance>: <f_11_3_3>[C] == 0;
+  [linear] <flow_balance>: <f_12_7_3>[C] == -1;
+  [linear] <flow_balance>: <f_13_4_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_1_3>[C] +<f_1_0_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_2_3>[C] +<f_2_1_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_2_3_3>[C] +<f_3_2_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_4_3>[C] +<f_4_3_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_5_3>[C] +<f_5_4_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_6_3>[C] +<f_6_5_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_7_3>[C] +<f_7_6_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_6_3>[C] +<f_6_0_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_5_3>[C] +<f_5_1_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_6_3>[C] +<f_6_1_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_7_3>[C] +<f_7_0_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_8_3>[C] +<f_8_6_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_9_3>[C] +<f_9_3_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_10_3>[C] +<f_10_5_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_11_3>[C] +<f_11_3_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_7_12_3>[C] +<f_12_7_3>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_13_3>[C] +<f_13_4_3>[C] == 0;
+  [linear] <flow_balance>: <f_0_1_4>[C] +<f_0_6_4>[C] +<f_0_7_4>[C] == 0;
+  [linear] <flow_balance>: <f_1_0_4>[C] +<f_1_2_4>[C] +<f_1_5_4>[C] +<f_1_6_4>[C] == 0;
+  [linear] <flow_balance>: <f_2_1_4>[C] +<f_2_3_4>[C] == 0;
+  [linear] <flow_balance>: <f_3_2_4>[C] +<f_3_4_4>[C] +<f_3_9_4>[C] +<f_3_11_4>[C] == 0;
+  [linear] <flow_balance>: <f_4_3_4>[C] +<f_4_5_4>[C] +<f_4_13_4>[C] == 0;
+  [linear] <flow_balance>: <f_5_1_4>[C] +<f_5_4_4>[C] +<f_5_6_4>[C] +<f_5_10_4>[C] == 0;
+  [linear] <flow_balance>: <f_6_0_4>[C] +<f_6_1_4>[C] +<f_6_5_4>[C] +<f_6_7_4>[C] +<f_6_8_4>[C] == 0;
+  [linear] <flow_balance>: <f_7_0_4>[C] +<f_7_6_4>[C] +<f_7_12_4>[C] == 0;
+  [linear] <flow_balance>: <f_8_6_4>[C] == 1;
+  [linear] <flow_balance>: <f_9_3_4>[C] == 0;
+  [linear] <flow_balance>: <f_10_5_4>[C] == -1;
+  [linear] <flow_balance>: <f_11_3_4>[C] == 0;
+  [linear] <flow_balance>: <f_12_7_4>[C] == 0;
+  [linear] <flow_balance>: <f_13_4_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_1_4>[C] +<f_1_0_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_2_4>[C] +<f_2_1_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_2_3_4>[C] +<f_3_2_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_4_4>[C] +<f_4_3_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_5_4>[C] +<f_5_4_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_6_4>[C] +<f_6_5_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_7_4>[C] +<f_7_6_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_6_4>[C] +<f_6_0_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_5_4>[C] +<f_5_1_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_6_4>[C] +<f_6_1_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_7_4>[C] +<f_7_0_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_8_4>[C] +<f_8_6_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_9_4>[C] +<f_9_3_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_10_4>[C] +<f_10_5_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_11_4>[C] +<f_11_3_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_7_12_4>[C] +<f_12_7_4>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_13_4>[C] +<f_13_4_4>[C] == 0;
+  [linear] <flow_balance>: <f_0_1_5>[C] +<f_0_6_5>[C] +<f_0_7_5>[C] == 0;
+  [linear] <flow_balance>: <f_1_0_5>[C] +<f_1_2_5>[C] +<f_1_5_5>[C] +<f_1_6_5>[C] == 0;
+  [linear] <flow_balance>: <f_2_1_5>[C] +<f_2_3_5>[C] == 0;
+  [linear] <flow_balance>: <f_3_2_5>[C] +<f_3_4_5>[C] +<f_3_9_5>[C] +<f_3_11_5>[C] == 0;
+  [linear] <flow_balance>: <f_4_3_5>[C] +<f_4_5_5>[C] +<f_4_13_5>[C] == 0;
+  [linear] <flow_balance>: <f_5_1_5>[C] +<f_5_4_5>[C] +<f_5_6_5>[C] +<f_5_10_5>[C] == 0;
+  [linear] <flow_balance>: <f_6_0_5>[C] +<f_6_1_5>[C] +<f_6_5_5>[C] +<f_6_7_5>[C] +<f_6_8_5>[C] == 0;
+  [linear] <flow_balance>: <f_7_0_5>[C] +<f_7_6_5>[C] +<f_7_12_5>[C] == 0;
+  [linear] <flow_balance>: <f_8_6_5>[C] == 0;
+  [linear] <flow_balance>: <f_9_3_5>[C] == 0;
+  [linear] <flow_balance>: <f_10_5_5>[C] == 1;
+  [linear] <flow_balance>: <f_11_3_5>[C] == -1;
+  [linear] <flow_balance>: <f_12_7_5>[C] == 0;
+  [linear] <flow_balance>: <f_13_4_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_1_5>[C] +<f_1_0_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_2_5>[C] +<f_2_1_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_2_3_5>[C] +<f_3_2_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_4_5>[C] +<f_4_3_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_5_5>[C] +<f_5_4_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_6_5>[C] +<f_6_5_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_7_5>[C] +<f_7_6_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_6_5>[C] +<f_6_0_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_5_5>[C] +<f_5_1_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_1_6_5>[C] +<f_6_1_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_0_7_5>[C] +<f_7_0_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_6_8_5>[C] +<f_8_6_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_9_5>[C] +<f_9_3_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_5_10_5>[C] +<f_10_5_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_3_11_5>[C] +<f_11_3_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_7_12_5>[C] +<f_12_7_5>[C] == 0;
+  [linear] <flow_symmetry>: <f_4_13_5>[C] +<f_13_4_5>[C] == 0;
+  [linear] <onlym>: <m_0_0>[B] +<m_0_1>[B] +<m_0_2>[B] +<m_0_3>[B] == 1;
+  [linear] <onlym>: <m_1_0>[B] +<m_1_1>[B] +<m_1_2>[B] +<m_1_3>[B] == 1;
+  [linear] <onlym>: <m_2_0>[B] +<m_2_1>[B] +<m_2_2>[B] +<m_2_3>[B] == 1;
+  [linear] <onlym>: <m_3_0>[B] +<m_3_1>[B] +<m_3_2>[B] +<m_3_3>[B] == 1;
+  [linear] <onlym>: <m_4_0>[B] +<m_4_1>[B] +<m_4_2>[B] +<m_4_3>[B] == 1;
+  [linear] <onlym>: <m_5_0>[B] +<m_5_1>[B] +<m_5_2>[B] +<m_5_3>[B] == 1;
+  [linear] <imbalance>: <m_0_0>[B] -<m_0_1>[B] +<m_1_0>[B] -<m_1_1>[B] +<m_2_0>[B] -<m_2_1>[B] +<m_3_0>[B] -<m_3_1>[B] +<m_4_0>[B] -<m_4_1>[B] +<m_5_0>[B] -<m_5_1>[B] >= 0;
+  [linear] <imbalance>: <m_0_1>[B] -<m_0_2>[B] +<m_1_1>[B] -<m_1_2>[B] +<m_2_1>[B] -<m_2_2>[B] +<m_3_1>[B] -<m_3_2>[B] +<m_4_1>[B] -<m_4_2>[B] +<m_5_1>[B] -<m_5_2>[B] >= 0;
+  [linear] <imbalance>: <m_0_2>[B] -<m_0_3>[B] +<m_1_2>[B] -<m_1_3>[B] +<m_2_2>[B] -<m_2_3>[B] +<m_3_2>[B] -<m_3_3>[B] +<m_4_2>[B] -<m_4_3>[B] +<m_5_2>[B] -<m_5_3>[B] >= 0;
+  [linear] <zlower>: <z_0_1_0>[B] +<z_1_0_0>[B] -<f_0_1_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_0>[B] +<z_1_0_0>[B] -<f_0_1_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_0>[B] +<z_1_0_0>[B] -<f_0_1_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_0>[B] +<z_1_0_0>[B] -<f_0_1_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_0>[B] +<z_1_0_0>[B] -<f_0_1_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_0>[B] +<z_1_0_0>[B] -<f_0_1_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_1>[B] +<z_1_0_1>[B] -<f_0_1_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_1>[B] +<z_1_0_1>[B] -<f_0_1_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_1>[B] +<z_1_0_1>[B] -<f_0_1_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_1>[B] +<z_1_0_1>[B] -<f_0_1_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_1>[B] +<z_1_0_1>[B] -<f_0_1_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_1>[B] +<z_1_0_1>[B] -<f_0_1_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_2>[B] +<z_1_0_2>[B] -<f_0_1_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_2>[B] +<z_1_0_2>[B] -<f_0_1_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_2>[B] +<z_1_0_2>[B] -<f_0_1_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_2>[B] +<z_1_0_2>[B] -<f_0_1_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_2>[B] +<z_1_0_2>[B] -<f_0_1_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_2>[B] +<z_1_0_2>[B] -<f_0_1_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_3>[B] +<z_1_0_3>[B] -<f_0_1_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_3>[B] +<z_1_0_3>[B] -<f_0_1_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_3>[B] +<z_1_0_3>[B] -<f_0_1_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_3>[B] +<z_1_0_3>[B] -<f_0_1_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_3>[B] +<z_1_0_3>[B] -<f_0_1_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_1_3>[B] +<z_1_0_3>[B] -<f_0_1_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_0>[B] +<z_2_1_0>[B] -<f_1_2_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_0>[B] +<z_2_1_0>[B] -<f_1_2_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_0>[B] +<z_2_1_0>[B] -<f_1_2_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_0>[B] +<z_2_1_0>[B] -<f_1_2_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_0>[B] +<z_2_1_0>[B] -<f_1_2_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_0>[B] +<z_2_1_0>[B] -<f_1_2_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_1>[B] +<z_2_1_1>[B] -<f_1_2_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_1>[B] +<z_2_1_1>[B] -<f_1_2_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_1>[B] +<z_2_1_1>[B] -<f_1_2_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_1>[B] +<z_2_1_1>[B] -<f_1_2_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_1>[B] +<z_2_1_1>[B] -<f_1_2_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_1>[B] +<z_2_1_1>[B] -<f_1_2_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_2>[B] +<z_2_1_2>[B] -<f_1_2_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_2>[B] +<z_2_1_2>[B] -<f_1_2_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_2>[B] +<z_2_1_2>[B] -<f_1_2_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_2>[B] +<z_2_1_2>[B] -<f_1_2_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_2>[B] +<z_2_1_2>[B] -<f_1_2_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_2>[B] +<z_2_1_2>[B] -<f_1_2_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_3>[B] +<z_2_1_3>[B] -<f_1_2_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_3>[B] +<z_2_1_3>[B] -<f_1_2_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_3>[B] +<z_2_1_3>[B] -<f_1_2_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_3>[B] +<z_2_1_3>[B] -<f_1_2_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_3>[B] +<z_2_1_3>[B] -<f_1_2_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_2_3>[B] +<z_2_1_3>[B] -<f_1_2_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_0>[B] +<z_3_2_0>[B] -<f_2_3_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_0>[B] +<z_3_2_0>[B] -<f_2_3_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_0>[B] +<z_3_2_0>[B] -<f_2_3_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_0>[B] +<z_3_2_0>[B] -<f_2_3_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_0>[B] +<z_3_2_0>[B] -<f_2_3_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_0>[B] +<z_3_2_0>[B] -<f_2_3_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_1>[B] +<z_3_2_1>[B] -<f_2_3_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_1>[B] +<z_3_2_1>[B] -<f_2_3_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_1>[B] +<z_3_2_1>[B] -<f_2_3_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_1>[B] +<z_3_2_1>[B] -<f_2_3_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_1>[B] +<z_3_2_1>[B] -<f_2_3_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_1>[B] +<z_3_2_1>[B] -<f_2_3_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_2>[B] +<z_3_2_2>[B] -<f_2_3_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_2>[B] +<z_3_2_2>[B] -<f_2_3_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_2>[B] +<z_3_2_2>[B] -<f_2_3_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_2>[B] +<z_3_2_2>[B] -<f_2_3_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_2>[B] +<z_3_2_2>[B] -<f_2_3_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_2>[B] +<z_3_2_2>[B] -<f_2_3_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_3>[B] +<z_3_2_3>[B] -<f_2_3_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_3>[B] +<z_3_2_3>[B] -<f_2_3_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_3>[B] +<z_3_2_3>[B] -<f_2_3_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_3>[B] +<z_3_2_3>[B] -<f_2_3_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_3>[B] +<z_3_2_3>[B] -<f_2_3_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_2_3_3>[B] +<z_3_2_3>[B] -<f_2_3_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_0>[B] +<z_4_3_0>[B] -<f_3_4_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_0>[B] +<z_4_3_0>[B] -<f_3_4_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_0>[B] +<z_4_3_0>[B] -<f_3_4_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_0>[B] +<z_4_3_0>[B] -<f_3_4_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_0>[B] +<z_4_3_0>[B] -<f_3_4_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_0>[B] +<z_4_3_0>[B] -<f_3_4_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_1>[B] +<z_4_3_1>[B] -<f_3_4_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_1>[B] +<z_4_3_1>[B] -<f_3_4_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_1>[B] +<z_4_3_1>[B] -<f_3_4_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_1>[B] +<z_4_3_1>[B] -<f_3_4_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_1>[B] +<z_4_3_1>[B] -<f_3_4_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_1>[B] +<z_4_3_1>[B] -<f_3_4_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_2>[B] +<z_4_3_2>[B] -<f_3_4_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_2>[B] +<z_4_3_2>[B] -<f_3_4_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_2>[B] +<z_4_3_2>[B] -<f_3_4_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_2>[B] +<z_4_3_2>[B] -<f_3_4_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_2>[B] +<z_4_3_2>[B] -<f_3_4_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_2>[B] +<z_4_3_2>[B] -<f_3_4_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_3>[B] +<z_4_3_3>[B] -<f_3_4_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_3>[B] +<z_4_3_3>[B] -<f_3_4_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_3>[B] +<z_4_3_3>[B] -<f_3_4_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_3>[B] +<z_4_3_3>[B] -<f_3_4_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_3>[B] +<z_4_3_3>[B] -<f_3_4_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_4_3>[B] +<z_4_3_3>[B] -<f_3_4_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_0>[B] +<z_5_4_0>[B] -<f_4_5_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_0>[B] +<z_5_4_0>[B] -<f_4_5_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_0>[B] +<z_5_4_0>[B] -<f_4_5_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_0>[B] +<z_5_4_0>[B] -<f_4_5_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_0>[B] +<z_5_4_0>[B] -<f_4_5_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_0>[B] +<z_5_4_0>[B] -<f_4_5_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_1>[B] +<z_5_4_1>[B] -<f_4_5_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_1>[B] +<z_5_4_1>[B] -<f_4_5_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_1>[B] +<z_5_4_1>[B] -<f_4_5_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_1>[B] +<z_5_4_1>[B] -<f_4_5_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_1>[B] +<z_5_4_1>[B] -<f_4_5_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_1>[B] +<z_5_4_1>[B] -<f_4_5_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_2>[B] +<z_5_4_2>[B] -<f_4_5_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_2>[B] +<z_5_4_2>[B] -<f_4_5_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_2>[B] +<z_5_4_2>[B] -<f_4_5_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_2>[B] +<z_5_4_2>[B] -<f_4_5_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_2>[B] +<z_5_4_2>[B] -<f_4_5_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_2>[B] +<z_5_4_2>[B] -<f_4_5_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_3>[B] +<z_5_4_3>[B] -<f_4_5_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_3>[B] +<z_5_4_3>[B] -<f_4_5_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_3>[B] +<z_5_4_3>[B] -<f_4_5_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_3>[B] +<z_5_4_3>[B] -<f_4_5_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_3>[B] +<z_5_4_3>[B] -<f_4_5_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_5_3>[B] +<z_5_4_3>[B] -<f_4_5_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_0>[B] +<z_6_5_0>[B] -<f_5_6_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_0>[B] +<z_6_5_0>[B] -<f_5_6_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_0>[B] +<z_6_5_0>[B] -<f_5_6_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_0>[B] +<z_6_5_0>[B] -<f_5_6_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_0>[B] +<z_6_5_0>[B] -<f_5_6_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_0>[B] +<z_6_5_0>[B] -<f_5_6_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_1>[B] +<z_6_5_1>[B] -<f_5_6_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_1>[B] +<z_6_5_1>[B] -<f_5_6_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_1>[B] +<z_6_5_1>[B] -<f_5_6_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_1>[B] +<z_6_5_1>[B] -<f_5_6_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_1>[B] +<z_6_5_1>[B] -<f_5_6_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_1>[B] +<z_6_5_1>[B] -<f_5_6_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_2>[B] +<z_6_5_2>[B] -<f_5_6_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_2>[B] +<z_6_5_2>[B] -<f_5_6_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_2>[B] +<z_6_5_2>[B] -<f_5_6_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_2>[B] +<z_6_5_2>[B] -<f_5_6_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_2>[B] +<z_6_5_2>[B] -<f_5_6_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_2>[B] +<z_6_5_2>[B] -<f_5_6_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_3>[B] +<z_6_5_3>[B] -<f_5_6_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_3>[B] +<z_6_5_3>[B] -<f_5_6_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_3>[B] +<z_6_5_3>[B] -<f_5_6_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_3>[B] +<z_6_5_3>[B] -<f_5_6_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_3>[B] +<z_6_5_3>[B] -<f_5_6_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_6_3>[B] +<z_6_5_3>[B] -<f_5_6_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_0>[B] +<z_7_6_0>[B] -<f_6_7_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_0>[B] +<z_7_6_0>[B] -<f_6_7_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_0>[B] +<z_7_6_0>[B] -<f_6_7_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_0>[B] +<z_7_6_0>[B] -<f_6_7_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_0>[B] +<z_7_6_0>[B] -<f_6_7_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_0>[B] +<z_7_6_0>[B] -<f_6_7_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_1>[B] +<z_7_6_1>[B] -<f_6_7_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_1>[B] +<z_7_6_1>[B] -<f_6_7_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_1>[B] +<z_7_6_1>[B] -<f_6_7_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_1>[B] +<z_7_6_1>[B] -<f_6_7_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_1>[B] +<z_7_6_1>[B] -<f_6_7_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_1>[B] +<z_7_6_1>[B] -<f_6_7_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_2>[B] +<z_7_6_2>[B] -<f_6_7_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_2>[B] +<z_7_6_2>[B] -<f_6_7_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_2>[B] +<z_7_6_2>[B] -<f_6_7_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_2>[B] +<z_7_6_2>[B] -<f_6_7_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_2>[B] +<z_7_6_2>[B] -<f_6_7_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_2>[B] +<z_7_6_2>[B] -<f_6_7_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_3>[B] +<z_7_6_3>[B] -<f_6_7_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_3>[B] +<z_7_6_3>[B] -<f_6_7_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_3>[B] +<z_7_6_3>[B] -<f_6_7_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_3>[B] +<z_7_6_3>[B] -<f_6_7_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_3>[B] +<z_7_6_3>[B] -<f_6_7_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_7_3>[B] +<z_7_6_3>[B] -<f_6_7_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_0>[B] +<z_6_0_0>[B] -<f_0_6_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_0>[B] +<z_6_0_0>[B] -<f_0_6_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_0>[B] +<z_6_0_0>[B] -<f_0_6_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_0>[B] +<z_6_0_0>[B] -<f_0_6_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_0>[B] +<z_6_0_0>[B] -<f_0_6_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_0>[B] +<z_6_0_0>[B] -<f_0_6_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_1>[B] +<z_6_0_1>[B] -<f_0_6_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_1>[B] +<z_6_0_1>[B] -<f_0_6_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_1>[B] +<z_6_0_1>[B] -<f_0_6_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_1>[B] +<z_6_0_1>[B] -<f_0_6_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_1>[B] +<z_6_0_1>[B] -<f_0_6_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_1>[B] +<z_6_0_1>[B] -<f_0_6_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_2>[B] +<z_6_0_2>[B] -<f_0_6_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_2>[B] +<z_6_0_2>[B] -<f_0_6_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_2>[B] +<z_6_0_2>[B] -<f_0_6_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_2>[B] +<z_6_0_2>[B] -<f_0_6_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_2>[B] +<z_6_0_2>[B] -<f_0_6_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_2>[B] +<z_6_0_2>[B] -<f_0_6_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_3>[B] +<z_6_0_3>[B] -<f_0_6_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_3>[B] +<z_6_0_3>[B] -<f_0_6_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_3>[B] +<z_6_0_3>[B] -<f_0_6_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_3>[B] +<z_6_0_3>[B] -<f_0_6_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_3>[B] +<z_6_0_3>[B] -<f_0_6_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_6_3>[B] +<z_6_0_3>[B] -<f_0_6_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_0>[B] +<z_5_1_0>[B] -<f_1_5_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_0>[B] +<z_5_1_0>[B] -<f_1_5_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_0>[B] +<z_5_1_0>[B] -<f_1_5_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_0>[B] +<z_5_1_0>[B] -<f_1_5_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_0>[B] +<z_5_1_0>[B] -<f_1_5_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_0>[B] +<z_5_1_0>[B] -<f_1_5_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_1>[B] +<z_5_1_1>[B] -<f_1_5_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_1>[B] +<z_5_1_1>[B] -<f_1_5_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_1>[B] +<z_5_1_1>[B] -<f_1_5_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_1>[B] +<z_5_1_1>[B] -<f_1_5_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_1>[B] +<z_5_1_1>[B] -<f_1_5_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_1>[B] +<z_5_1_1>[B] -<f_1_5_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_2>[B] +<z_5_1_2>[B] -<f_1_5_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_2>[B] +<z_5_1_2>[B] -<f_1_5_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_2>[B] +<z_5_1_2>[B] -<f_1_5_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_2>[B] +<z_5_1_2>[B] -<f_1_5_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_2>[B] +<z_5_1_2>[B] -<f_1_5_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_2>[B] +<z_5_1_2>[B] -<f_1_5_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_3>[B] +<z_5_1_3>[B] -<f_1_5_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_3>[B] +<z_5_1_3>[B] -<f_1_5_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_3>[B] +<z_5_1_3>[B] -<f_1_5_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_3>[B] +<z_5_1_3>[B] -<f_1_5_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_3>[B] +<z_5_1_3>[B] -<f_1_5_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_5_3>[B] +<z_5_1_3>[B] -<f_1_5_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_0>[B] +<z_6_1_0>[B] -<f_1_6_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_0>[B] +<z_6_1_0>[B] -<f_1_6_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_0>[B] +<z_6_1_0>[B] -<f_1_6_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_0>[B] +<z_6_1_0>[B] -<f_1_6_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_0>[B] +<z_6_1_0>[B] -<f_1_6_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_0>[B] +<z_6_1_0>[B] -<f_1_6_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_1>[B] +<z_6_1_1>[B] -<f_1_6_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_1>[B] +<z_6_1_1>[B] -<f_1_6_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_1>[B] +<z_6_1_1>[B] -<f_1_6_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_1>[B] +<z_6_1_1>[B] -<f_1_6_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_1>[B] +<z_6_1_1>[B] -<f_1_6_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_1>[B] +<z_6_1_1>[B] -<f_1_6_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_2>[B] +<z_6_1_2>[B] -<f_1_6_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_2>[B] +<z_6_1_2>[B] -<f_1_6_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_2>[B] +<z_6_1_2>[B] -<f_1_6_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_2>[B] +<z_6_1_2>[B] -<f_1_6_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_2>[B] +<z_6_1_2>[B] -<f_1_6_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_2>[B] +<z_6_1_2>[B] -<f_1_6_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_3>[B] +<z_6_1_3>[B] -<f_1_6_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_3>[B] +<z_6_1_3>[B] -<f_1_6_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_3>[B] +<z_6_1_3>[B] -<f_1_6_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_3>[B] +<z_6_1_3>[B] -<f_1_6_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_3>[B] +<z_6_1_3>[B] -<f_1_6_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_1_6_3>[B] +<z_6_1_3>[B] -<f_1_6_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_0>[B] +<z_7_0_0>[B] -<f_0_7_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_0>[B] +<z_7_0_0>[B] -<f_0_7_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_0>[B] +<z_7_0_0>[B] -<f_0_7_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_0>[B] +<z_7_0_0>[B] -<f_0_7_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_0>[B] +<z_7_0_0>[B] -<f_0_7_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_0>[B] +<z_7_0_0>[B] -<f_0_7_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_1>[B] +<z_7_0_1>[B] -<f_0_7_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_1>[B] +<z_7_0_1>[B] -<f_0_7_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_1>[B] +<z_7_0_1>[B] -<f_0_7_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_1>[B] +<z_7_0_1>[B] -<f_0_7_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_1>[B] +<z_7_0_1>[B] -<f_0_7_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_1>[B] +<z_7_0_1>[B] -<f_0_7_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_2>[B] +<z_7_0_2>[B] -<f_0_7_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_2>[B] +<z_7_0_2>[B] -<f_0_7_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_2>[B] +<z_7_0_2>[B] -<f_0_7_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_2>[B] +<z_7_0_2>[B] -<f_0_7_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_2>[B] +<z_7_0_2>[B] -<f_0_7_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_2>[B] +<z_7_0_2>[B] -<f_0_7_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_3>[B] +<z_7_0_3>[B] -<f_0_7_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_3>[B] +<z_7_0_3>[B] -<f_0_7_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_3>[B] +<z_7_0_3>[B] -<f_0_7_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_3>[B] +<z_7_0_3>[B] -<f_0_7_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_3>[B] +<z_7_0_3>[B] -<f_0_7_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_0_7_3>[B] +<z_7_0_3>[B] -<f_0_7_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_0>[B] +<z_8_6_0>[B] -<f_6_8_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_0>[B] +<z_8_6_0>[B] -<f_6_8_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_0>[B] +<z_8_6_0>[B] -<f_6_8_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_0>[B] +<z_8_6_0>[B] -<f_6_8_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_0>[B] +<z_8_6_0>[B] -<f_6_8_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_0>[B] +<z_8_6_0>[B] -<f_6_8_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_1>[B] +<z_8_6_1>[B] -<f_6_8_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_1>[B] +<z_8_6_1>[B] -<f_6_8_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_1>[B] +<z_8_6_1>[B] -<f_6_8_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_1>[B] +<z_8_6_1>[B] -<f_6_8_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_1>[B] +<z_8_6_1>[B] -<f_6_8_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_1>[B] +<z_8_6_1>[B] -<f_6_8_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_2>[B] +<z_8_6_2>[B] -<f_6_8_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_2>[B] +<z_8_6_2>[B] -<f_6_8_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_2>[B] +<z_8_6_2>[B] -<f_6_8_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_2>[B] +<z_8_6_2>[B] -<f_6_8_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_2>[B] +<z_8_6_2>[B] -<f_6_8_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_2>[B] +<z_8_6_2>[B] -<f_6_8_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_3>[B] +<z_8_6_3>[B] -<f_6_8_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_3>[B] +<z_8_6_3>[B] -<f_6_8_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_3>[B] +<z_8_6_3>[B] -<f_6_8_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_3>[B] +<z_8_6_3>[B] -<f_6_8_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_3>[B] +<z_8_6_3>[B] -<f_6_8_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_6_8_3>[B] +<z_8_6_3>[B] -<f_6_8_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_0>[B] +<z_9_3_0>[B] -<f_3_9_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_0>[B] +<z_9_3_0>[B] -<f_3_9_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_0>[B] +<z_9_3_0>[B] -<f_3_9_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_0>[B] +<z_9_3_0>[B] -<f_3_9_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_0>[B] +<z_9_3_0>[B] -<f_3_9_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_0>[B] +<z_9_3_0>[B] -<f_3_9_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_1>[B] +<z_9_3_1>[B] -<f_3_9_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_1>[B] +<z_9_3_1>[B] -<f_3_9_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_1>[B] +<z_9_3_1>[B] -<f_3_9_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_1>[B] +<z_9_3_1>[B] -<f_3_9_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_1>[B] +<z_9_3_1>[B] -<f_3_9_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_1>[B] +<z_9_3_1>[B] -<f_3_9_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_2>[B] +<z_9_3_2>[B] -<f_3_9_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_2>[B] +<z_9_3_2>[B] -<f_3_9_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_2>[B] +<z_9_3_2>[B] -<f_3_9_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_2>[B] +<z_9_3_2>[B] -<f_3_9_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_2>[B] +<z_9_3_2>[B] -<f_3_9_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_2>[B] +<z_9_3_2>[B] -<f_3_9_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_3>[B] +<z_9_3_3>[B] -<f_3_9_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_3>[B] +<z_9_3_3>[B] -<f_3_9_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_3>[B] +<z_9_3_3>[B] -<f_3_9_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_3>[B] +<z_9_3_3>[B] -<f_3_9_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_3>[B] +<z_9_3_3>[B] -<f_3_9_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_9_3>[B] +<z_9_3_3>[B] -<f_3_9_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_0>[B] +<z_10_5_0>[B] -<f_5_10_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_0>[B] +<z_10_5_0>[B] -<f_5_10_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_0>[B] +<z_10_5_0>[B] -<f_5_10_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_0>[B] +<z_10_5_0>[B] -<f_5_10_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_0>[B] +<z_10_5_0>[B] -<f_5_10_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_0>[B] +<z_10_5_0>[B] -<f_5_10_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_1>[B] +<z_10_5_1>[B] -<f_5_10_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_1>[B] +<z_10_5_1>[B] -<f_5_10_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_1>[B] +<z_10_5_1>[B] -<f_5_10_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_1>[B] +<z_10_5_1>[B] -<f_5_10_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_1>[B] +<z_10_5_1>[B] -<f_5_10_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_1>[B] +<z_10_5_1>[B] -<f_5_10_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_2>[B] +<z_10_5_2>[B] -<f_5_10_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_2>[B] +<z_10_5_2>[B] -<f_5_10_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_2>[B] +<z_10_5_2>[B] -<f_5_10_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_2>[B] +<z_10_5_2>[B] -<f_5_10_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_2>[B] +<z_10_5_2>[B] -<f_5_10_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_2>[B] +<z_10_5_2>[B] -<f_5_10_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_3>[B] +<z_10_5_3>[B] -<f_5_10_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_3>[B] +<z_10_5_3>[B] -<f_5_10_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_3>[B] +<z_10_5_3>[B] -<f_5_10_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_3>[B] +<z_10_5_3>[B] -<f_5_10_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_3>[B] +<z_10_5_3>[B] -<f_5_10_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_5_10_3>[B] +<z_10_5_3>[B] -<f_5_10_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_0>[B] +<z_11_3_0>[B] -<f_3_11_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_0>[B] +<z_11_3_0>[B] -<f_3_11_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_0>[B] +<z_11_3_0>[B] -<f_3_11_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_0>[B] +<z_11_3_0>[B] -<f_3_11_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_0>[B] +<z_11_3_0>[B] -<f_3_11_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_0>[B] +<z_11_3_0>[B] -<f_3_11_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_1>[B] +<z_11_3_1>[B] -<f_3_11_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_1>[B] +<z_11_3_1>[B] -<f_3_11_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_1>[B] +<z_11_3_1>[B] -<f_3_11_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_1>[B] +<z_11_3_1>[B] -<f_3_11_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_1>[B] +<z_11_3_1>[B] -<f_3_11_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_1>[B] +<z_11_3_1>[B] -<f_3_11_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_2>[B] +<z_11_3_2>[B] -<f_3_11_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_2>[B] +<z_11_3_2>[B] -<f_3_11_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_2>[B] +<z_11_3_2>[B] -<f_3_11_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_2>[B] +<z_11_3_2>[B] -<f_3_11_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_2>[B] +<z_11_3_2>[B] -<f_3_11_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_2>[B] +<z_11_3_2>[B] -<f_3_11_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_3>[B] +<z_11_3_3>[B] -<f_3_11_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_3>[B] +<z_11_3_3>[B] -<f_3_11_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_3>[B] +<z_11_3_3>[B] -<f_3_11_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_3>[B] +<z_11_3_3>[B] -<f_3_11_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_3>[B] +<z_11_3_3>[B] -<f_3_11_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_3_11_3>[B] +<z_11_3_3>[B] -<f_3_11_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_0>[B] +<z_12_7_0>[B] -<f_7_12_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_0>[B] +<z_12_7_0>[B] -<f_7_12_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_0>[B] +<z_12_7_0>[B] -<f_7_12_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_0>[B] +<z_12_7_0>[B] -<f_7_12_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_0>[B] +<z_12_7_0>[B] -<f_7_12_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_0>[B] +<z_12_7_0>[B] -<f_7_12_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_1>[B] +<z_12_7_1>[B] -<f_7_12_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_1>[B] +<z_12_7_1>[B] -<f_7_12_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_1>[B] +<z_12_7_1>[B] -<f_7_12_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_1>[B] +<z_12_7_1>[B] -<f_7_12_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_1>[B] +<z_12_7_1>[B] -<f_7_12_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_1>[B] +<z_12_7_1>[B] -<f_7_12_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_2>[B] +<z_12_7_2>[B] -<f_7_12_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_2>[B] +<z_12_7_2>[B] -<f_7_12_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_2>[B] +<z_12_7_2>[B] -<f_7_12_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_2>[B] +<z_12_7_2>[B] -<f_7_12_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_2>[B] +<z_12_7_2>[B] -<f_7_12_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_2>[B] +<z_12_7_2>[B] -<f_7_12_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_3>[B] +<z_12_7_3>[B] -<f_7_12_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_3>[B] +<z_12_7_3>[B] -<f_7_12_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_3>[B] +<z_12_7_3>[B] -<f_7_12_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_3>[B] +<z_12_7_3>[B] -<f_7_12_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_3>[B] +<z_12_7_3>[B] -<f_7_12_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_7_12_3>[B] +<z_12_7_3>[B] -<f_7_12_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_0>[B] +<z_13_4_0>[B] -<f_4_13_0>[C] -<m_0_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_0>[B] +<z_13_4_0>[B] -<f_4_13_1>[C] -<m_1_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_0>[B] +<z_13_4_0>[B] -<f_4_13_2>[C] -<m_2_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_0>[B] +<z_13_4_0>[B] -<f_4_13_3>[C] -<m_3_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_0>[B] +<z_13_4_0>[B] -<f_4_13_4>[C] -<m_4_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_0>[B] +<z_13_4_0>[B] -<f_4_13_5>[C] -<m_5_0>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_1>[B] +<z_13_4_1>[B] -<f_4_13_0>[C] -<m_0_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_1>[B] +<z_13_4_1>[B] -<f_4_13_1>[C] -<m_1_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_1>[B] +<z_13_4_1>[B] -<f_4_13_2>[C] -<m_2_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_1>[B] +<z_13_4_1>[B] -<f_4_13_3>[C] -<m_3_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_1>[B] +<z_13_4_1>[B] -<f_4_13_4>[C] -<m_4_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_1>[B] +<z_13_4_1>[B] -<f_4_13_5>[C] -<m_5_1>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_2>[B] +<z_13_4_2>[B] -<f_4_13_0>[C] -<m_0_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_2>[B] +<z_13_4_2>[B] -<f_4_13_1>[C] -<m_1_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_2>[B] +<z_13_4_2>[B] -<f_4_13_2>[C] -<m_2_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_2>[B] +<z_13_4_2>[B] -<f_4_13_3>[C] -<m_3_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_2>[B] +<z_13_4_2>[B] -<f_4_13_4>[C] -<m_4_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_2>[B] +<z_13_4_2>[B] -<f_4_13_5>[C] -<m_5_2>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_3>[B] +<z_13_4_3>[B] -<f_4_13_0>[C] -<m_0_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_3>[B] +<z_13_4_3>[B] -<f_4_13_1>[C] -<m_1_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_3>[B] +<z_13_4_3>[B] -<f_4_13_2>[C] -<m_2_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_3>[B] +<z_13_4_3>[B] -<f_4_13_3>[C] -<m_3_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_3>[B] +<z_13_4_3>[B] -<f_4_13_4>[C] -<m_4_3>[B] >= -1.001;
+  [linear] <zlower>: <z_4_13_3>[B] +<z_13_4_3>[B] -<f_4_13_5>[C] -<m_5_3>[B] >= -1.001;
+  [linear] <topo_seq1>: <y_0_0>[C] -<y_1_0>[C] +<z_0_1_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_1_0>[C] -<y_0_0>[C] +<z_1_0_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_1>[C] -<y_1_1>[C] +<z_0_1_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_1_1>[C] -<y_0_1>[C] +<z_1_0_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_2>[C] -<y_1_2>[C] +<z_0_1_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_1_2>[C] -<y_0_2>[C] +<z_1_0_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_3>[C] -<y_1_3>[C] +<z_0_1_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_1_3>[C] -<y_0_3>[C] +<z_1_0_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_0>[C] -<y_2_0>[C] +<z_1_2_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_2_0>[C] -<y_1_0>[C] +<z_2_1_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_1>[C] -<y_2_1>[C] +<z_1_2_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_2_1>[C] -<y_1_1>[C] +<z_2_1_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_2>[C] -<y_2_2>[C] +<z_1_2_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_2_2>[C] -<y_1_2>[C] +<z_2_1_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_3>[C] -<y_2_3>[C] +<z_1_2_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_2_3>[C] -<y_1_3>[C] +<z_2_1_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_2_0>[C] -<y_3_0>[C] +<z_2_3_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_3_0>[C] -<y_2_0>[C] +<z_3_2_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_2_1>[C] -<y_3_1>[C] +<z_2_3_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_3_1>[C] -<y_2_1>[C] +<z_3_2_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_2_2>[C] -<y_3_2>[C] +<z_2_3_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_3_2>[C] -<y_2_2>[C] +<z_3_2_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_2_3>[C] -<y_3_3>[C] +<z_2_3_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_3_3>[C] -<y_2_3>[C] +<z_3_2_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_0>[C] -<y_4_0>[C] +<z_3_4_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_4_0>[C] -<y_3_0>[C] +<z_4_3_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_1>[C] -<y_4_1>[C] +<z_3_4_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_4_1>[C] -<y_3_1>[C] +<z_4_3_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_2>[C] -<y_4_2>[C] +<z_3_4_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_4_2>[C] -<y_3_2>[C] +<z_4_3_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_3>[C] -<y_4_3>[C] +<z_3_4_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_4_3>[C] -<y_3_3>[C] +<z_4_3_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_0>[C] -<y_5_0>[C] +<z_4_5_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_0>[C] -<y_4_0>[C] +<z_5_4_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_1>[C] -<y_5_1>[C] +<z_4_5_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_1>[C] -<y_4_1>[C] +<z_5_4_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_2>[C] -<y_5_2>[C] +<z_4_5_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_2>[C] -<y_4_2>[C] +<z_5_4_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_3>[C] -<y_5_3>[C] +<z_4_5_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_3>[C] -<y_4_3>[C] +<z_5_4_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_0>[C] -<y_6_0>[C] +<z_5_6_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_0>[C] -<y_5_0>[C] +<z_6_5_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_1>[C] -<y_6_1>[C] +<z_5_6_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_1>[C] -<y_5_1>[C] +<z_6_5_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_2>[C] -<y_6_2>[C] +<z_5_6_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_2>[C] -<y_5_2>[C] +<z_6_5_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_3>[C] -<y_6_3>[C] +<z_5_6_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_3>[C] -<y_5_3>[C] +<z_6_5_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_0>[C] -<y_7_0>[C] +<z_6_7_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_0>[C] -<y_6_0>[C] +<z_7_6_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_1>[C] -<y_7_1>[C] +<z_6_7_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_1>[C] -<y_6_1>[C] +<z_7_6_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_2>[C] -<y_7_2>[C] +<z_6_7_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_2>[C] -<y_6_2>[C] +<z_7_6_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_3>[C] -<y_7_3>[C] +<z_6_7_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_3>[C] -<y_6_3>[C] +<z_7_6_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_0>[C] -<y_6_0>[C] +<z_0_6_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_0>[C] -<y_0_0>[C] +<z_6_0_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_1>[C] -<y_6_1>[C] +<z_0_6_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_1>[C] -<y_0_1>[C] +<z_6_0_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_2>[C] -<y_6_2>[C] +<z_0_6_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_2>[C] -<y_0_2>[C] +<z_6_0_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_3>[C] -<y_6_3>[C] +<z_0_6_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_3>[C] -<y_0_3>[C] +<z_6_0_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_0>[C] -<y_5_0>[C] +<z_1_5_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_0>[C] -<y_1_0>[C] +<z_5_1_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_1>[C] -<y_5_1>[C] +<z_1_5_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_1>[C] -<y_1_1>[C] +<z_5_1_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_2>[C] -<y_5_2>[C] +<z_1_5_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_2>[C] -<y_1_2>[C] +<z_5_1_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_3>[C] -<y_5_3>[C] +<z_1_5_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_5_3>[C] -<y_1_3>[C] +<z_5_1_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_0>[C] -<y_6_0>[C] +<z_1_6_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_0>[C] -<y_1_0>[C] +<z_6_1_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_1>[C] -<y_6_1>[C] +<z_1_6_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_1>[C] -<y_1_1>[C] +<z_6_1_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_2>[C] -<y_6_2>[C] +<z_1_6_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_2>[C] -<y_1_2>[C] +<z_6_1_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_1_3>[C] -<y_6_3>[C] +<z_1_6_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_6_3>[C] -<y_1_3>[C] +<z_6_1_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_0>[C] -<y_7_0>[C] +<z_0_7_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_0>[C] -<y_0_0>[C] +<z_7_0_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_1>[C] -<y_7_1>[C] +<z_0_7_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_1>[C] -<y_0_1>[C] +<z_7_0_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_2>[C] -<y_7_2>[C] +<z_0_7_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_2>[C] -<y_0_2>[C] +<z_7_0_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_0_3>[C] -<y_7_3>[C] +<z_0_7_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_7_3>[C] -<y_0_3>[C] +<z_7_0_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_0>[C] -<y_8_0>[C] +<z_6_8_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_8_0>[C] -<y_6_0>[C] +<z_8_6_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_1>[C] -<y_8_1>[C] +<z_6_8_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_8_1>[C] -<y_6_1>[C] +<z_8_6_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_2>[C] -<y_8_2>[C] +<z_6_8_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_8_2>[C] -<y_6_2>[C] +<z_8_6_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_6_3>[C] -<y_8_3>[C] +<z_6_8_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_8_3>[C] -<y_6_3>[C] +<z_8_6_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_0>[C] -<y_9_0>[C] +<z_3_9_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_9_0>[C] -<y_3_0>[C] +<z_9_3_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_1>[C] -<y_9_1>[C] +<z_3_9_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_9_1>[C] -<y_3_1>[C] +<z_9_3_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_2>[C] -<y_9_2>[C] +<z_3_9_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_9_2>[C] -<y_3_2>[C] +<z_9_3_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_3>[C] -<y_9_3>[C] +<z_3_9_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_9_3>[C] -<y_3_3>[C] +<z_9_3_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_0>[C] -<y_10_0>[C] +<z_5_10_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_10_0>[C] -<y_5_0>[C] +<z_10_5_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_1>[C] -<y_10_1>[C] +<z_5_10_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_10_1>[C] -<y_5_1>[C] +<z_10_5_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_2>[C] -<y_10_2>[C] +<z_5_10_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_10_2>[C] -<y_5_2>[C] +<z_10_5_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_5_3>[C] -<y_10_3>[C] +<z_5_10_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_10_3>[C] -<y_5_3>[C] +<z_10_5_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_0>[C] -<y_11_0>[C] +<z_3_11_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_11_0>[C] -<y_3_0>[C] +<z_11_3_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_1>[C] -<y_11_1>[C] +<z_3_11_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_11_1>[C] -<y_3_1>[C] +<z_11_3_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_2>[C] -<y_11_2>[C] +<z_3_11_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_11_2>[C] -<y_3_2>[C] +<z_11_3_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_3_3>[C] -<y_11_3>[C] +<z_3_11_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_11_3>[C] -<y_3_3>[C] +<z_11_3_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_7_0>[C] -<y_12_0>[C] +<z_7_12_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_12_0>[C] -<y_7_0>[C] +<z_12_7_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_7_1>[C] -<y_12_1>[C] +<z_7_12_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_12_1>[C] -<y_7_1>[C] +<z_12_7_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_7_2>[C] -<y_12_2>[C] +<z_7_12_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_12_2>[C] -<y_7_2>[C] +<z_12_7_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_7_3>[C] -<y_12_3>[C] +<z_7_12_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_12_3>[C] -<y_7_3>[C] +<z_12_7_3>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_0>[C] -<y_13_0>[C] +<z_4_13_0>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_13_0>[C] -<y_4_0>[C] +<z_13_4_0>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_1>[C] -<y_13_1>[C] +<z_4_13_1>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_13_1>[C] -<y_4_1>[C] +<z_13_4_1>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_2>[C] -<y_13_2>[C] +<z_4_13_2>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_13_2>[C] -<y_4_2>[C] +<z_13_4_2>[B] <= 0.999;
+  [linear] <topo_seq1>: <y_4_3>[C] -<y_13_3>[C] +<z_4_13_3>[B] <= 0.999;
+  [linear] <topo_seq2>: <y_13_3>[C] -<y_4_3>[C] +<z_13_4_3>[B] <= 0.999;
+  [linear] <only_father>: 0 <= <z_1_0_0>[B] +<z_6_0_0>[B] +<z_7_0_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_0_1>[B] +<z_6_0_1>[B] +<z_7_0_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_0_2>[B] +<z_6_0_2>[B] +<z_7_0_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_0_3>[B] +<z_6_0_3>[B] +<z_7_0_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_1_0>[B] +<z_2_1_0>[B] +<z_5_1_0>[B] +<z_6_1_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_1_1>[B] +<z_2_1_1>[B] +<z_5_1_1>[B] +<z_6_1_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_1_2>[B] +<z_2_1_2>[B] +<z_5_1_2>[B] +<z_6_1_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_1_3>[B] +<z_2_1_3>[B] +<z_5_1_3>[B] +<z_6_1_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_2_0>[B] +<z_3_2_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_2_1>[B] +<z_3_2_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_2_2>[B] +<z_3_2_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_2_3>[B] +<z_3_2_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_2_3_0>[B] +<z_4_3_0>[B] +<z_9_3_0>[B] +<z_11_3_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_2_3_1>[B] +<z_4_3_1>[B] +<z_9_3_1>[B] +<z_11_3_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_2_3_2>[B] +<z_4_3_2>[B] +<z_9_3_2>[B] +<z_11_3_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_2_3_3>[B] +<z_4_3_3>[B] +<z_9_3_3>[B] +<z_11_3_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_4_0>[B] +<z_5_4_0>[B] +<z_13_4_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_4_1>[B] +<z_5_4_1>[B] +<z_13_4_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_4_2>[B] +<z_5_4_2>[B] +<z_13_4_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_4_3>[B] +<z_5_4_3>[B] +<z_13_4_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_5_0>[B] +<z_4_5_0>[B] +<z_6_5_0>[B] +<z_10_5_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_5_1>[B] +<z_4_5_1>[B] +<z_6_5_1>[B] +<z_10_5_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_5_2>[B] +<z_4_5_2>[B] +<z_6_5_2>[B] +<z_10_5_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_1_5_3>[B] +<z_4_5_3>[B] +<z_6_5_3>[B] +<z_10_5_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_6_0>[B] +<z_1_6_0>[B] +<z_5_6_0>[B] +<z_7_6_0>[B] +<z_8_6_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_6_1>[B] +<z_1_6_1>[B] +<z_5_6_1>[B] +<z_7_6_1>[B] +<z_8_6_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_6_2>[B] +<z_1_6_2>[B] +<z_5_6_2>[B] +<z_7_6_2>[B] +<z_8_6_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_6_3>[B] +<z_1_6_3>[B] +<z_5_6_3>[B] +<z_7_6_3>[B] +<z_8_6_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_7_0>[B] +<z_6_7_0>[B] +<z_12_7_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_7_1>[B] +<z_6_7_1>[B] +<z_12_7_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_7_2>[B] +<z_6_7_2>[B] +<z_12_7_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_0_7_3>[B] +<z_6_7_3>[B] +<z_12_7_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_6_8_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_6_8_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_6_8_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_6_8_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_9_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_9_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_9_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_9_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_5_10_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_5_10_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_5_10_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_5_10_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_11_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_11_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_11_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_3_11_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_7_12_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_7_12_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_7_12_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_7_12_3>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_4_13_0>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_4_13_1>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_4_13_2>[B] <= 1;
+  [linear] <only_father>: 0 <= <z_4_13_3>[B] <= 1;
+END

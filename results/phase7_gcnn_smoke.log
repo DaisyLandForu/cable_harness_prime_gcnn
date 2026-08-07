@@ -1,0 +1,52 @@
+{
+  "run_name": "bipartite_gcnn_scalar_smoke",
+  "gradient_steps": 100,
+  "episodes": 1,
+  "replay_size": 30,
+  "best_validation_nodes": 30.0,
+  "wall_time": 139.06515168500482,
+  "device": "cuda",
+  "torch_version": "2.5.1+cu121",
+  "loss_mode": "scalar",
+  "evaluation": [
+    {
+      "method": "random",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10111,
+      "status": "nodelimit",
+      "nodes": 30,
+      "solving_time": 26.219274,
+      "reward": -29.0,
+      "transitions": 30,
+      "mean_rank": 0.0,
+      "inference_time": 0.0
+    },
+    {
+      "method": "untrained",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10123,
+      "status": "nodelimit",
+      "nodes": 30,
+      "solving_time": 25.873642,
+      "reward": -29.0,
+      "transitions": 30,
+      "mean_rank": 1.0,
+      "inference_time": 0.3246278580263606
+    },
+    {
+      "method": "rl",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10137,
+      "status": "nodelimit",
+      "nodes": 30,
+      "solving_time": 27.481069,
+      "reward": -29.0,
+      "transitions": 29,
+      "mean_rank": 1.0,
+      "inference_time": 0.3457519739822601
+    }
+  ]
+}

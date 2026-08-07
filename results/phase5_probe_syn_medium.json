@@ -1,0 +1,17 @@
+{
+  "instance": "data/instances/validation/syn_medium_s201.cip",
+  "policy": "random",
+  "seed": 0,
+  "reward_mode": "negative_node_increment",
+  "gamma": 1.0,
+  "transition_count": 0,
+  "status": "optimal",
+  "terminated": true,
+  "truncated": false,
+  "nodes": 1,
+  "lp_iterations": 4221,
+  "solving_time": 0.6460509999999999,
+  "total_reward": 0.0,
+  "visited_tree_nodes": 0,
+  "transitions": []
+}

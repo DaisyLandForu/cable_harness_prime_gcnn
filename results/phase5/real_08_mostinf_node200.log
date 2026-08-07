@@ -1,0 +1,16 @@
+{
+  "instance": "data/instances/validation/real_08.cip",
+  "policy": "mostinf",
+  "seed": 100,
+  "reward_mode": "negative_node_increment",
+  "gamma": 1.0,
+  "transition_count": 66,
+  "status": "optimal",
+  "terminated": true,
+  "truncated": false,
+  "nodes": 74,
+  "lp_iterations": 9180,
+  "solving_time": 27.005274,
+  "total_reward": -73.0,
+  "visited_tree_nodes": 66
+}

@@ -1,0 +1,10 @@
+{
+  "device": "cuda",
+  "candidate_count": 154,
+  "max_abs_error": 5.7220458984375e-06,
+  "tolerance": 1e-05,
+  "python_argmax_position": 24,
+  "cpp_argmax_position": 24,
+  "argmax_equal": true,
+  "passed": true
+}

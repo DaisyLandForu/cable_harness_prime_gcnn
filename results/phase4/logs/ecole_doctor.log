@@ -1,0 +1,13 @@
+Ecole version info:
+    Version       : 0.8.1
+    Git Revision  : c6a6d872b773192608b30bdd3b99481a8b6f55ba
+    Build Type    : Release
+    Build OS      : Linux-5.15.0-177-generic
+    Build Time    : 2026-08-04T04:07:30
+    Build Compiler: GNU-11.4.0
+    Path:         : /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/ecole/lib/libecole.so.0.8
+Built against SCIP:
+    Version       : 8.0.4
+Running SCIP:
+    Version       : 8.0.4
+    Path:         : /home/duweiyue25/acyclic_cable_harness/artifacts/environment/phase4/scip804_prefix/lib/libscip.so.8.0

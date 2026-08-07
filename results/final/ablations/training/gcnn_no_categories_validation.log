@@ -1,0 +1,11 @@
+{
+  "device": "cuda",
+  "candidate_count": 154,
+  "max_abs_error": 1.9073486328125e-06,
+  "tolerance": 1e-05,
+  "eager_argmax_position": 24,
+  "scripted_argmax_position": 24,
+  "argmax_equal": true,
+  "finite_training_losses": true,
+  "passed": true
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": 2,
+  "candidate_variable_features": [
+    "objective",
+    "is_type_binary",
+    "is_type_integer",
+    "is_type_implicit_integer",
+    "is_type_continuous",
+    "has_lower_bound",
+    "has_upper_bound",
+    "normed_reduced_cost",
+    "solution_value",
+    "solution_frac",
+    "is_solution_at_lower_bound",
+    "is_solution_at_upper_bound",
+    "scaled_age",
+    "incumbent_value",
+    "average_incumbent_value",
+    "is_basis_lower",
+    "is_basis_basic",
+    "is_basis_upper",
+    "is_basis_zero"
+  ],
+  "global_features": [
+    "depth",
+    "processed_nodes",
+    "total_nodes",
+    "open_nodes",
+    "feasible_leaves",
+    "infeasible_leaves",
+    "lp_iterations",
+    "primal_bound",
+    "primal_bound_finite",
+    "dual_bound",
+    "dual_bound_finite",
+    "relative_gap",
+    "relative_gap_finite",
+    "incumbent_count"
+  ],
+  "aviation_variable_categories": [
+    "m",
+    "z",
+    "y",
+    "absf",
+    "f",
+    "other"
+  ],
+  "input_width": 39,
+  "action_semantics": "one scalar Q per current fractional LP candidate",
+  "category_name_rule": "strip repeated t_ prefixes, then match <category>_",
+  "excluded_features": {
+    "solving_time": "wall-clock dependent and not reproducible for an identical SCIP state"
+  }
+}

@@ -1,0 +1,16 @@
+event_index,node_id,depth,candidate_count,selected_candidate_index,selected_variable_index,selected_variable_name,lp_value,fractionality,selected_q,inference_time_seconds,selection_time_seconds,selected_is_candidate,result,fallback_reason
+0,1,0,180,34,61,t_m_15_1,0.13006684755322123,0.13006684755322123,-24.733196258544922,0.091599541000000007,0.143065885,true,branched,
+1,2,1,183,37,63,t_m_15_3,0.14324015115832678,0.14324015115832678,-24.6710205078125,1.1389944000000001,1.185777904,true,branched,
+2,4,2,169,43,81,t_m_20_1,0.15266802194702189,0.15266802194702189,-24.674943923950195,1.432017257,1.4785220379999999,true,branched,
+3,6,3,168,41,79,t_m_19_3,0.19999834313120146,0.19999834313120146,-24.686321258544922,0.010878288,0.060180623000000003,true,branched,
+4,8,4,168,44,83,t_m_20_3,0.13008521286199537,0.13008521286199537,-24.738307952880859,0.011055584,0.057151843000000001,true,branched,
+5,10,5,167,39,70,t_m_17_2,0.16616666666666657,0.16616666666666657,-24.776313781738281,0.010797307000000001,0.056852376000000003,true,branched,
+6,12,6,190,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+7,14,7,172,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+8,16,8,169,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+9,19,9,159,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+10,21,10,140,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+11,23,11,115,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+12,25,12,109,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+13,27,13,82,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+14,29,14,61,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost

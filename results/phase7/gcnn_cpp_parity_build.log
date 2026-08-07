@@ -1,0 +1,3 @@
+mkdir -p build
+g++ -O2 -std=c++17 -Wall -Wextra -D_GLIBCXX_USE_CXX11_ABI=0 tests/gcnn_model_runner_parity.cpp src/rl/gcnn_model_runner.cpp \
+	-Isrc -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/scip -isystem /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/include -isystem /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/include/torch/csrc/api/include -L/home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/lib -Wl,-rpath,/home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/lib -ltorch -ltorch_cpu -ltorch_cuda -lc10_cuda -lc10 -o build/gcnn_model_runner_parity

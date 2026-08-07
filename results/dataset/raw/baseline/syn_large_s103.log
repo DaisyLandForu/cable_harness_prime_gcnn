@@ -1,0 +1,62 @@
+Reading edges
+Reading pairs
+Solving problem
+SCIP
+mip_gap: 0
+branching: default (relpscost)
+seed: 0
+pairs size: 45
+nodes size: 80
+edges size: 139
+copy   num: 4
+Solving...
+presolving:
+(round 1, fast)       7470 del vars, 13400 del conss, 0 add conss, 3420 chg bounds, 25260 chg sides, 64260 chg coeffs, 0 upgd conss, 0 impls, 285 clqs
+(round 2, fast)       8410 del vars, 13580 del conss, 0 add conss, 3510 chg bounds, 25260 chg sides, 64260 chg coeffs, 0 upgd conss, 0 impls, 285 clqs
+(round 3, exhaustive) 8430 del vars, 13620 del conss, 0 add conss, 3550 chg bounds, 25260 chg sides, 64260 chg coeffs, 0 upgd conss, 0 impls, 285 clqs
+(round 4, exhaustive) 8430 del vars, 13620 del conss, 0 add conss, 3550 chg bounds, 25260 chg sides, 64260 chg coeffs, 468 upgd conss, 0 impls, 285 clqs
+   (0.8s) probing: 51/1252 (4.1%) - 0 fixings, 0 aggregations, 0 implications, 0 bound changes
+   (0.8s) probing aborted: 50/50 successive totally useless probings
+   (1.2s) symmetry computation started: requiring (bin +, int -, cont +), (fixed: bin -, int +, cont -)
+   (1.3s) no symmetry present
+presolving (5 rounds: 5 fast, 3 medium, 3 exhaustive):
+ 8430 deleted vars, 13620 deleted constraints, 0 added constraints, 3550 tightened bounds, 0 added holes, 25260 changed sides, 64260 changed coefficients
+ 0 implications, 285 cliques
+presolved problem has 11947 variables (1252 bin, 0 int, 0 impl, 10695 cont) and 36055 constraints
+      3 constraints of type <knapsack>
+    285 constraints of type <setppc>
+  35587 constraints of type <linear>
+    180 constraints of type <logicor>
+Presolving Time: 1.23
+
+ time | node  | left  |LP iter|LP it/n|mem/heur|mdpt |vars |cons |rows |cuts |sepa|confs|strbr|  dualbound   | primalbound  |  gap   | compl. 
+  3.1s|     1 |     0 | 20898 |     - |   220M |   0 |  11k|  36k|  36k|   0 |  0 |   4 |   0 | 9.105300e-03 |      --      |    Inf | unknown
+o 5.8s|     1 |     0 | 24671 |     - |feaspump|   0 |  11k|  36k|  36k|   0 |  0 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  6.0s|     1 |     0 | 24687 |     - |   229M |   0 |  11k|  36k|  36k|   1 |  1 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  6.2s|     1 |     0 | 24693 |     - |   235M |   0 |  11k|  36k|  36k|   2 |  2 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  6.4s|     1 |     0 | 24711 |     - |   240M |   0 |  11k|  36k|  36k|   4 |  3 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  6.7s|     1 |     0 | 24743 |     - |   247M |   0 |  11k|  36k|  36k|   6 |  4 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  6.9s|     1 |     0 | 24753 |     - |   253M |   0 |  11k|  36k|  36k|   9 |  5 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  7.1s|     1 |     0 | 24776 |     - |   260M |   0 |  11k|  36k|  36k|  12 |  6 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  7.4s|     1 |     0 | 24794 |     - |   268M |   0 |  11k|  36k|  36k|  14 |  7 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  7.6s|     1 |     0 | 24804 |     - |   272M |   0 |  11k|  36k|  36k|  16 |  8 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  7.8s|     1 |     0 | 24815 |     - |   279M |   0 |  11k|  36k|  36k|  19 |  9 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  8.0s|     1 |     0 | 24833 |     - |   285M |   0 |  11k|  36k|  36k|  21 | 10 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+  8.2s|     1 |     0 | 24847 |     - |   288M |   0 |  11k|  36k|  36k|  22 | 11 |   4 |   0 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+ 11.2s|     1 |     2 | 26527 |     - |   291M |   0 |  11k|  36k|  36k|  22 | 11 |   6 |  30 | 9.105300e-03 | 1.207130e-02 |  32.57%| unknown
+r24.7s|    18 |     0 | 26839 | 927.5 |shifting|  10 |  11k|  36k|  36k|  25 |  2 |   6 | 301 | 9.105300e-03 | 9.105300e-03 |   0.00%|  99.96%
+
+SCIP Status        : problem is solved [optimal solution found]
+Solving Time (sec) : 24.66
+Solving Nodes      : 18
+Primal Bound       : +9.10530000000000e-03 (2 solutions)
+Dual Bound         : +9.10530000000000e-03
+Gap                : 0.00 %
+OPTIMAL
+Solution:
+Objective value = 0.0091053
+Checking cycles
+No cycle
+Total best res: 0.0102651
+Outputing results
+Execute success

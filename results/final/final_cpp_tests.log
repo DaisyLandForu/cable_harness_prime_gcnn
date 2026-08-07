@@ -1,0 +1,305 @@
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objcloneable.h:37,
+                 from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:41,
+                 from src/rl/rl_branchrule.hpp:9,
+                 from tests/test_custom_branchrule.cpp:7:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objcloneable.h: In member function ‘virtual scip::ObjCloneable* scip::ObjCloneable::clone(SCIP*) const’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/type_objcloneable.h:41:49: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   41 | #define SCIP_DECL_OBJCLONEABLECLONE(x) x (SCIP* scip) const
+      |                                           ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objcloneable.h:58:15: note: in expansion of macro ‘SCIP_DECL_OBJCLONEABLECLONE’
+   58 |       virtual SCIP_DECL_OBJCLONEABLECLONE(ObjCloneable* clone)
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/scip.h:61,
+                 from tests/test_custom_branchrule.cpp:5:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_free(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:75:55: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   75 | #define SCIP_DECL_BRANCHFREE(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                 ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:142:12: note: in expansion of macro ‘SCIP_DECL_BRANCHFREE’
+  142 |    virtual SCIP_DECL_BRANCHFREE(scip_free)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:75:78: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+   75 | #define SCIP_DECL_BRANCHFREE(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:142:12: note: in expansion of macro ‘SCIP_DECL_BRANCHFREE’
+  142 |    virtual SCIP_DECL_BRANCHFREE(scip_free)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_init(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:83:55: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   83 | #define SCIP_DECL_BRANCHINIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                 ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:151:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINIT’
+  151 |    virtual SCIP_DECL_BRANCHINIT(scip_init)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:83:78: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+   83 | #define SCIP_DECL_BRANCHINIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:151:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINIT’
+  151 |    virtual SCIP_DECL_BRANCHINIT(scip_init)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_exit(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:91:55: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   91 | #define SCIP_DECL_BRANCHEXIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                 ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:160:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXIT’
+  160 |    virtual SCIP_DECL_BRANCHEXIT(scip_exit)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:91:78: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+   91 | #define SCIP_DECL_BRANCHEXIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:160:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXIT’
+  160 |    virtual SCIP_DECL_BRANCHEXIT(scip_exit)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_initsol(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:102:58: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  102 | #define SCIP_DECL_BRANCHINITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                    ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:169:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINITSOL’
+  169 |    virtual SCIP_DECL_BRANCHINITSOL(scip_initsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:102:81: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  102 | #define SCIP_DECL_BRANCHINITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:169:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINITSOL’
+  169 |    virtual SCIP_DECL_BRANCHINITSOL(scip_initsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_exitsol(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:113:58: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  113 | #define SCIP_DECL_BRANCHEXITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                    ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:178:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXITSOL’
+  178 |    virtual SCIP_DECL_BRANCHEXITSOL(scip_exitsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:113:81: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  113 | #define SCIP_DECL_BRANCHEXITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:178:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXITSOL’
+  178 |    virtual SCIP_DECL_BRANCHEXITSOL(scip_exitsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_execlp(SCIP*, SCIP_BRANCHRULE*, unsigned int, SCIP_RESULT*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:134:57: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  134 | #define SCIP_DECL_BRANCHEXECLP(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                   ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:187:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECLP’
+  187 |    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:134:80: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  134 | #define SCIP_DECL_BRANCHEXECLP(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                               ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:187:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECLP’
+  187 |    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:134:102: warning: unused parameter ‘allowaddcons’ [-Wunused-parameter]
+  134 | #define SCIP_DECL_BRANCHEXECLP(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:187:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECLP’
+  187 |    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/scip.h:61,
+                 from tests/test_custom_branchrule.cpp:5:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_execext(SCIP*, SCIP_BRANCHRULE*, unsigned int, SCIP_RESULT*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:155:58: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  155 | #define SCIP_DECL_BRANCHEXECEXT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                    ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:198:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECEXT’
+  198 |    virtual SCIP_DECL_BRANCHEXECEXT(scip_execext)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:155:81: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  155 | #define SCIP_DECL_BRANCHEXECEXT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:198:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECEXT’
+  198 |    virtual SCIP_DECL_BRANCHEXECEXT(scip_execext)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:155:103: warning: unused parameter ‘allowaddcons’ [-Wunused-parameter]
+  155 | #define SCIP_DECL_BRANCHEXECEXT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:198:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECEXT’
+  198 |    virtual SCIP_DECL_BRANCHEXECEXT(scip_execext)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_execps(SCIP*, SCIP_BRANCHRULE*, unsigned int, SCIP_RESULT*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:176:57: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  176 | #define SCIP_DECL_BRANCHEXECPS(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                   ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:209:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECPS’
+  209 |    virtual SCIP_DECL_BRANCHEXECPS(scip_execps)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:176:80: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  176 | #define SCIP_DECL_BRANCHEXECPS(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                               ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:209:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECPS’
+  209 |    virtual SCIP_DECL_BRANCHEXECPS(scip_execps)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:176:102: warning: unused parameter ‘allowaddcons’ [-Wunused-parameter]
+  176 | #define SCIP_DECL_BRANCHEXECPS(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:209:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECPS’
+  209 |    virtual SCIP_DECL_BRANCHEXECPS(scip_execps)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/scip.h:45,
+                 from tests/test_custom_branchrule.cpp:5:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/blockmemshell/memory.h: In instantiation of ‘T1* docastcheck(T1*, void*, T2*) [with T1 = char; T2 = const char]’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:100:7:   required from here
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/blockmemshell/memory.h:62:56: warning: unused parameter ‘v1’ [-Wunused-parameter]
+   62 | template<typename T1, typename T2> T1* docastcheck(T1* v1, void* v, T2* v2)
+      |                                                    ~~~~^~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/blockmemshell/memory.h:62:73: warning: unused parameter ‘v2’ [-Wunused-parameter]
+   62 | template<typename T1, typename T2> T1* docastcheck(T1* v1, void* v, T2* v2)
+      |                                                                     ~~~~^~
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objcloneable.h:37,
+                 from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:41,
+                 from src/rl/rl_branchrule.hpp:9,
+                 from src/rl/rl_branchrule.cpp:1:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objcloneable.h: In member function ‘virtual scip::ObjCloneable* scip::ObjCloneable::clone(SCIP*) const’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/type_objcloneable.h:41:49: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   41 | #define SCIP_DECL_OBJCLONEABLECLONE(x) x (SCIP* scip) const
+      |                                           ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objcloneable.h:58:15: note: in expansion of macro ‘SCIP_DECL_OBJCLONEABLECLONE’
+   58 |       virtual SCIP_DECL_OBJCLONEABLECLONE(ObjCloneable* clone)
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/scip.h:61,
+                 from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:40,
+                 from src/rl/rl_branchrule.hpp:9,
+                 from src/rl/rl_branchrule.cpp:1:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_free(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:75:55: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   75 | #define SCIP_DECL_BRANCHFREE(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                 ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:142:12: note: in expansion of macro ‘SCIP_DECL_BRANCHFREE’
+  142 |    virtual SCIP_DECL_BRANCHFREE(scip_free)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:75:78: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+   75 | #define SCIP_DECL_BRANCHFREE(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:142:12: note: in expansion of macro ‘SCIP_DECL_BRANCHFREE’
+  142 |    virtual SCIP_DECL_BRANCHFREE(scip_free)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_init(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:83:55: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   83 | #define SCIP_DECL_BRANCHINIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                 ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:151:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINIT’
+  151 |    virtual SCIP_DECL_BRANCHINIT(scip_init)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:83:78: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+   83 | #define SCIP_DECL_BRANCHINIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:151:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINIT’
+  151 |    virtual SCIP_DECL_BRANCHINIT(scip_init)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_exit(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:91:55: warning: unused parameter ‘scip’ [-Wunused-parameter]
+   91 | #define SCIP_DECL_BRANCHEXIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                 ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:160:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXIT’
+  160 |    virtual SCIP_DECL_BRANCHEXIT(scip_exit)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:91:78: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+   91 | #define SCIP_DECL_BRANCHEXIT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:160:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXIT’
+  160 |    virtual SCIP_DECL_BRANCHEXIT(scip_exit)
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_initsol(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:102:58: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  102 | #define SCIP_DECL_BRANCHINITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                    ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:169:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINITSOL’
+  169 |    virtual SCIP_DECL_BRANCHINITSOL(scip_initsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:102:81: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  102 | #define SCIP_DECL_BRANCHINITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:169:12: note: in expansion of macro ‘SCIP_DECL_BRANCHINITSOL’
+  169 |    virtual SCIP_DECL_BRANCHINITSOL(scip_initsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_exitsol(SCIP*, SCIP_BRANCHRULE*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:113:58: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  113 | #define SCIP_DECL_BRANCHEXITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                    ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:178:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXITSOL’
+  178 |    virtual SCIP_DECL_BRANCHEXITSOL(scip_exitsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:113:81: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  113 | #define SCIP_DECL_BRANCHEXITSOL(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule)
+      |                                                                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:178:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXITSOL’
+  178 |    virtual SCIP_DECL_BRANCHEXITSOL(scip_exitsol)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_execlp(SCIP*, SCIP_BRANCHRULE*, unsigned int, SCIP_RESULT*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:134:57: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  134 | #define SCIP_DECL_BRANCHEXECLP(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                   ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:187:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECLP’
+  187 |    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:134:80: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  134 | #define SCIP_DECL_BRANCHEXECLP(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                               ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:187:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECLP’
+  187 |    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:134:102: warning: unused parameter ‘allowaddcons’ [-Wunused-parameter]
+  134 | #define SCIP_DECL_BRANCHEXECLP(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:187:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECLP’
+  187 |    virtual SCIP_DECL_BRANCHEXECLP(scip_execlp)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/scip.h:61,
+                 from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:40,
+                 from src/rl/rl_branchrule.hpp:9,
+                 from src/rl/rl_branchrule.cpp:1:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_execext(SCIP*, SCIP_BRANCHRULE*, unsigned int, SCIP_RESULT*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:155:58: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  155 | #define SCIP_DECL_BRANCHEXECEXT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                    ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:198:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECEXT’
+  198 |    virtual SCIP_DECL_BRANCHEXECEXT(scip_execext)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:155:81: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  155 | #define SCIP_DECL_BRANCHEXECEXT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                                ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:198:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECEXT’
+  198 |    virtual SCIP_DECL_BRANCHEXECEXT(scip_execext)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:155:103: warning: unused parameter ‘allowaddcons’ [-Wunused-parameter]
+  155 | #define SCIP_DECL_BRANCHEXECEXT(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:198:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECEXT’
+  198 |    virtual SCIP_DECL_BRANCHEXECEXT(scip_execext)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h: In member function ‘virtual SCIP_RETCODE scip::ObjBranchrule::scip_execps(SCIP*, SCIP_BRANCHRULE*, unsigned int, SCIP_RESULT*)’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:176:57: warning: unused parameter ‘scip’ [-Wunused-parameter]
+  176 | #define SCIP_DECL_BRANCHEXECPS(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                   ~~~~~~^~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:209:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECPS’
+  209 |    virtual SCIP_DECL_BRANCHEXECPS(scip_execps)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:176:80: warning: unused parameter ‘branchrule’ [-Wunused-parameter]
+  176 | #define SCIP_DECL_BRANCHEXECPS(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+      |                                                               ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:209:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECPS’
+  209 |    virtual SCIP_DECL_BRANCHEXECPS(scip_execps)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/type_branch.h:176:102: warning: unused parameter ‘allowaddcons’ [-Wunused-parameter]
+  176 | #define SCIP_DECL_BRANCHEXECPS(x) SCIP_RETCODE x (SCIP* scip, SCIP_BRANCHRULE* branchrule, SCIP_Bool allowaddcons, SCIP_RESULT* result)
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:209:12: note: in expansion of macro ‘SCIP_DECL_BRANCHEXECPS’
+  209 |    virtual SCIP_DECL_BRANCHEXECPS(scip_execps)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/scip/scip.h:45,
+                 from /home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:40,
+                 from src/rl/rl_branchrule.hpp:9,
+                 from src/rl/rl_branchrule.cpp:1:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/blockmemshell/memory.h: In instantiation of ‘T1* docastcheck(T1*, void*, T2*) [with T1 = char; T2 = const char]’:
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/objscip/objbranchrule.h:100:7:   required from here
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/blockmemshell/memory.h:62:56: warning: unused parameter ‘v1’ [-Wunused-parameter]
+   62 | template<typename T1, typename T2> T1* docastcheck(T1* v1, void* v, T2* v2)
+      |                                                    ~~~~^~
+/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src/blockmemshell/memory.h:62:73: warning: unused parameter ‘v2’ [-Wunused-parameter]
+   62 | template<typename T1, typename T2> T1* docastcheck(T1* v1, void* v, T2* v2)
+      |                                                                     ~~~~^~
+mkdir -p build
+g++ -O2 -std=c++17 -Wall -Wextra -D_GLIBCXX_USE_CXX11_ABI=0 tests/test_custom_branchrule.cpp src/rl/rl_branchrule.cpp src/rl/scip_feature_extractor.cpp \
+	-Isrc -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/scip -L/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -Wl,-rpath,/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -lscip -o build/test_custom_branchrule
+./build/test_custom_branchrule
+custom branchrule selection tests passed
+mkdir -p build
+g++ -O2 -std=c++17 -Wall -Wextra -D_GLIBCXX_USE_CXX11_ABI=0 tests/model_runner_parity.cpp src/rl/model_runner.cpp \
+	-Isrc -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/scip -isystem /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/include -isystem /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/include/torch/csrc/api/include -L/home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/lib -Wl,-rpath,/home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/lib -ltorch -ltorch_cpu -ltorch_cuda -lc10_cuda -lc10 -o build/model_runner_parity
+mkdir -p build
+g++ -O2 -std=c++17 -Wall -Wextra -D_GLIBCXX_USE_CXX11_ABI=0 tests/gcnn_model_runner_parity.cpp src/rl/gcnn_model_runner.cpp \
+	-Isrc -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/scip -isystem /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/include -isystem /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/include/torch/csrc/api/include -L/home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/lib -Wl,-rpath,/home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/torch/lib -ltorch -ltorch_cpu -ltorch_cuda -lc10_cuda -lc10 -o build/gcnn_model_runner_parity

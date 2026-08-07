@@ -1,0 +1,59 @@
+Reading edges
+Reading pairs
+Solving problem
+SCIP
+mip_gap: 0
+pairs size: 5
+nodes size: 152
+edges size: 160
+copy   num: 1
+Solving...
+presolving:
+(round 1, fast)       1290 del vars, 1752 del conss, 0 add conss, 1104 chg bounds, 536 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 115 clqs
+(round 2, fast)       1633 del vars, 2880 del conss, 0 add conss, 1229 chg bounds, 569 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 58 clqs
+(round 3, fast)       2103 del vars, 3151 del conss, 0 add conss, 1242 chg bounds, 612 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 58 clqs
+(round 4, fast)       2221 del vars, 3180 del conss, 0 add conss, 1242 chg bounds, 612 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 52 clqs
+(round 5, fast)       2228 del vars, 3187 del conss, 0 add conss, 1242 chg bounds, 612 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 52 clqs
+(round 6, fast)       2228 del vars, 3187 del conss, 0 add conss, 1428 chg bounds, 612 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 52 clqs
+(round 7, fast)       2321 del vars, 3375 del conss, 0 add conss, 1428 chg bounds, 752 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 52 clqs
+(round 8, exhaustive) 2321 del vars, 3385 del conss, 0 add conss, 1428 chg bounds, 752 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 52 clqs
+(round 9, fast)       2322 del vars, 3386 del conss, 0 add conss, 1428 chg bounds, 752 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 51 clqs
+(round 10, exhaustive) 2322 del vars, 3387 del conss, 0 add conss, 1428 chg bounds, 752 chg sides, 750 chg coeffs, 0 upgd conss, 0 impls, 51 clqs
+(round 11, exhaustive) 2322 del vars, 3387 del conss, 0 add conss, 1428 chg bounds, 752 chg sides, 750 chg coeffs, 51 upgd conss, 0 impls, 51 clqs
+(round 12, exhaustive) 2323 del vars, 3387 del conss, 0 add conss, 1428 chg bounds, 752 chg sides, 750 chg coeffs, 51 upgd conss, 0 impls, 51 clqs
+(round 13, fast)       2324 del vars, 3388 del conss, 0 add conss, 1429 chg bounds, 752 chg sides, 750 chg coeffs, 51 upgd conss, 0 impls, 51 clqs
+(round 14, fast)       2325 del vars, 3388 del conss, 0 add conss, 1429 chg bounds, 752 chg sides, 750 chg coeffs, 51 upgd conss, 0 impls, 51 clqs
+   (0.1s) probing: 51/120 (42.5%) - 0 fixings, 0 aggregations, 0 implications, 0 bound changes
+   (0.1s) probing aborted: 50/50 successive totally useless probings
+   (0.1s) symmetry computation started: requiring (bin +, int -, cont +), (fixed: bin -, int +, cont -)
+   (0.1s) symmetry computation finished: 2 generators found (max: 1500, log10 of symmetry group size: 0.8)
+   (0.1s) no symmetry on binary variables present.
+(round 15, exhaustive) 2325 del vars, 3388 del conss, 2 add conss, 1429 chg bounds, 752 chg sides, 750 chg coeffs, 51 upgd conss, 0 impls, 51 clqs
+presolving (16 rounds: 16 fast, 6 medium, 6 exhaustive):
+ 2325 deleted vars, 3388 deleted constraints, 2 added constraints, 1429 tightened bounds, 0 added holes, 752 changed sides, 750 changed coefficients
+ 0 implications, 51 cliques
+presolved problem has 552 variables (120 bin, 0 int, 0 impl, 432 cont) and 1051 constraints
+     51 constraints of type <setppc>
+   1000 constraints of type <linear>
+Presolving Time: 0.07
+
+ time | node  | left  |LP iter|LP it/n|mem/heur|mdpt |vars |cons |rows |cuts |sepa|confs|strbr|  dualbound   | primalbound  |  gap   | compl. 
+p 0.1s|     1 |     0 |   442 |     - |shiftand|   0 | 552 |1054 |1049 |   0 |  0 |   2 |   0 | 9.930000e-03 | 5.230794e-02 | 426.77%| unknown
+  0.1s|     1 |     0 |   626 |     - |    20M |   0 | 552 |1054 |1049 |   0 |  0 |   2 |   0 | 2.028000e-02 | 5.230794e-02 | 157.93%| unknown
+r 0.1s|     1 |     0 |   626 |     - |shifting|   0 | 552 |1054 |1049 |   0 |  0 |   2 |   0 | 2.028000e-02 | 2.028000e-02 |   0.00%| unknown
+  0.1s|     1 |     0 |   626 |     - |    20M |   0 | 552 |1054 |1049 |   0 |  0 |   2 |   0 | 2.028000e-02 | 2.028000e-02 |   0.00%| unknown
+
+SCIP Status        : problem is solved [optimal solution found]
+Solving Time (sec) : 0.11
+Solving Nodes      : 1
+Primal Bound       : +2.02800000000000e-02 (2 solutions)
+Dual Bound         : +2.02800000000000e-02
+Gap                : 0.00 %
+OPTIMAL
+Solution:
+Objective value = 0.02028
+Checking cycles
+No cycle
+Total best res: 0.36885
+Outputing results
+Execute success

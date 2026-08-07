@@ -1,0 +1,84 @@
+{
+  "baseline": {
+    "dual_bound": 0.0036569,
+    "final_gap": 0,
+    "method": "default",
+    "nodes": 1,
+    "objective": 0.0036569,
+    "raw_json": "results/dataset/raw/baseline/syn_medium_s103.json",
+    "raw_log": "results/dataset/raw/baseline/syn_medium_s103.log",
+    "solving_time": 0.895378,
+    "status": "optimal",
+    "threads": 1,
+    "time_limit": 30,
+    "wall_time": 0.953416678
+  },
+  "baseline_seed": 0,
+  "business_parameters": {
+    "access_edges": 36,
+    "cables": 18,
+    "center_edges": 55,
+    "center_nodes": 36,
+    "edges": 91,
+    "nodes": 72
+  },
+  "copy_num": 4,
+  "generation_seed": 103,
+  "generator": {
+    "graph": {
+      "access_edges": 36,
+      "cables": 18,
+      "center_edges": 55,
+      "center_nodes": 36,
+      "edges": 91,
+      "nodes": 72
+    },
+    "instance_id": "syn_medium_s103",
+    "parameters": {
+      "backbone_nodes": 24,
+      "cables": 18,
+      "entry_nodes": 12,
+      "extra_backbone_edges": 20
+    },
+    "scenario": "SYN_SYN_MEDIUM_S103",
+    "seed": 103,
+    "semantics": {
+      "backbone_nodes": "N followed by digits",
+      "entry_nodes": "E followed by digits",
+      "leaf_nodes": "L-prefixed cable endpoints",
+      "pair_weight_schedule": [
+        1e-07,
+        2e-07,
+        4e-07
+      ]
+    },
+    "source_files": {
+      "edges": "data/generated/train/syn_medium_s103_edges.csv",
+      "edges_sha256": "c4f5d7d0e267ee9b61eaffd38f773575c166caea36aa18a37a6b6582709f6f91",
+      "pairs": "data/generated/train/syn_medium_s103_pairs.csv",
+      "pairs_sha256": "67fd0f923c50f8cad89537afce3806c0b8c2cc8fb4df01d4c4c9f154752de2de"
+    }
+  },
+  "instance_id": "syn_medium_s103",
+  "milp": {
+    "center_edges": 55,
+    "center_nodes": 36,
+    "cip": "data/instances/train/syn_medium_s103.cip",
+    "cip_sha256": "0a839d130e0b6b9e72db9e48c9548201ca3733a749c7d109e13fd9aa12e44294",
+    "commodities": 18,
+    "constraint_variable_ratio": 2.3063982349696635,
+    "constraints": 8363,
+    "integer_variables": 512,
+    "variables": 3626
+  },
+  "size": "medium",
+  "source_files": {
+    "edges": "data/generated/train/syn_medium_s103_edges.csv",
+    "edges_sha256": "c4f5d7d0e267ee9b61eaffd38f773575c166caea36aa18a37a6b6582709f6f91",
+    "pairs": "data/generated/train/syn_medium_s103_pairs.csv",
+    "pairs_sha256": "67fd0f923c50f8cad89537afce3806c0b8c2cc8fb4df01d4c4c9f154752de2de"
+  },
+  "source_scenario": "SYN_SYN_MEDIUM_S103",
+  "source_type": "synthetic",
+  "split": "train"
+}

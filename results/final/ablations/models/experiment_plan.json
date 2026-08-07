@@ -1,0 +1,26 @@
+{
+  "config": "configs/experiments/phase8_model_ablations.json",
+  "jobs": 50,
+  "time_limit": 30.0,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "protocols": [
+    "controlled-bbmdp"
+  ],
+  "instances": [
+    "real_08",
+    "real_09"
+  ],
+  "methods": [
+    "rl-gcnn-3step",
+    "rl-gcnn-1step",
+    "rl-gcnn-hlgauss",
+    "rl-gcnn-no-categories",
+    "rl-gcnn-no-global"
+  ]
+}

@@ -1,0 +1,3 @@
+[ 30%] Built target test_custom_branchrule
+[ 92%] Built target scip_tree
+[100%] Built target model_runner_parity

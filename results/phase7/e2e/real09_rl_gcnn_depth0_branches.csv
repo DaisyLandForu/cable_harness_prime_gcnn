@@ -1,0 +1,12 @@
+event_index,node_id,depth,candidate_count,selected_candidate_index,selected_variable_index,selected_variable_name,lp_value,fractionality,selected_q,inference_time_seconds,selection_time_seconds,selected_is_candidate,result,fallback_reason
+0,1,0,51,12,22,t_m_5_2,0.0019999999999996505,0.0019999999999996505,-39.735088348388672,0.076298890999999994,0.085825025999999999,true,branched,
+1,2,1,48,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+2,5,2,47,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+3,4,2,47,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+4,6,3,47,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+5,10,4,43,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+6,12,5,37,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+7,14,6,36,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+8,16,7,33,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+9,19,8,19,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+10,20,9,14,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost

@@ -1,0 +1,49 @@
+{
+  "baseline": {
+    "dual_bound": 0.0093259,
+    "final_gap": 0,
+    "method": "default",
+    "nodes": 29,
+    "objective": 0.0093259,
+    "raw_json": "results/baseline/raw/instance_6_default_seed0.json",
+    "raw_log": "results/baseline/raw/instance_6_default_seed0.log",
+    "solving_time": 27.040274,
+    "status": "optimal",
+    "threads": 1,
+    "time_limit": 30,
+    "wall_time": 27.350410786
+  },
+  "baseline_seed": 0,
+  "business_parameters": {
+    "cables": 23,
+    "center_edges": 330,
+    "center_nodes": 286,
+    "edges": 339,
+    "nodes": 295
+  },
+  "copy_num": 4,
+  "generation_seed": null,
+  "generator": null,
+  "instance_id": "real_06",
+  "milp": {
+    "center_edges": 330,
+    "center_nodes": 286,
+    "cip": "data/instances/train/real_06.cip",
+    "cip_sha256": "b50c4ddfda7752630159239bdf5c0484f28ccaa41845ab9200fb904f9b8cab3f",
+    "commodities": 17,
+    "constraint_variable_ratio": 2.3276278889855915,
+    "constraints": 48140,
+    "integer_variables": 2708,
+    "variables": 20682
+  },
+  "size": "medium",
+  "source_files": {
+    "edges": "code/data/edges-6.csv",
+    "edges_sha256": "4986302f3cbce2976ad75c10d044faa8b74d26622902aacc3c34553e060457ce",
+    "pairs": "code/data/pairs-6.csv",
+    "pairs_sha256": "64853286b4f7013bd89995736b64abebe27d79a6fa7c98e7f7e0e3392fe842f3"
+  },
+  "source_scenario": "TESTA10",
+  "source_type": "real",
+  "split": "train"
+}

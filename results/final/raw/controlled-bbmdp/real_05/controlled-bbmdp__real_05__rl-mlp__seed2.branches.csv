@@ -1,0 +1,2 @@
+event_index,node_id,depth,candidate_count,selected_candidate_index,selected_variable_index,selected_variable_name,lp_value,fractionality,selected_q,inference_time_seconds,selection_time_seconds,selected_is_candidate,result,fallback_reason
+0,1,0,340,289,1604,t_z_284_285_2,0.00012500000000015277,0.00012500000000015277,-291.59613037109375,0.00062599499999999996,0.0010423299999999999,true,branched,

@@ -1,0 +1,7 @@
+seed: 0
+time_limit: 60.0
+node_limit: 20
+gamma: 1.0
+reward_mode: negative_node_increment
+bootstrap_on_truncation: false
+cache_static_features: true

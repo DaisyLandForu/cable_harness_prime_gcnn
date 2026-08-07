@@ -1,0 +1,14 @@
+-rw-rw-r-- 1 duweiyue25 duweiyue25 9.8M Aug  3 07:20 /tmp/acyclic-audit-default.63Hcm6/save/model_scip_tree_data4+cp4.lp
+-rw-rw-r-- 1 duweiyue25 duweiyue25 328K Aug  3 07:19 /tmp/acyclic-audit-run.9bM55J/save/model_scip_tree_data4+cp1.lp
+4923ccfe642ee4e0b470b18bd51781299a679251e71a5b6a356e726df76fbbba  /tmp/acyclic-audit-run.9bM55J/save/model_scip_tree_data4+cp1.lp
+0d8b6a3893ae2318d630dc236462e7cc3fde81fca644c57860c67fd989e59cfe  /tmp/acyclic-audit-default.63Hcm6/save/model_scip_tree_data4+cp4.lp
+\ SCIP STATISTICS
+\   Problem name     : MIPProblem
+\   Variables        : 2877 (325 binary, 0 integer, 0 implicit integer, 2552 continuous)
+\   Constraints      : 4437
+Minimize
+\ SCIP STATISTICS
+\   Problem name     : MIPProblem
+\   Variables        : 52708 (1700 binary, 0 integer, 0 implicit integer, 51008 continuous)
+\   Constraints      : 135556
+Minimize

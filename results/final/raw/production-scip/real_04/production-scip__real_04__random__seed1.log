@@ -1,0 +1,44 @@
+Reading edges
+Reading pairs
+Solving problem
+SCIP
+mip_gap: 0
+branching: random (random)
+protocol: production-scip
+seed: 1
+pairs size: 194
+nodes size: 454
+edges size: 549
+copy   num: 4
+Solving...
+permute transformed problem using random seed 1
+presolving:
+(round 1, fast)       184640 del vars, 297507 del conss, 0 add conss, 89223 chg bounds, 426926 chg sides, 1076265 chg coeffs, 0 upgd conss, 0 impls, 1914 clqs
+(round 2, fast)       206045 del vars, 455144 del conss, 0 add conss, 95413 chg bounds, 523133 chg sides, 1076265 chg coeffs, 0 upgd conss, 0 impls, 1914 clqs
+(round 3, fast)       238837 del vars, 477443 del conss, 0 add conss, 96883 chg bounds, 533201 chg sides, 1076265 chg coeffs, 0 upgd conss, 0 impls, 1750 clqs
+(round 4, fast)       243728 del vars, 488445 del conss, 0 add conss, 97428 chg bounds, 537268 chg sides, 1076265 chg coeffs, 0 upgd conss, 0 impls, 1718 clqs
+(round 5, fast)       245484 del vars, 492074 del conss, 0 add conss, 97549 chg bounds, 538872 chg sides, 1076265 chg coeffs, 0 upgd conss, 0 impls, 1674 clqs
+(round 6, fast)       245943 del vars, 492734 del conss, 0 add conss, 97554 chg bounds, 539184 chg sides, 1076265 chg coeffs, 0 upgd conss, 0 impls, 1674 clqs
+(round 7, exhaustive) 245976 del vars, 493096 del conss, 0 add conss, 99813 chg bounds, 539188 chg sides, 1076265 chg coeffs, 0 upgd conss, 0 impls, 1674 clqs
+(round 8, fast)       247090 del vars, 571458 del conss, 0 add conss, 99813 chg bounds, 592000 chg sides, 1077729 chg coeffs, 0 upgd conss, 0 impls, 1674 clqs
+(round 9, fast)       260131 del vars, 571478 del conss, 0 add conss, 99813 chg bounds, 592000 chg sides, 1077729 chg coeffs, 0 upgd conss, 0 impls, 1654 clqs
+(round 10, exhaustive) 260131 del vars, 571490 del conss, 0 add conss, 99813 chg bounds, 592000 chg sides, 1077729 chg coeffs, 2741 upgd conss, 0 impls, 1654 clqs
+   (17.8s) sparsify finished: 9/974116 (0.0%) nonzeros canceled - in total 9 canceled nonzeros, 9 changed coefficients, 0 added nonzeros
+   (18.1s) probing: 52/4480 (1.2%) - 12 fixings, 0 aggregations, 0 implications, 6 bound changes
+   (18.1s) probing aborted: 50/50 successive totally useless probings
+   (23.7s) symmetry computation started: requiring (bin +, int -, cont +), (fixed: bin -, int +, cont -)
+   (27.3s) symmetry computation finished: 964 generators found (max: 964, log10 of symmetry group size: 613.6)
+   (27.3s) no symmetry on binary variables present.
+(round 11, exhaustive) 260143 del vars, 571490 del conss, 4059 add conss, 99819 chg bounds, 592000 chg sides, 1077738 chg coeffs, 2741 upgd conss, 0 impls, 1654 clqs
+presolving (11 rounds: 11 fast, 3 medium, 3 exhaustive):
+ 260143 deleted vars, 571490 deleted constraints, 4059 added constraints, 99819 tightened bounds, 0 added holes, 592000 changed sides, 1077738 changed coefficients
+ 0 implications, 1654 cliques
+presolving was interrupted.
+Presolving Time: 27.37
+
+SCIP Status        : solving was interrupted [time limit reached]
+Solving Time (sec) : 30.01
+Solving Nodes      : 0
+Primal Bound       : +1.00000000000000e+20 (0 solutions)
+OTHER_STATUS
+Execute success

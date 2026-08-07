@@ -1,0 +1,117 @@
+{
+  "instance": "data/instances/train/real_06.cip",
+  "policy": "random",
+  "seed": 0,
+  "reward_mode": "constant_minus_one",
+  "gamma": 1.0,
+  "transition_count": 3,
+  "status": "nodelimit",
+  "terminated": false,
+  "truncated": true,
+  "nodes": 3,
+  "lp_iterations": 8944,
+  "solving_time": 16.057284,
+  "total_reward": -3.0,
+  "visited_tree_nodes": 3,
+  "transitions": [
+    {
+      "step": 0,
+      "node_id": 1,
+      "parent_node_id": null,
+      "depth": 0,
+      "candidate_count": 154,
+      "action": 1784,
+      "action_position": 130,
+      "action_name": "t_z_262_261_2",
+      "reward": -1.0,
+      "nodes_before": 1,
+      "nodes_after": 2,
+      "next_candidate_count": 153,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 1,
+      "node_id": 3,
+      "parent_node_id": 1,
+      "depth": 1,
+      "candidate_count": 153,
+      "action": 1573,
+      "action_position": 97,
+      "action_name": "t_m_14_2",
+      "reward": -1.0,
+      "nodes_before": 2,
+      "nodes_after": 3,
+      "next_candidate_count": 153,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 2,
+      "node_id": 5,
+      "parent_node_id": 3,
+      "depth": 2,
+      "candidate_count": 153,
+      "action": 1360,
+      "action_position": 78,
+      "action_name": "t_z_253_250_3",
+      "reward": -1.0,
+      "nodes_before": 3,
+      "nodes_after": 3,
+      "next_candidate_count": 0,
+      "terminated": false,
+      "truncated": true,
+      "bootstrap_mask": 0.0,
+      "status": "nodelimit",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": null,
+      "next_constraint_shape": null
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+project/scip_tree.cpp:21:10: fatal error: xlslib.h: No such file or directory
+   21 | #include <xlslib.h>
+      |          ^~~~~~~~~~
+compilation terminated.
+ERROR conda.cli.main_run:execute(142): `conda run g++ -std=c++17 -O2 project/scip_tree.cpp -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/scip -L/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -Wl,-rpath,/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -lscip -o results/audit/scip_tree_project_probe` failed. (See above for error)

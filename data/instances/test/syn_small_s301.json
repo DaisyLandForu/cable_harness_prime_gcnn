@@ -1,0 +1,84 @@
+{
+  "baseline": {
+    "dual_bound": 0.001118,
+    "final_gap": 0,
+    "method": "default",
+    "nodes": 1,
+    "objective": 0.001118,
+    "raw_json": "results/dataset/raw/baseline/syn_small_s301.json",
+    "raw_log": "results/dataset/raw/baseline/syn_small_s301.log",
+    "solving_time": 0.035099,
+    "status": "optimal",
+    "threads": 1,
+    "time_limit": 30,
+    "wall_time": 0.047090157
+  },
+  "baseline_seed": 0,
+  "business_parameters": {
+    "access_edges": 12,
+    "cables": 6,
+    "center_edges": 17,
+    "center_nodes": 14,
+    "edges": 29,
+    "nodes": 26
+  },
+  "copy_num": 4,
+  "generation_seed": 301,
+  "generator": {
+    "graph": {
+      "access_edges": 12,
+      "cables": 6,
+      "center_edges": 17,
+      "center_nodes": 14,
+      "edges": 29,
+      "nodes": 26
+    },
+    "instance_id": "syn_small_s301",
+    "parameters": {
+      "backbone_nodes": 8,
+      "cables": 6,
+      "entry_nodes": 6,
+      "extra_backbone_edges": 4
+    },
+    "scenario": "SYN_SYN_SMALL_S301",
+    "seed": 301,
+    "semantics": {
+      "backbone_nodes": "N followed by digits",
+      "entry_nodes": "E followed by digits",
+      "leaf_nodes": "L-prefixed cable endpoints",
+      "pair_weight_schedule": [
+        1e-07,
+        2e-07,
+        4e-07
+      ]
+    },
+    "source_files": {
+      "edges": "data/generated/test/syn_small_s301_edges.csv",
+      "edges_sha256": "e21f7d775c9b73545b3ec69324be854e0724a680ac868368f9c1b951a12d3f72",
+      "pairs": "data/generated/test/syn_small_s301_pairs.csv",
+      "pairs_sha256": "617355984c6953bb0374b301396c943475c325a29bb866b6fba35c9d930759d8"
+    }
+  },
+  "instance_id": "syn_small_s301",
+  "milp": {
+    "center_edges": 17,
+    "center_nodes": 14,
+    "cip": "data/instances/test/syn_small_s301.cip",
+    "cip_sha256": "3f40cebed1ca80b6a78803db5c2e105dea9e3236e9e9c219f9943e669a23257d",
+    "commodities": 6,
+    "constraint_variable_ratio": 1.9597701149425288,
+    "constraints": 1023,
+    "integer_variables": 160,
+    "variables": 522
+  },
+  "size": "small",
+  "source_files": {
+    "edges": "data/generated/test/syn_small_s301_edges.csv",
+    "edges_sha256": "e21f7d775c9b73545b3ec69324be854e0724a680ac868368f9c1b951a12d3f72",
+    "pairs": "data/generated/test/syn_small_s301_pairs.csv",
+    "pairs_sha256": "617355984c6953bb0374b301396c943475c325a29bb866b6fba35c9d930759d8"
+  },
+  "source_scenario": "SYN_SYN_SMALL_S301",
+  "source_type": "synthetic",
+  "split": "test"
+}

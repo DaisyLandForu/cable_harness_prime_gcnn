@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/test_custom_branchrule.dir/tests/test_custom_branchrule.cpp.o CMakeFiles/test_custom_branchrule.dir/src/rl/rl_branchrule.cpp.o CMakeFiles/test_custom_branchrule.dir/src/rl/scip_feature_extractor.cpp.o -o test_custom_branchrule  -Wl,-rpath,/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib /home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib/libscip.so

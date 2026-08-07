@@ -1,0 +1,131 @@
+{
+  "run_name": "candidate_mlp_pilot",
+  "gradient_steps": 5000,
+  "episodes": 20,
+  "replay_size": 735,
+  "best_validation_nodes": 63.0,
+  "device": "cuda",
+  "torch_version": "2.5.1+cu121",
+  "evaluation": [
+    {
+      "method": "random",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10111,
+      "status": "optimal",
+      "nodes": 91,
+      "solving_time": 28.784804,
+      "reward": -90.0,
+      "transitions": 81,
+      "mean_rank": 0.0
+    },
+    {
+      "method": "untrained",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10123,
+      "status": "optimal",
+      "nodes": 107,
+      "solving_time": 32.358831,
+      "reward": -106.0,
+      "transitions": 100,
+      "mean_rank": 1.0
+    },
+    {
+      "method": "rl",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10137,
+      "status": "optimal",
+      "nodes": 63,
+      "solving_time": 26.069117,
+      "reward": -62.0,
+      "transitions": 60,
+      "mean_rank": 1.0
+    },
+    {
+      "method": "random",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 101,
+      "policy_seed": 10212,
+      "status": "optimal",
+      "nodes": 100,
+      "solving_time": 33.002641,
+      "reward": -99.0,
+      "transitions": 92,
+      "mean_rank": 0.0
+    },
+    {
+      "method": "untrained",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 101,
+      "policy_seed": 10224,
+      "status": "optimal",
+      "nodes": 104,
+      "solving_time": 34.625372,
+      "reward": -103.0,
+      "transitions": 100,
+      "mean_rank": 1.0
+    },
+    {
+      "method": "rl",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 101,
+      "policy_seed": 10238,
+      "status": "optimal",
+      "nodes": 146,
+      "solving_time": 37.905223,
+      "reward": -145.0,
+      "transitions": 140,
+      "mean_rank": 1.0
+    },
+    {
+      "method": "random",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 102,
+      "policy_seed": 10313,
+      "status": "nodelimit",
+      "nodes": 200,
+      "solving_time": 29.215456,
+      "reward": -199.0,
+      "transitions": 142,
+      "mean_rank": 0.0
+    },
+    {
+      "method": "untrained",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 102,
+      "policy_seed": 10325,
+      "status": "nodelimit",
+      "nodes": 200,
+      "solving_time": 34.709869,
+      "reward": -199.0,
+      "transitions": 178,
+      "mean_rank": 1.0
+    },
+    {
+      "method": "rl",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 102,
+      "policy_seed": 10339,
+      "status": "optimal",
+      "nodes": 119,
+      "solving_time": 25.526141,
+      "reward": -118.0,
+      "transitions": 110,
+      "mean_rank": 1.0
+    }
+  ],
+  "evaluation_protocol": {
+    "policy_seed_formula": "base_seed*1000003 + solver_seed*101 + instance_index*10007 + method_offset",
+    "method_offsets": {
+      "random": 11,
+      "untrained": 23,
+      "rl": 37
+    },
+    "untrained_initialization_seed": 1000000
+  },
+  "training_wall_time_estimate": 1278.454773426056,
+  "evaluation_wall_time": 314.21646243800205,
+  "summary_reconstructed_from_artifacts": true
+}

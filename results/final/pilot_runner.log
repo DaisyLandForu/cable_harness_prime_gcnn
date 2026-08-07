@@ -1,0 +1,27 @@
+[1/26] controlled-bbmdp real_08 default seed=0 rc=0
+[2/26] controlled-bbmdp real_08 relpscost seed=0 rc=0
+[3/26] controlled-bbmdp real_08 mostinf seed=0 rc=0
+[4/26] controlled-bbmdp real_08 random seed=0 rc=0
+[5/26] controlled-bbmdp real_08 rl-gcnn seed=0 rc=0
+[6/26] controlled-bbmdp real_08 rl-mlp seed=0 rc=0
+[7/26] controlled-bbmdp real_09 default seed=0 rc=0
+[8/26] controlled-bbmdp real_09 relpscost seed=0 rc=0
+[9/26] controlled-bbmdp real_09 random seed=0 rc=0
+[10/26] controlled-bbmdp real_09 mostinf seed=0 rc=0
+[11/26] controlled-bbmdp real_09 rl-mlp seed=0 rc=0
+[12/26] controlled-bbmdp real_09 strong seed=0 rc=0
+[13/26] controlled-bbmdp real_09 rl-gcnn seed=0 rc=0
+[14/26] production-scip real_08 default seed=0 rc=0
+[15/26] production-scip real_08 relpscost seed=0 rc=0
+[16/26] production-scip real_08 mostinf seed=0 rc=0
+[17/26] production-scip real_08 random seed=0 rc=0
+[18/26] production-scip real_08 rl-mlp seed=0 rc=0
+[19/26] production-scip real_09 default seed=0 rc=0
+[20/26] production-scip real_09 relpscost seed=0 rc=0
+[21/26] production-scip real_09 random seed=0 rc=0
+[22/26] production-scip real_08 rl-gcnn seed=0 rc=0
+[23/26] production-scip real_09 mostinf seed=0 rc=0
+[24/26] production-scip real_09 rl-mlp seed=0 rc=0
+[25/26] production-scip real_09 strong seed=0 rc=0
+[26/26] production-scip real_09 rl-gcnn seed=0 rc=0
+completed=26 failures=0

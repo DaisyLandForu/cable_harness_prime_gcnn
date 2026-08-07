@@ -1,0 +1,25 @@
+{
+  "config": "configs/experiments/phase8_pilot.json",
+  "jobs": 26,
+  "time_limit": 30.0,
+  "seeds": [
+    0
+  ],
+  "protocols": [
+    "controlled-bbmdp",
+    "production-scip"
+  ],
+  "instances": [
+    "real_08",
+    "real_09"
+  ],
+  "methods": [
+    "default",
+    "relpscost",
+    "random",
+    "mostinf",
+    "strong",
+    "rl-mlp",
+    "rl-gcnn"
+  ]
+}

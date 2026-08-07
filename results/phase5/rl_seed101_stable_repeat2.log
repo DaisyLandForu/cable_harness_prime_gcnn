@@ -1,0 +1,12 @@
+{
+  "method": "rl",
+  "instance": "data/instances/validation/real_08.cip",
+  "seed": 101,
+  "policy_seed": 10238,
+  "status": "optimal",
+  "nodes": 90,
+  "solving_time": 35.008004,
+  "reward": -89.0,
+  "transitions": 87,
+  "action_trace_sha256": "e36ae45ff4e5bed748e950969afaf4b7f1061cd21d57f36ce85b7234640126dc"
+}

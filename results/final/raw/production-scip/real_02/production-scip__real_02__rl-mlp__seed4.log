@@ -1,0 +1,47 @@
+Reading edges
+Reading pairs
+Solving problem
+SCIP
+mip_gap: 0
+branching: rl-mlp (rlmlp)
+protocol: production-scip
+seed: 4
+pairs size: 181
+nodes size: 126
+edges size: 150
+copy   num: 4
+Solving...
+permute transformed problem using random seed 4
+presolving:
+(round 1, fast)       38554 del vars, 52753 del conss, 0 add conss, 16083 chg bounds, 108814 chg sides, 296808 chg coeffs, 0 upgd conss, 0 impls, 589 clqs
+(round 2, fast)       43455 del vars, 87407 del conss, 0 add conss, 17883 chg bounds, 128606 chg sides, 296808 chg coeffs, 0 upgd conss, 0 impls, 589 clqs
+(round 3, fast)       49866 del vars, 92049 del conss, 0 add conss, 18131 chg bounds, 130654 chg sides, 296808 chg coeffs, 0 upgd conss, 0 impls, 581 clqs
+(round 4, fast)       50656 del vars, 92546 del conss, 0 add conss, 18143 chg bounds, 130686 chg sides, 296808 chg coeffs, 0 upgd conss, 0 impls, 581 clqs
+(round 5, fast)       50699 del vars, 92588 del conss, 0 add conss, 18143 chg bounds, 130686 chg sides, 296808 chg coeffs, 0 upgd conss, 0 impls, 581 clqs
+(round 6, exhaustive) 50711 del vars, 92612 del conss, 0 add conss, 18167 chg bounds, 130690 chg sides, 296808 chg coeffs, 1984 upgd conss, 0 impls, 581 clqs
+   (4.4s) probing: 51/1900 (2.7%) - 0 fixings, 0 aggregations, 0 implications, 0 bound changes
+   (4.4s) probing aborted: 50/50 successive totally useless probings
+   (7.0s) symmetry computation started: requiring (bin +, int -, cont +), (fixed: bin -, int +, cont -)
+   (7.5s) symmetry computation finished: 9 generators found (max: 1500, log10 of symmetry group size: 2.9)
+presolving (7 rounds: 7 fast, 2 medium, 2 exhaustive):
+ 50711 deleted vars, 92612 deleted constraints, 8 added constraints, 18167 tightened bounds, 0 added holes, 130690 changed sides, 296808 changed coefficients
+ 0 implications, 581 cliques
+presolved problem has 33167 variables (1900 bin, 0 int, 0 impl, 31267 cont) and 122140 constraints
+      3 constraints of type <knapsack>
+    581 constraints of type <setppc>
+ 120148 constraints of type <linear>
+      8 constraints of type <orbitope>
+   1400 constraints of type <logicor>
+Presolving Time: 7.05
+
+ time | node  | left  |LP iter|LP it/n|mem/heur|mdpt |vars |cons |rows |cuts |sepa|confs|strbr|  dualbound   | primalbound  |  gap   | compl. 
+ 15.7s|     1 |     0 | 21410 |     - |   946M |   0 |  33k| 122k| 122k|   0 |  0 | 150 |   0 | 3.137360e+00 |      --      |    Inf | unknown
+
+SCIP Status        : solving was interrupted [time limit reached]
+Solving Time (sec) : 30.04
+Solving Nodes      : 1
+Primal Bound       : +1.00000000000000e+20 (0 solutions)
+Dual Bound         : +3.13736000000000e+00
+Gap                : infinite
+OTHER_STATUS
+Execute success

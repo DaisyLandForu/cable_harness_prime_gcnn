@@ -1,0 +1,34 @@
+{
+  "config": "configs/experiments/phase8_full.json",
+  "jobs": 430,
+  "time_limit": 30.0,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "protocols": [
+    "controlled-bbmdp",
+    "production-scip"
+  ],
+  "instances": [
+    "real_08",
+    "real_09",
+    "real_01",
+    "real_02",
+    "real_03",
+    "real_04",
+    "real_05"
+  ],
+  "methods": [
+    "default",
+    "relpscost",
+    "random",
+    "mostinf",
+    "strong",
+    "rl-mlp",
+    "rl-gcnn"
+  ]
+}

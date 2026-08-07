@@ -1,0 +1,10 @@
+method,instance,seed,policy_seed,status,nodes,solving_time,reward,transitions,mean_rank,inference_time
+random,data/instances/validation/real_08.cip,100,10111,optimal,91,34.814245,-90.0,81,0.0,0.0
+untrained,data/instances/validation/real_08.cip,100,10123,nodelimit,100,37.350695,-99.0,90,1.0,1.255957753972325
+rl,data/instances/validation/real_08.cip,100,10137,optimal,76,33.202542,-75.0,71,1.0,0.9882169330157922
+random,data/instances/validation/real_08.cip,101,10212,optimal,100,39.799922,-99.0,92,0.0,0.0
+untrained,data/instances/validation/real_08.cip,101,10224,nodelimit,100,41.977632,-99.0,97,1.0,1.4119493869293365
+rl,data/instances/validation/real_08.cip,101,10238,nodelimit,100,39.39798,-99.0,85,1.0,1.2446422479915782
+random,data/instances/validation/real_08.cip,102,10313,nodelimit,100,28.280273,-99.0,90,0.0,0.0
+untrained,data/instances/validation/real_08.cip,102,10325,nodelimit,100,31.038033,-99.0,92,1.0,1.344949423968501
+rl,data/instances/validation/real_08.cip,102,10339,optimal,67,25.806112,-66.0,62,1.0,0.9086748300251202

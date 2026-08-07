@@ -1,0 +1,45 @@
+{
+  "run_name": "candidate_mlp_smoke",
+  "gradient_steps": 500,
+  "episodes": 2,
+  "replay_size": 98,
+  "best_validation_nodes": 50.0,
+  "wall_time": 216.91506481199758,
+  "device": "cuda",
+  "torch_version": "2.5.1+cu121",
+  "evaluation": [
+    {
+      "method": "random",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "status": "nodelimit",
+      "nodes": 50,
+      "solving_time": 26.548888,
+      "reward": -49.0,
+      "transitions": 46,
+      "mean_rank": 0.0
+    },
+    {
+      "method": "untrained",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "status": "nodelimit",
+      "nodes": 50,
+      "solving_time": 27.109693,
+      "reward": -49.0,
+      "transitions": 49,
+      "mean_rank": 1.0
+    },
+    {
+      "method": "rl",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "status": "nodelimit",
+      "nodes": 50,
+      "solving_time": 27.141697,
+      "reward": -49.0,
+      "transitions": 50,
+      "mean_rank": 1.0
+    }
+  ]
+}

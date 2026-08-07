@@ -1,0 +1,84 @@
+{
+  "baseline": {
+    "dual_bound": 0.0031967,
+    "final_gap": 0,
+    "method": "default",
+    "nodes": 1,
+    "objective": 0.0031967,
+    "raw_json": "results/dataset/raw/baseline/syn_medium_s201.json",
+    "raw_log": "results/dataset/raw/baseline/syn_medium_s201.log",
+    "solving_time": 0.343988,
+    "status": "optimal",
+    "threads": 1,
+    "time_limit": 30,
+    "wall_time": 0.400457329
+  },
+  "baseline_seed": 0,
+  "business_parameters": {
+    "access_edges": 36,
+    "cables": 18,
+    "center_edges": 55,
+    "center_nodes": 36,
+    "edges": 91,
+    "nodes": 72
+  },
+  "copy_num": 4,
+  "generation_seed": 201,
+  "generator": {
+    "graph": {
+      "access_edges": 36,
+      "cables": 18,
+      "center_edges": 55,
+      "center_nodes": 36,
+      "edges": 91,
+      "nodes": 72
+    },
+    "instance_id": "syn_medium_s201",
+    "parameters": {
+      "backbone_nodes": 24,
+      "cables": 18,
+      "entry_nodes": 12,
+      "extra_backbone_edges": 20
+    },
+    "scenario": "SYN_SYN_MEDIUM_S201",
+    "seed": 201,
+    "semantics": {
+      "backbone_nodes": "N followed by digits",
+      "entry_nodes": "E followed by digits",
+      "leaf_nodes": "L-prefixed cable endpoints",
+      "pair_weight_schedule": [
+        1e-07,
+        2e-07,
+        4e-07
+      ]
+    },
+    "source_files": {
+      "edges": "data/generated/validation/syn_medium_s201_edges.csv",
+      "edges_sha256": "bf20962aad5250892e1ee47e2a5faa0c8208f207112297528e0e5762ca80d911",
+      "pairs": "data/generated/validation/syn_medium_s201_pairs.csv",
+      "pairs_sha256": "572868a14c52b5b5635e87a5a68e8afe5c5d99c81313ab6e9edf15130d28297b"
+    }
+  },
+  "instance_id": "syn_medium_s201",
+  "milp": {
+    "center_edges": 55,
+    "center_nodes": 36,
+    "cip": "data/instances/validation/syn_medium_s201.cip",
+    "cip_sha256": "5702b72f98666458cb854977c79e263165d09e21ca21d19f1dfae7a28265e40b",
+    "commodities": 18,
+    "constraint_variable_ratio": 2.3063982349696635,
+    "constraints": 8363,
+    "integer_variables": 512,
+    "variables": 3626
+  },
+  "size": "medium",
+  "source_files": {
+    "edges": "data/generated/validation/syn_medium_s201_edges.csv",
+    "edges_sha256": "bf20962aad5250892e1ee47e2a5faa0c8208f207112297528e0e5762ca80d911",
+    "pairs": "data/generated/validation/syn_medium_s201_pairs.csv",
+    "pairs_sha256": "572868a14c52b5b5635e87a5a68e8afe5c5d99c81313ab6e9edf15130d28297b"
+  },
+  "source_scenario": "SYN_SYN_MEDIUM_S201",
+  "source_type": "synthetic",
+  "split": "validation"
+}

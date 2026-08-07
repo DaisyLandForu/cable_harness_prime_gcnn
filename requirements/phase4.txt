@@ -1,0 +1,14 @@
+# Common Python packages. SCIP-dependent packages are built from pinned source revisions.
+numpy==1.26.4
+scipy==1.13.1
+pandas==2.2.3
+PyYAML==6.0.2
+pytest==8.3.5
+psutil==6.1.1
+networkx==3.4.2
+Cython==0.29.37
+cmake==3.31.6
+ninja==1.11.1.3
+scikit-build==0.18.1
+pybind11==2.13.6
+patchelf==0.17.2.2

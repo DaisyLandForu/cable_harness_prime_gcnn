@@ -1,0 +1,29 @@
+{
+  "runs": 26,
+  "protocols": [
+    "controlled-bbmdp",
+    "production-scip"
+  ],
+  "methods": [
+    "default",
+    "relpscost",
+    "random",
+    "mostinf",
+    "strong",
+    "rl-mlp",
+    "rl-gcnn"
+  ],
+  "figures": [
+    "cactus_plot.png",
+    "id_vs_transfer.png",
+    "inference_overhead.png",
+    "node_vs_time_reduction.png",
+    "performance_by_size.png",
+    "performance_profile.png",
+    "training_curve.png",
+    "wall_time_speedup_scatter.png"
+  ],
+  "bootstrap_samples": 200,
+  "par2_policy": "optimal uses measured wall_time; otherwise 2 * SCIP time_limit",
+  "shifted_geomean_shift": 1.0
+}

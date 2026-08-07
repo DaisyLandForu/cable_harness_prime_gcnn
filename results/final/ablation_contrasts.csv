@@ -1,0 +1,7 @@
+contrast,baseline,candidate,paired_runs,paired_time_speedup,wins,ties,losses,jointly_solved,shifted_gmean_node_speedup
+MLP vs GCNN (controlled-bbmdp),rl-mlp,rl-gcnn,35,0.9268096085133243,1,26,8,8,0.9381427059852853
+MLP vs GCNN (production-scip),rl-mlp,rl-gcnn,35,0.9455741783177373,4,21,10,9,0.8908167872522045
+one-step vs three-step,rl-gcnn-1step,rl-gcnn-3step,10,0.9913049468452897,6,0,4,10,0.9324481992984294
+scalar vs HL-Gauss,rl-gcnn-3step,rl-gcnn-hlgauss,10,0.8511039790755682,1,0,9,8,0.9696137237434289
+without vs with variable categories,rl-gcnn-no-categories,rl-gcnn-3step,10,0.9918520694239179,5,0,5,10,0.915353442256363
+without vs with global features,rl-gcnn-no-global,rl-gcnn-3step,10,0.9911413156036106,4,0,6,10,0.9242748581880156

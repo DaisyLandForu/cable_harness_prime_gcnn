@@ -1,0 +1,12 @@
+Reading edges
+Reading pairs
+Solving problem
+SCIP
+mip_gap: 0
+branching: default (relpscost)
+seed: 0
+pairs size: 26
+nodes size: 410
+edges size: 461
+copy   num: 4
+Execute success

@@ -1,0 +1,28 @@
+{
+  "config": "configs/experiments/phase8_depth_ablations.json",
+  "jobs": 100,
+  "time_limit": 30.0,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "protocols": [
+    "production-scip"
+  ],
+  "instances": [
+    "real_08",
+    "real_09",
+    "real_04",
+    "real_05"
+  ],
+  "methods": [
+    "rl-gcnn-d5",
+    "rl-gcnn-d10",
+    "rl-gcnn-d20",
+    "rl-gcnn-d50",
+    "rl-gcnn-unlimited"
+  ]
+}

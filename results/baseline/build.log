@@ -1,0 +1,19 @@
+code/scip_tree.cpp: In function ‘SCIP_RETCODE SolveMIPProblem(std::set<int>, std::vector<std::pair<int, int> >&, std::map<std::pair<int, int>, int>&, std::map<int, std::pair<int, int> >&, std::map<std::pair<int, int>, double>&, std::map<int, std::set<int> >&, std::map<std::pair<int, int>, std::set<std::pair<int, int> > >&, std::set<std::pair<int, int> >&, std::map<int, int>&, std::map<int, int>&, std::vector<std::pair<int, int> >&, std::map<int, std::vector<std::pair<int, int> > >&, const RunConfig&, SolverMetrics&, double&)’:
+code/scip_tree.cpp:677:45: warning: unused parameter ‘id_to_copynums’ [-Wunused-parameter]
+  677 |                         std::map<int, int>& id_to_copynums,
+      |                         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+code/scip_tree.cpp:679:74: warning: unused parameter ‘cpid_to_entry_edges’ [-Wunused-parameter]
+  679 |                         std::map<int, std::vector<std::pair<int, int>>>& cpid_to_entry_edges,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+code/scip_tree.cpp: In function ‘double ret_compose(double, std::vector<std::pair<int, int> >&, std::map<std::pair<int, int>, int>&, std::vector<std::pair<int, int> >&, std::map<std::pair<int, int>, double>&, std::map<int, int>&, std::map<std::pair<int, int>, std::pair<int, int> >&, std::map<std::pair<int, int>, int>&, std::map<int, std::set<std::pair<std::pair<int, int>, std::pair<int, int> > > >&, std::map<std::pair<int, int>, std::set<std::pair<int, int> > >&, std::set<std::pair<int, int> >&, std::map<int, int>&)’:
+code/scip_tree.cpp:1183:27: warning: unused parameter ‘obj’ [-Wunused-parameter]
+ 1183 | double ret_compose(double obj, std::vector<std::pair<int, int>>& edges,
+      |                    ~~~~~~~^~~
+code/scip_tree.cpp:1183:66: warning: unused parameter ‘edges’ [-Wunused-parameter]
+ 1183 | double ret_compose(double obj, std::vector<std::pair<int, int>>& edges,
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+code/scip_tree.cpp:1192:52: warning: unused parameter ‘ret_edges_prime’ [-Wunused-parameter]
+ 1192 |                     std::set<std::pair<int, int>>& ret_edges_prime,
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+mkdir -p build
+g++ -O2 -std=c++17 -Wall -Wextra code/scip_tree.cpp -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/scip -L/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -Wl,-rpath,/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -lscip -o build/scip_tree

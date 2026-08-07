@@ -1,0 +1,1 @@
+{"torch": "2.5.1+cu121", "cuda_runtime": "12.1", "cuda_available": true, "device_count": 1, "devices": ["Tesla V100-PCIE-32GB"]}

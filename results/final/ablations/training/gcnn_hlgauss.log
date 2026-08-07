@@ -1,0 +1,52 @@
+{
+  "run_name": "gcnn_ablation_hlgauss",
+  "gradient_steps": 1000,
+  "episodes": 6,
+  "replay_size": 64,
+  "best_validation_nodes": 55.0,
+  "wall_time": 602.293419641006,
+  "device": "cuda",
+  "torch_version": "2.5.1+cu121",
+  "loss_mode": "hl_gauss",
+  "evaluation": [
+    {
+      "method": "random",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10111,
+      "status": "optimal",
+      "nodes": 91,
+      "solving_time": 41.905032,
+      "reward": -90.0,
+      "transitions": 81,
+      "mean_rank": 0.0,
+      "inference_time": 0.0
+    },
+    {
+      "method": "untrained",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10123,
+      "status": "nodelimit",
+      "nodes": 100,
+      "solving_time": 48.143515,
+      "reward": -99.0,
+      "transitions": 99,
+      "mean_rank": 1.0,
+      "inference_time": 1.4596170068834908
+    },
+    {
+      "method": "rl",
+      "instance": "data/instances/validation/real_08.cip",
+      "seed": 100,
+      "policy_seed": 10137,
+      "status": "optimal",
+      "nodes": 55,
+      "solving_time": 35.148459,
+      "reward": -54.0,
+      "transitions": 52,
+      "mean_rank": 1.0,
+      "inference_time": 0.7682599481195211
+    }
+  ]
+}

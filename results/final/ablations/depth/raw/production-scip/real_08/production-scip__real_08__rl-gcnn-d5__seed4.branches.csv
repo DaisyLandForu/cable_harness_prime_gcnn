@@ -1,0 +1,12 @@
+event_index,node_id,depth,candidate_count,selected_candidate_index,selected_variable_index,selected_variable_name,lp_value,fractionality,selected_q,inference_time_seconds,selection_time_seconds,selected_is_candidate,result,fallback_reason
+0,1,0,221,39,65,t_m_16_1,0.17349454098917549,0.17349454098917549,-23.966365814208984,0.12293699,0.17182661099999999,true,branched,
+1,2,1,221,45,81,t_m_20_1,0.16437427761183945,0.16437427761183945,-23.864387512207031,1.1396111179999999,1.192012965,true,branched,
+2,4,2,221,35,57,t_m_14_1,0.20200438842962787,0.20200438842962787,-23.88311767578125,1.437333492,1.486968786,true,branched,
+3,6,3,229,2,3,t_m_0_3,0.18713093692317118,0.18713093692317118,-23.918533325195312,0.010907478,0.062303070000000002,true,branched,
+4,8,4,228,51,85,t_m_21_1,0.23411830159984925,0.23411830159984925,-23.952592849731445,0.010780418,0.058721994,true,branched,
+5,10,5,235,19,31,t_m_7_3,0.23430164356043381,0.23430164356043381,-24.021007537841797,0.011209304,0.059879676,true,branched,
+6,12,6,229,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+7,15,7,199,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+8,16,8,184,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+9,18,9,178,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost
+10,21,10,171,-1,-1,,,,,0,0,false,did_not_run,depth_limit:relpscost

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "architecture": "variable-to-constraint then constraint-to-variable index_add message passing",
+  "variable_features": [
+    "objective",
+    "is_type_binary",
+    "is_type_integer",
+    "is_type_implicit_integer",
+    "is_type_continuous",
+    "has_lower_bound",
+    "has_upper_bound",
+    "normed_reduced_cost",
+    "solution_value",
+    "solution_frac",
+    "is_solution_at_lower_bound",
+    "is_solution_at_upper_bound",
+    "scaled_age",
+    "incumbent_value",
+    "average_incumbent_value",
+    "is_basis_lower",
+    "is_basis_basic",
+    "is_basis_upper",
+    "is_basis_zero"
+  ],
+  "constraint_features": [
+    "normalized_bias",
+    "objective_cosine_similarity",
+    "is_tight",
+    "normalized_dual_solution_value",
+    "scaled_age",
+    "lhs",
+    "lhs_finite",
+    "rhs",
+    "rhs_finite",
+    "lp_activity",
+    "side_slack",
+    "is_equality",
+    "is_lhs_side",
+    "is_rhs_side"
+  ],
+  "edge_features": [
+    "coefficient",
+    "normalized_coefficient",
+    "coefficient_sign"
+  ],
+  "global_features": [
+    "depth",
+    "processed_nodes",
+    "total_nodes",
+    "open_nodes",
+    "feasible_leaves",
+    "infeasible_leaves",
+    "lp_iterations",
+    "primal_bound",
+    "primal_bound_finite",
+    "dual_bound",
+    "dual_bound_finite",
+    "relative_gap",
+    "relative_gap_finite",
+    "incumbent_count"
+  ],
+  "aviation_variable_categories": [
+    "m",
+    "z",
+    "y",
+    "absf",
+    "f",
+    "other"
+  ],
+  "aviation_constraint_categories": [
+    "flow",
+    "absolute",
+    "topology",
+    "selection",
+    "imbalance",
+    "other"
+  ],
+  "action_semantics": "one scalar Q per current fractional LP candidate",
+  "candidate_indices_reference": "transformed SCIP variable order",
+  "loss_mode": "scalar",
+  "distributional_bins": 1,
+  "hl_gauss": {
+    "transform": "z=log2(-Q), Q=-2**z",
+    "z_min": -1.0,
+    "z_max": 12.0,
+    "sigma": 0.75
+  },
+  "excluded_features": {
+    "solving_time": "wall-clock dependent and not reproducible for identical SCIP states"
+  }
+}

@@ -1,0 +1,712 @@
+{
+  "instance": "data/instances/train/real_06.cip",
+  "policy": "random",
+  "seed": 0,
+  "reward_mode": "negative_node_increment",
+  "gamma": 1.0,
+  "transition_count": 20,
+  "status": "nodelimit",
+  "terminated": false,
+  "truncated": true,
+  "nodes": 20,
+  "lp_iterations": 9058,
+  "solving_time": 17.734693,
+  "total_reward": -19.0,
+  "visited_tree_nodes": 20,
+  "transitions": [
+    {
+      "step": 0,
+      "node_id": 1,
+      "parent_node_id": null,
+      "depth": 0,
+      "candidate_count": 154,
+      "action": 1784,
+      "action_position": 130,
+      "action_name": "t_z_262_261_2",
+      "reward": -1.0,
+      "nodes_before": 1,
+      "nodes_after": 2,
+      "next_candidate_count": 153,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 1,
+      "node_id": 3,
+      "parent_node_id": 1,
+      "depth": 1,
+      "candidate_count": 153,
+      "action": 1573,
+      "action_position": 97,
+      "action_name": "t_m_14_2",
+      "reward": -1.0,
+      "nodes_before": 2,
+      "nodes_after": 3,
+      "next_candidate_count": 153,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 2,
+      "node_id": 5,
+      "parent_node_id": 3,
+      "depth": 2,
+      "candidate_count": 153,
+      "action": 1360,
+      "action_position": 78,
+      "action_name": "t_z_253_250_3",
+      "reward": -1.0,
+      "nodes_before": 3,
+      "nodes_after": 4,
+      "next_candidate_count": 152,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 3,
+      "node_id": 7,
+      "parent_node_id": 5,
+      "depth": 3,
+      "candidate_count": 152,
+      "action": 932,
+      "action_position": 41,
+      "action_name": "t_m_8_3",
+      "reward": -1.0,
+      "nodes_before": 4,
+      "nodes_after": 5,
+      "next_candidate_count": 145,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 4,
+      "node_id": 9,
+      "parent_node_id": 7,
+      "depth": 4,
+      "candidate_count": 145,
+      "action": 1038,
+      "action_position": 44,
+      "action_name": "t_m_15_2",
+      "reward": -1.0,
+      "nodes_before": 5,
+      "nodes_after": 6,
+      "next_candidate_count": 138,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 5,
+      "node_id": 11,
+      "parent_node_id": 9,
+      "depth": 5,
+      "candidate_count": 138,
+      "action": 226,
+      "action_position": 5,
+      "action_name": "t_z_227_226_0",
+      "reward": -1.0,
+      "nodes_before": 6,
+      "nodes_after": 7,
+      "next_candidate_count": 138,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 6,
+      "node_id": 13,
+      "parent_node_id": 11,
+      "depth": 6,
+      "candidate_count": 138,
+      "action": 321,
+      "action_position": 10,
+      "action_name": "t_z_65_71_0",
+      "reward": -1.0,
+      "nodes_before": 7,
+      "nodes_after": 8,
+      "next_candidate_count": 140,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 7,
+      "node_id": 15,
+      "parent_node_id": 13,
+      "depth": 7,
+      "candidate_count": 140,
+      "action": 118,
+      "action_position": 2,
+      "action_name": "t_z_12_249_1",
+      "reward": -1.0,
+      "nodes_before": 8,
+      "nodes_after": 9,
+      "next_candidate_count": 139,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 8,
+      "node_id": 17,
+      "parent_node_id": 15,
+      "depth": 8,
+      "candidate_count": 139,
+      "action": 752,
+      "action_position": 24,
+      "action_name": "t_z_69_68_3",
+      "reward": -1.0,
+      "nodes_before": 9,
+      "nodes_after": 10,
+      "next_candidate_count": 138,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 9,
+      "node_id": 19,
+      "parent_node_id": 17,
+      "depth": 9,
+      "candidate_count": 138,
+      "action": 1731,
+      "action_position": 112,
+      "action_name": "t_z_230_231_1",
+      "reward": -1.0,
+      "nodes_before": 10,
+      "nodes_after": 11,
+      "next_candidate_count": 137,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 10,
+      "node_id": 21,
+      "parent_node_id": 19,
+      "depth": 10,
+      "candidate_count": 137,
+      "action": 1567,
+      "action_position": 88,
+      "action_name": "t_z_227_226_1",
+      "reward": -1.0,
+      "nodes_before": 11,
+      "nodes_after": 12,
+      "next_candidate_count": 116,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 11,
+      "node_id": 23,
+      "parent_node_id": 21,
+      "depth": 11,
+      "candidate_count": 116,
+      "action": 1849,
+      "action_position": 105,
+      "action_name": "t_z_73_44_3",
+      "reward": -1.0,
+      "nodes_before": 12,
+      "nodes_after": 13,
+      "next_candidate_count": 117,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 12,
+      "node_id": 24,
+      "parent_node_id": 23,
+      "depth": 12,
+      "candidate_count": 117,
+      "action": 1326,
+      "action_position": 58,
+      "action_name": "t_z_22_64_3",
+      "reward": -1.0,
+      "nodes_before": 13,
+      "nodes_after": 14,
+      "next_candidate_count": 116,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 13,
+      "node_id": 27,
+      "parent_node_id": 24,
+      "depth": 13,
+      "candidate_count": 116,
+      "action": 1509,
+      "action_position": 70,
+      "action_name": "t_z_7_5_2",
+      "reward": -1.0,
+      "nodes_before": 14,
+      "nodes_after": 15,
+      "next_candidate_count": 112,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 14,
+      "node_id": 29,
+      "parent_node_id": 27,
+      "depth": 14,
+      "candidate_count": 112,
+      "action": 1932,
+      "action_position": 108,
+      "action_name": "t_z_244_231_0",
+      "reward": -1.0,
+      "nodes_before": 15,
+      "nodes_after": 16,
+      "next_candidate_count": 111,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 15,
+      "node_id": 30,
+      "parent_node_id": 29,
+      "depth": 15,
+      "candidate_count": 111,
+      "action": 1650,
+      "action_position": 80,
+      "action_name": "t_z_251_240_3",
+      "reward": -1.0,
+      "nodes_before": 16,
+      "nodes_after": 17,
+      "next_candidate_count": 110,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 16,
+      "node_id": 33,
+      "parent_node_id": 30,
+      "depth": 16,
+      "candidate_count": 110,
+      "action": 1518,
+      "action_position": 69,
+      "action_name": "t_z_254_253_3",
+      "reward": -1.0,
+      "nodes_before": 17,
+      "nodes_after": 18,
+      "next_candidate_count": 109,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 17,
+      "node_id": 35,
+      "parent_node_id": 33,
+      "depth": 17,
+      "candidate_count": 109,
+      "action": 1365,
+      "action_position": 59,
+      "action_name": "t_z_18_244_0",
+      "reward": -1.0,
+      "nodes_before": 18,
+      "nodes_after": 19,
+      "next_candidate_count": 107,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 18,
+      "node_id": 37,
+      "parent_node_id": 35,
+      "depth": 18,
+      "candidate_count": 107,
+      "action": 1373,
+      "action_position": 59,
+      "action_name": "t_z_252_257_3",
+      "reward": -1.0,
+      "nodes_before": 19,
+      "nodes_after": 20,
+      "next_candidate_count": 106,
+      "terminated": false,
+      "truncated": false,
+      "bootstrap_mask": 1.0,
+      "status": "unknown",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": [
+        8372,
+        19
+      ],
+      "next_constraint_shape": [
+        28089,
+        5
+      ]
+    },
+    {
+      "step": 19,
+      "node_id": 39,
+      "parent_node_id": 37,
+      "depth": 19,
+      "candidate_count": 106,
+      "action": 1887,
+      "action_position": 99,
+      "action_name": "t_z_30_250_2",
+      "reward": -0.0,
+      "nodes_before": 20,
+      "nodes_after": 20,
+      "next_candidate_count": 0,
+      "terminated": false,
+      "truncated": true,
+      "bootstrap_mask": 0.0,
+      "status": "nodelimit",
+      "variable_shape": [
+        8372,
+        19
+      ],
+      "constraint_shape": [
+        28089,
+        5
+      ],
+      "edge_count": 93555,
+      "next_variable_shape": null,
+      "next_constraint_shape": null
+    }
+  ]
+}

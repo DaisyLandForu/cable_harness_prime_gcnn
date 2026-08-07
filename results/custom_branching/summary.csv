@@ -1,0 +1,4 @@
+instance_id,method,seed,status,objective,wall_clock_time,solving_time,nodes,lp_iterations,branchrule_calls,branchrule_priority,custom_branch_decisions,custom_candidates_seen,custom_illegal_actions,custom_fallback_count,custom_selection_time_total,custom_selection_time_mean,custom_selection_time_max
+real_09,default,0,optimal,0.0022776,4.076919209,3.933438,9,3596,10,10000,0,0,0,0,0,0,0
+real_09,custom-random,0,optimal,0.0022776,2.247437527,2.070579,7,3663,7,1000000,7,369,0,0,0.000024361,0.00000348014285714286,0.000007317
+real_09,custom-mostinf,0,optimal,0.0022776,2.185539681,2.040283,12,3583,11,1000000,11,286,0,0,0.000037601,0.00000341827272727273,0.000007082

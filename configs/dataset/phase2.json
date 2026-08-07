@@ -1,0 +1,57 @@
+{
+  "copy_num": 4,
+  "baseline_seed": 0,
+  "baseline_time_limit": 30,
+  "baseline_node_limit": -1,
+  "threads": 1,
+  "synthetic_presets": {
+    "small": {
+      "backbone_nodes": 8,
+      "entry_nodes": 6,
+      "extra_backbone_edges": 4,
+      "cables": 6
+    },
+    "medium": {
+      "backbone_nodes": 24,
+      "entry_nodes": 12,
+      "extra_backbone_edges": 20,
+      "cables": 18
+    },
+    "large": {
+      "backbone_nodes": 60,
+      "entry_nodes": 20,
+      "extra_backbone_edges": 60,
+      "cables": 45
+    }
+  },
+  "splits": {
+    "train": {
+      "real": [6, 7],
+      "synthetic": {
+        "small": [101, 102, 103],
+        "medium": [101, 102, 103],
+        "large": [101, 102, 103]
+      }
+    },
+    "validation": {
+      "real": [8],
+      "synthetic": {
+        "small": [201],
+        "medium": [201],
+        "large": [201]
+      }
+    },
+    "test": {
+      "real": [9],
+      "synthetic": {
+        "small": [301],
+        "medium": [301],
+        "large": [301]
+      }
+    },
+    "transfer": {
+      "real": [1, 2, 3, 4, 5],
+      "synthetic": {}
+    }
+  }
+}

@@ -1,0 +1,234 @@
+code/scip_heur.cpp:664:    SCIP_CALL(SCIPcreate(&scip));
+code/scip_heur.cpp:665:    SCIP_CALL(SCIPincludeDefaultPlugins(scip));
+code/scip_heur.cpp:666:    SCIP_CALL(SCIPcreateProbBasic(scip, "MIPProblem"));
+code/scip_heur.cpp:668:    SCIP_CALL(SCIPsetIntParam(scip, "display/verblevel", 5));
+code/scip_heur.cpp:670:    SCIP_CALL(SCIPsetRealParam(scip, "limits/gap", gap));
+code/scip_heur.cpp:671:    // SCIP_CALL(SCIPsetBoolParam(scip, "branching/preferbinary", true));
+code/scip_heur.cpp:672:    SCIP_CALL(SCIPsetIntParam(scip, "parallel/minnthreads", 8));
+code/scip_heur.cpp:673:    SCIP_CALL(SCIPsetIntParam(scip, "parallel/maxnthreads", 16));
+code/scip_heur.cpp:674:    // SCIP_CALL(SCIPsetIntParam(scip, "lp/threads", 4));
+code/scip_heur.cpp:676:    SCIPsetIntParam(scip, "separating/maxrounds", 50);
+code/scip_heur.cpp:677:    SCIPsetIntParam(scip, "separating/maxroundsroot", 100);
+code/scip_heur.cpp:678:    SCIPsetIntParam(scip, "separating/maxcuts", 500);
+code/scip_heur.cpp:679:    SCIPsetIntParam(scip, "separating/maxcutsroot", 1000);
+code/scip_heur.cpp:680:    SCIPsetIntParam(scip, "separating/minefficacy", 0.00001);  // smaller than default 1e‑4 maybe
+code/scip_heur.cpp:681:    SCIPsetIntParam(scip, "separating/maxstallrounds", 20);
+code/scip_heur.cpp:682:    SCIPsetRealParam(scip, "separating/maxbounddist", 0.9);
+code/scip_heur.cpp:683:    SCIPsetIntParam(scip, "display/verblevel", 5);
+code/scip_heur.cpp:684:    SCIPsetIntParam(scip, "presolving/maxrounds", 500);
+code/scip_heur.cpp:685:    SCIPsetBoolParam(scip, "heuristics/fastprimal", TRUE);
+code/scip_heur.cpp:687:    // SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/freq", 50));
+code/scip_heur.cpp:688:    // SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/priority", 100000));
+code/scip_heur.cpp:689:    // SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/freq", 50));
+code/scip_heur.cpp:690:    // SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/priority", 90000));
+code/scip_heur.cpp:691:    // SCIP_CALL(SCIPsetIntParam(scip, "heuristics/undercover/freq", 20));
+code/scip_heur.cpp:692:    // SCIP_CALL(SCIPsetIntParam(scip, "nodeselection/hybridestim/stdpriority", 500000));
+code/scip_heur.cpp:718:            SCIP_CALL(SCIPcreateVarBasic(scip, &var,
+code/scip_heur.cpp:729:            SCIP_CALL(SCIPcreateVarBasic(scip, &var,
+code/scip_heur.cpp:743:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_x,
+code/scip_heur.cpp:750:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_f1,
+code/scip_heur.cpp:757:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_f2,
+code/scip_heur.cpp:766:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_z1,
+code/scip_heur.cpp:773:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_z2,
+code/scip_heur.cpp:782:    SCIP_CALL(SCIPcreatePartialSol(scip, &sol, nullptr));
+code/scip_heur.cpp:813:    //                 SCIP_CALL(SCIPcreateConsLinear(scip, &xlock, "xlock", 0, nullptr, nullptr,
+code/scip_heur.cpp:818:    //                 SCIP_CALL(SCIPcreateConsLinear(scip, &mlock, "mlock", 0, nullptr, nullptr,
+code/scip_heur.cpp:823:    //                 SCIP_CALL(SCIPcreateConsLinear(scip, &zlock, "zlock", 0, nullptr, nullptr,
+code/scip_heur.cpp:830:    //                 SCIP_CALL(SCIPcreateConsLinear(scip, &xlock, "xlock", 0, nullptr, nullptr,
+code/scip_heur.cpp:850:    //             SCIP_CALL(SCIPcreateConsLinear(scip, &xforbid, "xforbid", 0, nullptr, nullptr,
+code/scip_heur.cpp:884:            SCIP_CALL(SCIPcreateConsLinear(scip, &cons, "flow_balance", 0, nullptr, nullptr,
+code/scip_heur.cpp:902:            SCIP_CALL(SCIPcreateConsLinear(scip, &sym_cons, "flow_symmetry", 0, nullptr, nullptr,
+code/scip_heur.cpp:911:            SCIP_CALL(SCIPcreateConsLinear(scip, &upper1, "capacity_upper1", 0, nullptr, nullptr,
+code/scip_heur.cpp:919:            SCIP_CALL(SCIPcreateConsLinear(scip, &lower1, "capacity_lower1", 0, nullptr, nullptr,
+code/scip_heur.cpp:927:            SCIP_CALL(SCIPcreateConsLinear(scip, &upper2, "capacity_upper2", 0, nullptr, nullptr,
+code/scip_heur.cpp:935:            SCIP_CALL(SCIPcreateConsLinear(scip, &lower2, "capacity_lower2", 0, nullptr, nullptr,
+code/scip_heur.cpp:946:        SCIP_CALL(SCIPcreateConsLinear(scip, &onlym, "onlym", 0, nullptr, nullptr,
+code/scip_heur.cpp:959:        SCIP_CALL(SCIPcreateConsLinear(scip, &prio, "prio", 0, nullptr, nullptr,
+code/scip_heur.cpp:974:                SCIP_CALL(SCIPcreateConsLinear(scip, &zlower, "zlower", 0, nullptr, nullptr,
+code/scip_heur.cpp:994:            SCIP_CALL(SCIPcreateConsLinear(scip, &topo_seq1, "topo_seq1", 0, nullptr, nullptr,
+code/scip_heur.cpp:1003:            SCIP_CALL(SCIPcreateConsLinear(scip, &topo_seq2, "topo_seq2", 0, nullptr, nullptr,
+code/scip_heur.cpp:1013:            SCIP_CALL(SCIPcreateConsLinear(scip, &single_dir, "single_dir", 0, nullptr, nullptr,
+code/scip_heur.cpp:1026:            SCIP_CALL(SCIPcreateConsLinear(scip, &only_father, "only_father", 0, nullptr, nullptr,
+code/scip_heur.cpp:1041:    SCIP_CALL(SCIPsolve(scip));
+code/scip_heur.cpp:1042:    // SCIP_CALL(SCIPsolveConcurrent(scip));
+code/scip_heur.cpp:1052:        // SCIP_CALL( SCIPwriteOrigProblem(scip, "model_leaf+cp.lp", "lp", FALSE) );
+code/scip_heur.cpp:1066:        SCIP_CALL(SCIPfree(&scip));
+code/scip_heur.cpp:1103:    // SCIP_CALL(SCIPfree(&scip));
+project/scip_tree.cpp:361:    SCIP_CALL(SCIPcreate(&scip));
+project/scip_tree.cpp:362:    SCIP_CALL(SCIPincludeDefaultPlugins(scip));
+project/scip_tree.cpp:363:    SCIP_CALL(SCIPcreateProbBasic(scip, "MIPProblem"));
+project/scip_tree.cpp:367:    SCIP_CALL(SCIPsetRealParam(scip, "limits/gap", gap));
+project/scip_tree.cpp:368:    SCIP_CALL(SCIPsetBoolParam(scip, "branching/preferbinary", true));
+project/scip_tree.cpp:369:    SCIP_CALL(SCIPsetIntParam(scip, "parallel/minnthreads", 4));
+project/scip_tree.cpp:370:    SCIP_CALL(SCIPsetIntParam(scip, "parallel/maxnthreads", 16));
+project/scip_tree.cpp:371:    SCIP_CALL(SCIPsetIntParam(scip, "lp/threads", 4));
+project/scip_tree.cpp:373:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/freq", 50));
+project/scip_tree.cpp:374:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/priority", 100000));
+project/scip_tree.cpp:375:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/freq", 50));
+project/scip_tree.cpp:376:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/priority", 90000));
+project/scip_tree.cpp:377:    // SCIP_CALL(SCIPsetIntParam(scip, "heuristics/dinns/priority", 85000));
+project/scip_tree.cpp:378:    // SCIP_CALL(SCIPsetIntParam(scip, "nodeselection/hybridestim/stdpriority", 500000));
+project/scip_tree.cpp:405:            SCIP_CALL(SCIPcreateVarBasic(scip, &var,
+project/scip_tree.cpp:416:            SCIP_CALL(SCIPcreateVarBasic(scip, &var,
+project/scip_tree.cpp:437:            // SCIP_CALL(SCIPcreateVarBasic(scip, &var_x,
+project/scip_tree.cpp:444:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_absf,
+project/scip_tree.cpp:451:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_f1,
+project/scip_tree.cpp:458:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_f2,
+project/scip_tree.cpp:472:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_z1,
+project/scip_tree.cpp:479:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_z2,
+project/scip_tree.cpp:504:                SCIP_CALL(SCIPcreateConsLinear(scip, &fforbid, "fforbid", 0, nullptr, nullptr,
+project/scip_tree.cpp:534:            SCIP_CALL(SCIPcreateConsLinear(scip, &abs1, "abs1", 0, nullptr, nullptr,
+project/scip_tree.cpp:540:            SCIP_CALL(SCIPcreateConsLinear(scip, &abs2, "abs2", 0, nullptr, nullptr,
+project/scip_tree.cpp:557:            SCIP_CALL(SCIPcreateConsLinear(scip, &cons, "flow_balance", 0, nullptr, nullptr,
+project/scip_tree.cpp:575:            SCIP_CALL(SCIPcreateConsLinear(scip, &sym_cons, "flow_symmetry", 0, nullptr, nullptr,
+project/scip_tree.cpp:584:            // SCIP_CALL(SCIPcreateConsLinear(scip, &upper1, "capacity_upper1", 0, nullptr, nullptr,
+project/scip_tree.cpp:592:            // SCIP_CALL(SCIPcreateConsLinear(scip, &lower1, "capacity_lower1", 0, nullptr, nullptr,
+project/scip_tree.cpp:600:            // SCIP_CALL(SCIPcreateConsLinear(scip, &upper2, "capacity_upper2", 0, nullptr, nullptr,
+project/scip_tree.cpp:608:            // SCIP_CALL(SCIPcreateConsLinear(scip, &lower2, "capacity_lower2", 0, nullptr, nullptr,
+project/scip_tree.cpp:620:        SCIP_CALL(SCIPcreateConsLinear(scip, &onlym, "onlym", 0, nullptr, nullptr,
+project/scip_tree.cpp:631:        SCIP_CALL(SCIPcreateConsLinear(scip, &imbalance, "imbalance", 0, nullptr, nullptr,
+project/scip_tree.cpp:647:                SCIP_CALL(SCIPcreateConsLinear(scip, &zlower, "zlower", 0, nullptr, nullptr,
+project/scip_tree.cpp:666:            SCIP_CALL(SCIPcreateConsLinear(scip, &topo_seq1, "topo_seq1", 0, nullptr, nullptr,
+project/scip_tree.cpp:675:            SCIP_CALL(SCIPcreateConsLinear(scip, &topo_seq2, "topo_seq2", 0, nullptr, nullptr,
+project/scip_tree.cpp:685:            // SCIP_CALL(SCIPcreateConsLinear(scip, &single_dir, "single_dir", 0, nullptr, nullptr,
+project/scip_tree.cpp:698:            SCIP_CALL(SCIPcreateConsLinear(scip, &only_father, "only_father", 0, nullptr, nullptr,
+project/scip_tree.cpp:716:    // SCIP_CALL(SCIPwriteOrigProblem(scip, ss.str().c_str(), "lp", FALSE));
+project/scip_tree.cpp:717:    SCIP_CALL(SCIPsolve(scip));
+project/scip_tree.cpp:718:    // SCIP_CALL(SCIPsolveConcurrent(scip));
+project/scip_tree.cpp:728:        // SCIP_CALL(SCIPwriteOrigProblem(scip, "model_data4+cp4.lp", "lp", FALSE));
+project/scip_tree.cpp:742:        SCIP_CALL(SCIPfree(&scip));
+project/scip_tree.cpp:779:    // SCIP_CALL(SCIPfree(&scip));
+code/scip_tree.cpp:330:    SCIP_CALL(SCIPcreate(&scip));
+code/scip_tree.cpp:331:    SCIP_CALL(SCIPincludeDefaultPlugins(scip));
+code/scip_tree.cpp:332:    SCIP_CALL(SCIPcreateProbBasic(scip, "MIPProblem"));
+code/scip_tree.cpp:336:    SCIP_CALL(SCIPsetRealParam(scip, "limits/gap", gap));
+code/scip_tree.cpp:337:    SCIP_CALL(SCIPsetBoolParam(scip, "branching/preferbinary", true));
+code/scip_tree.cpp:338:    SCIP_CALL(SCIPsetIntParam(scip, "parallel/minnthreads", 4));
+code/scip_tree.cpp:339:    SCIP_CALL(SCIPsetIntParam(scip, "parallel/maxnthreads", 16));
+code/scip_tree.cpp:340:    SCIP_CALL(SCIPsetIntParam(scip, "lp/threads", 4));
+code/scip_tree.cpp:342:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/freq", 50));
+code/scip_tree.cpp:343:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/priority", 100000));
+code/scip_tree.cpp:344:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/freq", 50));
+code/scip_tree.cpp:345:    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/priority", 90000));
+code/scip_tree.cpp:346:    // SCIP_CALL(SCIPsetIntParam(scip, "heuristics/dinns/priority", 85000));
+code/scip_tree.cpp:347:    // SCIP_CALL(SCIPsetIntParam(scip, "nodeselection/hybridestim/stdpriority", 500000));
+code/scip_tree.cpp:374:            SCIP_CALL(SCIPcreateVarBasic(scip, &var,
+code/scip_tree.cpp:385:            SCIP_CALL(SCIPcreateVarBasic(scip, &var,
+code/scip_tree.cpp:406:            // SCIP_CALL(SCIPcreateVarBasic(scip, &var_x,
+code/scip_tree.cpp:413:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_absf,
+code/scip_tree.cpp:420:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_f1,
+code/scip_tree.cpp:427:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_f2,
+code/scip_tree.cpp:441:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_z1,
+code/scip_tree.cpp:448:            SCIP_CALL(SCIPcreateVarBasic(scip, &var_z2,
+code/scip_tree.cpp:473:                SCIP_CALL(SCIPcreateConsLinear(scip, &fforbid, "fforbid", 0, nullptr, nullptr,
+code/scip_tree.cpp:503:            SCIP_CALL(SCIPcreateConsLinear(scip, &abs1, "abs1", 0, nullptr, nullptr,
+code/scip_tree.cpp:509:            SCIP_CALL(SCIPcreateConsLinear(scip, &abs2, "abs2", 0, nullptr, nullptr,
+code/scip_tree.cpp:526:            SCIP_CALL(SCIPcreateConsLinear(scip, &cons, "flow_balance", 0, nullptr, nullptr,
+code/scip_tree.cpp:544:            SCIP_CALL(SCIPcreateConsLinear(scip, &sym_cons, "flow_symmetry", 0, nullptr, nullptr,
+code/scip_tree.cpp:553:            // SCIP_CALL(SCIPcreateConsLinear(scip, &upper1, "capacity_upper1", 0, nullptr, nullptr,
+code/scip_tree.cpp:561:            // SCIP_CALL(SCIPcreateConsLinear(scip, &lower1, "capacity_lower1", 0, nullptr, nullptr,
+code/scip_tree.cpp:569:            // SCIP_CALL(SCIPcreateConsLinear(scip, &upper2, "capacity_upper2", 0, nullptr, nullptr,
+code/scip_tree.cpp:577:            // SCIP_CALL(SCIPcreateConsLinear(scip, &lower2, "capacity_lower2", 0, nullptr, nullptr,
+code/scip_tree.cpp:589:        SCIP_CALL(SCIPcreateConsLinear(scip, &onlym, "onlym", 0, nullptr, nullptr,
+code/scip_tree.cpp:600:        SCIP_CALL(SCIPcreateConsLinear(scip, &imbalance, "imbalance", 0, nullptr, nullptr,
+code/scip_tree.cpp:616:                SCIP_CALL(SCIPcreateConsLinear(scip, &zlower, "zlower", 0, nullptr, nullptr,
+code/scip_tree.cpp:635:            SCIP_CALL(SCIPcreateConsLinear(scip, &topo_seq1, "topo_seq1", 0, nullptr, nullptr,
+code/scip_tree.cpp:644:            SCIP_CALL(SCIPcreateConsLinear(scip, &topo_seq2, "topo_seq2", 0, nullptr, nullptr,
+code/scip_tree.cpp:654:            // SCIP_CALL(SCIPcreateConsLinear(scip, &single_dir, "single_dir", 0, nullptr, nullptr,
+code/scip_tree.cpp:667:            SCIP_CALL(SCIPcreateConsLinear(scip, &only_father, "only_father", 0, nullptr, nullptr,
+code/scip_tree.cpp:685:    SCIP_CALL(SCIPwriteOrigProblem(scip, ss.str().c_str(), "lp", FALSE));
+code/scip_tree.cpp:686:    SCIP_CALL(SCIPsolve(scip));
+code/scip_tree.cpp:687:    // SCIP_CALL(SCIPsolveConcurrent(scip));
+code/scip_tree.cpp:697:        // SCIP_CALL(SCIPwriteOrigProblem(scip, "model_data4+cp4.lp", "lp", FALSE));
+code/scip_tree.cpp:711:        SCIP_CALL(SCIPfree(&scip));
+code/scip_tree.cpp:748:    // SCIP_CALL(SCIPfree(&scip));
+code/scip_heur.cpp:68:int read_csv_to_edges(std::string file_path1, 
+code/scip_heur.cpp:78:    std::ifstream file1(file_path1);
+code/scip_heur.cpp:207:        std::cerr << "file open fail" << file_path1 << std::endl;
+code/scip_heur.cpp:212:int read_csv_to_pairs(std::string file_path2, 
+code/scip_heur.cpp:225:    std::ifstream file2(file_path2);
+code/scip_heur.cpp:290:        std::cerr << "file open fail" << file_path2 << std::endl;
+code/scip_heur.cpp:304:int read_csv_to_copynums(std::string file_path1, 
+code/scip_heur.cpp:307:    std::ifstream file1(file_path1);
+code/scip_heur.cpp:330:        std::cerr << "file open fail" << file_path1 << std::endl;
+code/scip_heur.cpp:1480:int main(int argc, char* argv[]) {
+code/scip_heur.cpp:1481:    // std::string file_path1 = "data/edges-3.csv";    
+code/scip_heur.cpp:1482:    // std::string file_path2 = "data/pairs-3-40.csv";
+code/scip_heur.cpp:1483:    std::string file_path1 = "data/edges-4.csv";    
+code/scip_heur.cpp:1484:    std::string file_path2 = "data/pairs-4-246.csv";
+code/scip_heur.cpp:1485:    // std::string file_path1 = "data/edges.csv";    
+code/scip_heur.cpp:1486:    // std::string file_path2 = "data/pairs.csv";
+code/scip_heur.cpp:1487:    std::string file_path3 = "data/name_to_copynums.csv";
+code/scip_heur.cpp:1488:    if (argc > 1) {
+code/scip_heur.cpp:1489:        copy_num = std::stoi(argv[1]);
+code/scip_heur.cpp:1492:    if (argc > 2) {
+code/scip_heur.cpp:1493:        gap = std::stod(argv[2]);
+code/scip_heur.cpp:1494:        // scale = std::string(argv[2]);
+code/scip_heur.cpp:1496:        //     file_path1 = "data/edges_" + scale + "x.csv";    
+code/scip_heur.cpp:1497:        //     file_path2 = "data/pairs_" + scale + "x.csv";
+code/scip_heur.cpp:1500:    // if (argc > 3) {
+code/scip_heur.cpp:1501:    //     thread_num = std::stoi(argv[3]);
+code/scip_heur.cpp:1502:    //     // scale = std::string(argv[2]);
+code/scip_heur.cpp:1504:    //     //     file_path1 = "data/edges_" + scale + "x.csv";    
+code/scip_heur.cpp:1505:    //     //     file_path2 = "data/pairs_" + scale + "x.csv";
+code/scip_heur.cpp:1508:    // std::string file_path1 = "test_edges.csv";    
+code/scip_heur.cpp:1509:    // std::string file_path2 = "test_pairs.csv";
+code/scip_heur.cpp:1540:    int node_num = read_csv_to_edges(file_path1, node_name_to_id, id_to_node_name, edges, edges_to_weight, 
+code/scip_heur.cpp:1546:    if (read_csv_to_pairs(file_path2, node_name_to_id, pairs, ori_pairs, pairs_to_weight, pairs_to_center_pairs, center_pairs, 
+code/scip_heur.cpp:1552:    // if (read_csv_to_copynums(file_path3, node_name_to_id, id_to_copynums) == -1) {
+project/scip_tree.cpp:67:int read_csv_to_edges(std::string file_path1,
+project/scip_tree.cpp:77:    std::ifstream file1(file_path1);
+project/scip_tree.cpp:213:        std::cerr << "file open fail" << file_path1 << std::endl;
+project/scip_tree.cpp:218:int read_csv_to_pairs(std::string file_path2,
+project/scip_tree.cpp:233:    std::ifstream file2(file_path2);
+project/scip_tree.cpp:300:        std::cerr << "file open fail" << file_path2 << std::endl;
+project/scip_tree.cpp:314:int read_csv_to_copynums(std::string file_path1,
+project/scip_tree.cpp:317:    std::ifstream file1(file_path1);
+project/scip_tree.cpp:341:        std::cerr << "file open fail" << file_path1 << std::endl;
+project/scip_tree.cpp:1082:int main(int argc, char* argv[]) {
+project/scip_tree.cpp:1083:    std::string file_path1 = "data/edges-4.csv";    
+project/scip_tree.cpp:1084:    std::string file_path2 = "data/pairs-4-246.csv";
+project/scip_tree.cpp:1085:    std::string file_path3 = "data/name_to_copynums.csv";
+project/scip_tree.cpp:1086:    if (argc > 1) {
+project/scip_tree.cpp:1087:        copy_num = std::stoi(argv[1]);
+project/scip_tree.cpp:1089:    if (argc > 2) {
+project/scip_tree.cpp:1090:        div_part = std::stoi(argv[2]);
+project/scip_tree.cpp:1091:        // gap = std::string(argv[2]);
+project/scip_tree.cpp:1093:        //     file_path1 = "data/edges_" + scale + "x.csv";
+project/scip_tree.cpp:1094:        //     file_path2 = "data/pairs_" + scale + "x.csv";
+project/scip_tree.cpp:1097:    // std::string file_path1 = "test_edges.csv";
+project/scip_tree.cpp:1098:    // std::string file_path2 = "test_pairs.csv";
+project/scip_tree.cpp:1128:    int node_num = read_csv_to_edges(file_path1, node_name_to_id, id_to_node_name, edges, edges_to_weight,
+project/scip_tree.cpp:1134:    if (read_csv_to_pairs(file_path2, node_name_to_id, pairs, ori_pairs, pairs_to_weight, pairs_to_center_pairs, center_pairs,
+project/scip_tree.cpp:1141:    // if (read_csv_to_copynums(file_path3, node_name_to_id, id_to_copynums) == -1) {
+code/scip_tree.cpp:64:int read_csv_to_edges(std::string file_path1, 
+code/scip_tree.cpp:74:    std::ifstream file1(file_path1);
+code/scip_tree.cpp:188:        std::cerr << "file open fail" << file_path1 << std::endl;
+code/scip_tree.cpp:193:int read_csv_to_pairs(std::string file_path2, 
+code/scip_tree.cpp:206:    std::ifstream file2(file_path2);
+code/scip_tree.cpp:270:        std::cerr << "file open fail" << file_path2 << std::endl;
+code/scip_tree.cpp:284:int read_csv_to_copynums(std::string file_path1, 
+code/scip_tree.cpp:287:    std::ifstream file1(file_path1);
+code/scip_tree.cpp:310:        std::cerr << "file open fail" << file_path1 << std::endl;
+code/scip_tree.cpp:1019:int main(int argc, char* argv[]) {
+code/scip_tree.cpp:1020:    std::string file_path1 = "data/edges.csv";    
+code/scip_tree.cpp:1021:    std::string file_path2 = "data/pairs.csv";
+code/scip_tree.cpp:1022:    // std::string file_path1 = "data/edges-2.csv";    
+code/scip_tree.cpp:1023:    // std::string file_path2 = "data/pairs-2.csv";
+code/scip_tree.cpp:1024:    // std::string file_path1 = "data/edges-3.csv";    
+code/scip_tree.cpp:1025:    // std::string file_path2 = "data/pairs-3-40.csv";
+code/scip_tree.cpp:1026:    // std::string file_path1 = "data/edges-4.csv";    
+code/scip_tree.cpp:1027:    // std::string file_path2 = "data/pairs-4-246.csv";
+code/scip_tree.cpp:1028:    std::string file_path3 = "data/name_to_copynums.csv";
+code/scip_tree.cpp:1029:    if (argc > 1) {
+code/scip_tree.cpp:1030:        copy_num = std::stoi(argv[1]);
+code/scip_tree.cpp:1032:    if (argc > 2) {
+code/scip_tree.cpp:1033:        div_part = std::stoi(argv[2]);
+code/scip_tree.cpp:1034:        // gap = std::string(argv[2]);
+code/scip_tree.cpp:1036:        //     file_path1 = "data/edges_" + scale + "x.csv";    
+code/scip_tree.cpp:1037:        //     file_path2 = "data/pairs_" + scale + "x.csv";
+code/scip_tree.cpp:1040:    // std::string file_path1 = "test_edges.csv";    
+code/scip_tree.cpp:1041:    // std::string file_path2 = "test_pairs.csv";
+code/scip_tree.cpp:1070:    int node_num = read_csv_to_edges(file_path1, node_name_to_id, id_to_node_name, edges, edges_to_weight, 
+code/scip_tree.cpp:1076:    if (read_csv_to_pairs(file_path2, node_name_to_id, pairs, ori_pairs, pairs_to_weight, pairs_to_center_pairs, center_pairs, 
+code/scip_tree.cpp:1082:    // if (read_csv_to_copynums(file_path3, node_name_to_id, id_to_copynums) == -1) {

@@ -1,0 +1,4 @@
+method,instance,seed,policy_seed,status,nodes,solving_time,reward,transitions,mean_rank,inference_time
+random,data/instances/validation/real_08.cip,100,10111,optimal,91,41.949632,-90.0,81,0.0,0.0
+untrained,data/instances/validation/real_08.cip,100,10123,nodelimit,100,45.943741,-99.0,90,1.0,1.310110151040135
+rl,data/instances/validation/real_08.cip,100,10137,optimal,62,37.532645,-61.0,60,1.0,0.8756795029621571

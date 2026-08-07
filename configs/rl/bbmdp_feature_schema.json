@@ -1,0 +1,27 @@
+{
+  "node_bipartite": {
+    "variable_feature_count": 19,
+    "constraint_feature_count": 5,
+    "edge_feature_count": 1,
+    "source": "Ecole 0.8.1 NodeBipartite"
+  },
+  "global_features": [
+    "depth",
+    "processed_nodes",
+    "total_nodes",
+    "open_nodes",
+    "feasible_leaves",
+    "infeasible_leaves",
+    "lp_iterations",
+    "solving_time",
+    "primal_bound",
+    "primal_bound_finite",
+    "dual_bound",
+    "dual_bound_finite",
+    "relative_gap",
+    "relative_gap_finite",
+    "incumbent_count"
+  ],
+  "action": "index into transformed variable_features, restricted by action_set",
+  "pointer_lifetime": "all arrays, names, and action sets are copied before returning to agent code"
+}

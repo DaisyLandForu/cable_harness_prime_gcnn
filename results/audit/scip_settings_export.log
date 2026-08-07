@@ -1,0 +1,16 @@
+SCIP version 8.0.4 [precision: 8 byte] [memory: block] [mode: optimized] [LP solver: Soplex 6.0.4] [GitHash: a8e51afd1e]
+Copyright (c) 2002-2023 Zuse Institute Berlin (ZIB)
+
+External libraries: 
+  Readline 8.1         GNU library for command line editing (gnu.org/s/readline)
+  Soplex 6.0.4         Linear Programming Solver developed at Zuse Institute Berlin (soplex.zib.de) [GitHash: 950b1658]
+  CppAD 20180000.0     Algorithmic Differentiation of C++ algorithms developed by B. Bell (github.com/coin-or/CppAD)
+  ZLIB 1.2.11          General purpose compression library by J. Gailly and M. Adler (zlib.net)
+  GMP 6.2.1            GNU Multiple Precision Arithmetic Library developed by T. Granlund (gmplib.org)
+  AMPL/MP 4e2d45c4     AMPL .nl file reader library (github.com/ampl/mp)
+  bliss 0.77           Computing Graph Automorphism Groups by T. Junttila and P. Kaski (www.tcs.hut.fi/Software/bliss/)
+
+user parameter file <scip.set> not found - using default parameters
+
+saved parameter file </home/duweiyue25/acyclic_cable_harness/results/audit/scip_8.0.4_default.set>
+

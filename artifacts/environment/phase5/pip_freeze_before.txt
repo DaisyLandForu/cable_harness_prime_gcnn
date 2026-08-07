@@ -1,0 +1,23 @@
+cmake==3.31.6
+Cython==0.29.37
+distro==1.9.0
+ecole @ file:///tmp/phase4_deps/ecole-0.8.1
+iniconfig==2.3.0
+networkx==3.4.2
+ninja==1.11.1.3
+numpy==1.26.4
+packaging @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_packaging_1777103621/work
+pandas==2.2.3
+patchelf==0.17.2.2
+pluggy==1.6.0
+psutil==6.1.1
+pybind11==2.13.6
+PySCIPOpt @ file:///tmp/phase4_deps/PySCIPOpt-4.3.0
+pytest==8.3.5
+python-dateutil==2.9.0.post0
+pytz==2026.3.post1
+PyYAML==6.0.2
+scikit-build==0.18.1
+scipy==1.13.1
+six==1.17.0
+tzdata==2026.3

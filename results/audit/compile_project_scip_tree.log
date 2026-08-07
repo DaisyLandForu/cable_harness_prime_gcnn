@@ -1,0 +1,5 @@
+project/scip_tree.cpp:17:10: fatal error: scip/scip.h: No such file or directory
+   17 | #include <scip/scip.h>
+      |          ^~~~~~~~~~~~~
+compilation terminated.
+ERROR conda.cli.main_run:execute(142): `conda run g++ -std=c++17 -O2 project/scip_tree.cpp -lscip -lxls -o results/audit/scip_tree_project_probe` failed. (See above for error)

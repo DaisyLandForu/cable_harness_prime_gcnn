@@ -1,0 +1,84 @@
+{
+  "baseline": {
+    "dual_bound": 0.0106657,
+    "final_gap": 0.00563861724968818,
+    "method": "default",
+    "nodes": 19,
+    "objective": 0.0107258398,
+    "raw_json": "results/dataset/raw/baseline/syn_large_s201.json",
+    "raw_log": "results/dataset/raw/baseline/syn_large_s201.log",
+    "solving_time": 30.010857,
+    "status": "time_limit",
+    "threads": 1,
+    "time_limit": 30,
+    "wall_time": 30.490492806
+  },
+  "baseline_seed": 0,
+  "business_parameters": {
+    "access_edges": 90,
+    "cables": 45,
+    "center_edges": 139,
+    "center_nodes": 80,
+    "edges": 229,
+    "nodes": 170
+  },
+  "copy_num": 4,
+  "generation_seed": 201,
+  "generator": {
+    "graph": {
+      "access_edges": 90,
+      "cables": 45,
+      "center_edges": 139,
+      "center_nodes": 80,
+      "edges": 229,
+      "nodes": 170
+    },
+    "instance_id": "syn_large_s201",
+    "parameters": {
+      "backbone_nodes": 60,
+      "cables": 45,
+      "entry_nodes": 20,
+      "extra_backbone_edges": 60
+    },
+    "scenario": "SYN_SYN_LARGE_S201",
+    "seed": 201,
+    "semantics": {
+      "backbone_nodes": "N followed by digits",
+      "entry_nodes": "E followed by digits",
+      "leaf_nodes": "L-prefixed cable endpoints",
+      "pair_weight_schedule": [
+        1e-07,
+        2e-07,
+        4e-07
+      ]
+    },
+    "source_files": {
+      "edges": "data/generated/validation/syn_large_s201_edges.csv",
+      "edges_sha256": "1695ee28ed80d908dcc28e45bb253c5d3a8e9f300c4da6e82a20b27b42bde72d",
+      "pairs": "data/generated/validation/syn_large_s201_pairs.csv",
+      "pairs_sha256": "6d3caa752b133c188cb6c6bad7f29e3c6a10884cb5f1baf1f318239cbf8db108"
+    }
+  },
+  "instance_id": "syn_large_s201",
+  "milp": {
+    "center_edges": 139,
+    "center_nodes": 80,
+    "cip": "data/instances/validation/syn_large_s201.cip",
+    "cip_sha256": "b32987281eb2034eaff112dc85199263563315de5a0e89b15370da1f8a2a98eb",
+    "commodities": 45,
+    "constraint_variable_ratio": 2.4377975168081663,
+    "constraints": 49675,
+    "integer_variables": 1292,
+    "variables": 20377
+  },
+  "size": "large",
+  "source_files": {
+    "edges": "data/generated/validation/syn_large_s201_edges.csv",
+    "edges_sha256": "1695ee28ed80d908dcc28e45bb253c5d3a8e9f300c4da6e82a20b27b42bde72d",
+    "pairs": "data/generated/validation/syn_large_s201_pairs.csv",
+    "pairs_sha256": "6d3caa752b133c188cb6c6bad7f29e3c6a10884cb5f1baf1f318239cbf8db108"
+  },
+  "source_scenario": "SYN_SYN_LARGE_S201",
+  "source_type": "synthetic",
+  "split": "validation"
+}

@@ -1,0 +1,239 @@
+{
+  "method": "rl",
+  "instance": "data/instances/validation/real_08.cip",
+  "seed": 101,
+  "policy_seed": 10238,
+  "status": "nodelimit",
+  "nodes": 20,
+  "solving_time": 22.887357,
+  "reward": -19.0,
+  "transitions": 19,
+  "root_fingerprint": {
+    "candidate_count": 261,
+    "actions_sha256": "d82ac61708db25286ae7a1bfd2334c4a859586f544c916b7df31a63809528b05",
+    "variable_features_sha256": "d73b18debd166d8cc9c38a5a9d17205ff7e6932c9ab7b7e8e0c624465bc999da",
+    "global_features_sha256": "13ee7d6a47c1e83c1d508910fd634e9dd11db909f0c1b9b2c67bbfcddce5dd43",
+    "top_q": [
+      {
+        "action": 277,
+        "variable_name": "t_z_54_16_2",
+        "q_value": -136.5260467529297
+      },
+      {
+        "action": 1656,
+        "variable_name": "t_z_239_238_1",
+        "q_value": -136.53713989257812
+      },
+      {
+        "action": 528,
+        "variable_name": "t_z_119_60_3",
+        "q_value": -136.53713989257812
+      },
+      {
+        "action": 941,
+        "variable_name": "t_z_16_15_0",
+        "q_value": -136.54544067382812
+      },
+      {
+        "action": 998,
+        "variable_name": "t_z_16_35_0",
+        "q_value": -136.54544067382812
+      }
+    ]
+  },
+  "first_actions": [
+    277,
+    1529,
+    871,
+    1986,
+    1027,
+    528,
+    873,
+    2010,
+    2047,
+    1269,
+    494,
+    2065,
+    2027,
+    523,
+    934,
+    819,
+    1765,
+    358,
+    1400
+  ],
+  "first_decisions": [
+    {
+      "action": 277,
+      "variable_name": "t_z_54_16_2",
+      "depth": 0,
+      "node_id": 1,
+      "q_value": -136.5260467529297,
+      "q_margin": 0.0110931396484375,
+      "q_ties_1e7": 1
+    },
+    {
+      "action": 1529,
+      "variable_name": "t_z_237_238_3",
+      "depth": 1,
+      "node_id": 3,
+      "q_value": -136.8037567138672,
+      "q_margin": 0.0081787109375,
+      "q_ties_1e7": 1
+    },
+    {
+      "action": 871,
+      "variable_name": "t_z_238_237_2",
+      "depth": 2,
+      "node_id": 5,
+      "q_value": -136.42103576660156,
+      "q_margin": 0.0,
+      "q_ties_1e7": 2
+    },
+    {
+      "action": 1986,
+      "variable_name": "t_z_89_6_3",
+      "depth": 3,
+      "node_id": 7,
+      "q_value": -136.04737854003906,
+      "q_margin": 0.00152587890625,
+      "q_ties_1e7": 1
+    },
+    {
+      "action": 1027,
+      "variable_name": "t_z_109_88_1",
+      "depth": 4,
+      "node_id": 9,
+      "q_value": -136.1139373779297,
+      "q_margin": 0.0,
+      "q_ties_1e7": 4
+    },
+    {
+      "action": 528,
+      "variable_name": "t_z_119_60_3",
+      "depth": 5,
+      "node_id": 10,
+      "q_value": -135.55226135253906,
+      "q_margin": 0.0,
+      "q_ties_1e7": 2
+    },
+    {
+      "action": 873,
+      "variable_name": "t_z_123_122_3",
+      "depth": 6,
+      "node_id": 13,
+      "q_value": -135.00335693359375,
+      "q_margin": 0.000274658203125,
+      "q_ties_1e7": 1
+    },
+    {
+      "action": 2010,
+      "variable_name": "t_z_112_113_1",
+      "depth": 7,
+      "node_id": 15,
+      "q_value": -134.69300842285156,
+      "q_margin": 0.0,
+      "q_ties_1e7": 27
+    },
+    {
+      "action": 2047,
+      "variable_name": "t_z_113_212_1",
+      "depth": 8,
+      "node_id": 17,
+      "q_value": -134.09385681152344,
+      "q_margin": 0.0,
+      "q_ties_1e7": 26
+    },
+    {
+      "action": 1269,
+      "variable_name": "t_z_16_15_1",
+      "depth": 9,
+      "node_id": 19,
+      "q_value": -133.50350952148438,
+      "q_margin": 0.0,
+      "q_ties_1e7": 7
+    },
+    {
+      "action": 494,
+      "variable_name": "t_z_16_20_1",
+      "depth": 10,
+      "node_id": 21,
+      "q_value": -132.955078125,
+      "q_margin": 0.0,
+      "q_ties_1e7": 6
+    },
+    {
+      "action": 2065,
+      "variable_name": "t_z_15_52_2",
+      "depth": 11,
+      "node_id": 23,
+      "q_value": -132.3688201904297,
+      "q_margin": 0.0042724609375,
+      "q_ties_1e7": 1
+    },
+    {
+      "action": 2027,
+      "variable_name": "t_z_120_121_3",
+      "depth": 12,
+      "node_id": 25,
+      "q_value": -131.78253173828125,
+      "q_margin": 0.0,
+      "q_ties_1e7": 4
+    },
+    {
+      "action": 523,
+      "variable_name": "t_z_122_123_3",
+      "depth": 13,
+      "node_id": 26,
+      "q_value": -131.2005615234375,
+      "q_margin": 0.0,
+      "q_ties_1e7": 3
+    },
+    {
+      "action": 934,
+      "variable_name": "t_z_6_5_1",
+      "depth": 14,
+      "node_id": 28,
+      "q_value": -131.4730987548828,
+      "q_margin": 0.0,
+      "q_ties_1e7": 5
+    },
+    {
+      "action": 819,
+      "variable_name": "t_z_5_6_1",
+      "depth": 15,
+      "node_id": 30,
+      "q_value": -130.96932983398438,
+      "q_margin": 0.0,
+      "q_ties_1e7": 5
+    },
+    {
+      "action": 1765,
+      "variable_name": "t_z_212_113_3",
+      "depth": 16,
+      "node_id": 33,
+      "q_value": -130.50054931640625,
+      "q_margin": 0.0,
+      "q_ties_1e7": 2
+    },
+    {
+      "action": 358,
+      "variable_name": "t_z_6_89_1",
+      "depth": 17,
+      "node_id": 35,
+      "q_value": -130.1588134765625,
+      "q_margin": 0.0,
+      "q_ties_1e7": 4
+    },
+    {
+      "action": 1400,
+      "variable_name": "t_z_89_90_1",
+      "depth": 18,
+      "node_id": 37,
+      "q_value": -129.58969116210938,
+      "q_margin": 0.0,
+      "q_ties_1e7": 3
+    }
+  ],
+  "action_trace_sha256": "11b3ec0325739d95e8ad327e9e01854c2b089933df47638ab6ef71bef9e7541a"
+}

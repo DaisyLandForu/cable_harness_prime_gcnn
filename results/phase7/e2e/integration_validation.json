@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "checks": {
+    "all_runs_optimal_and_feasible": true,
+    "all_objectives_match_default": true,
+    "all_rl_actions_legal": true,
+    "repeat_decision_sequence_equal": true,
+    "missing_model_fallback_used": true,
+    "depth_gate_fallback_used": true
+  },
+  "default": {
+    "objective": 0.0022776,
+    "nodes": 9,
+    "solving_time": 2.906668
+  },
+  "rl_cuda": {
+    "nodes": 8,
+    "branch_decisions": 8,
+    "inference_total_seconds": 1.757531833,
+    "inference_mean_seconds": 0.219691479125,
+    "inference_max_seconds": 0.901333116,
+    "inference_fraction_of_solving_time": 0.4849490096734193
+  },
+  "rl_cuda_repeat": {
+    "nodes": 8,
+    "branch_decisions": 8,
+    "inference_total_seconds": 2.540867047,
+    "inference_mean_seconds": 0.317608380875,
+    "inference_max_seconds": 1.325105407,
+    "inference_fraction_of_solving_time": 0.597387356731798
+  },
+  "rl_cpu": {
+    "nodes": 8,
+    "branch_decisions": 8,
+    "inference_total_seconds": 0.999552981,
+    "inference_mean_seconds": 0.124944122625,
+    "inference_max_seconds": 0.169753261,
+    "inference_fraction_of_solving_time": 0.36143649233900116
+  },
+  "repeat_trace_length": 8,
+  "model_fallback_count": 10,
+  "gate_rl_decisions": 1,
+  "gate_fallback_count": 10
+}

@@ -1,0 +1,13 @@
+{
+  "instance": "data/instances/validation/real_08.cip",
+  "seed": 100,
+  "candidate_count": 151,
+  "max_abs_error": 0.0,
+  "tolerance": 1e-06,
+  "eager_argmax_position": 17,
+  "scripted_argmax_position": 17,
+  "selected_action": 423,
+  "loss_rows": 120,
+  "loss_min": 0.04597976803779602,
+  "loss_max": 12.122382164001465
+}

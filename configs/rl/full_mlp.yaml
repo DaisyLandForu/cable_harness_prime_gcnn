@@ -1,0 +1,41 @@
+run_name: candidate_mlp_full
+seed: 0
+device: cuda
+output_dir: artifacts/models/mlp/full
+train_instances:
+  - data/instances/train/real_06.cip
+  - data/instances/train/real_07.cip
+validation_instances:
+  - data/instances/validation/real_08.cip
+environment:
+  seed: 0
+  time_limit: 120.0
+  node_limit: 200
+  gamma: 1.0
+  reward_mode: negative_node_increment
+  bootstrap_on_truncation: false
+  cache_static_features: true
+model:
+  hidden_sizes: [256, 256, 128]
+optimization:
+  total_gradient_steps: 20000
+  batch_size: 64
+  replay_capacity: 50000
+  min_replay_size: 256
+  learning_rate: 0.0001
+  updates_per_env_step: 16
+  n_step: 3
+  gamma: 1.0
+  gradient_clip: 10.0
+  target_update_interval: 500
+exploration:
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  decay_steps: 16000
+evaluation:
+  seeds: [100, 101, 102]
+  interval_steps: 2000
+  early_stopping_patience: 5
+  compare_seeds: [100, 101, 102, 103, 104]
+normalization_warmup_states: 64
+log_interval_steps: 100

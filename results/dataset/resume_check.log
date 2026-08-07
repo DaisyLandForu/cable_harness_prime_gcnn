@@ -1,0 +1,49 @@
+[1/24] train/real_06
+  resume: complete instance
+[2/24] train/real_07
+  resume: complete instance
+[3/24] train/syn_small_s101
+  resume: complete instance
+[4/24] train/syn_small_s102
+  resume: complete instance
+[5/24] train/syn_small_s103
+  resume: complete instance
+[6/24] train/syn_medium_s101
+  resume: complete instance
+[7/24] train/syn_medium_s102
+  resume: complete instance
+[8/24] train/syn_medium_s103
+  resume: complete instance
+[9/24] train/syn_large_s101
+  resume: complete instance
+[10/24] train/syn_large_s102
+  resume: complete instance
+[11/24] train/syn_large_s103
+  resume: complete instance
+[12/24] validation/real_08
+  resume: complete instance
+[13/24] validation/syn_small_s201
+  resume: complete instance
+[14/24] validation/syn_medium_s201
+  resume: complete instance
+[15/24] validation/syn_large_s201
+  resume: complete instance
+[16/24] test/real_09
+  resume: complete instance
+[17/24] test/syn_small_s301
+  resume: complete instance
+[18/24] test/syn_medium_s301
+  resume: complete instance
+[19/24] test/syn_large_s301
+  resume: complete instance
+[20/24] transfer/real_01
+  resume: complete instance
+[21/24] transfer/real_02
+  resume: complete instance
+[22/24] transfer/real_03
+  resume: complete instance
+[23/24] transfer/real_04
+  resume: complete instance
+[24/24] transfer/real_05
+  resume: complete instance
+Wrote 24 instances to data/instances/manifest.csv

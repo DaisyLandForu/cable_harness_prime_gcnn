@@ -1,0 +1,44 @@
+SCIP version 8.0.4 [precision: 8 byte] [memory: block] [mode: optimized] [LP solver: Soplex 6.0.4] [GitHash: a8e51afd1e]
+Copyright (c) 2002-2023 Zuse Institute Berlin (ZIB)
+
+External libraries: 
+  Readline 8.1         GNU library for command line editing (gnu.org/s/readline)
+  Soplex 6.0.4         Linear Programming Solver developed at Zuse Institute Berlin (soplex.zib.de) [GitHash: 950b1658]
+  CppAD 20180000.0     Algorithmic Differentiation of C++ algorithms developed by B. Bell (github.com/coin-or/CppAD)
+  ZLIB 1.2.11          General purpose compression library by J. Gailly and M. Adler (zlib.net)
+  GMP 6.2.1            GNU Multiple Precision Arithmetic Library developed by T. Granlund (gmplib.org)
+  AMPL/MP 4e2d45c4     AMPL .nl file reader library (github.com/ampl/mp)
+  bliss 0.77           Computing Graph Automorphism Groups by T. Junttila and P. Kaski (www.tcs.hut.fi/Software/bliss/)
+
+user parameter file <scip.set> not found - using default parameters
+
+
+ branching rule       priority maxdepth maxbddist  description
+ --------------       -------- -------- ---------  -----------
+ relpscost               10000       -1    100.0%  reliability branching on pseudo cost values
+ pscost                   2000       -1    100.0%  branching on pseudo cost values
+ inference                1000       -1    100.0%  inference history branching
+ mostinf                   100       -1    100.0%  most infeasible branching
+ leastinf                   50       -1    100.0%  least infeasible branching
+ distribution                0       -1    100.0%  branching rule based on variable influence on cumulative normal distribution of row activities
+ fullstrong                  0       -1    100.0%  full strong branching
+ cloud                       0       -1    100.0%  branching rule that considers several alternative LP optima
+ lookahead                   0       -1    100.0%  full strong branching over multiple levels
+ multaggr                    0       -1    100.0%  fullstrong branching on fractional and multi-aggregated variables
+ allfullstrong           -1000       -1    100.0%  all variables full strong branching
+ vanillafullstrong       -2000       -1    100.0%  vanilla full strong branching
+ random                -100000       -1    100.0%  random variable branching
+ nodereopt            -9000000       -1    100.0%  branching rule for node reoptimization
+
+
+ node selector        std priority memsave prio  description
+ -------------        ------------ ------------  -----------
+ estimate                   200000          100  best estimate search
+ bfs                        100000            0  best first search
+ hybridestim                 50000           50  hybrid best estimate / best bound search
+ restartdfs                  10000        50000  depth first search with periodical selection of the best node
+ uct                            10            0  node selector which balances exploration and exploitation 
+ dfs                             0       100000  depth first search
+ breadthfirst               -10000     -1000000  breadth first search
+
+

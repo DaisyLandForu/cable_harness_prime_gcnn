@@ -1,0 +1,16 @@
+{
+  "all_deterministic_fields_equal": true,
+  "checks": {
+    "status": true,
+    "nodes": true,
+    "reward": true,
+    "transitions": true,
+    "root_fingerprint": true,
+    "first_actions": true,
+    "first_decisions": true,
+    "action_trace_sha256": true
+  },
+  "solving_time_a": 22.887357,
+  "solving_time_b": 23.218669,
+  "action_trace_sha256": "11b3ec0325739d95e8ad327e9e01854c2b089933df47638ab6ef71bef9e7541a"
+}

@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "checks": {
+    "all_runs_optimal_and_feasible": true,
+    "rl_objective_matches_default": true,
+    "repeat_objective_matches": true,
+    "all_rl_actions_legal": true,
+    "repeat_decision_sequence_equal": true,
+    "missing_model_fallback_used": true,
+    "candidate_gate_fallback_used": true
+  },
+  "default": {
+    "objective": 0.0022776,
+    "nodes": 9
+  },
+  "rl_cpu": {
+    "objective": 0.0022776,
+    "nodes": 13,
+    "branch_decisions": 12,
+    "inference_total_seconds": 0.005898909,
+    "inference_mean_seconds": 0.00049157575,
+    "inference_max_seconds": 0.001309373,
+    "fallback_count": 0
+  },
+  "repeat_trace_length": 12,
+  "model_fallback_count": 10,
+  "gate_fallback_count": 10
+}

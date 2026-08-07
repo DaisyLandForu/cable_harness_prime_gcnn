@@ -1,0 +1,17 @@
+{
+  "instance": "data/instances/test/real_09.cip",
+  "policy": "random",
+  "seed": 0,
+  "reward_mode": "negative_node_increment",
+  "gamma": 1.0,
+  "transition_count": 0,
+  "status": "optimal",
+  "terminated": true,
+  "truncated": false,
+  "nodes": 1,
+  "lp_iterations": 2924,
+  "solving_time": 1.9872869999999998,
+  "total_reward": 0.0,
+  "visited_tree_nodes": 0,
+  "transitions": []
+}

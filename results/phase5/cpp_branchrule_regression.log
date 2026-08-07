@@ -1,0 +1,5 @@
+mkdir -p build
+g++ -O2 -std=c++17 -Wall -Wextra tests/test_custom_branchrule.cpp src/rl/rl_branchrule.cpp src/rl/scip_feature_extractor.cpp \
+	-Isrc -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/scip/src -I/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/scip -L/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -Wl,-rpath,/home/duweiyue25/SCIP/scipoptsuite-8.0.4/build/lib -lscip -o build/test_custom_branchrule
+./build/test_custom_branchrule
+custom branchrule selection tests passed
