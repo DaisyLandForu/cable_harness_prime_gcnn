@@ -192,6 +192,82 @@ def extract_graph_state(
     return state
 
 
+def graph_state_storage_bytes(state: GraphState) -> int:
+    return int(
+        state.row_features.nbytes
+        + state.variable_features.nbytes
+        + state.edge_indices.nbytes
+        + state.edge_features.nbytes
+        + state.global_features.nbytes
+        + state.variable_categories.nbytes
+        + state.row_categories.nbytes
+        + state.actions.nbytes
+    )
+
+
+def transition_storage_bytes(
+    state: GraphState,
+    next_state: GraphState | None,
+    *,
+    container_overhead: int = 64,
+) -> int:
+    total = graph_state_storage_bytes(state) + int(container_overhead)
+    if next_state is not None:
+        total += graph_state_storage_bytes(next_state)
+    return int(total)
+
+
+def candidate_twohop_state(state: GraphState) -> GraphState:
+    n_variables = state.variable_features.shape[0]
+    n_rows = state.row_features.shape[0]
+    candidates = np.asarray(state.actions, dtype=np.int64)
+    if candidates.size == 0:
+        raise ValueError("candidate two-hop requires a non-empty action set")
+    row_idx = np.asarray(state.edge_indices[0], dtype=np.int64)
+    var_idx = np.asarray(state.edge_indices[1], dtype=np.int64)
+    candidate_mask = np.zeros(n_variables, dtype=bool)
+    candidate_mask[candidates] = True
+    keep_row_mask = np.zeros(n_rows, dtype=bool)
+    if row_idx.size:
+        keep_row_mask[np.unique(row_idx[candidate_mask[var_idx]])] = True
+    keep_edge = keep_row_mask[row_idx] if row_idx.size else np.zeros(0, dtype=bool)
+    keep_var_mask = candidate_mask.copy()
+    if keep_edge.size:
+        keep_var_mask[var_idx[keep_edge]] = True
+    keep_rows = np.flatnonzero(keep_row_mask)
+    keep_vars = np.flatnonzero(keep_var_mask)
+    row_map = np.full(n_rows, -1, dtype=np.int64)
+    var_map = np.full(n_variables, -1, dtype=np.int64)
+    row_map[keep_rows] = np.arange(keep_rows.size, dtype=np.int64)
+    var_map[keep_vars] = np.arange(keep_vars.size, dtype=np.int64)
+    if keep_edge.size:
+        new_edges = np.vstack(
+            [row_map[row_idx[keep_edge]], var_map[var_idx[keep_edge]]]
+        )
+        new_edge_features = np.asarray(state.edge_features)[keep_edge]
+    else:
+        new_edges = np.zeros((2, 0), dtype=np.int64)
+        new_edge_features = np.zeros((0, state.edge_features.shape[1]), dtype=np.float32)
+    new_actions = var_map[candidates]
+    if np.any(new_actions < 0):
+        raise ValueError("candidate missing from the union two-hop variable set")
+    names = state.variable_names
+    restricted = GraphState(
+        row_features=_immutable(np.asarray(state.row_features)[keep_rows]),
+        variable_features=_immutable(np.asarray(state.variable_features)[keep_vars]),
+        edge_indices=_immutable(new_edges, np.int64),
+        edge_features=_immutable(new_edge_features),
+        global_features=_immutable(state.global_features),
+        variable_categories=_immutable(np.asarray(state.variable_categories)[keep_vars]),
+        row_categories=_immutable(np.asarray(state.row_categories)[keep_rows]),
+        actions=_immutable(new_actions, np.int64),
+        candidate_names=state.candidate_names,
+        variable_names=tuple(names[int(index)] for index in keep_vars) if names else (),
+    )
+    restricted.validate()
+    return restricted
+
+
 class RunningGraphNormalizer:
     FEATURE_GROUPS = {
         "variable": len(GRAPH_VARIABLE_FEATURE_NAMES),

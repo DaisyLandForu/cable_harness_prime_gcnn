@@ -2,13 +2,17 @@ from pathlib import Path
 
 from rl_branching.config import BBMDPConfig
 from rl_branching.scip_profile import (
+    EFFECTIVE_SEARCH_PARAM_NAMES,
     FORBIDDEN_PRODUCTION_KEYS,
+    canonicalize_live_param,
     canonicalize_profile_value,
+    dump_effective_search_params,
     ecole_params_from_profile,
     parse_scip_set,
     profile_dump,
     resolve_scip_profile,
     sha256_file,
+    sha256_text,
 )
 
 
@@ -52,3 +56,21 @@ def test_profile_dump_is_canonical_and_hashed():
     assert canonicalize_profile_value("TRUE") == "TRUE"
     assert canonicalize_profile_value("0") == "0"
     assert len(sha256_file(PROFILE)) == 64
+    assert "separating/maxrounds" in EFFECTIVE_SEARCH_PARAM_NAMES
+    assert "estimation/restarts/restartpolicy" in EFFECTIVE_SEARCH_PARAM_NAMES
+    assert canonicalize_live_param("c") == "'c'"
+    applied = profile_dump(entries)
+    assert sha256_text(applied) == "ffec5443d40f7e92f1c547d345206054c3cfd3a88dda04322df4f5aa38bc0741"
+
+
+def test_effective_dump_reads_the_same_key_set():
+    values = {name: 1 for name in EFFECTIVE_SEARCH_PARAM_NAMES}
+    values["branching/preferbinary"] = True
+    values["estimation/restarts/restartpolicy"] = "c"
+    values["limits/time"] = 3600.0
+    values["limits/nodes"] = -1
+    values["limits/restarts"] = 2147483647
+    dump = dump_effective_search_params(values.__getitem__)
+    assert "limits/time = 3600" in dump
+    assert "estimation/restarts/restartpolicy = 'c'" in dump
+    assert dump == dump_effective_search_params(values.__getitem__)

@@ -31,6 +31,7 @@ struct ProbeOptions {
     int chunk_size = 64;
     double time_limit = 3600.0;
     double full_limit_gib = 8.0;
+    bool dump_effective_only = false;
 };
 
 struct SCIP_BranchruleData {
@@ -40,6 +41,10 @@ struct SCIP_BranchruleData {
     std::string node_selector;
     std::string param_dump;
     std::string param_dump_sha256;
+    std::string applied_profile_dump_sha256;
+    std::string effective_dump;
+    std::string effective_search_params_sha256;
+    std::string effective_search_params_core_sha256;
     std::string binary_sha256;
     bool reached_first_branch = false;
     bool wrote_output = false;
@@ -109,9 +114,16 @@ void writeProbeJson(SCIP* scip, SCIP_BRANCHRULEDATA* data, const std::string& st
 
     out << "{\n";
     out << "  \"instance\": \"" << data->options.instance << "\",\n";
-    out << "  \"instance_sha256\": \"" << rlbranch::sha256File(data->options.instance) << "\",\n";
+    out << "  \"instance_sha256\": \""
+        << (data->options.instance.empty() ? "" : rlbranch::sha256File(data->options.instance))
+        << "\",\n";
     out << "  \"scip_profile\": \"" << data->options.profile << "\",\n";
     out << "  \"profile_sha256\": \"" << data->profile.file_sha256 << "\",\n";
+    out << "  \"applied_profile_dump_sha256\": \"" << data->applied_profile_dump_sha256 << "\",\n";
+    out << "  \"effective_search_params_sha256\": \""
+        << data->effective_search_params_sha256 << "\",\n";
+    out << "  \"effective_search_params_core_sha256\": \""
+        << data->effective_search_params_core_sha256 << "\",\n";
     out << "  \"param_dump_sha256\": \"" << data->param_dump_sha256 << "\",\n";
     out << "  \"binary_sha256\": \"" << data->binary_sha256 << "\",\n";
     out << "  \"scip_version\": \"" << SCIPmajorVersion() << "." << SCIPminorVersion()
@@ -148,6 +160,10 @@ void writeProbeJson(SCIP* scip, SCIP_BRANCHRULEDATA* data, const std::string& st
     const auto dump_path = std::filesystem::path(data->options.output).replace_extension(".params.txt");
     std::ofstream dump(dump_path);
     dump << data->param_dump;
+    const auto effective_path =
+        std::filesystem::path(data->options.output).replace_extension(".effective.txt");
+    std::ofstream effective(effective_path);
+    effective << data->effective_dump;
     data->wrote_output = true;
 }
 
@@ -166,6 +182,7 @@ SCIP_DECL_BRANCHEXECLP(branchExeclpGraphProbe) {
     }
 
     data->reached_first_branch = true;
+    rlbranch::requireEstimateNodeSelector(scip);
     data->node_selector = rlbranch::activeNodeSelectorName(scip);
     const std::int64_t limit_bytes = static_cast<std::int64_t>(
         data->options.full_limit_gib * 1024.0 * 1024.0 * 1024.0);
@@ -187,7 +204,7 @@ void printUsage(const char* program) {
     std::cout
         << "Usage:\n  " << program
         << " --instance <cip> [--scip-profile <set>] [--output <json>]"
-        << " [--seed 0] [--time-limit 3600] [--chunk-size 64]\n";
+        << " [--seed 0] [--time-limit 3600] [--chunk-size 64] [--dump-effective]\n";
 }
 
 ProbeOptions parseOptions(int argc, char** argv) {
@@ -219,11 +236,13 @@ ProbeOptions parseOptions(int argc, char** argv) {
             if (std::stoi(require()) != 1) {
                 throw std::invalid_argument("graph_probe requires --threads 1");
             }
+        } else if (arg == "--dump-effective") {
+            options.dump_effective_only = true;
         } else {
             throw std::invalid_argument("unknown option: " + arg);
         }
     }
-    if (options.instance.empty()) {
+    if (options.instance.empty() && !options.dump_effective_only) {
         throw std::invalid_argument("--instance is required");
     }
     if (options.chunk_size <= 0 || options.time_limit <= 0.0 || options.seed < 0) {
@@ -237,7 +256,7 @@ ProbeOptions parseOptions(int argc, char** argv) {
 int main(int argc, char** argv) {
     try {
         ProbeOptions options = parseOptions(argc, argv);
-        if (!std::filesystem::exists(options.instance)) {
+        if (!options.dump_effective_only && !std::filesystem::exists(options.instance)) {
             throw std::runtime_error("instance not found: " + options.instance);
         }
         if (!std::filesystem::exists(options.profile)) {
@@ -274,6 +293,23 @@ int main(int argc, char** argv) {
         rlbranch::assertProductionInvariants(scip);
         data->param_dump = rlbranch::dumpAppliedProfile(scip, data->profile);
         data->param_dump_sha256 = rlbranch::sha256Text(data->param_dump);
+        data->applied_profile_dump_sha256 = data->param_dump_sha256;
+        data->effective_dump = rlbranch::dumpEffectiveSearchParams(scip);
+        data->effective_search_params_sha256 = rlbranch::sha256Text(data->effective_dump);
+        data->effective_search_params_core_sha256 = rlbranch::sha256Text(
+            rlbranch::dumpEffectiveSearchParams(scip, false));
+
+        if (options.dump_effective_only) {
+            if (data->options.output.empty()) {
+                data->options.output = "results/probes/effective_search_params.json";
+            }
+            SCIP_CALL(SCIPcreateProbBasic(scip, "effective_dump"));
+            rlbranch::requireEstimateNodeSelector(scip);
+            data->node_selector = rlbranch::activeNodeSelectorName(scip);
+            writeProbeJson(scip, data, "effective_dump");
+            SCIP_CALL(SCIPfree(&scip));
+            return 0;
+        }
 
         SCIP_CALL(SCIPreadProb(scip, options.instance.c_str(), nullptr));
         SCIP_CALL(SCIPsolve(scip));

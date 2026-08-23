@@ -11,7 +11,7 @@ SCIP_LDFLAGS := -L$(SCIP_ROOT)/build/lib -Wl,-rpath,$(SCIP_ROOT)/build/lib -lsci
 else
 SCIP_INCLUDES := -I$(SCIP_ROOT)/include
 SCIP_LDFLAGS := -L$(SCIP_ROOT)/lib -Wl,-rpath,$(SCIP_ROOT)/lib -lscip \
-	-L$(CONDA_PREFIX)/lib -Wl,-rpath,$(CONDA_PREFIX)/lib -lz -lreadline -lgmp -lcrypto
+	-L$(CONDA_PREFIX)/lib -Wl,-rpath,$(CONDA_PREFIX)/lib -lz -lreadline -ltinfo -lgmp -lcrypto
 endif
 TORCH_INCLUDES := -isystem $(TORCH_ROOT)/include -isystem $(TORCH_ROOT)/include/torch/csrc/api/include
 TORCH_LDFLAGS := -L$(TORCH_ROOT)/lib -Wl,-rpath,$(TORCH_ROOT)/lib \

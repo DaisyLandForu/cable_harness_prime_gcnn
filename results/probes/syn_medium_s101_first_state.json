@@ -1,0 +1,18 @@
+{
+  "instance": "data/instances/train/syn_medium_s101.cip",
+  "instance_sha256": "2fe2f163bc7d67388bdae109cd98f98a491281ecd6188ee0b0eedaec289437e4",
+  "parity_role": "primary",
+  "lifecycle_note": "use this instance for Python/C++ first-state parity",
+  "status": "unknown",
+  "terminated": false,
+  "lp_iterations": 4039,
+  "nodes": 1,
+  "candidate_count": 142,
+  "twohop_variables": 1438,
+  "twohop_rows": 2563,
+  "twohop_edges": 12892,
+  "twohop_state_bytes": 745520,
+  "effective_search_params_sha256": "2f4bc84ef69da66263a14082380cbe76be4798a65e0ea118ca91207b1d00c760",
+  "effective_search_params_core_sha256": "85658e46b29cc6dada1b0a60802a5e7459763dcc8e413d3edfdbac80803e7c80",
+  "ecole_seed_remap": true
+}

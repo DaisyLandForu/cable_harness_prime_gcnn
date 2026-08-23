@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cctype>
 #include <fstream>
+#include <iterator>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -126,6 +127,33 @@ SCIP_RETCODE applyScipProfile(SCIP* scip, const ScipProfile& profile) {
     return SCIP_OKAY;
 }
 
+namespace {
+
+const char* const kEffectiveSearchParams[] = {
+    "branching/preferbinary",
+    "estimation/restarts/restartpolicy",
+    "heuristics/alns/freq",
+    "heuristics/alns/priority",
+    "heuristics/rens/freq",
+    "heuristics/rens/priority",
+    "limits/gap",
+    "limits/nodes",
+    "limits/restarts",
+    "limits/time",
+    "lp/threads",
+    "nodeselection/dfs/stdpriority",
+    "nodeselection/estimate/stdpriority",
+    "parallel/maxnthreads",
+    "parallel/minnthreads",
+    "presolving/maxrestarts",
+    "randomization/lpseed",
+    "randomization/permutationseed",
+    "randomization/randomseedshift",
+    "separating/maxrounds",
+};
+
+}  // namespace
+
 std::string dumpAppliedProfile(SCIP* scip, const ScipProfile& profile) {
     auto entries = profile.entries;
     std::sort(entries.begin(), entries.end());
@@ -140,6 +168,30 @@ std::string dumpAppliedProfile(SCIP* scip, const ScipProfile& profile) {
     return out.str();
 }
 
+std::string dumpEffectiveSearchParams(SCIP* scip, bool include_seeds) {
+    std::vector<std::string> names;
+    for (const char* raw : kEffectiveSearchParams) {
+        const std::string name(raw);
+        if (!include_seeds && (
+            name == "randomization/lpseed"
+            || name == "randomization/permutationseed"
+            || name == "randomization/randomseedshift")) {
+            continue;
+        }
+        names.push_back(name);
+    }
+    std::sort(names.begin(), names.end());
+    std::ostringstream out;
+    for (const auto& name : names) {
+        SCIP_PARAM* param = SCIPgetParam(scip, name.c_str());
+        if (param == nullptr) {
+            throw std::runtime_error("missing effective SCIP parameter: " + name);
+        }
+        out << name << " = " << canonicalizeValue(scip, param) << '\n';
+    }
+    return out.str();
+}
+
 void assertProductionInvariants(SCIP* scip) {
     int min_threads = 0;
     int max_threads = 0;
@@ -147,6 +199,8 @@ void assertProductionInvariants(SCIP* scip) {
     int maxrounds = 0;
     int dfs_priority = 0;
     int estimate_priority = 0;
+    int restart_limit = 0;
+    char restart_policy = 'n';
     SCIP_Bool prefer_binary = FALSE;
     SCIP_CALL_ABORT(SCIPgetIntParam(scip, "parallel/minnthreads", &min_threads));
     SCIP_CALL_ABORT(SCIPgetIntParam(scip, "parallel/maxnthreads", &max_threads));
@@ -156,6 +210,9 @@ void assertProductionInvariants(SCIP* scip) {
     SCIP_CALL_ABORT(SCIPgetIntParam(
         scip, "nodeselection/estimate/stdpriority", &estimate_priority));
     SCIP_CALL_ABORT(SCIPgetBoolParam(scip, "branching/preferbinary", &prefer_binary));
+    SCIP_CALL_ABORT(SCIPgetCharParam(
+        scip, "estimation/restarts/restartpolicy", &restart_policy));
+    SCIP_CALL_ABORT(SCIPgetIntParam(scip, "limits/restarts", &restart_limit));
     if (min_threads != 1 || max_threads != 1 || lp_threads != 1) {
         throw std::runtime_error("project-production-v1 requires SCIP/LP threads=1");
     }
@@ -167,6 +224,21 @@ void assertProductionInvariants(SCIP* scip) {
     }
     if (!prefer_binary) {
         throw std::runtime_error("project-production-v1 requires branching/preferbinary");
+    }
+    if (restart_policy == 'n') {
+        throw std::runtime_error("project-production-v1 must not disable restarts");
+    }
+    if (restart_limit == 0) {
+        throw std::runtime_error("project-production-v1 must not set limits/restarts=0");
+    }
+}
+
+void requireEstimateNodeSelector(SCIP* scip) {
+    const std::string name = activeNodeSelectorName(scip);
+    if (name != "estimate") {
+        throw std::runtime_error(
+            "project-production-v1 requires active node selector estimate, got: "
+            + (name.empty() ? "<none>" : name));
     }
 }
 

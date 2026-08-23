@@ -16,6 +16,39 @@ FORBIDDEN_PRODUCTION_KEYS = (
     "presolving/maxrestarts",
 )
 
+# Live SCIP keys hashed as effective_search_params_sha256 on Python/Ecole and C++.
+EFFECTIVE_SEARCH_PARAM_NAMES = (
+    "branching/preferbinary",
+    "estimation/restarts/restartpolicy",
+    "heuristics/alns/freq",
+    "heuristics/alns/priority",
+    "heuristics/rens/freq",
+    "heuristics/rens/priority",
+    "limits/gap",
+    "limits/nodes",
+    "limits/restarts",
+    "limits/time",
+    "lp/threads",
+    "nodeselection/dfs/stdpriority",
+    "nodeselection/estimate/stdpriority",
+    "parallel/maxnthreads",
+    "parallel/minnthreads",
+    "presolving/maxrestarts",
+    "randomization/lpseed",
+    "randomization/permutationseed",
+    "randomization/randomseedshift",
+    "separating/maxrounds",
+)
+
+EFFECTIVE_SEED_PARAM_NAMES = (
+    "randomization/lpseed",
+    "randomization/permutationseed",
+    "randomization/randomseedshift",
+)
+
+PARITY_INSTANCE_RELATIVE = Path("data/instances/train/syn_medium_s101.cip")
+LIFECYCLE_DRIFT_INSTANCE_RELATIVE = Path("data/instances/test/real_09.cip")
+
 DEFAULT_PROFILE_RELATIVE = Path("configs/scip/project-production-v1.set")
 _ENTRY_RE = re.compile(r"^([A-Za-z0-9_/#.-]+)\s*=\s*(.+?)\s*$")
 
@@ -104,6 +137,64 @@ def profile_dump(entries: list[tuple[str, str]]) -> str:
         for name, value in sorted(entries, key=lambda item: item[0])
     ]
     return "\n".join(lines) + ("\n" if lines else "")
+
+
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def canonicalize_live_param(value: Any) -> str:
+    if isinstance(value, bool):
+        return "TRUE" if value else "FALSE"
+    if isinstance(value, str) and len(value) == 1:
+        return f"'{value}'"
+    if isinstance(value, int) and not isinstance(value, bool):
+        return str(value)
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    if isinstance(value, float):
+        return format(value, ".15g")
+    if isinstance(value, bytes) and len(value) == 1:
+        return f"'{value.decode('ascii')}'"
+    return str(value)
+
+
+def dump_effective_search_params(getter, *, include_seeds: bool = True) -> str:
+    names = EFFECTIVE_SEARCH_PARAM_NAMES
+    if not include_seeds:
+        names = tuple(name for name in names if name not in EFFECTIVE_SEED_PARAM_NAMES)
+    lines = []
+    for name in sorted(names):
+        value = getter(name)
+        lines.append(f"{name} = {canonicalize_live_param(value)}")
+    return "\n".join(lines) + ("\n" if lines else "")
+
+
+def effective_search_params_sha256(getter, *, include_seeds: bool = True) -> str:
+    return sha256_text(dump_effective_search_params(getter, include_seeds=include_seeds))
+
+
+def assert_production_live_invariants(getter) -> None:
+    if int(getter("parallel/minnthreads")) != 1:
+        raise ValueError("project-production-v1 requires minnthreads=1")
+    if int(getter("parallel/maxnthreads")) != 1:
+        raise ValueError("project-production-v1 requires maxnthreads=1")
+    if int(getter("lp/threads")) != 1:
+        raise ValueError("project-production-v1 requires lp/threads=1")
+    if int(getter("separating/maxrounds")) == 0:
+        raise ValueError("project-production-v1 must not disable cuts")
+    if int(getter("nodeselection/dfs/stdpriority")) >= int(
+        getter("nodeselection/estimate/stdpriority")
+    ):
+        raise ValueError("project-production-v1 must keep estimate above DFS")
+    if getter("branching/preferbinary") not in {True, "TRUE", 1}:
+        raise ValueError("project-production-v1 requires branching/preferbinary")
+    policy = getter("estimation/restarts/restartpolicy")
+    policy_char = policy.decode("ascii") if isinstance(policy, bytes) else str(policy)
+    if policy_char.replace("'", "") == "n":
+        raise ValueError("project-production-v1 must not disable restarts")
+    if int(getter("limits/restarts")) == 0:
+        raise ValueError("project-production-v1 must not set limits/restarts=0")
 
 
 def ecole_params_from_profile(path: str | Path | None = None) -> dict[str, Any]:

@@ -10,8 +10,11 @@ from rl_branching.graph_features import (
     GraphState,
     RunningGraphNormalizer,
     aviation_constraint_category,
+    candidate_twohop_state,
+    graph_state_storage_bytes,
+    transition_storage_bytes,
 )
-from rl_branching.graph_replay import PrioritizedReplayBuffer
+from rl_branching.graph_replay import DualPoolGraphReplay, PrioritizedReplayBuffer
 from rl_branching.replay import ReplayExperience
 
 
@@ -49,6 +52,41 @@ def model_for_state(bins=1):
     normalizer.update(graph_state(1.0))
     model.set_normalization(normalizer.statistics())
     return model
+
+
+def test_union_twohop_keeps_candidate_rows_and_all_row_variables():
+    full = graph_state()
+    twohop = candidate_twohop_state(full)
+    # candidates 0/2/4 touch rows 0,2,3; those rows only contain variables 0,2,4.
+    assert twohop.variable_features.shape[0] == 3
+    assert twohop.row_features.shape[0] == 3
+    assert twohop.actions.tolist() == [0, 1, 2]
+    assert twohop.candidate_names == full.candidate_names
+    assert graph_state_storage_bytes(twohop) > 0
+    assert transition_storage_bytes(twohop, twohop) == (
+        2 * graph_state_storage_bytes(twohop) + 64
+    )
+
+
+def test_dual_pool_can_keep_four_large_transitions():
+    replay = DualPoolGraphReplay(
+        seed=0,
+        large_count_limit=8,
+        large_byte_limit=64 * 1024,
+        medium_count_limit=16,
+        medium_byte_limit=64 * 1024,
+    )
+    sample = graph_state()
+    nbytes = transition_storage_bytes(sample, sample)
+    assert replay.can_hold_large(4, nbytes)
+    for _ in range(4):
+        replay.add(ReplayExperience(sample, 0, -1.0, sample, 1.0, 1), "large")
+        replay.add(ReplayExperience(sample, 1, -1.0, sample, 1.0, 1), "medium")
+    snapshot = replay.snapshot()
+    assert snapshot.large_count == 4
+    assert snapshot.can_sample_large_quota
+    too_big = DualPoolGraphReplay(seed=0, large_byte_limit=nbytes * 3)
+    assert not too_big.can_hold_large(4, nbytes)
 
 
 def test_constraint_categories_and_graph_validation():

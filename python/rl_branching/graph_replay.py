@@ -2,7 +2,16 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from .graph_features import GraphState, graph_state_storage_bytes, transition_storage_bytes
 from .replay import ReplayExperience
+
+STATE_BYTE_LIMIT = 512 * 1024 * 1024
+MEDIUM_COUNT_LIMIT = 224
+MEDIUM_BYTE_LIMIT = 3 * 1024 * 1024 * 1024
+LARGE_COUNT_LIMIT = 32
+LARGE_BYTE_LIMIT = 1 * 1024 * 1024 * 1024
+LARGE_SAMPLE_QUOTA = 4
+MEDIUM_SAMPLE_QUOTA = 12
 
 
 @dataclass(frozen=True)
@@ -75,3 +84,127 @@ class PrioritizedReplayBuffer:
         if not np.isfinite(td_errors).all():
             raise FloatingPointError("PER TD errors contain NaN or Inf")
         self._priorities[indices] = np.abs(td_errors) + self.epsilon
+
+
+def _experience_bytes(experience: ReplayExperience) -> int:
+    next_state = experience.next_state if isinstance(experience.next_state, GraphState) else None
+    if not isinstance(experience.state, GraphState):
+        raise TypeError("dual-pool replay requires GraphState tensors")
+    return transition_storage_bytes(experience.state, next_state)
+
+
+def _reject_oversized_state(state: GraphState | None) -> None:
+    if state is None:
+        return
+    nbytes = graph_state_storage_bytes(state)
+    if nbytes > STATE_BYTE_LIMIT:
+        raise MemoryError(
+            f"single graph state is {nbytes} bytes, exceeds 512MiB; "
+            "return to candidate chunking"
+        )
+
+
+@dataclass
+class DualPoolSnapshot:
+    medium_count: int
+    large_count: int
+    medium_bytes: int
+    large_bytes: int
+    evictions_by_count: int
+    evictions_by_bytes: int
+    can_sample_large_quota: bool
+
+
+class _ByteLimitedPool:
+    def __init__(self, count_limit: int, byte_limit: int) -> None:
+        self.count_limit = int(count_limit)
+        self.byte_limit = int(byte_limit)
+        self.storage: list[ReplayExperience] = []
+        self.nbytes: list[int] = []
+        self.total_bytes = 0
+        self.evictions_by_count = 0
+        self.evictions_by_bytes = 0
+
+    def __len__(self) -> int:
+        return len(self.storage)
+
+    def add(self, experience: ReplayExperience, nbytes: int) -> None:
+        if nbytes > self.byte_limit:
+            raise MemoryError(
+                f"transition is {nbytes} bytes, exceeds pool budget {self.byte_limit}"
+            )
+        while self.storage and (
+            len(self.storage) >= self.count_limit
+            or self.total_bytes + nbytes > self.byte_limit
+        ):
+            if len(self.storage) >= self.count_limit:
+                self.evictions_by_count += 1
+            else:
+                self.evictions_by_bytes += 1
+            self.storage.pop(0)
+            self.total_bytes -= self.nbytes.pop(0)
+        self.storage.append(experience)
+        self.nbytes.append(nbytes)
+        self.total_bytes += nbytes
+
+
+class DualPoolGraphReplay:
+    def __init__(
+        self,
+        seed: int,
+        medium_count_limit: int = MEDIUM_COUNT_LIMIT,
+        medium_byte_limit: int = MEDIUM_BYTE_LIMIT,
+        large_count_limit: int = LARGE_COUNT_LIMIT,
+        large_byte_limit: int = LARGE_BYTE_LIMIT,
+        large_sample_quota: int = LARGE_SAMPLE_QUOTA,
+        medium_sample_quota: int = MEDIUM_SAMPLE_QUOTA,
+    ) -> None:
+        self.medium = _ByteLimitedPool(medium_count_limit, medium_byte_limit)
+        self.large = _ByteLimitedPool(large_count_limit, large_byte_limit)
+        self.large_sample_quota = int(large_sample_quota)
+        self.medium_sample_quota = int(medium_sample_quota)
+        self._rng = np.random.default_rng(seed)
+
+    def add(self, experience: ReplayExperience, pool: str) -> int:
+        _reject_oversized_state(experience.state)
+        if isinstance(experience.next_state, GraphState):
+            _reject_oversized_state(experience.next_state)
+        nbytes = _experience_bytes(experience)
+        target = self.large if pool == "large" else self.medium
+        if pool not in {"medium", "large"}:
+            raise ValueError(f"unknown replay pool: {pool}")
+        target.add(experience, nbytes)
+        return nbytes
+
+    def can_hold_large(self, n_transitions: int, typical_bytes: int) -> bool:
+        return int(n_transitions) * int(typical_bytes) <= self.large.byte_limit
+
+    def snapshot(self) -> DualPoolSnapshot:
+        return DualPoolSnapshot(
+            medium_count=len(self.medium),
+            large_count=len(self.large),
+            medium_bytes=self.medium.total_bytes,
+            large_bytes=self.large.total_bytes,
+            evictions_by_count=self.medium.evictions_by_count + self.large.evictions_by_count,
+            evictions_by_bytes=self.medium.evictions_by_bytes + self.large.evictions_by_bytes,
+            can_sample_large_quota=len(self.large) >= self.large_sample_quota,
+        )
+
+    def sample_logical_batch(self) -> tuple[ReplayExperience, ...]:
+        large_take = (
+            self.large_sample_quota
+            if len(self.large) >= self.large_sample_quota
+            else 0
+        )
+        medium_take = self.medium_sample_quota + (self.large_sample_quota - large_take)
+        if len(self.medium) < medium_take:
+            raise ValueError("not enough medium replay entries")
+        if large_take and len(self.large) < large_take:
+            raise ValueError("not enough large replay entries")
+        batch: list[ReplayExperience] = []
+        if large_take:
+            large_idx = self._rng.choice(len(self.large), size=large_take, replace=False)
+            batch.extend(self.large.storage[int(index)] for index in large_idx)
+        medium_idx = self._rng.choice(len(self.medium), size=medium_take, replace=False)
+        batch.extend(self.medium.storage[int(index)] for index in medium_idx)
+        return tuple(batch)

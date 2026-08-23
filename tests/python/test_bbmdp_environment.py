@@ -53,6 +53,8 @@ def test_real_transition_contract_and_terminal_bootstrap():
     assert environment.scip_parameter("heuristics/rens/freq") == 50
     assert environment.scip_parameter("nodeselection/dfs/stdpriority") == 0
     assert environment.scip_parameter("separating/maxrounds") == -1
+    assert str(environment.scip_parameter("estimation/restarts/restartpolicy")) != "n"
+    assert int(environment.scip_parameter("limits/restarts")) != 0
 
     first_action_set = state.action_set.copy()
     retained_observation = state.observation

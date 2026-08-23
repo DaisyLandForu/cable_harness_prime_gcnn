@@ -7,6 +7,11 @@ import numpy as np
 
 from .config import BBMDPConfig, RewardMode
 from .observation import BipartiteObservation, CopiedNodeBipartite
+from .scip_profile import (
+    assert_production_live_invariants,
+    dump_effective_search_params,
+    effective_search_params_sha256,
+)
 
 
 TERMINAL_STATUSES = {"optimal", "infeasible", "unbounded", "inforunbd"}
@@ -170,6 +175,8 @@ class BBMDPBranchingEnv:
         )
         self._search_tree.update(info)
         self._validate_state(self._state)
+        if not (self._state.terminated or self._state.truncated):
+            self.assert_live_production_invariants()
         return self._state
 
     def step(self, action: int) -> Transition:
@@ -237,6 +244,15 @@ class BBMDPBranchingEnv:
 
     def scip_parameter(self, name: str):
         return self._ecole_env.model.as_pyscipopt().getParam(name)
+
+    def effective_search_params_dump(self, *, include_seeds: bool = True) -> str:
+        return dump_effective_search_params(self.scip_parameter, include_seeds=include_seeds)
+
+    def effective_search_params_sha256(self, *, include_seeds: bool = True) -> str:
+        return effective_search_params_sha256(self.scip_parameter, include_seeds=include_seeds)
+
+    def assert_live_production_invariants(self) -> None:
+        assert_production_live_invariants(self.scip_parameter)
 
     def close(self) -> None:
         self._state = None

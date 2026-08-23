@@ -1,0 +1,57 @@
+{
+  "instance": "data/instances/transfer/real_02.cip",
+  "instance_sha256": "b77472135b323663efce26c24a39967bd89202724bc51d6523a6c8dd0d1be0df",
+  "seed": 0,
+  "time_limit": 600.0,
+  "status": "unknown",
+  "terminated": false,
+  "truncated": false,
+  "lp_iterations": 49892,
+  "effective_search_params_sha256": "ffa1a333d4c1bb6bcf72aaa4ed598960151e039de410a283b690256f00f5936d",
+  "transitions": [
+    {
+      "state_bytes": 14735744,
+      "next_state_bytes": 14734400,
+      "transition_bytes": 29470208,
+      "state_variables": 14975,
+      "state_rows": 67060,
+      "state_edges": 268101,
+      "candidates": 895
+    },
+    {
+      "state_bytes": 14734400,
+      "next_state_bytes": 14760540,
+      "transition_bytes": 29495004,
+      "state_variables": 14975,
+      "state_rows": 67053,
+      "state_edges": 268073,
+      "candidates": 895
+    },
+    {
+      "state_bytes": 14760540,
+      "next_state_bytes": 14749984,
+      "transition_bytes": 29510588,
+      "state_variables": 14988,
+      "state_rows": 67185,
+      "state_edges": 268567,
+      "candidates": 912
+    },
+    {
+      "state_bytes": 14749984,
+      "next_state_bytes": 14744600,
+      "transition_bytes": 29494648,
+      "state_variables": 14984,
+      "state_rows": 67126,
+      "state_edges": 268380,
+      "candidates": 899
+    }
+  ],
+  "large_pool_can_hold_4": true,
+  "gate_passed": true,
+  "transition_count": 4,
+  "transition_bytes_max": 29510588,
+  "transition_bytes_mean": 29492612,
+  "large_byte_budget": 1073741824,
+  "large_pool_count": 4,
+  "large_pool_bytes": 117970448
+}

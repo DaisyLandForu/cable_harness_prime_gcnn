@@ -68,9 +68,12 @@ struct RunConfig {
 struct SolverMetrics {
     std::string status = "not_run";
     std::string active_branchrule;
-    std::string node_selector = "estimate";
+    std::string node_selector;
     std::string scip_profile_sha256;
     std::string scip_param_dump_sha256;
+    std::string applied_profile_dump_sha256;
+    std::string effective_search_params_sha256;
+    std::string effective_search_params_core_sha256;
     double objective = std::numeric_limits<double>::quiet_NaN();
     double primal_bound = std::numeric_limits<double>::quiet_NaN();
     double dual_bound = std::numeric_limits<double>::quiet_NaN();
@@ -219,6 +222,12 @@ void writeRunJson(const std::string& path, const RunConfig& config, const Solver
     out << "  \"rl_min_candidates\": " << config.rl_min_candidates << ",\n";
     out << "  \"scip_profile\": \"" << jsonEscape(config.scip_profile) << "\",\n";
     out << "  \"scip_profile_sha256\": \"" << jsonEscape(metrics.scip_profile_sha256) << "\",\n";
+    out << "  \"applied_profile_dump_sha256\": \""
+        << jsonEscape(metrics.applied_profile_dump_sha256) << "\",\n";
+    out << "  \"effective_search_params_sha256\": \""
+        << jsonEscape(metrics.effective_search_params_sha256) << "\",\n";
+    out << "  \"effective_search_params_core_sha256\": \""
+        << jsonEscape(metrics.effective_search_params_core_sha256) << "\",\n";
     out << "  \"scip_param_dump_sha256\": \"" << jsonEscape(metrics.scip_param_dump_sha256) << "\",\n";
     out << "  \"node_selection_rule\": \"" << jsonEscape(metrics.node_selector) << "\",\n";
     out << "  \"threads\": " << (config.threads_explicit ? config.threads : 1) << ",\n";
@@ -772,10 +781,14 @@ SCIP_RETCODE configureScip(SCIP* scip, const RunConfig& config, SolverMetrics& m
         SCIP_CALL(SCIPsetIntParam(scip, "lp/threads", 1));
     }
     rlbranch::assertProductionInvariants(scip);
-    metrics.node_selector = "estimate";
+    rlbranch::requireEstimateNodeSelector(scip);
+    metrics.node_selector = rlbranch::activeNodeSelectorName(scip);
     metrics.scip_profile_sha256 = profile.file_sha256;
-    metrics.scip_param_dump_sha256 = rlbranch::sha256Text(
-        rlbranch::dumpAppliedProfile(scip, profile));
+    const std::string applied_dump = rlbranch::dumpAppliedProfile(scip, profile);
+    metrics.applied_profile_dump_sha256 = rlbranch::sha256Text(applied_dump);
+    metrics.scip_param_dump_sha256 = metrics.applied_profile_dump_sha256;
+    metrics.effective_search_params_sha256 = rlbranch::sha256Text(
+        rlbranch::dumpEffectiveSearchParams(scip));
 
     metrics.active_branchrule = configuredBranchruleName(config.branching);
     if (config.branching != "default") {
@@ -785,6 +798,12 @@ SCIP_RETCODE configureScip(SCIP* scip, const RunConfig& config, SolverMetrics& m
     if (config.branching == "rl-gcnn" && config.rl_fallback == "relpscost") {
         SCIP_CALL(SCIPsetIntParam(scip, "branching/relpscost/priority", 999999));
     }
+    rlbranch::requireEstimateNodeSelector(scip);
+    metrics.node_selector = rlbranch::activeNodeSelectorName(scip);
+    metrics.effective_search_params_sha256 = rlbranch::sha256Text(
+        rlbranch::dumpEffectiveSearchParams(scip));
+    metrics.effective_search_params_core_sha256 = rlbranch::sha256Text(
+        rlbranch::dumpEffectiveSearchParams(scip, false));
     return SCIP_OKAY;
 }
 
@@ -1211,6 +1230,8 @@ SCIP_RETCODE SolveMIPProblem(std::set<int> nodes,
 
     cout << "Solving..." << endl;
     SCIP_CALL(SCIPsolve(scip));
+    rlbranch::requireEstimateNodeSelector(scip);
+    metrics.node_selector = rlbranch::activeNodeSelectorName(scip);
 
     SCIP_STATUS status = SCIPgetStatus(scip);
     metrics.status = statusName(status);
