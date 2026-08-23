@@ -131,6 +131,9 @@ add_executable(graph_probe
     tools/graph_probe.cpp
     src/rl/scip_profile.cpp
     src/rl/graph_size.cpp
+    src/rl/scip_graph_feature_extractor.cpp
+    src/rl/scip_feature_extractor.cpp
+    src/rl/prim_bias.cpp
 )
 target_include_directories(graph_probe PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"

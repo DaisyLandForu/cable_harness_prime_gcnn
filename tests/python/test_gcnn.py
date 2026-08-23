@@ -54,6 +54,27 @@ def model_for_state(bins=1):
     return model
 
 
+def test_union_twohop_keeps_noncandidate_neighbors_on_candidate_rows():
+    # Row 0: candidate 0 and non-candidate 1. Row 1: isolated non-candidate 2.
+    full = GraphState(
+        row_features=immutable(np.arange(28).reshape(2, 14)),
+        variable_features=immutable(np.arange(75).reshape(3, 25)),
+        edge_indices=immutable([[0, 0, 1], [0, 1, 2]], np.int64),
+        edge_features=immutable([[1.0, 0.5, 1.0], [2.0, 1.0, 1.0], [-1.0, -0.5, -1.0]]),
+        global_features=immutable(np.arange(14)),
+        variable_categories=immutable(np.eye(6)[[0, 1, 2]]),
+        row_categories=immutable(np.eye(6)[[0, 1]]),
+        actions=immutable([0], np.int64),
+        candidate_names=("z_1_2_0",),
+        variable_names=("z_1_2_0", "t_f_9", "t_m_3_0"),
+    )
+    twohop = candidate_twohop_state(full)
+    assert twohop.variable_names == ("z_1_2_0", "t_f_9")
+    assert twohop.actions.tolist() == [0]
+    assert twohop.row_features.shape[0] == 1
+    assert twohop.edge_indices.tolist() == [[0, 0], [0, 1]]
+
+
 def test_union_twohop_keeps_candidate_rows_and_all_row_variables():
     full = graph_state()
     twohop = candidate_twohop_state(full)

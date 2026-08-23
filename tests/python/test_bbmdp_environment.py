@@ -21,6 +21,8 @@ def test_production_profile_parameters():
     assert parameters["lp/threads"] == 1
     assert parameters["branching/preferbinary"] is True
     assert parameters["randomization/randomseedshift"] == 7
+    assert parameters["randomization/permuteconss"] is True
+    assert parameters["randomization/permutevars"] is True
 
 
 def test_gamma_other_than_one_is_rejected():

@@ -2,10 +2,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <unordered_set>
 
 #include <scip/pub_lp.h>
 #include <scip/pub_var.h>
 #include <scip/scip_lp.h>
+#include <scip/scip_numerics.h>
 #include <scip/scip_solvingstats.h>
 #include <scip/scip_var.h>
 
@@ -117,7 +119,7 @@ int aviationConstraintCategory(const std::string& row_name) {
 SCIP_RETCODE extractGraphObservation(
     SCIP* scip,
     GraphObservation& observation,
-    bool use_prim_features) {
+    bool twohop) {
     observation = GraphObservation{};
     SCIP_CALL(extractLpBranchCandidates(scip, observation.candidates));
     if (observation.candidates.empty()) {
@@ -126,18 +128,63 @@ SCIP_RETCODE extractGraphObservation(
 
     SCIP_VAR** variables = SCIPgetVars(scip);
     const int variable_count = SCIPgetNVars(scip);
-    if (variables == nullptr || variable_count <= 0) {
+    SCIP_ROW** rows = SCIPgetLPRows(scip);
+    const int row_count = SCIPgetNLPRows(scip);
+    if (variables == nullptr || variable_count <= 0 || rows == nullptr || row_count <= 0) {
         return SCIP_INVALIDDATA;
     }
-    observation.variable_count = static_cast<std::size_t>(variable_count);
-    const int feature_width = use_prim_features
-        ? kGraphVariableFeatureCount
-        : kCandidateVariableFeatureCount;
-    observation.variable_feature_dim = feature_width;
+
+    std::vector<char> keep_variable(static_cast<std::size_t>(variable_count), twohop ? 0 : 1);
+    std::vector<char> keep_lp_row(static_cast<std::size_t>(row_count), twohop ? 0 : 1);
+    std::unordered_set<int> candidate_set;
+    for (const BranchCandidate& candidate : observation.candidates) {
+        if (candidate.variable_index < 0 || candidate.variable_index >= variable_count) {
+            return SCIP_INVALIDDATA;
+        }
+        candidate_set.insert(candidate.variable_index);
+        keep_variable[static_cast<std::size_t>(candidate.variable_index)] = 1;
+    }
+    if (twohop) {
+        for (int row_position = 0; row_position < row_count; ++row_position) {
+            SCIP_COL** columns = SCIProwGetCols(rows[row_position]);
+            const int nonzeros = SCIProwGetNLPNonz(rows[row_position]);
+            bool keep = false;
+            for (int index = 0; index < nonzeros; ++index) {
+                const int variable_index = SCIPvarGetProbindex(SCIPcolGetVar(columns[index]));
+                if (candidate_set.count(variable_index) > 0) {
+                    keep = true;
+                    break;
+                }
+            }
+            if (!keep) {
+                continue;
+            }
+            keep_lp_row[static_cast<std::size_t>(row_position)] = 1;
+            for (int index = 0; index < nonzeros; ++index) {
+                const int variable_index = SCIPvarGetProbindex(SCIPcolGetVar(columns[index]));
+                if (variable_index >= 0 && variable_index < variable_count) {
+                    keep_variable[static_cast<std::size_t>(variable_index)] = 1;
+                }
+            }
+        }
+    }
+
+    std::vector<int> old_to_new(static_cast<std::size_t>(variable_count), -1);
+    int compact_count = 0;
+    for (int variable_index = 0; variable_index < variable_count; ++variable_index) {
+        if (keep_variable[static_cast<std::size_t>(variable_index)]) {
+            old_to_new[static_cast<std::size_t>(variable_index)] = compact_count++;
+        }
+    }
+    observation.variable_count = static_cast<std::size_t>(compact_count);
+    observation.variable_feature_dim = kGraphVariableFeatureCount;
     observation.variable_features.assign(
-        observation.variable_count * static_cast<std::size_t>(feature_width), 0.0F);
+        observation.variable_count * static_cast<std::size_t>(kGraphVariableFeatureCount), 0.0F);
     observation.variable_categories.assign(
         observation.variable_count * kVariableCategoryCount, 0.0F);
+    observation.variable_names.assign(observation.variable_count, "");
+    observation.local_lower_bounds.assign(observation.variable_count, 0.0F);
+
     const VariableFeatureContext context = makeVariableFeatureContext(scip);
     for (int position = 0; position < variable_count; ++position) {
         SCIP_VAR* variable = variables[position];
@@ -145,48 +192,55 @@ SCIP_RETCODE extractGraphObservation(
         if (variable_index < 0 || variable_index >= variable_count) {
             return SCIP_INVALIDDATA;
         }
+        const int compact = old_to_new[static_cast<std::size_t>(variable_index)];
+        if (compact < 0) {
+            continue;
+        }
         SCIP_CALL(extractVariableFeatures(
             scip,
             variable,
             context,
             observation.variable_features.data()
-                + static_cast<std::size_t>(variable_index)
-                    * static_cast<std::size_t>(feature_width)));
+                + static_cast<std::size_t>(compact)
+                    * static_cast<std::size_t>(kGraphVariableFeatureCount)));
         const int category = aviationVariableCategory(SCIPvarGetName(variable));
         observation.variable_categories[
-            static_cast<std::size_t>(variable_index) * kVariableCategoryCount + category] = 1.0F;
+            static_cast<std::size_t>(compact) * kVariableCategoryCount + category] = 1.0F;
+        observation.variable_names[static_cast<std::size_t>(compact)] = SCIPvarGetName(variable);
+        observation.local_lower_bounds[static_cast<std::size_t>(compact)] =
+            static_cast<float>(SCIPvarGetLbLocal(variable));
     }
-    if (use_prim_features) {
-        appendPrimVariableFeatures(scip, observation);
-    }
+    appendPrimVariableFeatures(scip, observation);
 
     observation.candidate_indices.reserve(observation.candidates.size());
     observation.candidate_names.reserve(observation.candidates.size());
     for (const BranchCandidate& candidate : observation.candidates) {
-        if (candidate.variable_index < 0 || candidate.variable_index >= variable_count) {
+        const int compact = old_to_new[static_cast<std::size_t>(candidate.variable_index)];
+        if (compact < 0) {
             return SCIP_INVALIDDATA;
         }
-        observation.candidate_indices.push_back(candidate.variable_index);
+        observation.candidate_indices.push_back(compact);
         observation.candidate_names.emplace_back(SCIPvarGetName(candidate.variable));
     }
 
-    SCIP_ROW** rows = SCIPgetLPRows(scip);
-    const int row_count = SCIPgetNLPRows(scip);
-    if (rows == nullptr || row_count <= 0) {
-        return SCIP_INVALIDDATA;
-    }
     std::size_t expanded_row_index = 0;
     const double raw_objective_norm = SCIPgetObjNorm(scip);
     const double objective_norm = raw_objective_norm > 0.0 ? raw_objective_norm : 1.0;
     for (int row_position = 0; row_position < row_count; ++row_position) {
+        if (!keep_lp_row[static_cast<std::size_t>(row_position)]) {
+            continue;
+        }
         SCIP_ROW* row = rows[row_position];
         const double raw_norm = SCIProwGetNorm(row);
         const double norm = raw_norm > 0.0 ? raw_norm : 1.0;
         const double constant = SCIProwGetConstant(row);
-        const double lhs = SCIProwGetLhs(row) - constant;
-        const double rhs = SCIProwGetRhs(row) - constant;
-        const bool lhs_finite = !SCIPisInfinity(scip, std::abs(lhs));
-        const bool rhs_finite = !SCIPisInfinity(scip, std::abs(rhs));
+        const double raw_lhs = SCIProwGetLhs(row);
+        const double raw_rhs = SCIProwGetRhs(row);
+        // Ecole checks infinity on the unshifted bound, then subtracts the constant.
+        const bool lhs_finite = !SCIPisInfinity(scip, std::abs(raw_lhs));
+        const bool rhs_finite = !SCIPisInfinity(scip, std::abs(raw_rhs));
+        const double lhs = raw_lhs - constant;
+        const double rhs = raw_rhs - constant;
         SCIP_COL** columns = SCIProwGetCols(row);
         SCIP_Real* values = SCIProwGetVals(row);
         const int nonzeros = SCIProwGetNLPNonz(row);
@@ -200,6 +254,7 @@ SCIP_RETCODE extractGraphObservation(
         const double objective_cosine = norm * objective_norm > 0.0
             ? objective_product / (norm * objective_norm)
             : 0.0;
+        const std::size_t features_before = observation.edge_variable_indices.size();
         if (lhs_finite) {
             appendExpandedRow(
                 scip, row, lhs, lhs_finite, rhs, rhs_finite, norm, activity,
@@ -209,6 +264,15 @@ SCIP_RETCODE extractGraphObservation(
             appendExpandedRow(
                 scip, row, lhs, lhs_finite, rhs, rhs_finite, norm, activity,
                 objective_cosine, 1.0, expanded_row_index++, observation);
+        }
+        for (std::size_t edge = features_before; edge < observation.edge_variable_indices.size();
+             ++edge) {
+            const int compact = old_to_new[static_cast<std::size_t>(
+                observation.edge_variable_indices[edge])];
+            if (compact < 0) {
+                return SCIP_INVALIDDATA;
+            }
+            observation.edge_variable_indices[edge] = compact;
         }
     }
     observation.row_count = expanded_row_index;

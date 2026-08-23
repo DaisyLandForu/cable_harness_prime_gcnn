@@ -31,10 +31,8 @@ bool sideIsFinite(SCIP* scip, double bound) {
 }
 
 int expandedSideCount(SCIP* scip, SCIP_ROW* row) {
-    const double constant = SCIProwGetConstant(row);
-    const double lhs = SCIProwGetLhs(row) - constant;
-    const double rhs = SCIProwGetRhs(row) - constant;
-    return (sideIsFinite(scip, lhs) ? 1 : 0) + (sideIsFinite(scip, rhs) ? 1 : 0);
+    return (sideIsFinite(scip, SCIProwGetLhs(row)) ? 1 : 0)
+        + (sideIsFinite(scip, SCIProwGetRhs(row)) ? 1 : 0);
 }
 
 std::int64_t parseMeminfoBytes(const std::string& key) {

@@ -57,6 +57,7 @@ class BipartiteObservation:
     extended_row_features: np.ndarray | None = None
     edge_features: np.ndarray | None = None
     row_names: Tuple[str, ...] = ()
+    local_lower_bounds: np.ndarray | None = None
 
     def validate(self) -> None:
         if self.row_features.ndim != 2 or self.row_features.shape[1] != 5:
@@ -93,6 +94,11 @@ class BipartiteObservation:
                 raise ValueError("extended edge features contain NaN or Inf")
         if self.row_names and len(self.row_names) != self.row_features.shape[0]:
             raise ValueError("row names must align with row features")
+        if self.local_lower_bounds is not None:
+            if self.local_lower_bounds.shape != (self.variable_features.shape[0],):
+                raise ValueError("local lower bounds must align with variables")
+            if self.local_lower_bounds.flags.writeable:
+                raise ValueError("local lower bounds must be immutable")
         if self.edge_indices.size:
             if self.edge_indices[0].min() < 0 or self.edge_indices[0].max() >= self.row_features.shape[0]:
                 raise ValueError("constraint edge index is out of range")
@@ -129,9 +135,10 @@ def _immutable_copy(values, dtype) -> np.ndarray:
 
 
 class CopiedNodeBipartite(ecole.observation.NodeBipartite):
-    def __init__(self, cache: bool = True):
-        super().__init__(cache=cache)
+    def __init__(self, cache: bool = False):
+        super().__init__(cache=False)
         self._variable_names: Tuple[str, ...] = ()
+        self._variable_cache_key: tuple | None = None
         self._edge_indices: np.ndarray | None = None
         self._edge_features: np.ndarray | None = None
         self._row_norms: np.ndarray | None = None
@@ -146,6 +153,7 @@ class CopiedNodeBipartite(ecole.observation.NodeBipartite):
     def before_reset(self, model) -> None:
         super().before_reset(model)
         self._variable_names = ()
+        self._variable_cache_key = None
         self._edge_indices = None
         self._edge_features = None
         self._row_norms = None
@@ -177,10 +185,12 @@ class CopiedNodeBipartite(ecole.observation.NodeBipartite):
         output_row = 0
         for row in pyscip_model.getLPRowsData():
             constant = float(row.getConstant())
-            raw_lhs = float(row.getLhs()) - constant
-            raw_rhs = float(row.getRhs()) - constant
-            lhs, lhs_finite = _finite_value(raw_lhs)
-            rhs, rhs_finite = _finite_value(raw_rhs)
+            original_lhs = float(row.getLhs())
+            original_rhs = float(row.getRhs())
+            _, lhs_finite = _finite_value(original_lhs)
+            _, rhs_finite = _finite_value(original_rhs)
+            lhs, _ = _finite_value(original_lhs - constant)
+            rhs, _ = _finite_value(original_rhs - constant)
             norm = max(float(row.getNorm()), 1.0e-20)
             equality = float(
                 lhs_finite == 1.0
@@ -275,12 +285,23 @@ class CopiedNodeBipartite(ecole.observation.NodeBipartite):
 
         pyscip_model = model.as_pyscipopt()
         variables = pyscip_model.getVars(transformed=True)
-        if not self._variable_names or len(self._variable_names) != len(variables):
-            self._variable_names = tuple(str(variable.name) for variable in variables)
+        names = tuple(str(variable.name) for variable in variables)
+        stage = str(pyscip_model.getStage())
+        n_runs = int(getattr(pyscip_model, "getNRuns", lambda: 0)())
+        cache_key = (stage, n_runs, len(names), names)
+        if self._variable_cache_key != cache_key:
+            self._variable_names = names
+            self._variable_cache_key = cache_key
+        elif names != self._variable_names:
+            raise RuntimeError("transformed variable identity changed without cache invalidation")
 
         variable_features = _immutable_copy(raw.variable_features, np.float32)
         if len(self._variable_names) != variable_features.shape[0]:
             raise RuntimeError("Ecole/PySCIPOpt variable order has inconsistent length")
+        local_lower_bounds = _immutable_copy(
+            [float(variable.getLbLocal()) for variable in variables],
+            np.float32,
+        )
 
         primal_bound, primal_finite = _finite_value(pyscip_model.getPrimalbound())
         dual_bound, dual_finite = _finite_value(pyscip_model.getDualbound())
@@ -305,9 +326,8 @@ class CopiedNodeBipartite(ecole.observation.NodeBipartite):
             np.float64,
         )
 
-        raw_indices = np.asarray(raw.edge_features.indices, dtype=np.int64)
-        if self._edge_indices is None or not np.array_equal(self._edge_indices, raw_indices):
-            self._build_static_graph_metadata(pyscip_model, raw)
+        # Cuts/restarts can keep the same edge_indices object while changing LP rows.
+        self._build_static_graph_metadata(pyscip_model, raw)
 
         observation = BipartiteObservation(
             row_features=_immutable_copy(raw.row_features, np.float32),
@@ -319,6 +339,7 @@ class CopiedNodeBipartite(ecole.observation.NodeBipartite):
             extended_row_features=self._extended_rows(raw),
             edge_features=self._edge_features,
             row_names=self._row_names,
+            local_lower_bounds=local_lower_bounds,
         )
         observation.validate()
         return observation

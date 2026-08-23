@@ -13,15 +13,16 @@ _Z_RE = re.compile(r"^(?:t_)*z_(\d+)_(\d+)_(\d+)$")
 _M_RE = re.compile(r"^(?:t_)*m_(\d+)_(\d+)$")
 _Y_RE = re.compile(r"^(?:t_)*y_(\d+)_(\d+)$")
 
-# Phase B: appended after ECOLE's 19 variable features.
+# Official DSU-Prime features appended after ECOLE's 19 variable features.
 PRIM_VARIABLE_FEATURE_NAMES = (
-    "prim_is_cut",
-    "prim_both_in",
-    "prim_both_out",
-    "prim_grown_empty",
-    "prim_m_on_grown",
-    "prim_y_on_grown",
+    "prim_frontier",
+    "prim_merge",
+    "prim_cycle",
+    "prim_unseen",
+    "prim_src_component_ratio",
+    "prim_dst_component_ratio",
 )
+DSU_VARIABLE_FEATURE_NAMES = PRIM_VARIABLE_FEATURE_NAMES
 
 
 @dataclass(frozen=True)
@@ -64,6 +65,69 @@ def parse_y(name: str) -> Optional[ParsedY]:
     return ParsedY(int(match.group(1)), int(match.group(2)))
 
 
+class LayerDSU:
+    """Union-find over one layer's nodes that are already fixed to 1."""
+
+    def __init__(self) -> None:
+        self.parent: Dict[int, int] = {}
+        self.size: Dict[int, int] = {}
+
+    def add(self, node: int) -> None:
+        if node not in self.parent:
+            self.parent[node] = node
+            self.size[node] = 1
+
+    def find(self, node: int) -> int:
+        if node not in self.parent:
+            raise KeyError(node)
+        root = node
+        while self.parent[root] != root:
+            root = self.parent[root]
+        while self.parent[node] != root:
+            nxt = self.parent[node]
+            self.parent[node] = root
+            node = nxt
+        return root
+
+    def union(self, left: int, right: int) -> None:
+        self.add(left)
+        self.add(right)
+        left_root = self.find(left)
+        right_root = self.find(right)
+        if left_root == right_root:
+            return
+        if self.size[left_root] < self.size[right_root]:
+            left_root, right_root = right_root, left_root
+        self.parent[right_root] = left_root
+        self.size[left_root] += self.size[right_root]
+
+    def contains(self, node: int) -> bool:
+        return node in self.parent
+
+    def component_size(self, node: int) -> int:
+        return 0 if node not in self.parent else self.size[self.find(node)]
+
+    def grown_node_count(self) -> int:
+        return len(self.parent)
+
+
+def build_dsu_layers(
+    variable_names: Sequence[str],
+    local_lower_bounds: Sequence[float],
+    *,
+    active_threshold: float = 0.5,
+) -> Dict[int, LayerDSU]:
+    if len(variable_names) != len(local_lower_bounds):
+        raise ValueError("variable_names and local_lower_bounds must align")
+    layers: Dict[int, LayerDSU] = {}
+    for name, lower_bound in zip(variable_names, local_lower_bounds):
+        parsed = parse_z(name)
+        if parsed is None or float(lower_bound) <= active_threshold:
+            continue
+        layers.setdefault(parsed.prime, LayerDSU()).union(parsed.src, parsed.dst)
+    return layers
+
+
 def build_grown_sets(
     variable_names: Sequence[str],
     solution_values: Sequence[float],
@@ -71,29 +135,16 @@ def build_grown_sets(
     active_threshold: float = 0.5,
     lower_bounds: Optional[Sequence[float]] = None,
 ) -> Dict[int, Set[int]]:
-    """Build per-prime node sets already covered by nearly-integral tree edges.
-
-    Matches C++ semantics when lower_bounds is provided:
-      active iff lb > threshold OR (lp > threshold).
-    Without lower_bounds, falls back to lp-only (legacy training path).
-    """
-    grown: Dict[int, Set[int]] = {}
-    if len(variable_names) != len(solution_values):
-        raise ValueError("variable_names and solution_values must align")
-    if lower_bounds is not None and len(lower_bounds) != len(variable_names):
-        raise ValueError("lower_bounds must align with variable_names")
-    for index, (name, value) in enumerate(zip(variable_names, solution_values)):
-        parsed = parse_z(name)
-        if parsed is None:
-            continue
-        lp_active = float(value) > active_threshold
-        lb_active = (
-            lower_bounds is not None and float(lower_bounds[index]) > active_threshold
-        )
-        if not (lp_active or lb_active):
-            continue
-        grown.setdefault(parsed.prime, set()).update((parsed.src, parsed.dst))
-    return grown
+    """Return DSU node sets. Official path uses local lower bounds only."""
+    del solution_values
+    if lower_bounds is None:
+        return {}
+    return {
+        prime: set(dsu.parent)
+        for prime, dsu in build_dsu_layers(
+            variable_names, lower_bounds, active_threshold=active_threshold
+        ).items()
+    }
 
 
 def prim_score_for_name(
@@ -184,35 +235,45 @@ def candidate_bias_scores(
     )
 
 
+def dsu_feature_vector_for_name(
+    name: str,
+    layers: Dict[int, LayerDSU],
+) -> Tuple[float, float, float, float, float, float]:
+    z_var = parse_z(name)
+    if z_var is None:
+        return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    dsu = layers.get(z_var.prime)
+    if dsu is None or dsu.grown_node_count() == 0:
+        return (0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+    src_in = dsu.contains(z_var.src)
+    dst_in = dsu.contains(z_var.dst)
+    grown = float(dsu.grown_node_count())
+    src_ratio = dsu.component_size(z_var.src) / grown if src_in else 0.0
+    dst_ratio = dsu.component_size(z_var.dst) / grown if dst_in else 0.0
+    if src_in and dst_in:
+        if dsu.find(z_var.src) == dsu.find(z_var.dst):
+            return (0.0, 0.0, 1.0, 0.0, src_ratio, dst_ratio)
+        return (0.0, 1.0, 0.0, 0.0, src_ratio, dst_ratio)
+    if src_in ^ dst_in:
+        return (1.0, 0.0, 0.0, 0.0, src_ratio, dst_ratio)
+    return (0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+
+
 def prim_feature_vector_for_name(
     name: str,
     grown: Dict[int, Set[int]],
 ) -> Tuple[float, float, float, float, float, float]:
-    """Binary neighborhood indicators aligned with PrimScore semantics."""
-    z_var = parse_z(name)
-    if z_var is not None:
-        s = grown.get(z_var.prime, set())
-        if not s:
-            return (0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-        src_in = z_var.src in s
-        dst_in = z_var.dst in s
-        if src_in ^ dst_in:
-            return (1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-        if src_in and dst_in:
-            return (0.0, 1.0, 0.0, 0.0, 0.0, 0.0)
-        return (0.0, 0.0, 1.0, 0.0, 0.0, 0.0)
-
-    m_var = parse_m(name)
-    if m_var is not None:
-        s = grown.get(m_var.prime, set())
-        return (0.0, 0.0, 0.0, 0.0, 1.0 if m_var.node in s else 0.0, 0.0)
-
-    y_var = parse_y(name)
-    if y_var is not None:
-        s = grown.get(y_var.prime, set())
-        return (0.0, 0.0, 0.0, 0.0, 0.0, 1.0 if y_var.node in s else 0.0)
-
-    return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    """Compatibility wrapper around set-only grown maps (no component sizes)."""
+    layers = {prime: LayerDSU() for prime in grown}
+    for prime, nodes in grown.items():
+        nodes = list(nodes)
+        if not nodes:
+            continue
+        first = nodes[0]
+        layers[prime].add(first)
+        for node in nodes[1:]:
+            layers[prime].union(first, node)
+    return dsu_feature_vector_for_name(name, layers)
 
 
 def prim_variable_feature_matrix(
@@ -223,19 +284,16 @@ def prim_variable_feature_matrix(
     grown: Optional[Dict[int, Set[int]]] = None,
     active_threshold: float = 0.5,
 ) -> np.ndarray:
-    """Return [N, 6] Prim neighborhood features for all variables."""
-    if grown is None:
-        if solution_values is None:
-            grown = {}
-        else:
-            grown = build_grown_sets(
-                variable_names,
-                solution_values,
-                active_threshold=active_threshold,
-                lower_bounds=lower_bounds,
-            )
+    """Return [N, 6] DSU-Prime features. Official path requires local bounds."""
+    del solution_values, grown
+    if lower_bounds is None:
+        layers: Dict[int, LayerDSU] = {}
+    else:
+        layers = build_dsu_layers(
+            variable_names, lower_bounds, active_threshold=active_threshold
+        )
     return np.asarray(
-        [prim_feature_vector_for_name(name, grown) for name in variable_names],
+        [dsu_feature_vector_for_name(name, layers) for name in variable_names],
         dtype=np.float32,
     )
 

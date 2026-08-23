@@ -157,19 +157,11 @@ def extract_graph_state(
         raise ValueError("observation does not contain row names")
     actions = _immutable(action_set, np.int64)
     ecole_features = np.asarray(observation.variable_features, dtype=np.float32)
-    # ECOLE: solution_value=8, is_solution_at_lower_bound=10.
-    # Approximate C++ grown-set rule (lb>0.5 || lp>0.5): when sol is at lb and
-    # sol>0.5, treat lb as active (fixed-to-one binaries).
-    solution_values = ecole_features[:, 8] if ecole_features.size else np.zeros(0)
-    if ecole_features.size:
-        at_lb = ecole_features[:, 10] > 0.5
-        lower_bounds = np.where(at_lb, solution_values, 0.0).astype(np.float32)
-    else:
-        lower_bounds = None
+    if observation.local_lower_bounds is None:
+        raise ValueError("observation is missing transformed local lower bounds")
     prim_features = prim_variable_feature_matrix(
         observation.variable_names,
-        solution_values=solution_values,
-        lower_bounds=lower_bounds,
+        lower_bounds=observation.local_lower_bounds,
     )
     if ecole_features.ndim != 2 or ecole_features.shape[1] != len(ECOLE_VARIABLE_FEATURE_NAMES):
         raise ValueError("observation variable features must have shape [n, 19]")

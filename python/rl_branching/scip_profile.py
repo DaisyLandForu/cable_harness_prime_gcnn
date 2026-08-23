@@ -36,6 +36,8 @@ EFFECTIVE_SEARCH_PARAM_NAMES = (
     "presolving/maxrestarts",
     "randomization/lpseed",
     "randomization/permutationseed",
+    "randomization/permuteconss",
+    "randomization/permutevars",
     "randomization/randomseedshift",
     "separating/maxrounds",
 )
@@ -195,6 +197,10 @@ def assert_production_live_invariants(getter) -> None:
         raise ValueError("project-production-v1 must not disable restarts")
     if int(getter("limits/restarts")) == 0:
         raise ValueError("project-production-v1 must not set limits/restarts=0")
+    if getter("randomization/permuteconss") not in {True, "TRUE", 1}:
+        raise ValueError("Ecole-compatible search requires permuteconss")
+    if getter("randomization/permutevars") not in {True, "TRUE", 1}:
+        raise ValueError("Ecole-compatible search requires permutevars")
 
 
 def ecole_params_from_profile(path: str | Path | None = None) -> dict[str, Any]:
@@ -221,6 +227,10 @@ def load_production_scip_params(
     params["randomization/randomseedshift"] = int(seed)
     params["randomization/permutationseed"] = int(seed)
     params["randomization/lpseed"] = int(seed)
+    # Ecole BranchingDynamics forces both permutation flags on reset.
+    # Keep Python/C++ overlays identical; do not write them into the frozen .set.
+    params["randomization/permuteconss"] = True
+    params["randomization/permutevars"] = True
     params["limits/time"] = float(time_limit)
     if int(node_limit) >= 0:
         params["limits/nodes"] = int(node_limit)

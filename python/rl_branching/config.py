@@ -21,7 +21,7 @@ class BBMDPConfig:
     gamma: float = 1.0
     reward_mode: RewardMode = RewardMode.NEGATIVE_NODE_INCREMENT
     bootstrap_on_truncation: bool = False
-    cache_static_features: bool = True
+    cache_static_features: bool = False
     scip_profile: str = ""
 
     def __post_init__(self) -> None:

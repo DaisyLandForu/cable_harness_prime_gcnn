@@ -39,9 +39,12 @@ build/sb_native_probe: tools/sb_native_probe.cpp
 
 graph_probe: build/graph_probe
 
-build/graph_probe: tools/graph_probe.cpp src/rl/scip_profile.cpp src/rl/graph_size.cpp src/rl/scip_profile.hpp src/rl/graph_size.hpp
+build/graph_probe: tools/graph_probe.cpp src/rl/scip_profile.cpp src/rl/graph_size.cpp \
+	src/rl/scip_graph_feature_extractor.cpp src/rl/scip_feature_extractor.cpp src/rl/prim_bias.cpp \
+	src/rl/scip_profile.hpp src/rl/graph_size.hpp src/rl/scip_graph_feature_extractor.hpp
 	mkdir -p build
 	$(CXX) $(CXXFLAGS) -Isrc tools/graph_probe.cpp src/rl/scip_profile.cpp src/rl/graph_size.cpp \
+		src/rl/scip_graph_feature_extractor.cpp src/rl/scip_feature_extractor.cpp src/rl/prim_bias.cpp \
 		$(SCIP_INCLUDES) $(SCIP_LDFLAGS) -o $@
 
 build/scip_tree: $(OBJECTS)

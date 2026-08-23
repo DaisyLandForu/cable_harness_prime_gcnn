@@ -166,8 +166,7 @@ SCIP_DECL_BRANCHEXECLP(RlGcnnBranchrule::scip_execlp) {
     double graph_extract_time = 0.0;
     try {
         const auto extract_start = std::chrono::steady_clock::now();
-        return_code = extractGraphObservation(
-            scip, observation, options_.use_prim_features);
+        return_code = extractGraphObservation(scip, observation, /*twohop=*/true);
         graph_extract_time = std::chrono::duration<double>(
             std::chrono::steady_clock::now() - extract_start).count();
     } catch (const std::exception& exception) {

@@ -44,6 +44,8 @@ def test_bbmdp_config_loads_production_profile():
     assert parameters["parallel/maxnthreads"] == 1
     assert parameters["lp/threads"] == 1
     assert parameters["randomization/randomseedshift"] == 7
+    assert parameters["randomization/permuteconss"] is True
+    assert parameters["randomization/permutevars"] is True
     assert parameters["limits/nodes"] == 3
     assert parameters["branching/preferbinary"] is True
 
@@ -58,6 +60,8 @@ def test_profile_dump_is_canonical_and_hashed():
     assert len(sha256_file(PROFILE)) == 64
     assert "separating/maxrounds" in EFFECTIVE_SEARCH_PARAM_NAMES
     assert "estimation/restarts/restartpolicy" in EFFECTIVE_SEARCH_PARAM_NAMES
+    assert "randomization/permutevars" in EFFECTIVE_SEARCH_PARAM_NAMES
+    assert "randomization/permuteconss" in EFFECTIVE_SEARCH_PARAM_NAMES
     assert canonicalize_live_param("c") == "'c'"
     applied = profile_dump(entries)
     assert sha256_text(applied) == "ffec5443d40f7e92f1c547d345206054c3cfd3a88dda04322df4f5aa38bc0741"
@@ -66,6 +70,8 @@ def test_profile_dump_is_canonical_and_hashed():
 def test_effective_dump_reads_the_same_key_set():
     values = {name: 1 for name in EFFECTIVE_SEARCH_PARAM_NAMES}
     values["branching/preferbinary"] = True
+    values["randomization/permuteconss"] = True
+    values["randomization/permutevars"] = True
     values["estimation/restarts/restartpolicy"] = "c"
     values["limits/time"] = 3600.0
     values["limits/nodes"] = -1

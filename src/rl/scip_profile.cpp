@@ -124,6 +124,9 @@ ScipProfile loadScipProfile(const std::string& path) {
 
 SCIP_RETCODE applyScipProfile(SCIP* scip, const ScipProfile& profile) {
     SCIP_CALL(SCIPreadParams(scip, profile.path.c_str()));
+    // Match Ecole BranchingDynamics::set_dynamics_random_state overlays.
+    SCIP_CALL(SCIPsetBoolParam(scip, "randomization/permuteconss", TRUE));
+    SCIP_CALL(SCIPsetBoolParam(scip, "randomization/permutevars", TRUE));
     return SCIP_OKAY;
 }
 
@@ -148,6 +151,8 @@ const char* const kEffectiveSearchParams[] = {
     "presolving/maxrestarts",
     "randomization/lpseed",
     "randomization/permutationseed",
+    "randomization/permuteconss",
+    "randomization/permutevars",
     "randomization/randomseedshift",
     "separating/maxrounds",
 };
@@ -230,6 +235,13 @@ void assertProductionInvariants(SCIP* scip) {
     }
     if (restart_limit == 0) {
         throw std::runtime_error("project-production-v1 must not set limits/restarts=0");
+    }
+    SCIP_Bool permute_conss = FALSE;
+    SCIP_Bool permute_vars = FALSE;
+    SCIP_CALL_ABORT(SCIPgetBoolParam(scip, "randomization/permuteconss", &permute_conss));
+    SCIP_CALL_ABORT(SCIPgetBoolParam(scip, "randomization/permutevars", &permute_vars));
+    if (!permute_conss || !permute_vars) {
+        throw std::runtime_error("Ecole-compatible search requires permuteconss and permutevars");
     }
 }
 

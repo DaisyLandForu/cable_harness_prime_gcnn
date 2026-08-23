@@ -88,10 +88,73 @@ ParsedNodePrimeVar parseYVariableName(const std::string& name) {
     return parsed;
 }
 
-std::unordered_map<int, std::unordered_set<int>> buildGrownSetsFromScip(
+class LayerDSU {
+public:
+    void add(int node) {
+        if (parent.find(node) != parent.end()) {
+            return;
+        }
+        parent[node] = node;
+        size[node] = 1;
+    }
+
+    int find(int node) {
+        int root = node;
+        while (parent[root] != root) {
+            root = parent[root];
+        }
+        while (parent[node] != root) {
+            const int next = parent[node];
+            parent[node] = root;
+            node = next;
+        }
+        return root;
+    }
+
+    void unite(int left, int right) {
+        add(left);
+        add(right);
+        int left_root = find(left);
+        int right_root = find(right);
+        if (left_root == right_root) {
+            return;
+        }
+        if (size[left_root] < size[right_root]) {
+            std::swap(left_root, right_root);
+        }
+        parent[right_root] = left_root;
+        size[left_root] += size[right_root];
+    }
+
+    bool contains(int node) const {
+        return parent.find(node) != parent.end();
+    }
+
+    int componentSize(int node) {
+        return contains(node) ? size[find(node)] : 0;
+    }
+
+    int grownNodeCount() const {
+        return static_cast<int>(parent.size());
+    }
+
+    std::unordered_set<int> nodes() const {
+        std::unordered_set<int> values;
+        for (const auto& item : parent) {
+            values.insert(item.first);
+        }
+        return values;
+    }
+
+private:
+    std::unordered_map<int, int> parent;
+    std::unordered_map<int, int> size;
+};
+
+std::unordered_map<int, LayerDSU> buildDsuLayersFromScip(
     SCIP* scip,
     double active_threshold) {
-    std::unordered_map<int, std::unordered_set<int>> grown;
+    std::unordered_map<int, LayerDSU> layers;
     const int n_vars = SCIPgetNVars(scip);
     SCIP_VAR** vars = SCIPgetVars(scip);
     for (int index = 0; index < n_vars; ++index) {
@@ -99,22 +162,21 @@ std::unordered_map<int, std::unordered_set<int>> buildGrownSetsFromScip(
         if (variable == nullptr) {
             continue;
         }
-        const std::string name = SCIPvarGetName(variable);
-        const ParsedZVar parsed = parseZVariableName(name);
-        if (!parsed.valid) {
+        const ParsedZVar parsed = parseZVariableName(SCIPvarGetName(variable));
+        if (!parsed.valid || SCIPvarGetLbLocal(variable) <= active_threshold) {
             continue;
         }
-        const SCIP_Real lb = SCIPvarGetLbLocal(variable);
-        const SCIP_Real ub = SCIPvarGetUbLocal(variable);
-        const SCIP_Real lp = SCIPvarGetLPSol(variable);
-        const bool fixed_one = lb > active_threshold;
-        const bool lp_one = lp > active_threshold && ub > active_threshold;
-        if (!(fixed_one || lp_one)) {
-            continue;
-        }
-        auto& nodes = grown[parsed.prime];
-        nodes.insert(parsed.src);
-        nodes.insert(parsed.dst);
+        layers[parsed.prime].unite(parsed.src, parsed.dst);
+    }
+    return layers;
+}
+
+std::unordered_map<int, std::unordered_set<int>> buildGrownSetsFromScip(
+    SCIP* scip,
+    double active_threshold) {
+    std::unordered_map<int, std::unordered_set<int>> grown;
+    for (auto& item : buildDsuLayersFromScip(scip, active_threshold)) {
+        grown[item.first] = item.second.nodes();
     }
     return grown;
 }
@@ -207,68 +269,46 @@ void appendPrimVariableFeatures(
     if (observation.variable_count == 0) {
         return;
     }
-    const auto grown = buildGrownSetsFromScip(scip, active_threshold);
+    auto layers = buildDsuLayersFromScip(scip, active_threshold);
     const int width = kGraphVariableFeatureCount;
     if (observation.variable_features.size()
         != observation.variable_count * static_cast<std::size_t>(width)) {
-        throw std::runtime_error("variable_features width mismatch for Prim append");
+        throw std::runtime_error("variable_features width mismatch for DSU append");
     }
-    SCIP_VAR** vars = SCIPgetVars(scip);
-    const int n_vars = SCIPgetNVars(scip);
-    if (vars == nullptr || n_vars <= 0) {
-        observation.variable_feature_dim = kGraphVariableFeatureCount;
-        return;
+    if (observation.variable_names.size() != observation.variable_count) {
+        throw std::runtime_error("variable_names must align with DSU features");
     }
-    for (int position = 0; position < n_vars; ++position) {
-        SCIP_VAR* variable = vars[position];
-        if (variable == nullptr) {
-            continue;
-        }
-        const int variable_index = SCIPvarGetProbindex(variable);
-        if (variable_index < 0
-            || static_cast<std::size_t>(variable_index) >= observation.variable_count) {
-            continue;
-        }
+    for (std::size_t variable_index = 0; variable_index < observation.variable_count;
+         ++variable_index) {
         float* features = observation.variable_features.data()
-            + static_cast<std::size_t>(variable_index) * static_cast<std::size_t>(width)
+            + variable_index * static_cast<std::size_t>(width)
             + kCandidateVariableFeatureCount;
         for (int dim = 0; dim < kPrimVariableFeatureCount; ++dim) {
             features[dim] = 0.0F;
         }
-        const std::string name = SCIPvarGetName(variable);
-        const ParsedZVar z_var = parseZVariableName(name);
-        if (z_var.valid) {
-            const auto iterator = grown.find(z_var.prime);
-            if (iterator == grown.end() || iterator->second.empty()) {
-                features[3] = 1.0F;  // prim_grown_empty
-            } else {
-                const auto& nodes = iterator->second;
-                const bool src_in = nodes.find(z_var.src) != nodes.end();
-                const bool dst_in = nodes.find(z_var.dst) != nodes.end();
-                if (src_in != dst_in) {
-                    features[0] = 1.0F;  // prim_is_cut
-                } else if (src_in && dst_in) {
-                    features[1] = 1.0F;  // prim_both_in
-                } else {
-                    features[2] = 1.0F;  // prim_both_out
-                }
-            }
+        const ParsedZVar z_var = parseZVariableName(observation.variable_names[variable_index]);
+        if (!z_var.valid) {
             continue;
         }
-        const ParsedNodePrimeVar m_var = parseMVariableName(name);
-        if (m_var.valid) {
-            const auto iterator = grown.find(m_var.prime);
-            if (iterator != grown.end() && iterator->second.count(m_var.node) > 0) {
-                features[4] = 1.0F;
-            }
+        auto iterator = layers.find(z_var.prime);
+        if (iterator == layers.end() || iterator->second.grownNodeCount() == 0) {
+            features[3] = 1.0F;  // prim_unseen
             continue;
         }
-        const ParsedNodePrimeVar y_var = parseYVariableName(name);
-        if (y_var.valid) {
-            const auto iterator = grown.find(y_var.prime);
-            if (iterator != grown.end() && iterator->second.count(y_var.node) > 0) {
-                features[5] = 1.0F;
-            }
+        LayerDSU& dsu = iterator->second;
+        const bool src_in = dsu.contains(z_var.src);
+        const bool dst_in = dsu.contains(z_var.dst);
+        const float grown = static_cast<float>(dsu.grownNodeCount());
+        features[4] = src_in ? static_cast<float>(dsu.componentSize(z_var.src)) / grown : 0.0F;
+        features[5] = dst_in ? static_cast<float>(dsu.componentSize(z_var.dst)) / grown : 0.0F;
+        if (src_in && dst_in) {
+            features[dsu.find(z_var.src) == dsu.find(z_var.dst) ? 2 : 1] = 1.0F;
+        } else if (src_in != dst_in) {
+            features[0] = 1.0F;
+        } else {
+            features[3] = 1.0F;
+            features[4] = 0.0F;
+            features[5] = 0.0F;
         }
     }
     observation.variable_feature_dim = kGraphVariableFeatureCount;
