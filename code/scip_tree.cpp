@@ -54,6 +54,11 @@ struct RunConfig {
     std::string rl_log;
     int rl_max_depth = -1;
     int rl_min_candidates = 1;
+    float rl_prim_lambda = 0.0F;
+    int rl_prim_min_depth = 0;
+    int rl_prim_require_grown = 0;
+    int rl_prim_features = 0;
+    std::string rl_bias_mode = "prim";
     int seed = 0;
     double time_limit = 1e20;
     SCIP_Longint node_limit = -1;
@@ -213,6 +218,11 @@ void writeRunJson(const std::string& path, const RunConfig& config, const Solver
     out << "  \"rl_fallback\": \"" << jsonEscape(config.rl_fallback) << "\",\n";
     out << "  \"rl_max_depth\": " << config.rl_max_depth << ",\n";
     out << "  \"rl_min_candidates\": " << config.rl_min_candidates << ",\n";
+    out << "  \"rl_prim_lambda\": "; writeJsonNumber(out, config.rl_prim_lambda); out << ",\n";
+    out << "  \"rl_prim_min_depth\": " << config.rl_prim_min_depth << ",\n";
+    out << "  \"rl_prim_require_grown\": " << (config.rl_prim_require_grown ? "true" : "false") << ",\n";
+    out << "  \"rl_prim_features\": " << (config.rl_prim_features ? "true" : "false") << ",\n";
+    out << "  \"rl_bias_mode\": \"" << jsonEscape(config.rl_bias_mode) << "\",\n";
     out << "  \"node_selection_rule\": \"" << jsonEscape(metrics.node_selector) << "\",\n";
     out << "  \"threads\": "
         << (config.protocol == "controlled-bbmdp" ? 1
@@ -248,6 +258,11 @@ void printUsage(const char* program) {
         << "  --rl-fallback <method>    relpscost|default\n"
         << "  --rl-max-depth <int>      Use RL through this depth (-1 unlimited)\n"
         << "  --rl-min-candidates <int> Minimum candidates required for RL\n"
+        << "  --rl-prim-lambda <float>  Phase-A Prim decode bias: score=Q+λ·PrimScore (0=off)\n"
+        << "  --rl-prim-min-depth <int> Apply Prim bias only if depth >= this (default 0)\n"
+        << "  --rl-prim-require-grown <0|1>  Require non-empty grown set S before Prim bias\n"
+        << "  --rl-prim-features <0|1>  Phase-B append 6 Prim neighborhood variable features\n"
+        << "  --rl-bias-mode <mode>     none|z|root_z|prim|topology (C0 Prim decomposition)\n"
         << "  --rl-log <path>           Write RL branch decisions as CSV\n"
         << "  --export-milp <path>      Export original problem as CIP/MPS/LP\n"
         << "  --build-only              Build/export without solving\n"
@@ -322,6 +337,16 @@ RunConfig parseArguments(int argc, char* argv[]) {
             config.rl_max_depth = std::stoi(requireValue());
         } else if (arg == "--rl-min-candidates") {
             config.rl_min_candidates = std::stoi(requireValue());
+        } else if (arg == "--rl-prim-lambda") {
+            config.rl_prim_lambda = std::stof(requireValue());
+        } else if (arg == "--rl-prim-min-depth") {
+            config.rl_prim_min_depth = std::stoi(requireValue());
+        } else if (arg == "--rl-prim-require-grown") {
+            config.rl_prim_require_grown = std::stoi(requireValue());
+        } else if (arg == "--rl-prim-features") {
+            config.rl_prim_features = std::stoi(requireValue());
+        } else if (arg == "--rl-bias-mode") {
+            config.rl_bias_mode = requireValue();
         } else if (arg == "--rl-log") {
             config.rl_log = requireValue();
         } else if (arg == "--export-milp") {
@@ -347,7 +372,10 @@ RunConfig parseArguments(int argc, char* argv[]) {
     }
     if (copy_num <= 0 || div_part <= 0 || config.seed < 0 || config.time_limit <= 0.0
         || config.node_limit < -1 || (config.threads_explicit && config.threads <= 0)
-        || config.rl_max_depth < -1 || config.rl_min_candidates <= 0) {
+        || config.rl_max_depth < -1 || config.rl_min_candidates <= 0
+        || config.rl_prim_min_depth < 0
+        || (config.rl_prim_require_grown != 0 && config.rl_prim_require_grown != 1)
+        || (config.rl_prim_features != 0 && config.rl_prim_features != 1)) {
         throw std::invalid_argument("numeric options are outside their valid range");
     }
     if (config.rl_device != "cpu" && config.rl_device != "cuda") {
@@ -355,6 +383,12 @@ RunConfig parseArguments(int argc, char* argv[]) {
     }
     if (config.rl_fallback != "relpscost" && config.rl_fallback != "default") {
         throw std::invalid_argument("--rl-fallback must be relpscost or default");
+    }
+    static const std::set<std::string> bias_modes = {
+        "none", "z", "root_z", "prim", "topology"};
+    if (bias_modes.find(config.rl_bias_mode) == bias_modes.end()) {
+        throw std::invalid_argument(
+            "--rl-bias-mode must be one of none|z|root_z|prim|topology");
     }
     if ((config.branching == "rl-mlp" || config.branching == "rl-gcnn")
         && config.rl_model.empty()) {
@@ -854,6 +888,11 @@ SCIP_RETCODE SolveMIPProblem(std::set<int> nodes,
         options.log_path = config.rl_log;
         options.max_depth = config.rl_max_depth;
         options.min_candidates = config.rl_min_candidates;
+        options.lambda_prim = config.rl_prim_lambda;
+        options.prim_min_depth = config.rl_prim_min_depth;
+        options.prim_require_grown = config.rl_prim_require_grown != 0;
+        options.use_prim_features = config.rl_prim_features != 0;
+        options.bias_mode = config.rl_bias_mode;
         SCIP_CALL(rlbranch::includeRlGcnnBranchrule(
             scip,
             options,

@@ -39,7 +39,7 @@ std::vector<torch::jit::IValue> graphInputs(
             {rows, kConstraintFeatureCount}, float_cpu).to(device),
         torch::from_blob(
             const_cast<float*>(observation.variable_features.data()),
-            {variables, kCandidateVariableFeatureCount}, float_cpu).to(device),
+            {variables, static_cast<long>(observation.variable_feature_dim)}, float_cpu).to(device),
         edge_indices,
         torch::from_blob(
             const_cast<float*>(observation.edge_features.data()),
@@ -63,10 +63,15 @@ std::vector<torch::jit::IValue> graphInputs(
 
 GcnnModelRunner::GcnnModelRunner(
     const std::string& model_path,
-    const std::string& device_name) {
+    const std::string& device_name,
+    int variable_feature_dim) {
     try {
         if (!std::filesystem::is_regular_file(model_path)) {
             throw std::runtime_error("model file does not exist: " + model_path);
+        }
+        if (variable_feature_dim != kCandidateVariableFeatureCount
+            && variable_feature_dim != kGraphVariableFeatureCount) {
+            throw std::runtime_error("unsupported variable_feature_dim");
         }
         implementation_ = std::make_unique<Impl>();
         if (device_name == "cuda") {
@@ -84,7 +89,9 @@ GcnnModelRunner::GcnnModelRunner(
         warmup.row_count = 2;
         warmup.variable_count = 2;
         warmup.row_features.assign(2 * kConstraintFeatureCount, 0.0F);
-        warmup.variable_features.assign(2 * kCandidateVariableFeatureCount, 0.0F);
+        warmup.variable_feature_dim = variable_feature_dim;
+        warmup.variable_features.assign(
+            2 * static_cast<std::size_t>(variable_feature_dim), 0.0F);
         warmup.edge_row_indices = {0, 1};
         warmup.edge_variable_indices = {0, 1};
         warmup.edge_features.assign(2 * kEdgeFeatureCount, 0.0F);

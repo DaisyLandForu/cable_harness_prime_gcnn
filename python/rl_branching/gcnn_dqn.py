@@ -7,6 +7,7 @@ from torch import nn
 from .gcnn_model import BipartiteGCNNQNetwork
 from .graph_features import GraphState
 from .graph_replay import PrioritizedBatch
+from .prim_bias import apply_prim_bias, stable_argmax_with_scores
 
 
 def graph_state_tensors(state: GraphState, device: torch.device):
@@ -22,16 +23,26 @@ def graph_state_tensors(state: GraphState, device: torch.device):
     )
 
 
-def stable_graph_argmax(q_values: np.ndarray, state: GraphState) -> int:
+def stable_graph_argmax(
+    q_values: np.ndarray,
+    state: GraphState,
+    *,
+    lambda_prim: float = 0.0,
+) -> int:
     values = np.asarray(q_values, dtype=np.float64)
     if values.shape != (state.candidate_count,) or not np.isfinite(values).all():
         raise ValueError("graph Q values must be finite and align with candidates")
-    maximum = float(values.max())
-    tied = np.flatnonzero(values >= maximum - 1.0e-7)
-    return min(
-        (int(position) for position in tied),
-        key=lambda position: (state.candidate_names[position], int(state.actions[position])),
-    )
+    if lambda_prim != 0.0 and state.variable_names:
+        # solution_value is feature index 8 in ECOLE_VARIABLE_FEATURE_NAMES
+        solution_values = state.variable_features[:, 8]
+        values, _ = apply_prim_bias(
+            values,
+            state.candidate_names,
+            variable_names=state.variable_names,
+            solution_values=solution_values,
+            lambda_prim=lambda_prim,
+        )
+    return stable_argmax_with_scores(values, state.candidate_names, state.actions)
 
 
 @dataclass(frozen=True)
@@ -83,6 +94,7 @@ class GraphDoubleDQNLearner:
         epsilon: float,
         rng: np.random.Generator,
         boltzmann_temperature: float = 0.0,
+        lambda_prim: float = 0.0,
     ) -> tuple[int, int, float, np.ndarray]:
         q_values = self.q_values(state)
         if rng.random() < epsilon:
@@ -93,7 +105,7 @@ class GraphDoubleDQNLearner:
             probabilities /= probabilities.sum()
             position = int(rng.choice(state.candidate_count, p=probabilities))
         else:
-            position = stable_graph_argmax(q_values, state)
+            position = stable_graph_argmax(q_values, state, lambda_prim=lambda_prim)
         rank = float(1 + np.count_nonzero(q_values > q_values[position] + 1.0e-7))
         return int(state.actions[position]), position, rank, q_values
 

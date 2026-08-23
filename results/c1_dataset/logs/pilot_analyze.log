@@ -1,0 +1,6 @@
+{
+  "n_samples": 132,
+  "gate_30k": false,
+  "gate_label_quality": true,
+  "informative_score_frac": 1.0
+}

@@ -1,0 +1,34 @@
+{
+  "n_shards": 12,
+  "n_empty_shards": 0,
+  "n_samples": 151,
+  "gate_30k": false,
+  "followed_expert_frac": 0.609271523178808,
+  "close_top1_top2_frac": 1.0,
+  "teacher_gap": {
+    "mean": 1.002275907596386e-09,
+    "p50": 0.0,
+    "p10": 0.0
+  },
+  "depth_buckets": {
+    "0": 12,
+    "1-2": 25,
+    "3-5": 37,
+    "6-10": 77
+  },
+  "by_instance": {
+    "real_06": 69,
+    "syn_medium_s101": 82
+  },
+  "by_policy": {
+    "expert": 50,
+    "epsilon_expert": 57,
+    "random": 44
+  },
+  "expert_top1_family": {
+    "m": 143,
+    "z": 8
+  },
+  "n_errors": 0,
+  "errors_head": []
+}

@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "runs": 60,
+  "status_counts": {
+    "optimal": 60
+  },
+  "instances_with_optimal_reference": [
+    "real_01",
+    "real_03",
+    "real_05",
+    "real_08",
+    "real_09"
+  ],
+  "rl_branch_decisions": 1897,
+  "errors": [
+    "branch log count mismatch: results/phaseA_extend/raw/production-scip/real_08/production-scip__real_08__rl-gcnn__seed0.branches.csv",
+    "branch log count mismatch: results/phaseA_extend/raw/production-scip/real_08/production-scip__real_08__rl-gcnn-prim-l025__seed0.branches.csv",
+    "branch log count mismatch: results/phaseA_extend/raw/production-scip/real_08/production-scip__real_08__rl-gcnn-prim-l05__seed0.branches.csv"
+  ]
+}

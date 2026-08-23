@@ -4,8 +4,8 @@ import numpy as np
 import torch
 from torch import nn
 
-from .candidate_features import AVIATION_VARIABLE_CATEGORIES, ECOLE_VARIABLE_FEATURE_NAMES
-from .graph_features import AVIATION_CONSTRAINT_CATEGORIES
+from .candidate_features import AVIATION_VARIABLE_CATEGORIES
+from .graph_features import AVIATION_CONSTRAINT_CATEGORIES, GRAPH_VARIABLE_FEATURE_NAMES
 from .observation import EDGE_FEATURE_NAMES, EXTENDED_ROW_FEATURE_NAMES, GLOBAL_FEATURE_NAMES
 
 
@@ -28,7 +28,7 @@ class BipartiteGCNNQNetwork(nn.Module):
         if self.distributional_bins <= 0:
             raise ValueError("distributional_bins must be positive")
 
-        variable_width = len(ECOLE_VARIABLE_FEATURE_NAMES) + len(AVIATION_VARIABLE_CATEGORIES)
+        variable_width = len(GRAPH_VARIABLE_FEATURE_NAMES) + len(AVIATION_VARIABLE_CATEGORIES)
         row_width = len(EXTENDED_ROW_FEATURE_NAMES) + len(AVIATION_CONSTRAINT_CATEGORIES)
         edge_width = len(EDGE_FEATURE_NAMES)
         global_width = len(GLOBAL_FEATURE_NAMES)
@@ -48,8 +48,8 @@ class BipartiteGCNNQNetwork(nn.Module):
             final_relu=False,
         )
 
-        self.register_buffer("variable_mean", torch.zeros(len(ECOLE_VARIABLE_FEATURE_NAMES)))
-        self.register_buffer("variable_std", torch.ones(len(ECOLE_VARIABLE_FEATURE_NAMES)))
+        self.register_buffer("variable_mean", torch.zeros(len(GRAPH_VARIABLE_FEATURE_NAMES)))
+        self.register_buffer("variable_std", torch.ones(len(GRAPH_VARIABLE_FEATURE_NAMES)))
         self.register_buffer("row_mean", torch.zeros(len(EXTENDED_ROW_FEATURE_NAMES)))
         self.register_buffer("row_std", torch.ones(len(EXTENDED_ROW_FEATURE_NAMES)))
         self.register_buffer("edge_mean", torch.zeros(len(EDGE_FEATURE_NAMES)))

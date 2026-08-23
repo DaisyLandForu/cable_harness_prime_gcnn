@@ -1,0 +1,20 @@
+# C1 smoke / pilot v2: verify NON-DEGENERATE teacher labels.
+# Train-split ONLY. Do not add validation/test/transfer.
+output_dir: artifacts/datasets/c1_branch_ranking_pilot_v2
+workers: 4
+protocol: production-scip
+teacher_mode: auto   # sb if informative else pseudocost_fallback
+time_limit: 120.0
+node_limit: 40
+max_decisions_per_episode: 40
+max_depth_record: 10
+epsilon: 0.3
+store_graph: false
+seeds: [0, 1]
+policies:
+  - expert
+  - epsilon_expert
+  - random
+instances:
+  - data/instances/train/real_06.cip
+  - data/instances/train/syn_medium_s101.cip

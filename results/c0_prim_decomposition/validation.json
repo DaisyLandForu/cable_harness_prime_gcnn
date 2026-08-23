@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "runs": 30,
+  "status_counts": {
+    "optimal": 30
+  },
+  "instances_with_optimal_reference": [
+    "real_01",
+    "real_05",
+    "real_08"
+  ],
+  "rl_branch_decisions": 0,
+  "errors": []
+}

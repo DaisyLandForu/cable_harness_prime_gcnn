@@ -1,0 +1,27 @@
+nohup: ignoring input
+[2026-08-08 19:30:14] C1 pilot collect start out=artifacts/datasets/c1_branch_ranking_pilot_v2 teacher via config
+[c1-collect] instances=2 seeds=2 policies=['expert', 'epsilon_expert', 'random'] teacher=auto pending_jobs=12 workers=4
+[c1-collect] real_06.cip seed=0 policy=expert samples=12 status=optimal wall=48.1s
+[c1-collect] real_06.cip seed=0 policy=random samples=11 status=optimal wall=76.0s
+[c1-collect] real_06.cip seed=0 policy=epsilon_expert samples=12 status=nodelimit wall=102.2s
+[c1-collect] syn_medium_s101.cip seed=0 policy=expert samples=11 status=nodelimit wall=15.5s
+[c1-collect] real_06.cip seed=1 policy=expert samples=11 status=timelimit wall=120.1s
+[c1-collect] syn_medium_s101.cip seed=0 policy=epsilon_expert samples=8 status=optimal wall=8.4s
+[c1-collect] syn_medium_s101.cip seed=1 policy=expert samples=11 status=optimal wall=7.8s
+[c1-collect] syn_medium_s101.cip seed=0 policy=random samples=11 status=optimal wall=15.4s
+[c1-collect] syn_medium_s101.cip seed=1 policy=epsilon_expert samples=12 status=optimal wall=4.2s
+[c1-collect] syn_medium_s101.cip seed=1 policy=random samples=11 status=nodelimit wall=14.6s
+[c1-collect] real_06.cip seed=1 policy=epsilon_expert samples=11 status=timelimit wall=120.1s
+[c1-collect] real_06.cip seed=1 policy=random samples=11 status=timelimit wall=120.1s
+{
+  "n_shards": 12,
+  "n_samples": 132,
+  "gate_30k": false
+}
+{
+  "n_samples": 132,
+  "gate_30k": false,
+  "gate_label_quality": true,
+  "informative_score_frac": 1.0
+}
+[2026-08-08 19:33:31] C1 pilot DONE — require gate_label_quality=PASS before wave1

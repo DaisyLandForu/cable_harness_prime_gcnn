@@ -1,0 +1,30 @@
+{
+  "config": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/experiments/c0_prim_decomposition.json",
+  "jobs": 30,
+  "time_limit_default": 300.0,
+  "instance_time_limits": {
+    "real_01": 600.0,
+    "real_05": 600.0,
+    "real_08": 300.0
+  },
+  "seeds": [
+    0,
+    1
+  ],
+  "protocols": [
+    "production-scip"
+  ],
+  "instances": [
+    "real_01",
+    "real_05",
+    "real_08"
+  ],
+  "methods": [
+    "gcnn",
+    "z-bias",
+    "root-z-bias",
+    "full-prim",
+    "topology-only"
+  ],
+  "max_concurrent_large": 2
+}

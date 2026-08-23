@@ -1,0 +1,211 @@
+[2026-08-08 17:25:00] Phase B prim-feat eval start
+phase8 runner: jobs=40 workers=4 cuda_devices=1,2,4,5 default_time_limit=300.0 max_concurrent_large=2
+[1/40] production-scip real_09 default seed=1 tl=120s rc=0
+[2/40] production-scip real_09 rl-gcnn seed=1 tl=120s rc=0
+[3/40] production-scip real_09 default seed=0 tl=120s rc=0
+[4/40] production-scip real_09 rl-gcnn-prim-decode seed=1 tl=120s rc=0
+[5/40] production-scip real_09 rl-gcnn seed=0 tl=120s rc=0
+[6/40] production-scip real_09 rl-gcnn-prim-feat seed=1 tl=120s rc=0
+[7/40] production-scip real_09 rl-gcnn-prim-feat-decode seed=1 tl=120s rc=0
+[8/40] production-scip real_09 rl-gcnn-prim-feat seed=0 tl=120s rc=0
+[9/40] production-scip real_09 rl-gcnn-prim-decode seed=0 tl=120s rc=0
+[10/40] production-scip real_09 rl-gcnn-prim-feat-decode seed=0 tl=120s rc=0
+[11/40] production-scip real_08 default seed=1 tl=300s rc=0
+[12/40] production-scip real_08 default seed=0 tl=300s rc=0
+[13/40] production-scip real_08 rl-gcnn seed=1 tl=300s rc=0
+[14/40] production-scip real_08 rl-gcnn-prim-decode seed=1 tl=300s rc=0
+[15/40] production-scip real_08 rl-gcnn-prim-feat seed=1 tl=300s rc=0
+[16/40] production-scip real_08 rl-gcnn-prim-feat seed=0 tl=300s rc=0
+[17/40] production-scip real_08 rl-gcnn seed=0 tl=300s rc=0
+[18/40] production-scip real_08 rl-gcnn-prim-decode seed=0 tl=300s rc=0
+[19/40] production-scip real_08 rl-gcnn-prim-feat-decode seed=1 tl=300s rc=0
+[20/40] production-scip real_08 rl-gcnn-prim-feat-decode seed=0 tl=300s rc=0
+[21/40] production-scip real_01 default seed=1 tl=600s rc=0
+[22/40] production-scip real_01 rl-gcnn-prim-decode seed=0 tl=600s rc=0
+[23/40] production-scip real_01 default seed=0 tl=600s rc=0
+[24/40] production-scip real_01 rl-gcnn-prim-decode seed=1 tl=600s rc=0
+[25/40] production-scip real_01 rl-gcnn seed=1 tl=600s rc=0
+[26/40] production-scip real_01 rl-gcnn seed=0 tl=600s rc=0
+[27/40] production-scip real_01 rl-gcnn-prim-feat seed=1 tl=600s rc=0
+[28/40] production-scip real_01 rl-gcnn-prim-feat-decode seed=0 tl=600s rc=0
+[29/40] production-scip real_05 default seed=0 tl=600s rc=0
+[30/40] production-scip real_05 default seed=1 tl=600s rc=0
+[31/40] production-scip real_05 rl-gcnn seed=0 tl=600s rc=0
+[32/40] production-scip real_01 rl-gcnn-prim-feat-decode seed=1 tl=600s rc=0
+[33/40] production-scip real_01 rl-gcnn-prim-feat seed=0 tl=600s rc=0
+[34/40] production-scip real_05 rl-gcnn-prim-decode seed=1 tl=600s rc=0
+[35/40] production-scip real_05 rl-gcnn seed=1 tl=600s rc=0
+[36/40] production-scip real_05 rl-gcnn-prim-feat-decode seed=0 tl=600s rc=0
+[37/40] production-scip real_05 rl-gcnn-prim-feat seed=0 tl=600s rc=0
+[38/40] production-scip real_05 rl-gcnn-prim-decode seed=0 tl=600s rc=0
+[39/40] production-scip real_05 rl-gcnn-prim-feat seed=1 tl=600s rc=0
+[40/40] production-scip real_05 rl-gcnn-prim-feat-decode seed=1 tl=600s rc=0
+completed=40 failures=0
+{
+  "passed": true,
+  "runs": 40,
+  "status_counts": {
+    "optimal": 40
+  },
+  "instances_with_optimal_reference": [
+    "real_01",
+    "real_05",
+    "real_08",
+    "real_09"
+  ],
+  "rl_branch_decisions": 1655,
+  "errors": []
+}
+{
+  "n": 40,
+  "methods": {
+    "default": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 22.441194672749997,
+      "nodes_mean": 36.0
+    },
+    "rl-gcnn": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 40.98982378325,
+      "nodes_mean": 44.375
+    },
+    "rl-gcnn-prim-decode": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 33.4737053115,
+      "nodes_mean": 34.625
+    },
+    "rl-gcnn-prim-feat": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 56.948752227125,
+      "nodes_mean": 62.25
+    },
+    "rl-gcnn-prim-feat-decode": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 66.54960217775,
+      "nodes_mean": 73.25
+    }
+  },
+  "per_instance": {
+    "real_01/default": {
+      "solved": 2,
+      "wall_mean": 46.213113706,
+      "nodes_mean": 88.0
+    },
+    "real_01/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 87.4723940855,
+      "nodes_mean": 98.5
+    },
+    "real_01/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 24.029681127,
+      "nodes_mean": 13.0
+    },
+    "real_01/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 114.0671855245,
+      "nodes_mean": 140.0
+    },
+    "real_01/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 77.948228761,
+      "nodes_mean": 74.5
+    },
+    "real_05/default": {
+      "solved": 2,
+      "wall_mean": 31.365356597,
+      "nodes_mean": 44.5
+    },
+    "real_05/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 50.6664753105,
+      "nodes_mean": 39.5
+    },
+    "real_05/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 83.86361378000001,
+      "nodes_mean": 81.0
+    },
+    "real_05/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 96.711906753,
+      "nodes_mean": 92.0
+    },
+    "real_05/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 162.13334673650002,
+      "nodes_mean": 176.0
+    },
+    "real_08/default": {
+      "solved": 2,
+      "wall_mean": 11.140235554,
+      "nodes_mean": 6.5
+    },
+    "real_08/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 24.4688128565,
+      "nodes_mean": 35.0
+    },
+    "real_08/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 22.556204889,
+      "nodes_mean": 26.5
+    },
+    "real_08/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 15.60357436,
+      "nodes_mean": 13.5
+    },
+    "real_08/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 23.187736420500002,
+      "nodes_mean": 27.5
+    },
+    "real_09/default": {
+      "solved": 2,
+      "wall_mean": 1.0460728339999998,
+      "nodes_mean": 5.0
+    },
+    "real_09/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 1.3516128805,
+      "nodes_mean": 4.5
+    },
+    "real_09/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 3.44532145,
+      "nodes_mean": 18.0
+    },
+    "real_09/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 1.412342271,
+      "nodes_mean": 3.5
+    },
+    "real_09/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 2.929096793,
+      "nodes_mean": 15.0
+    }
+  },
+  "paired_vs_gcnn": {
+    "rl-gcnn-prim-decode": {
+      "geom_wall_speedup": 1.0777360585079077,
+      "n": 8
+    },
+    "rl-gcnn-prim-feat": {
+      "geom_wall_speedup": 0.8502810898370731,
+      "n": 8
+    },
+    "rl-gcnn-prim-feat-decode": {
+      "geom_wall_speedup": 0.7084926202116633,
+      "n": 8
+    }
+  }
+}
+
+[2026-08-08 17:35:28] Phase B DONE

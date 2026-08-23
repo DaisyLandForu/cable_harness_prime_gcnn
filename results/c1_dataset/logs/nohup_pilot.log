@@ -1,0 +1,25 @@
+nohup: ignoring input
+[2026-08-08 19:17:10] C1 pilot collect start
+[c1-collect] instances=2 seeds=2 policies=['expert', 'epsilon_expert', 'random'] pending_jobs=12 workers=4
+[c1-collect] real_06.cip seed=0 policy=epsilon_expert samples=11 status=optimal wall=59.6s
+[c1-collect] real_06.cip seed=0 policy=random samples=11 status=optimal wall=75.6s
+[c1-collect] real_06.cip seed=0 policy=expert samples=12 status=nodelimit wall=89.5s
+[c1-collect] syn_medium_s101.cip seed=0 policy=expert samples=11 status=nodelimit wall=22.0s
+[c1-collect] real_06.cip seed=1 policy=expert samples=13 status=timelimit wall=120.1s
+[c1-collect] syn_medium_s101.cip seed=0 policy=epsilon_expert samples=11 status=nodelimit wall=19.0s
+[c1-collect] syn_medium_s101.cip seed=1 policy=expert samples=14 status=nodelimit wall=12.9s
+[c1-collect] syn_medium_s101.cip seed=0 policy=random samples=11 status=nodelimit wall=24.0s
+[c1-collect] syn_medium_s101.cip seed=1 policy=epsilon_expert samples=24 status=nodelimit wall=12.6s
+[c1-collect] syn_medium_s101.cip seed=1 policy=random samples=11 status=optimal wall=13.0s
+[c1-collect] real_06.cip seed=1 policy=epsilon_expert samples=11 status=timelimit wall=120.1s
+[c1-collect] real_06.cip seed=1 policy=random samples=11 status=timelimit wall=120.1s
+{
+  "n_shards": 12,
+  "n_samples": 151,
+  "gate_30k": false
+}
+{
+  "n_samples": 151,
+  "gate_30k": false
+}
+[2026-08-08 19:20:27] C1 pilot DONE

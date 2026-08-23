@@ -14,6 +14,10 @@ from .observation import (
     GLOBAL_FEATURE_NAMES,
     BipartiteObservation,
 )
+from .prim_bias import PRIM_VARIABLE_FEATURE_NAMES, prim_variable_feature_matrix
+
+# Phase B graph variable width = Ecole(19) + Prim neighborhood(6).
+GRAPH_VARIABLE_FEATURE_NAMES = ECOLE_VARIABLE_FEATURE_NAMES + PRIM_VARIABLE_FEATURE_NAMES
 
 
 AVIATION_CONSTRAINT_CATEGORIES = (
@@ -79,6 +83,7 @@ class GraphState:
     row_categories: np.ndarray
     actions: np.ndarray
     candidate_names: Tuple[str, ...]
+    variable_names: Tuple[str, ...] = ()
 
     @property
     def candidate_count(self) -> int:
@@ -91,7 +96,7 @@ class GraphState:
             raise ValueError("graph row features have the wrong shape")
         if self.variable_features.shape != (
             n_variables,
-            len(ECOLE_VARIABLE_FEATURE_NAMES),
+            len(GRAPH_VARIABLE_FEATURE_NAMES),
         ):
             raise ValueError("graph variable features have the wrong shape")
         if self.edge_indices.ndim != 2 or self.edge_indices.shape[0] != 2:
@@ -119,6 +124,8 @@ class GraphState:
             raise ValueError("graph action set contains an invalid variable index")
         if len(self.candidate_names) != self.candidate_count:
             raise ValueError("candidate names must align with graph actions")
+        if self.variable_names and len(self.variable_names) != n_variables:
+            raise ValueError("variable names must align with variable features")
         if self.edge_indices.size:
             if self.edge_indices[0].min() < 0 or self.edge_indices[0].max() >= n_rows:
                 raise ValueError("graph edge contains an invalid row index")
@@ -149,9 +156,29 @@ def extract_graph_state(
     if not observation.row_names:
         raise ValueError("observation does not contain row names")
     actions = _immutable(action_set, np.int64)
+    ecole_features = np.asarray(observation.variable_features, dtype=np.float32)
+    # ECOLE: solution_value=8, is_solution_at_lower_bound=10.
+    # Approximate C++ grown-set rule (lb>0.5 || lp>0.5): when sol is at lb and
+    # sol>0.5, treat lb as active (fixed-to-one binaries).
+    solution_values = ecole_features[:, 8] if ecole_features.size else np.zeros(0)
+    if ecole_features.size:
+        at_lb = ecole_features[:, 10] > 0.5
+        lower_bounds = np.where(at_lb, solution_values, 0.0).astype(np.float32)
+    else:
+        lower_bounds = None
+    prim_features = prim_variable_feature_matrix(
+        observation.variable_names,
+        solution_values=solution_values,
+        lower_bounds=lower_bounds,
+    )
+    if ecole_features.ndim != 2 or ecole_features.shape[1] != len(ECOLE_VARIABLE_FEATURE_NAMES):
+        raise ValueError("observation variable features must have shape [n, 19]")
+    if prim_features.shape != (ecole_features.shape[0], len(PRIM_VARIABLE_FEATURE_NAMES)):
+        raise ValueError("prim variable features have the wrong shape")
+    variable_features = np.concatenate([ecole_features, prim_features], axis=1)
     state = GraphState(
         row_features=_immutable(observation.extended_row_features),
-        variable_features=_immutable(observation.variable_features),
+        variable_features=_immutable(variable_features),
         edge_indices=_immutable(observation.edge_indices, np.int64),
         edge_features=_immutable(observation.edge_features),
         global_features=_immutable(observation.global_features),
@@ -159,6 +186,7 @@ def extract_graph_state(
         row_categories=_immutable(constraint_category_one_hot(observation.row_names)),
         actions=actions,
         candidate_names=tuple(observation.variable_names[int(action)] for action in actions),
+        variable_names=tuple(observation.variable_names),
     )
     state.validate()
     return state
@@ -166,7 +194,7 @@ def extract_graph_state(
 
 class RunningGraphNormalizer:
     FEATURE_GROUPS = {
-        "variable": len(ECOLE_VARIABLE_FEATURE_NAMES),
+        "variable": len(GRAPH_VARIABLE_FEATURE_NAMES),
         "row": len(EXTENDED_ROW_FEATURE_NAMES),
         "edge": len(EDGE_FEATURE_NAMES),
         "global": len(GLOBAL_FEATURE_NAMES),

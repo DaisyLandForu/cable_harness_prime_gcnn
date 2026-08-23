@@ -143,6 +143,12 @@ def make_jobs(config: dict[str, Any], output_dir: Path) -> list[Job]:
     return jobs
 
 
+def job_time_limit(job: Job, config: dict[str, Any]) -> float:
+    """Prefer per-instance time_limit, fall back to global config."""
+    value = job.instance.get("time_limit", config["time_limit"])
+    return float(value)
+
+
 def command_for(job: Job, config: dict[str, Any], binary: Path) -> list[str]:
     command = [
         str(binary),
@@ -155,7 +161,7 @@ def command_for(job: Job, config: dict[str, Any], binary: Path) -> list[str]:
         "--seed",
         str(job.seed),
         "--time-limit",
-        str(config["time_limit"]),
+        str(job_time_limit(job, config)),
         "--node-limit",
         str(config["node_limit"]),
         "--threads",
@@ -180,6 +186,20 @@ def command_for(job: Job, config: dict[str, Any], binary: Path) -> list[str]:
                 str(job.branch_log_path),
             ]
         )
+        if "prim_lambda" in job.method:
+            command.extend(["--rl-prim-lambda", str(job.method["prim_lambda"])])
+        if "prim_min_depth" in job.method:
+            command.extend(["--rl-prim-min-depth", str(job.method["prim_min_depth"])])
+        if "prim_require_grown" in job.method:
+            command.extend(
+                ["--rl-prim-require-grown", "1" if job.method["prim_require_grown"] else "0"]
+            )
+        if "prim_features" in job.method:
+            command.extend(
+                ["--rl-prim-features", "1" if job.method["prim_features"] else "0"]
+            )
+        if "bias_mode" in job.method:
+            command.extend(["--rl-bias-mode", str(job.method["bias_mode"])])
     return command
 
 
@@ -190,11 +210,17 @@ def persistent_failure(job: Job, config: dict[str, Any], status: str, message: s
         "protocol": job.protocol,
         "seed": job.seed,
         "status": status,
-        "time_limit": config["time_limit"],
+        "time_limit": job_time_limit(job, config),
         "node_limit": config["node_limit"],
         "runner_error": message,
     }
     job.json_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def parse_cuda_devices() -> list[str]:
+    raw = os.environ.get("PHASE8_CUDA_DEVICES") or os.environ.get("CUDA_VISIBLE_DEVICES") or "0"
+    devices = [item.strip() for item in raw.split(",") if item.strip() != ""]
+    return devices or ["0"]
 
 
 def execute_job(
@@ -202,7 +228,11 @@ def execute_job(
     config: dict[str, Any],
     binary: Path,
     resume: bool,
-    cuda_lock: threading.Lock,
+    cuda_locks: dict[str, threading.Lock],
+    cuda_devices: list[str],
+    cuda_counter: list[int],
+    cuda_counter_lock: threading.Lock,
+    large_semaphore: threading.Semaphore | None,
 ) -> tuple[Job, int]:
     job.json_path.parent.mkdir(parents=True, exist_ok=True)
     if resume and job.json_path.is_file():
@@ -211,9 +241,15 @@ def execute_job(
     environment = os.environ.copy()
     environment["OMP_NUM_THREADS"] = "1"
     environment["MKL_NUM_THREADS"] = "1"
+    assigned_device: str | None = None
     if job.method.get("device") == "cuda":
-        environment.setdefault("CUDA_VISIBLE_DEVICES", "0")
-    timeout = float(config["time_limit"]) + float(config.get("process_grace_seconds", 300.0))
+        with cuda_counter_lock:
+            assigned_device = cuda_devices[cuda_counter[0] % len(cuda_devices)]
+            cuda_counter[0] += 1
+        environment["CUDA_VISIBLE_DEVICES"] = assigned_device
+    limit = job_time_limit(job, config)
+    timeout = limit + float(config.get("process_grace_seconds", 300.0))
+    use_large_slot = large_semaphore is not None and job.instance.get("size") == "large"
 
     def run() -> int:
         with job.log_path.open("w", encoding="utf-8") as stream:
@@ -227,11 +263,18 @@ def execute_job(
             )
         return int(completed.returncode)
 
+    def run_with_device() -> int:
+        if assigned_device is None:
+            return run()
+        with cuda_locks[assigned_device]:
+            return run()
+
     try:
-        return_code = run() if job.method.get("device") != "cuda" else None
-        if return_code is None:
-            with cuda_lock:
-                return_code = run()
+        if use_large_slot:
+            with large_semaphore:
+                return_code = run_with_device()
+        else:
+            return_code = run_with_device()
     except subprocess.TimeoutExpired as error:
         persistent_failure(job, config, "process_timeout", str(error))
         return_code = 124
@@ -314,16 +357,39 @@ def main() -> None:
     output_dir = Path(config["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
     jobs = make_jobs(config, output_dir)
+    size_rank = {"small": 0, "medium": 1, "large": 2}
+    jobs = sorted(
+        jobs,
+        key=lambda item: (size_rank.get(str(item.instance.get("size")), 9), item.index),
+    )
+    jobs = [
+        Job(
+            index=index,
+            protocol=job.protocol,
+            instance=job.instance,
+            method=job.method,
+            seed=job.seed,
+            json_path=job.json_path,
+            log_path=job.log_path,
+            branch_log_path=job.branch_log_path,
+        )
+        for index, job in enumerate(jobs)
+    ]
     (output_dir / "experiment_plan.json").write_text(
         json.dumps(
             {
                 "config": str(args.config),
                 "jobs": len(jobs),
-                "time_limit": config["time_limit"],
+                "time_limit_default": config["time_limit"],
+                "instance_time_limits": {
+                    item["instance_id"]: item.get("time_limit", config["time_limit"])
+                    for item in config["instances"]
+                },
                 "seeds": config["seeds"],
                 "protocols": config["protocols"],
                 "instances": [item["instance_id"] for item in config["instances"]],
                 "methods": [item["name"] for item in config["methods"]],
+                "max_concurrent_large": config.get("max_concurrent_large"),
             },
             indent=2,
         )
@@ -333,11 +399,36 @@ def main() -> None:
     workers = args.workers if args.workers is not None else int(config["workers"])
     if workers <= 0:
         raise ValueError("workers must be positive")
-    cuda_lock = threading.Lock()
+    cuda_devices = parse_cuda_devices()
+    cuda_locks = {device: threading.Lock() for device in cuda_devices}
+    cuda_counter: list[int] = [0]
+    cuda_counter_lock = threading.Lock()
+    max_large = config.get("max_concurrent_large")
+    large_semaphore = (
+        threading.Semaphore(int(max_large)) if max_large is not None else None
+    )
+    print(
+        f"phase8 runner: jobs={len(jobs)} workers={workers} "
+        f"cuda_devices={','.join(cuda_devices)} "
+        f"default_time_limit={config['time_limit']} "
+        f"max_concurrent_large={max_large}",
+        flush=True,
+    )
     completed: dict[int, tuple[Job, int]] = {}
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = {
-            executor.submit(execute_job, job, config, binary, args.resume, cuda_lock): job
+            executor.submit(
+                execute_job,
+                job,
+                config,
+                binary,
+                args.resume,
+                cuda_locks,
+                cuda_devices,
+                cuda_counter,
+                cuda_counter_lock,
+                large_semaphore,
+            ): job
             for job in jobs
         }
         for count, future in enumerate(as_completed(futures), start=1):
@@ -350,7 +441,8 @@ def main() -> None:
             write_results(output_dir / "raw_results.csv", rows)
             print(
                 f"[{count}/{len(jobs)}] {job.protocol} {job.instance['instance_id']} "
-                f"{job.method['name']} seed={job.seed} rc={return_code}",
+                f"{job.method['name']} seed={job.seed} "
+                f"tl={job_time_limit(job, config):.0f}s rc={return_code}",
                 flush=True,
             )
 

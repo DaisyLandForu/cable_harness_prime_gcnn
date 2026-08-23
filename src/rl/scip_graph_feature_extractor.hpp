@@ -14,6 +14,10 @@ namespace rlbranch {
 constexpr int kConstraintFeatureCount = 14;
 constexpr int kEdgeFeatureCount = 3;
 constexpr int kConstraintCategoryCount = 6;
+// Phase B: ECOLE(19) + Prim neighborhood flags(6).
+constexpr int kPrimVariableFeatureCount = 6;
+constexpr int kGraphVariableFeatureCount =
+    kCandidateVariableFeatureCount + kPrimVariableFeatureCount;
 
 struct GraphObservation {
     std::vector<BranchCandidate> candidates;
@@ -29,10 +33,14 @@ struct GraphObservation {
     std::vector<std::string> candidate_names;
     std::size_t row_count = 0;
     std::size_t variable_count = 0;
+    int variable_feature_dim = kCandidateVariableFeatureCount;
 };
 
 int aviationConstraintCategory(const std::string& row_name);
 
-SCIP_RETCODE extractGraphObservation(SCIP* scip, GraphObservation& observation);
+SCIP_RETCODE extractGraphObservation(
+    SCIP* scip,
+    GraphObservation& observation,
+    bool use_prim_features = false);
 
 }  // namespace rlbranch

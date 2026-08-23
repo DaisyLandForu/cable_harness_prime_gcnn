@@ -67,6 +67,7 @@ add_executable(scip_tree
     src/rl/scip_graph_feature_extractor.cpp
     src/rl/gcnn_model_runner.cpp
     src/rl/rl_gcnn_branchrule.cpp
+    src/rl/prim_bias.cpp
 )
 target_include_directories(scip_tree PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"

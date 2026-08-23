@@ -1,0 +1,40 @@
+{
+  "n_shards": 12,
+  "n_empty_shards": 0,
+  "n_samples": 132,
+  "gate_30k": false,
+  "gate_label_quality": true,
+  "informative_score_frac": 1.0,
+  "teacher_used": {
+    "pseudocost_fallback": 113,
+    "sb": 19
+  },
+  "followed_expert_frac": 0.5984848484848485,
+  "close_top1_top2_frac": 1.0,
+  "teacher_gap": {
+    "mean": 2.0182386695648073e-07,
+    "p50": 0.0,
+    "p10": 0.0
+  },
+  "depth_buckets": {
+    "0": 12,
+    "1-2": 24,
+    "3-5": 40,
+    "6-10": 56
+  },
+  "by_instance": {
+    "real_06": 68,
+    "syn_medium_s101": 64
+  },
+  "by_policy": {
+    "expert": 45,
+    "epsilon_expert": 43,
+    "random": 44
+  },
+  "expert_top1_family": {
+    "m": 95,
+    "z": 37
+  },
+  "n_errors": 0,
+  "errors_head": []
+}

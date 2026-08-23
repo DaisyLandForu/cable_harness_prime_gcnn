@@ -1,0 +1,73 @@
+{
+  "n": 18,
+  "methods": {
+    "default": {
+      "solved": 6,
+      "n": 6,
+      "wall_mean": 19.141035845666668,
+      "nodes_mean": 33.166666666666664,
+      "gap_mean": 0.0
+    },
+    "rl-gcnn": {
+      "solved": 6,
+      "n": 6,
+      "wall_mean": 37.55128560483334,
+      "nodes_mean": 46.0,
+      "gap_mean": 0.0
+    },
+    "rl-gcnn-prim": {
+      "solved": 6,
+      "n": 6,
+      "wall_mean": 16.96382231583333,
+      "nodes_mean": 19.166666666666668,
+      "gap_mean": 0.0
+    }
+  },
+  "per_instance": {
+    "real_01/default": {
+      "solved": 2,
+      "wall_mean": 45.1603684555,
+      "nodes_mean": 88.0
+    },
+    "real_01/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 86.71452074550001,
+      "nodes_mean": 98.5
+    },
+    "real_01/rl-gcnn-prim": {
+      "solved": 2,
+      "wall_mean": 24.568027645,
+      "nodes_mean": 13.0
+    },
+    "real_08/default": {
+      "solved": 2,
+      "wall_mean": 11.227176958000001,
+      "nodes_mean": 6.5
+    },
+    "real_08/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 24.500946990499997,
+      "nodes_mean": 35.0
+    },
+    "real_08/rl-gcnn-prim": {
+      "solved": 2,
+      "wall_mean": 23.278868699,
+      "nodes_mean": 26.5
+    },
+    "real_09/default": {
+      "solved": 2,
+      "wall_mean": 1.0355621235,
+      "nodes_mean": 5.0
+    },
+    "real_09/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 1.4383890785000002,
+      "nodes_mean": 4.5
+    },
+    "real_09/rl-gcnn-prim": {
+      "solved": 2,
+      "wall_mean": 3.0445706035,
+      "nodes_mean": 18.0
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "seeds": [
+    {
+      "seed": "0",
+      "status": "ok",
+      "best_validation_nodes": 60.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed0/best_model_scripted.pt"
+    },
+    {
+      "seed": "1",
+      "status": "ok",
+      "best_validation_nodes": 75.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed1/best_model_scripted.pt"
+    },
+    {
+      "seed": "2",
+      "status": "ok",
+      "best_validation_nodes": 63.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed2/best_model_scripted.pt"
+    },
+    {
+      "seed": "3",
+      "status": "ok",
+      "best_validation_nodes": 71.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed3/best_model_scripted.pt"
+    }
+  ],
+  "best_seed": "0",
+  "promoted_from": "artifacts/models/gcnn_prim_feat/seed0"
+}

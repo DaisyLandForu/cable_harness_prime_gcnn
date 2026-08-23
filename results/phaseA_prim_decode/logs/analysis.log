@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/scripts/analyze_final_results.py", line 464, in <module>
+    main()
+  File "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/scripts/analyze_final_results.py", line 446, in main
+    plot_scale(data, figures)
+  File "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/scripts/analyze_final_results.py", line 410, in plot_scale
+    table[columns].plot(
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_core.py", line 1030, in __call__
+    return plot_backend.plot(data, kind=kind, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/__init__.py", line 71, in plot
+    plot_obj.generate()
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/core.py", line 501, in generate
+    self._make_plot(fig)
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/core.py", line 1891, in _make_plot
+    colors = self._get_colors()
+             ^^^^^^^^^^^^^^^^^^
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/core.py", line 1094, in _get_colors
+    return get_standard_colors(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/style.py", line 70, in get_standard_colors
+    colors = _derive_colors(
+             ^^^^^^^^^^^^^^^
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/style.py", line 127, in _derive_colors
+    return _get_colors_from_color(color)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/style.py", line 173, in _get_colors_from_color
+    return list(_gen_list_of_colors_from_iterable(color))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/hanchengcheng/envs/rl4scip/lib/python3.11/site-packages/pandas/plotting/_matplotlib/style.py", line 206, in _gen_list_of_colors_from_iterable
+    raise ValueError(f"Invalid color {x}")
+ValueError: Invalid color None

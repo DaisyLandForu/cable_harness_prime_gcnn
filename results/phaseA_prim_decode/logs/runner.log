@@ -1,0 +1,20 @@
+phase8 runner: jobs=18 workers=4 cuda_devices=1,2,4,5 default_time_limit=300.0 max_concurrent_large=2
+[1/18] production-scip real_09 default seed=1 tl=120s rc=0
+[2/18] production-scip real_09 rl-gcnn seed=1 tl=120s rc=0
+[3/18] production-scip real_09 default seed=0 tl=120s rc=0
+[4/18] production-scip real_09 rl-gcnn-prim seed=1 tl=120s rc=0
+[5/18] production-scip real_09 rl-gcnn seed=0 tl=120s rc=0
+[6/18] production-scip real_09 rl-gcnn-prim seed=0 tl=120s rc=0
+[7/18] production-scip real_08 default seed=1 tl=300s rc=0
+[8/18] production-scip real_08 default seed=0 tl=300s rc=0
+[9/18] production-scip real_08 rl-gcnn seed=1 tl=300s rc=0
+[10/18] production-scip real_08 rl-gcnn-prim seed=1 tl=300s rc=0
+[11/18] production-scip real_08 rl-gcnn seed=0 tl=300s rc=0
+[12/18] production-scip real_08 rl-gcnn-prim seed=0 tl=300s rc=0
+[13/18] production-scip real_01 default seed=1 tl=600s rc=0
+[14/18] production-scip real_01 default seed=0 tl=600s rc=0
+[15/18] production-scip real_01 rl-gcnn-prim seed=0 tl=600s rc=0
+[16/18] production-scip real_01 rl-gcnn-prim seed=1 tl=600s rc=0
+[17/18] production-scip real_01 rl-gcnn seed=1 tl=600s rc=0
+[18/18] production-scip real_01 rl-gcnn seed=0 tl=600s rc=0
+completed=18 failures=0

@@ -24,7 +24,7 @@ def immutable(values, dtype=np.float32):
 def graph_state(offset=0.0):
     return GraphState(
         row_features=immutable(np.arange(56).reshape(4, 14) + offset),
-        variable_features=immutable(np.arange(95).reshape(5, 19) + offset),
+        variable_features=immutable(np.arange(125).reshape(5, 25) + offset),
         edge_indices=immutable(
             [[0, 0, 1, 1, 2, 3, 3], [0, 2, 1, 3, 4, 0, 4]], np.int64
         ),

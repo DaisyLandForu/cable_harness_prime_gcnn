@@ -1,0 +1,56 @@
+run_name: bipartite_gcnn_prim_feat_pilot_seed0
+seed: 0
+device: cuda
+output_dir: /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_prim_feat/seed0
+train_instances:
+- data/instances/train/real_06.cip
+- data/instances/train/real_07.cip
+validation_instances:
+- data/instances/validation/real_08.cip
+environment:
+  seed: 0
+  time_limit: 60.0
+  node_limit: 100
+  gamma: 1.0
+  reward_mode: negative_node_increment
+  bootstrap_on_truncation: false
+  cache_static_features: true
+model:
+  embedding_dim: 64
+  hidden_dim: 128
+  loss_mode: scalar
+  distributional_bins: 18
+  z_min: -1.0
+  z_max: 12.0
+  hl_gauss_sigma: 0.75
+optimization:
+  total_gradient_steps: 3000
+  batch_size: 64
+  replay_capacity: 2048
+  min_replay_size: 128
+  learning_rate: 0.0003
+  updates_per_env_step: 8
+  n_step: 3
+  gamma: 1.0
+  gradient_clip: 10.0
+  target_tau: 0.01
+  per_alpha: 0.6
+  per_beta_start: 0.4
+  per_beta_steps: 3000
+  per_epsilon: 1.0e-05
+exploration:
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  decay_steps: 2400
+  boltzmann_temperature: 0.0
+evaluation:
+  seeds:
+  - 100
+  interval_steps: 250
+  early_stopping_patience: 8
+  compare_seeds:
+  - 100
+  - 101
+  - 102
+normalization_warmup_states: 8
+log_interval_steps: 20

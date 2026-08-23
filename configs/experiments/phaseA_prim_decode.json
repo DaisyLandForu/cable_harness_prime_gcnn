@@ -1,0 +1,38 @@
+{
+  "binary": "build/scip_tree",
+  "output_dir": "results/phaseA_prim_decode",
+  "time_limit": 300.0,
+  "node_limit": -1,
+  "threads": 1,
+  "workers": 4,
+  "max_concurrent_large": 2,
+  "process_grace_seconds": 300.0,
+  "seeds": [0, 1],
+  "protocols": ["production-scip"],
+  "instances": [
+    {"instance_id": "real_09", "cli_id": "9", "split": "test", "size": "small", "time_limit": 120.0},
+    {"instance_id": "real_08", "cli_id": "8", "split": "validation", "size": "medium", "time_limit": 300.0},
+    {"instance_id": "real_01", "cli_id": "1", "split": "transfer", "size": "medium", "time_limit": 600.0}
+  ],
+  "methods": [
+    {"name": "default", "branching": "default"},
+    {
+      "name": "rl-gcnn",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/gcnn/best_model_scripted.pt",
+      "device": "cpu",
+      "fallback": "relpscost",
+      "max_depth": -1,
+      "prim_lambda": 0.0
+    },
+    {
+      "name": "rl-gcnn-prim",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/gcnn/best_model_scripted.pt",
+      "device": "cpu",
+      "fallback": "relpscost",
+      "max_depth": -1,
+      "prim_lambda": 0.5
+    }
+  ]
+}

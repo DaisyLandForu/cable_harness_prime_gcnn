@@ -10,7 +10,10 @@ namespace rlbranch {
 
 class GcnnModelRunner {
 public:
-    GcnnModelRunner(const std::string& model_path, const std::string& device_name);
+    GcnnModelRunner(
+        const std::string& model_path,
+        const std::string& device_name,
+        int variable_feature_dim = kCandidateVariableFeatureCount);
     ~GcnnModelRunner();
 
     GcnnModelRunner(GcnnModelRunner&&) noexcept;

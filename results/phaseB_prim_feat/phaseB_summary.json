@@ -1,0 +1,151 @@
+{
+  "n": 40,
+  "methods": {
+    "default": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 22.441194672749997,
+      "nodes_mean": 36.0
+    },
+    "rl-gcnn": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 40.98982378325,
+      "nodes_mean": 44.375
+    },
+    "rl-gcnn-prim-decode": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 33.4737053115,
+      "nodes_mean": 34.625
+    },
+    "rl-gcnn-prim-feat": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 56.948752227125,
+      "nodes_mean": 62.25
+    },
+    "rl-gcnn-prim-feat-decode": {
+      "solved": 8,
+      "n": 8,
+      "wall_mean": 66.54960217775,
+      "nodes_mean": 73.25
+    }
+  },
+  "per_instance": {
+    "real_01/default": {
+      "solved": 2,
+      "wall_mean": 46.213113706,
+      "nodes_mean": 88.0
+    },
+    "real_01/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 87.4723940855,
+      "nodes_mean": 98.5
+    },
+    "real_01/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 24.029681127,
+      "nodes_mean": 13.0
+    },
+    "real_01/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 114.0671855245,
+      "nodes_mean": 140.0
+    },
+    "real_01/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 77.948228761,
+      "nodes_mean": 74.5
+    },
+    "real_05/default": {
+      "solved": 2,
+      "wall_mean": 31.365356597,
+      "nodes_mean": 44.5
+    },
+    "real_05/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 50.6664753105,
+      "nodes_mean": 39.5
+    },
+    "real_05/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 83.86361378000001,
+      "nodes_mean": 81.0
+    },
+    "real_05/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 96.711906753,
+      "nodes_mean": 92.0
+    },
+    "real_05/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 162.13334673650002,
+      "nodes_mean": 176.0
+    },
+    "real_08/default": {
+      "solved": 2,
+      "wall_mean": 11.140235554,
+      "nodes_mean": 6.5
+    },
+    "real_08/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 24.4688128565,
+      "nodes_mean": 35.0
+    },
+    "real_08/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 22.556204889,
+      "nodes_mean": 26.5
+    },
+    "real_08/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 15.60357436,
+      "nodes_mean": 13.5
+    },
+    "real_08/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 23.187736420500002,
+      "nodes_mean": 27.5
+    },
+    "real_09/default": {
+      "solved": 2,
+      "wall_mean": 1.0460728339999998,
+      "nodes_mean": 5.0
+    },
+    "real_09/rl-gcnn": {
+      "solved": 2,
+      "wall_mean": 1.3516128805,
+      "nodes_mean": 4.5
+    },
+    "real_09/rl-gcnn-prim-decode": {
+      "solved": 2,
+      "wall_mean": 3.44532145,
+      "nodes_mean": 18.0
+    },
+    "real_09/rl-gcnn-prim-feat": {
+      "solved": 2,
+      "wall_mean": 1.412342271,
+      "nodes_mean": 3.5
+    },
+    "real_09/rl-gcnn-prim-feat-decode": {
+      "solved": 2,
+      "wall_mean": 2.929096793,
+      "nodes_mean": 15.0
+    }
+  },
+  "paired_vs_gcnn": {
+    "rl-gcnn-prim-decode": {
+      "geom_wall_speedup": 1.0777360585079077,
+      "n": 8
+    },
+    "rl-gcnn-prim-feat": {
+      "geom_wall_speedup": 0.8502810898370731,
+      "n": 8
+    },
+    "rl-gcnn-prim-feat-decode": {
+      "geom_wall_speedup": 0.7084926202116633,
+      "n": 8
+    }
+  }
+}

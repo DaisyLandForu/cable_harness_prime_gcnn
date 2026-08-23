@@ -13,7 +13,8 @@ import psutil
 import torch
 import yaml
 
-from .candidate_features import AVIATION_VARIABLE_CATEGORIES, ECOLE_VARIABLE_FEATURE_NAMES
+from .candidate_features import AVIATION_VARIABLE_CATEGORIES
+from .graph_features import GRAPH_VARIABLE_FEATURE_NAMES
 from .environment import BBMDPBranchingEnv
 from .gcnn_config import GCNNTrainingConfig
 from .gcnn_dqn import GraphDoubleDQNLearner, GraphUpdateMetrics
@@ -163,7 +164,7 @@ def _schema(config: GCNNTrainingConfig) -> dict:
     return {
         "schema_version": 1,
         "architecture": "variable-to-constraint then constraint-to-variable index_add message passing",
-        "variable_features": list(ECOLE_VARIABLE_FEATURE_NAMES),
+        "variable_features": list(GRAPH_VARIABLE_FEATURE_NAMES),
         "constraint_features": list(EXTENDED_ROW_FEATURE_NAMES),
         "edge_features": list(EDGE_FEATURE_NAMES),
         "global_features": list(GLOBAL_FEATURE_NAMES),

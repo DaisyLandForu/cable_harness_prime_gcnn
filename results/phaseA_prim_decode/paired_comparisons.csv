@@ -1,0 +1,4 @@
+protocol,method,paired_runs,paired_speedup,paired_speedup_ci_low,paired_speedup_ci_high,wins,ties,losses,jointly_solved,geomean_node_speedup_joint
+production-scip,default,6,1.0,1.0,1.0,0,6,0,6,1.0
+production-scip,rl-gcnn,6,0.5971232067131932,0.45180322097629977,0.7694455250513541,0,0,6,6,0.6526146198258339
+production-scip,rl-gcnn-prim,6,0.7671905793842574,0.4485967447051183,1.391276097158766,2,0,4,6,1.0303807772454532

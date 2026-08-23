@@ -1,0 +1,10 @@
+protocol,instance_id,split,size,method,runs,solved,solved_rate,shifted_gmean_wall_time,shifted_gmean_nodes,mean_final_gap,finite_gap_runs,par2,branch_decisions,rl_inference_total,fallback_count
+production-scip,real_01,transfer,medium,default,2,2,1.0,41.93912621273136,58.70762095411272,0.0,2,45.1603684555,0,0.0,0
+production-scip,real_01,transfer,medium,rl-gcnn,2,2,1.0,81.95369996071366,92.69098142297368,0.0,2,86.71452074550001,189,121.44549815900001,0
+production-scip,real_01,transfer,medium,rl-gcnn-prim,2,2,1.0,24.520771363682325,12.96424004376894,0.0,2,24.568027645,26,17.304368546,0
+production-scip,real_08,validation,medium,default,2,2,1.0,11.074662141327714,4.099019513592785,0.0,2,11.227176958000001,0,0.0,0
+production-scip,real_08,validation,medium,rl-gcnn,2,2,1.0,19.838487787339268,10.83215956619923,0.0,2,24.500946990499997,64,28.063887565,0
+production-scip,real_08,validation,medium,rl-gcnn-prim,2,2,1.0,19.27389428454175,9.295630140986999,0.0,2,23.278868699,52,25.400986182,0
+production-scip,real_09,test,small,default,2,2,1.0,0.9476321851925462,3.4721359549995796,0.0,2,1.0355621235,0,0.0,0
+production-scip,real_09,test,small,rl-gcnn,2,2,1.0,1.280825143557506,3.2426406871192848,0.0,2,1.4383890785000002,8,1.142309721,0
+production-scip,real_09,test,small,rl-gcnn-prim,2,2,1.0,2.2502568909763805,7.4852813742385695,0.0,2,3.0445706035,33,3.802115487,0

@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Local SCIP / compiler artifacts (machine-specific)
+artifacts/environment/
+*.o
+*.so
+build/scip_tree
+build/sb_native_probe
+build/model_runner_parity
+build/gcnn_model_runner_parity
+
+# Secrets
+.env
+*.pem

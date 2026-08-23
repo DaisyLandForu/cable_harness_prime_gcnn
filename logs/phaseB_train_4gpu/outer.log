@@ -1,0 +1,44 @@
+[2026-08-08 15:46:39] Phase B 4-GPU train start gpus=1 2 4 5 seeds=0 1 2 3
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed0.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_prim_feat/seed0
+[2026-08-08 15:46:39] launch seed=0 gpu=1
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed1.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_prim_feat/seed1
+[2026-08-08 15:46:39] launch seed=1 gpu=2
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed2.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_prim_feat/seed2
+[2026-08-08 15:46:39] launch seed=2 gpu=4
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed3.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_prim_feat/seed3
+[2026-08-08 15:46:39] launch seed=3 gpu=5
+[2026-08-08 17:24:35] seed=0 OK
+[2026-08-08 17:24:35] seed=1 OK
+[2026-08-08 17:24:35] seed=2 OK
+[2026-08-08 17:24:35] seed=3 OK
+{
+  "seeds": [
+    {
+      "seed": "0",
+      "status": "ok",
+      "best_validation_nodes": 60.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed0/best_model_scripted.pt"
+    },
+    {
+      "seed": "1",
+      "status": "ok",
+      "best_validation_nodes": 75.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed1/best_model_scripted.pt"
+    },
+    {
+      "seed": "2",
+      "status": "ok",
+      "best_validation_nodes": 63.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed2/best_model_scripted.pt"
+    },
+    {
+      "seed": "3",
+      "status": "ok",
+      "best_validation_nodes": 71.0,
+      "model": "artifacts/models/gcnn_prim_feat/seed3/best_model_scripted.pt"
+    }
+  ],
+  "best_seed": "0",
+  "promoted_from": "artifacts/models/gcnn_prim_feat/seed0"
+}
+[2026-08-08 17:24:35] Phase B 4-GPU train DONE fail=0

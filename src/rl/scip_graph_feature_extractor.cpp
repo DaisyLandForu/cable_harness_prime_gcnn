@@ -7,6 +7,9 @@
 #include <scip/pub_var.h>
 #include <scip/scip_lp.h>
 #include <scip/scip_solvingstats.h>
+#include <scip/scip_var.h>
+
+#include "rl/prim_bias.hpp"
 
 namespace rlbranch {
 namespace {
@@ -111,7 +114,10 @@ int aviationConstraintCategory(const std::string& row_name) {
     return kConstraintCategoryCount - 1;
 }
 
-SCIP_RETCODE extractGraphObservation(SCIP* scip, GraphObservation& observation) {
+SCIP_RETCODE extractGraphObservation(
+    SCIP* scip,
+    GraphObservation& observation,
+    bool use_prim_features) {
     observation = GraphObservation{};
     SCIP_CALL(extractLpBranchCandidates(scip, observation.candidates));
     if (observation.candidates.empty()) {
@@ -124,8 +130,12 @@ SCIP_RETCODE extractGraphObservation(SCIP* scip, GraphObservation& observation) 
         return SCIP_INVALIDDATA;
     }
     observation.variable_count = static_cast<std::size_t>(variable_count);
+    const int feature_width = use_prim_features
+        ? kGraphVariableFeatureCount
+        : kCandidateVariableFeatureCount;
+    observation.variable_feature_dim = feature_width;
     observation.variable_features.assign(
-        observation.variable_count * kCandidateVariableFeatureCount, 0.0F);
+        observation.variable_count * static_cast<std::size_t>(feature_width), 0.0F);
     observation.variable_categories.assign(
         observation.variable_count * kVariableCategoryCount, 0.0F);
     const VariableFeatureContext context = makeVariableFeatureContext(scip);
@@ -140,10 +150,14 @@ SCIP_RETCODE extractGraphObservation(SCIP* scip, GraphObservation& observation) 
             variable,
             context,
             observation.variable_features.data()
-                + static_cast<std::size_t>(variable_index) * kCandidateVariableFeatureCount));
+                + static_cast<std::size_t>(variable_index)
+                    * static_cast<std::size_t>(feature_width)));
         const int category = aviationVariableCategory(SCIPvarGetName(variable));
         observation.variable_categories[
             static_cast<std::size_t>(variable_index) * kVariableCategoryCount + category] = 1.0F;
+    }
+    if (use_prim_features) {
+        appendPrimVariableFeatures(scip, observation);
     }
 
     observation.candidate_indices.reserve(observation.candidates.size());
