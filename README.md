@@ -2,6 +2,8 @@
 
 SCIP-based MILP optimization for acyclic aircraft cable-harness routing. The current development line adds reproducible branching baselines before introducing RL branching.
 
+**方法与实验评估底稿**（可直接交给外部模型评审）：[`docs/implementation_and_experiments.md`](docs/implementation_and_experiments.md)。
+
 ## Current Environment
 
 - Conda environment: `rl4scip`
