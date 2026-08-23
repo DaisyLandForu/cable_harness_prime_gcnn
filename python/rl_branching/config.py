@@ -5,6 +5,8 @@ from typing import Any, Dict
 
 import yaml
 
+from .scip_profile import load_production_scip_params, resolve_scip_profile
+
 
 class RewardMode(str, Enum):
     NEGATIVE_NODE_INCREMENT = "negative_node_increment"
@@ -20,6 +22,7 @@ class BBMDPConfig:
     reward_mode: RewardMode = RewardMode.NEGATIVE_NODE_INCREMENT
     bootstrap_on_truncation: bool = False
     cache_static_features: bool = True
+    scip_profile: str = ""
 
     def __post_init__(self) -> None:
         if self.seed < 0:
@@ -30,6 +33,7 @@ class BBMDPConfig:
             raise ValueError("node_limit must be -1 or a positive integer")
         if self.gamma != 1.0:
             raise ValueError("the BBMDP-faithful profile requires gamma=1")
+        object.__setattr__(self, "scip_profile", str(resolve_scip_profile(self.scip_profile)))
 
     @classmethod
     def from_yaml(cls, path: Path | str) -> "BBMDPConfig":
@@ -43,21 +47,9 @@ class BBMDPConfig:
         return cls(**raw)
 
     def scip_parameters(self) -> Dict[str, Any]:
-        parameters: Dict[str, Any] = {
-            "nodeselection/dfs/stdpriority": 1_000_000,
-            "nodeselection/dfs/memsavepriority": 1_000_000,
-            "separating/maxrounds": 0,
-            "estimation/restarts/restartpolicy": "n",
-            "limits/restarts": 0,
-            "presolving/maxrestarts": 0,
-            "parallel/minnthreads": 1,
-            "parallel/maxnthreads": 1,
-            "lp/threads": 1,
-            "randomization/randomseedshift": self.seed,
-            "randomization/permutationseed": self.seed,
-            "randomization/lpseed": self.seed,
-            "limits/time": self.time_limit,
-        }
-        if self.node_limit >= 0:
-            parameters["limits/nodes"] = self.node_limit
-        return parameters
+        return load_production_scip_params(
+            seed=self.seed,
+            time_limit=self.time_limit,
+            node_limit=self.node_limit,
+            profile=self.scip_profile,
+        )

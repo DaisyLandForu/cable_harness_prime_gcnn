@@ -8,6 +8,7 @@ artifacts/environment/
 *.o
 *.so
 build/scip_tree
+build/graph_probe
 build/sb_native_probe
 build/model_runner_parity
 build/gcnn_model_runner_parity

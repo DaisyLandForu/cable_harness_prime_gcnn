@@ -1,0 +1,9 @@
+branching/preferbinary = TRUE
+heuristics/alns/freq = 50
+heuristics/alns/priority = 90000
+heuristics/rens/freq = 50
+heuristics/rens/priority = 100000
+limits/gap = 0
+lp/threads = 1
+parallel/maxnthreads = 1
+parallel/minnthreads = 1

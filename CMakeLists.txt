@@ -68,6 +68,7 @@ add_executable(scip_tree
     src/rl/gcnn_model_runner.cpp
     src/rl/rl_gcnn_branchrule.cpp
     src/rl/prim_bias.cpp
+    src/rl/scip_profile.cpp
 )
 target_include_directories(scip_tree PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
@@ -125,3 +126,16 @@ target_link_libraries(gcnn_model_runner_parity PRIVATE "${TORCH_LIBRARIES}")
 target_compile_definitions(gcnn_model_runner_parity PRIVATE _GLIBCXX_USE_CXX11_ABI=0)
 set_target_properties(gcnn_model_runner_parity PROPERTIES BUILD_RPATH "${TORCH_LIBRARY_DIR}")
 target_compile_options(gcnn_model_runner_parity PRIVATE -Wall -Wextra)
+
+add_executable(graph_probe
+    tools/graph_probe.cpp
+    src/rl/scip_profile.cpp
+    src/rl/graph_size.cpp
+)
+target_include_directories(graph_probe PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${SCIP_INCLUDE_DIR}"
+    "${SCIP_CONFIG_INCLUDE_DIR}"
+)
+target_link_libraries(graph_probe PRIVATE "${SCIP_LIBRARY}")
+target_compile_options(graph_probe PRIVATE -Wall -Wextra)

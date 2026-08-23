@@ -28,6 +28,7 @@
 #include "rl/rl_branchrule.hpp"
 #include "rl/rl_gcnn_branchrule.hpp"
 #include "rl/rl_mlp_branchrule.hpp"
+#include "rl/scip_profile.hpp"
 
 using namespace std;
 
@@ -44,7 +45,8 @@ struct RunConfig {
     std::string edges_path = "data/edges-1.csv";
     std::string pairs_path = "data/pairs-1.csv";
     std::string branching = "default";
-    std::string protocol = "production-scip";
+    std::string protocol = "project-production-v1";
+    std::string scip_profile = "configs/scip/project-production-v1.set";
     std::string output_json;
     std::string export_milp;
     std::string branch_log;
@@ -54,15 +56,10 @@ struct RunConfig {
     std::string rl_log;
     int rl_max_depth = -1;
     int rl_min_candidates = 1;
-    float rl_prim_lambda = 0.0F;
-    int rl_prim_min_depth = 0;
-    int rl_prim_require_grown = 0;
-    int rl_prim_features = 0;
-    std::string rl_bias_mode = "prim";
     int seed = 0;
     double time_limit = 1e20;
     SCIP_Longint node_limit = -1;
-    int threads = 16;
+    int threads = 1;
     bool threads_explicit = false;
     bool build_only = false;
     bool legacy_cli = true;
@@ -72,6 +69,8 @@ struct SolverMetrics {
     std::string status = "not_run";
     std::string active_branchrule;
     std::string node_selector = "estimate";
+    std::string scip_profile_sha256;
+    std::string scip_param_dump_sha256;
     double objective = std::numeric_limits<double>::quiet_NaN();
     double primal_bound = std::numeric_limits<double>::quiet_NaN();
     double dual_bound = std::numeric_limits<double>::quiet_NaN();
@@ -218,15 +217,11 @@ void writeRunJson(const std::string& path, const RunConfig& config, const Solver
     out << "  \"rl_fallback\": \"" << jsonEscape(config.rl_fallback) << "\",\n";
     out << "  \"rl_max_depth\": " << config.rl_max_depth << ",\n";
     out << "  \"rl_min_candidates\": " << config.rl_min_candidates << ",\n";
-    out << "  \"rl_prim_lambda\": "; writeJsonNumber(out, config.rl_prim_lambda); out << ",\n";
-    out << "  \"rl_prim_min_depth\": " << config.rl_prim_min_depth << ",\n";
-    out << "  \"rl_prim_require_grown\": " << (config.rl_prim_require_grown ? "true" : "false") << ",\n";
-    out << "  \"rl_prim_features\": " << (config.rl_prim_features ? "true" : "false") << ",\n";
-    out << "  \"rl_bias_mode\": \"" << jsonEscape(config.rl_bias_mode) << "\",\n";
+    out << "  \"scip_profile\": \"" << jsonEscape(config.scip_profile) << "\",\n";
+    out << "  \"scip_profile_sha256\": \"" << jsonEscape(metrics.scip_profile_sha256) << "\",\n";
+    out << "  \"scip_param_dump_sha256\": \"" << jsonEscape(metrics.scip_param_dump_sha256) << "\",\n";
     out << "  \"node_selection_rule\": \"" << jsonEscape(metrics.node_selector) << "\",\n";
-    out << "  \"threads\": "
-        << (config.protocol == "controlled-bbmdp" ? 1
-            : (config.threads_explicit ? config.threads : 16)) << ",\n";
+    out << "  \"threads\": " << (config.threads_explicit ? config.threads : 1) << ",\n";
     out << "  \"time_limit\": "; writeJsonNumber(out, config.time_limit); out << ",\n";
     out << "  \"node_limit\": " << config.node_limit << ",\n";
     out << "  \"has_solution\": " << (metrics.has_solution ? "true" : "false") << ",\n";
@@ -245,24 +240,19 @@ void printUsage(const char* program) {
         << "  --pairs <path>            Pair CSV path\n"
         << "  --copy-num <int>          Number of topology copies (default: 4)\n"
         << "  --div-part <int>          Keep 1/div_part center pairs (default: 1)\n"
-        << "  --branching <method>      default|relpscost|random|mostinf|strong|custom-random|custom-mostinf|rl-mlp|rl-gcnn\n"
-        << "  --protocol <profile>      production-scip|controlled-bbmdp\n"
+        << "  --branching <method>      default|relpscost|random|mostinf|strong|custom-random|custom-mostinf|rl-gcnn\n"
+        << "  --scip-profile <path>     Frozen SCIP set file (default: project-production-v1)\n"
         << "  --seed <int>              SCIP random seed shift\n"
         << "  --time-limit <seconds>    Solver time limit\n"
         << "  --node-limit <int>        Solver node limit (-1 means unlimited)\n"
-        << "  --threads <int>           SCIP and LP thread count\n"
+        << "  --threads <int>           Must be 1 for formal runs; defaults to profile\n"
         << "  --output-json <path>      Write structured run metrics\n"
         << "  --branch-log <path>       Write custom branching decisions as CSV\n"
-        << "  --rl-model <path>         TorchScript MLP or GCNN model\n"
+        << "  --rl-model <path>         TorchScript GCNN model\n"
         << "  --rl-device <device>      cpu|cuda (default: cpu)\n"
         << "  --rl-fallback <method>    relpscost|default\n"
         << "  --rl-max-depth <int>      Use RL through this depth (-1 unlimited)\n"
         << "  --rl-min-candidates <int> Minimum candidates required for RL\n"
-        << "  --rl-prim-lambda <float>  Phase-A Prim decode bias: score=Q+λ·PrimScore (0=off)\n"
-        << "  --rl-prim-min-depth <int> Apply Prim bias only if depth >= this (default 0)\n"
-        << "  --rl-prim-require-grown <0|1>  Require non-empty grown set S before Prim bias\n"
-        << "  --rl-prim-features <0|1>  Phase-B append 6 Prim neighborhood variable features\n"
-        << "  --rl-bias-mode <mode>     none|z|root_z|prim|topology (C0 Prim decomposition)\n"
         << "  --rl-log <path>           Write RL branch decisions as CSV\n"
         << "  --export-milp <path>      Export original problem as CIP/MPS/LP\n"
         << "  --build-only              Build/export without solving\n"
@@ -312,8 +302,12 @@ RunConfig parseArguments(int argc, char* argv[]) {
             div_part = std::stoi(requireValue());
         } else if (arg == "--branching") {
             config.branching = requireValue();
+        } else if (arg == "--scip-profile") {
+            config.scip_profile = requireValue();
         } else if (arg == "--protocol") {
-            config.protocol = requireValue();
+            throw std::invalid_argument(
+                "--protocol has been removed; official runs use --scip-profile "
+                "configs/scip/project-production-v1.set");
         } else if (arg == "--seed") {
             config.seed = std::stoi(requireValue());
         } else if (arg == "--time-limit") {
@@ -337,16 +331,6 @@ RunConfig parseArguments(int argc, char* argv[]) {
             config.rl_max_depth = std::stoi(requireValue());
         } else if (arg == "--rl-min-candidates") {
             config.rl_min_candidates = std::stoi(requireValue());
-        } else if (arg == "--rl-prim-lambda") {
-            config.rl_prim_lambda = std::stof(requireValue());
-        } else if (arg == "--rl-prim-min-depth") {
-            config.rl_prim_min_depth = std::stoi(requireValue());
-        } else if (arg == "--rl-prim-require-grown") {
-            config.rl_prim_require_grown = std::stoi(requireValue());
-        } else if (arg == "--rl-prim-features") {
-            config.rl_prim_features = std::stoi(requireValue());
-        } else if (arg == "--rl-bias-mode") {
-            config.rl_bias_mode = requireValue();
         } else if (arg == "--rl-log") {
             config.rl_log = requireValue();
         } else if (arg == "--export-milp") {
@@ -363,19 +347,13 @@ RunConfig parseArguments(int argc, char* argv[]) {
     }
     static const std::set<std::string> methods = {
         "default", "relpscost", "random", "mostinf", "strong",
-        "custom-random", "custom-mostinf", "rl-mlp", "rl-gcnn"};
+        "custom-random", "custom-mostinf", "rl-gcnn"};
     if (methods.find(config.branching) == methods.end()) {
         throw std::invalid_argument("unsupported branching method: " + config.branching);
     }
-    if (config.protocol != "production-scip" && config.protocol != "controlled-bbmdp") {
-        throw std::invalid_argument("--protocol must be production-scip or controlled-bbmdp");
-    }
     if (copy_num <= 0 || div_part <= 0 || config.seed < 0 || config.time_limit <= 0.0
-        || config.node_limit < -1 || (config.threads_explicit && config.threads <= 0)
-        || config.rl_max_depth < -1 || config.rl_min_candidates <= 0
-        || config.rl_prim_min_depth < 0
-        || (config.rl_prim_require_grown != 0 && config.rl_prim_require_grown != 1)
-        || (config.rl_prim_features != 0 && config.rl_prim_features != 1)) {
+        || config.node_limit < -1 || (config.threads_explicit && config.threads != 1)
+        || config.rl_max_depth < -1 || config.rl_min_candidates <= 0) {
         throw std::invalid_argument("numeric options are outside their valid range");
     }
     if (config.rl_device != "cpu" && config.rl_device != "cuda") {
@@ -384,14 +362,7 @@ RunConfig parseArguments(int argc, char* argv[]) {
     if (config.rl_fallback != "relpscost" && config.rl_fallback != "default") {
         throw std::invalid_argument("--rl-fallback must be relpscost or default");
     }
-    static const std::set<std::string> bias_modes = {
-        "none", "z", "root_z", "prim", "topology"};
-    if (bias_modes.find(config.rl_bias_mode) == bias_modes.end()) {
-        throw std::invalid_argument(
-            "--rl-bias-mode must be one of none|z|root_z|prim|topology");
-    }
-    if ((config.branching == "rl-mlp" || config.branching == "rl-gcnn")
-        && config.rl_model.empty()) {
+    if (config.branching == "rl-gcnn" && config.rl_model.empty()) {
         throw std::invalid_argument("--rl-model is required for RL branching");
     }
     if (!explicit_edges) {
@@ -785,52 +756,33 @@ bool isRlGcnnBranching(const std::string& method) {
 }
 
 SCIP_RETCODE configureScip(SCIP* scip, const RunConfig& config, SolverMetrics& metrics) {
-    SCIP_CALL(SCIPsetRealParam(scip, "limits/gap", gap));
+    const auto profile = rlbranch::loadScipProfile(config.scip_profile);
+    SCIP_CALL(rlbranch::applyScipProfile(scip, profile));
     SCIP_CALL(SCIPsetRealParam(scip, "limits/time", config.time_limit));
     SCIP_CALL(SCIPsetLongintParam(scip, "limits/nodes", config.node_limit));
     SCIP_CALL(SCIPsetIntParam(scip, "randomization/randomseedshift", config.seed));
     SCIP_CALL(SCIPsetIntParam(scip, "randomization/permutationseed", config.seed));
     SCIP_CALL(SCIPsetIntParam(scip, "randomization/lpseed", config.seed));
-    SCIP_CALL(SCIPsetBoolParam(scip, "branching/preferbinary", true));
-
-    if (config.protocol == "controlled-bbmdp") {
-        SCIP_CALL(SCIPsetIntParam(scip, "nodeselection/dfs/stdpriority", 1000000));
-        SCIP_CALL(SCIPsetIntParam(scip, "nodeselection/dfs/memsavepriority", 1000000));
-        SCIP_CALL(SCIPsetIntParam(scip, "separating/maxrounds", 0));
-        SCIP_CALL(SCIPsetCharParam(scip, "estimation/restarts/restartpolicy", 'n'));
-        SCIP_CALL(SCIPsetIntParam(scip, "limits/restarts", 0));
-        SCIP_CALL(SCIPsetIntParam(scip, "presolving/maxrestarts", 0));
-        metrics.node_selector = "dfs";
-    } else {
-        metrics.node_selector = "estimate";
-    }
-
-    if (config.protocol == "controlled-bbmdp") {
+    if (config.threads_explicit) {
+        if (config.threads != 1) {
+            throw std::invalid_argument("formal project-production-v1 runs require --threads 1");
+        }
         SCIP_CALL(SCIPsetIntParam(scip, "parallel/minnthreads", 1));
         SCIP_CALL(SCIPsetIntParam(scip, "parallel/maxnthreads", 1));
         SCIP_CALL(SCIPsetIntParam(scip, "lp/threads", 1));
-    } else if (config.threads_explicit) {
-        SCIP_CALL(SCIPsetIntParam(scip, "parallel/minnthreads", config.threads));
-        SCIP_CALL(SCIPsetIntParam(scip, "parallel/maxnthreads", config.threads));
-        SCIP_CALL(SCIPsetIntParam(scip, "lp/threads", config.threads));
-    } else {
-        SCIP_CALL(SCIPsetIntParam(scip, "parallel/minnthreads", 4));
-        SCIP_CALL(SCIPsetIntParam(scip, "parallel/maxnthreads", 16));
-        SCIP_CALL(SCIPsetIntParam(scip, "lp/threads", 4));
     }
-
-    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/freq", 50));
-    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/rens/priority", 100000));
-    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/freq", 50));
-    SCIP_CALL(SCIPsetIntParam(scip, "heuristics/alns/priority", 90000));
+    rlbranch::assertProductionInvariants(scip);
+    metrics.node_selector = "estimate";
+    metrics.scip_profile_sha256 = profile.file_sha256;
+    metrics.scip_param_dump_sha256 = rlbranch::sha256Text(
+        rlbranch::dumpAppliedProfile(scip, profile));
 
     metrics.active_branchrule = configuredBranchruleName(config.branching);
     if (config.branching != "default") {
         const std::string priority_param = "branching/" + metrics.active_branchrule + "/priority";
         SCIP_CALL(SCIPsetIntParam(scip, priority_param.c_str(), 1000000));
     }
-    if ((config.branching == "rl-mlp" || config.branching == "rl-gcnn")
-        && config.rl_fallback == "relpscost") {
+    if (config.branching == "rl-gcnn" && config.rl_fallback == "relpscost") {
         SCIP_CALL(SCIPsetIntParam(scip, "branching/relpscost/priority", 999999));
     }
     return SCIP_OKAY;
@@ -868,18 +820,6 @@ SCIP_RETCODE SolveMIPProblem(std::set<int> nodes,
             static_cast<unsigned int>(config.seed),
             config.branch_log,
             &custom_branching_stats));
-    } else if (isRlMlpBranching(config.branching)) {
-        rlbranch::RlMlpOptions options;
-        options.model_path = config.rl_model;
-        options.device = config.rl_device;
-        options.fallback = config.rl_fallback;
-        options.log_path = config.rl_log;
-        options.max_depth = config.rl_max_depth;
-        options.min_candidates = config.rl_min_candidates;
-        SCIP_CALL(rlbranch::includeRlMlpBranchrule(
-            scip,
-            options,
-            &custom_branching_stats));
     } else if (isRlGcnnBranching(config.branching)) {
         rlbranch::RlGcnnOptions options;
         options.model_path = config.rl_model;
@@ -888,11 +828,11 @@ SCIP_RETCODE SolveMIPProblem(std::set<int> nodes,
         options.log_path = config.rl_log;
         options.max_depth = config.rl_max_depth;
         options.min_candidates = config.rl_min_candidates;
-        options.lambda_prim = config.rl_prim_lambda;
-        options.prim_min_depth = config.rl_prim_min_depth;
-        options.prim_require_grown = config.rl_prim_require_grown != 0;
-        options.use_prim_features = config.rl_prim_features != 0;
-        options.bias_mode = config.rl_bias_mode;
+        options.lambda_prim = 0.0F;
+        options.prim_min_depth = 0;
+        options.prim_require_grown = false;
+        options.use_prim_features = false;
+        options.bias_mode = "none";
         SCIP_CALL(rlbranch::includeRlGcnnBranchrule(
             scip,
             options,

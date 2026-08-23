@@ -1,0 +1,18 @@
+# project-production-v1
+# Frozen single-thread production search profile for DSU-Prime-GCNN.
+# This is the project's production-scip search, not stock SCIP-default.
+# Node selector estimate is the SCIP 8.0.4 default; do not raise DFS.
+# Cuts, restarts, and presolve stay at SCIP defaults.
+# Run-specific overrides applied after this file:
+#   limits/time, limits/nodes,
+#   randomization/randomseedshift, randomization/permutationseed, randomization/lpseed
+
+limits/gap = 0
+branching/preferbinary = TRUE
+parallel/minnthreads = 1
+parallel/maxnthreads = 1
+lp/threads = 1
+heuristics/rens/freq = 50
+heuristics/rens/priority = 100000
+heuristics/alns/freq = 50
+heuristics/alns/priority = 90000

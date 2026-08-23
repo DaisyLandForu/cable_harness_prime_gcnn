@@ -6,18 +6,20 @@ import pytest
 from rl_branching import BBMDPBranchingEnv, BBMDPConfig, RewardMode
 
 
-REAL_INSTANCE = Path("data/instances/train/real_06.cip")
+# Small real instances (real_06/08/09) can finish at the root under
+# project-production-v1. syn_medium still reaches a legal LP branch quickly.
+REAL_INSTANCE = Path("data/instances/train/syn_medium_s101.cip")
 
 
-def test_controlled_profile_parameters():
+def test_production_profile_parameters():
     config = BBMDPConfig(seed=7, node_limit=3)
     parameters = config.scip_parameters()
-    assert parameters["nodeselection/dfs/stdpriority"] == 1_000_000
-    assert parameters["separating/maxrounds"] == 0
-    assert parameters["estimation/restarts/restartpolicy"] == "n"
-    assert parameters["limits/restarts"] == 0
+    assert "nodeselection/dfs/stdpriority" not in parameters
+    assert "separating/maxrounds" not in parameters
+    assert "limits/restarts" not in parameters
     assert parameters["parallel/maxnthreads"] == 1
     assert parameters["lp/threads"] == 1
+    assert parameters["branching/preferbinary"] is True
     assert parameters["randomization/randomseedshift"] == 7
 
 
@@ -46,10 +48,11 @@ def test_real_transition_contract_and_terminal_bootstrap():
     assert state.observation is not None
     state.observation.validate()
     assert state.action_set.size > 0
-    assert environment.scip_parameter("nodeselection/dfs/stdpriority") == 1_000_000
-    assert environment.scip_parameter("separating/maxrounds") == 0
-    assert environment.scip_parameter("estimation/restarts/restartpolicy") == "n"
     assert environment.scip_parameter("parallel/maxnthreads") == 1
+    assert environment.scip_parameter("branching/preferbinary") is True
+    assert environment.scip_parameter("heuristics/rens/freq") == 50
+    assert environment.scip_parameter("nodeselection/dfs/stdpriority") == 0
+    assert environment.scip_parameter("separating/maxrounds") == -1
 
     first_action_set = state.action_set.copy()
     retained_observation = state.observation

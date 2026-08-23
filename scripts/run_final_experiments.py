@@ -99,12 +99,12 @@ def load_config(path: Path) -> dict[str, Any]:
     if missing:
         raise ValueError(f"experiment config is missing {sorted(missing)}")
     if config["threads"] != 1:
-        raise ValueError("phase-8 comparisons require threads=1")
+        raise ValueError("formal comparisons require threads=1")
     if not config["seeds"] or not config["instances"] or not config["methods"]:
         raise ValueError("seeds, instances, and methods must be non-empty")
-    valid_protocols = {"controlled-bbmdp", "production-scip"}
+    valid_protocols = {"project-production-v1"}
     if not set(config["protocols"]).issubset(valid_protocols):
-        raise ValueError("unsupported experiment protocol")
+        raise ValueError("unsupported experiment protocol; only project-production-v1 is allowed")
     return config
 
 
@@ -154,8 +154,8 @@ def command_for(job: Job, config: dict[str, Any], binary: Path) -> list[str]:
         str(binary),
         "--instance-id",
         str(job.instance["cli_id"]),
-        "--protocol",
-        job.protocol,
+        "--scip-profile",
+        str(config.get("scip_profile", "configs/scip/project-production-v1.set")),
         "--branching",
         job.method["branching"],
         "--seed",
@@ -186,20 +186,17 @@ def command_for(job: Job, config: dict[str, Any], binary: Path) -> list[str]:
                 str(job.branch_log_path),
             ]
         )
-        if "prim_lambda" in job.method:
-            command.extend(["--rl-prim-lambda", str(job.method["prim_lambda"])])
-        if "prim_min_depth" in job.method:
-            command.extend(["--rl-prim-min-depth", str(job.method["prim_min_depth"])])
-        if "prim_require_grown" in job.method:
-            command.extend(
-                ["--rl-prim-require-grown", "1" if job.method["prim_require_grown"] else "0"]
+        if any(
+            key in job.method
+            for key in (
+                "prim_lambda",
+                "prim_min_depth",
+                "prim_require_grown",
+                "prim_features",
+                "bias_mode",
             )
-        if "prim_features" in job.method:
-            command.extend(
-                ["--rl-prim-features", "1" if job.method["prim_features"] else "0"]
-            )
-        if "bias_mode" in job.method:
-            command.extend(["--rl-bias-mode", str(job.method["bias_mode"])])
+        ):
+            raise ValueError("legacy Prim bias switches have been removed from the official runner")
     return command
 
 

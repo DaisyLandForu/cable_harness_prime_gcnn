@@ -10,7 +10,8 @@ SCIP_INCLUDES := -I$(SCIP_ROOT)/scip/src -I$(SCIP_ROOT)/build/scip
 SCIP_LDFLAGS := -L$(SCIP_ROOT)/build/lib -Wl,-rpath,$(SCIP_ROOT)/build/lib -lscip
 else
 SCIP_INCLUDES := -I$(SCIP_ROOT)/include
-SCIP_LDFLAGS := -L$(SCIP_ROOT)/lib -Wl,-rpath,$(SCIP_ROOT)/lib -lscip
+SCIP_LDFLAGS := -L$(SCIP_ROOT)/lib -Wl,-rpath,$(SCIP_ROOT)/lib -lscip \
+	-L$(CONDA_PREFIX)/lib -Wl,-rpath,$(CONDA_PREFIX)/lib -lz -lreadline -lgmp -lcrypto
 endif
 TORCH_INCLUDES := -isystem $(TORCH_ROOT)/include -isystem $(TORCH_ROOT)/include/torch/csrc/api/include
 TORCH_LDFLAGS := -L$(TORCH_ROOT)/lib -Wl,-rpath,$(TORCH_ROOT)/lib \
@@ -18,14 +19,15 @@ TORCH_LDFLAGS := -L$(TORCH_ROOT)/lib -Wl,-rpath,$(TORCH_ROOT)/lib \
 SOURCES := code/scip_tree.cpp src/rl/rl_branchrule.cpp src/rl/scip_feature_extractor.cpp \
 	src/rl/model_runner.cpp src/rl/rl_mlp_branchrule.cpp \
 	src/rl/scip_graph_feature_extractor.cpp src/rl/gcnn_model_runner.cpp \
-	src/rl/rl_gcnn_branchrule.cpp src/rl/prim_bias.cpp
+	src/rl/rl_gcnn_branchrule.cpp src/rl/prim_bias.cpp src/rl/scip_profile.cpp
 HEADERS := src/rl/rl_branchrule.hpp src/rl/scip_feature_extractor.hpp \
 	src/rl/model_runner.hpp src/rl/rl_mlp_branchrule.hpp \
 	src/rl/scip_graph_feature_extractor.hpp src/rl/gcnn_model_runner.hpp \
-	src/rl/rl_gcnn_branchrule.hpp src/rl/prim_bias.hpp
+	src/rl/rl_gcnn_branchrule.hpp src/rl/prim_bias.hpp \
+	src/rl/scip_profile.hpp src/rl/graph_size.hpp
 OBJECTS := $(patsubst %.cpp,build/%.o,$(SOURCES))
 
-.PHONY: all clean test-custom-branching model-runner-parity gcnn-model-runner-parity sb_native_probe
+.PHONY: all clean test-custom-branching model-runner-parity gcnn-model-runner-parity sb_native_probe graph_probe
 
 all: build/scip_tree
 
@@ -35,6 +37,13 @@ build/sb_native_probe: tools/sb_native_probe.cpp
 	mkdir -p build
 	$(CXX) $(CXXFLAGS) $< $(SCIP_INCLUDES) $(SCIP_LDFLAGS) -o $@
 
+graph_probe: build/graph_probe
+
+build/graph_probe: tools/graph_probe.cpp src/rl/scip_profile.cpp src/rl/graph_size.cpp src/rl/scip_profile.hpp src/rl/graph_size.hpp
+	mkdir -p build
+	$(CXX) $(CXXFLAGS) -Isrc tools/graph_probe.cpp src/rl/scip_profile.cpp src/rl/graph_size.cpp \
+		$(SCIP_INCLUDES) $(SCIP_LDFLAGS) -o $@
+
 build/scip_tree: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) $(SCIP_LDFLAGS) $(TORCH_LDFLAGS) -o $@
 
@@ -43,7 +52,7 @@ build/%.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -Isrc $(SCIP_INCLUDES) $(TORCH_INCLUDES) -c $< -o $@
 
 clean:
-	rm -f build/scip_tree $(OBJECTS)
+	rm -f build/scip_tree build/graph_probe $(OBJECTS)
 
 test-custom-branching: tests/test_custom_branchrule.cpp src/rl/rl_branchrule.cpp src/rl/scip_feature_extractor.cpp $(HEADERS)
 	mkdir -p build
