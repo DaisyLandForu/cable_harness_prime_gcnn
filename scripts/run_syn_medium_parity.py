@@ -12,7 +12,7 @@ import torch
 
 from rl_branching import BBMDPBranchingEnv, BBMDPConfig
 from rl_branching.gcnn_dqn import graph_state_tensors, stable_graph_argmax
-from rl_branching.gcnn_model import BipartiteGCNNQNetwork
+from rl_branching.gcnn_model import BipartiteGCNNQNetwork, export_gcnn_torchscript
 from rl_branching.graph_features import (
     GraphState,
     candidate_twohop_state,
@@ -23,10 +23,15 @@ from rl_branching.scip_profile import dump_effective_search_params, sha256_text
 INSTANCE = Path("data/instances/train/syn_medium_s101.cip")
 OUTPUT = Path("results/probes/syn_medium_s101_parity.json")
 CPP_STATE = Path("results/probes/syn_medium_s101_cpp_first_state.json")
+SCRIPTED_MODEL = Path("results/probes/syn_medium_s101_gcnn_scripted.pt")
+SEED_OVERLAY = Path("results/probes/syn_medium_s101_seed_overlay.txt")
+RUNNER = Path("build/gcnn_model_runner_parity")
 TIME_LIMIT = 60.0
 NODE_LIMIT = -1
 FEATURE_TOL = 1.0e-6
 Q_TOL = 1.0e-5
+# Prior aligned independent solve on this instance; recorded as side evidence only.
+INDEPENDENT_SOLVE_PRIMAL = 5.4032024e-3
 
 
 def _reshape(values, rows, cols):
@@ -84,6 +89,59 @@ def q_values(model: BipartiteGCNNQNetwork, state: GraphState) -> np.ndarray:
     return np.asarray(values, dtype=np.float64)
 
 
+def write_gcnn_fixture(path: Path, state: GraphState) -> None:
+    import struct
+
+    arrays = {
+        "row_features": np.asarray(state.row_features, dtype="<f4"),
+        "variable_features": np.asarray(state.variable_features, dtype="<f4"),
+        "edge_row": np.asarray(state.edge_indices[0], dtype="<i8"),
+        "edge_var": np.asarray(state.edge_indices[1], dtype="<i8"),
+        "edge_features": np.asarray(state.edge_features, dtype="<f4"),
+        "global_features": np.asarray(state.global_features, dtype="<f4"),
+        "variable_categories": np.asarray(state.variable_categories, dtype="<f4"),
+        "row_categories": np.asarray(state.row_categories, dtype="<f4"),
+        "candidate_indices": np.asarray(state.actions, dtype="<i8"),
+    }
+    with path.open("wb") as stream:
+        stream.write(b"GCNNP002")
+        stream.write(
+            struct.pack(
+                "<QQQQQ",
+                arrays["row_features"].shape[0],
+                arrays["variable_features"].shape[0],
+                arrays["edge_features"].shape[0],
+                arrays["candidate_indices"].size,
+                arrays["variable_features"].shape[1],
+            )
+        )
+        for values in (
+            arrays["row_features"],
+            arrays["variable_features"],
+            arrays["edge_row"],
+            arrays["edge_var"],
+            arrays["edge_features"],
+            arrays["global_features"],
+            arrays["variable_categories"],
+            arrays["row_categories"],
+            arrays["candidate_indices"],
+        ):
+            stream.write(np.ascontiguousarray(values).tobytes())
+
+
+def cpp_runner_q(model_path: Path, state: GraphState, tag: str) -> np.ndarray:
+    if not RUNNER.is_file():
+        raise SystemExit("build/gcnn_model_runner_parity is missing; run make gcnn-model-runner-parity")
+    fixture = Path(f"results/probes/syn_medium_s101_{tag}_gcnn.bin")
+    output = Path(f"results/probes/syn_medium_s101_{tag}_cpp_q.csv")
+    write_gcnn_fixture(fixture, state)
+    subprocess.run(
+        [str(RUNNER), str(model_path), str(fixture), "cpu", str(output)],
+        check=True,
+    )
+    return np.loadtxt(output, dtype=np.float64, ndmin=1)
+
+
 def main() -> int:
     env = BBMDPBranchingEnv(
         BBMDPConfig(seed=0, time_limit=TIME_LIMIT, node_limit=NODE_LIMIT)
@@ -137,10 +195,13 @@ def main() -> int:
     torch.manual_seed(0)
     model = BipartiteGCNNQNetwork(embedding_dim=16, hidden_dim=32)
     model.eval()
+    export_gcnn_torchscript(model, SCRIPTED_MODEL)
     python_full_q = q_values(model, full)
     python_twohop_q = q_values(model, twohop)
-    cpp_full_q = q_values(model, cpp_full)
-    cpp_twohop_q = q_values(model, cpp_twohop)
+    python_on_cpp_full_q = q_values(model, cpp_full)
+    python_on_cpp_twohop_q = q_values(model, cpp_twohop)
+    cpp_runner_full_q = cpp_runner_q(SCRIPTED_MODEL, cpp_full, "full")
+    cpp_runner_twohop_q = cpp_runner_q(SCRIPTED_MODEL, cpp_twohop, "twohop")
 
     report = {
         "instance": str(INSTANCE),
@@ -156,6 +217,20 @@ def main() -> int:
             "python": int(state.info.get("lp_iterations", -1)),
             "cpp": int(cpp["lp_iterations"]),
         },
+        "seed_overlay": str(SEED_OVERLAY),
+        "primal_bound": {
+            "python": float(state.info.get("primal_bound", float("nan"))),
+            "cpp": float(cpp.get("primal_bound", float("nan"))),
+        },
+        "independent_solve_primal_bound_side_evidence": {
+            "value": INDEPENDENT_SOLVE_PRIMAL,
+            "automatic_gate": False,
+            "note": "prior aligned independent solve; not an automatic gate",
+        },
+        "dual_bound": {
+            "python": float(state.info.get("dual_bound", float("nan"))),
+            "cpp": float(cpp.get("dual_bound", float("nan"))),
+        },
         "local_lower_bounds_max_abs": max_abs(
             state.observation.local_lower_bounds,
             np.asarray(cpp["full"]["local_lower_bounds"], dtype=np.float32),
@@ -164,20 +239,27 @@ def main() -> int:
         "twohop": compare_graphs(twohop, cpp_twohop),
         "q": {
             "python_full_vs_twohop": max_abs(python_full_q, python_twohop_q),
-            "cpp_full_vs_twohop": max_abs(cpp_full_q, cpp_twohop_q),
-            "python_vs_cpp_full": max_abs(python_full_q, cpp_full_q),
-            "python_vs_cpp_twohop": max_abs(python_twohop_q, cpp_twohop_q),
+            "cpp_full_vs_twohop": max_abs(python_on_cpp_full_q, python_on_cpp_twohop_q),
+            "cpp_runner_full_vs_twohop": max_abs(cpp_runner_full_q, cpp_runner_twohop_q),
+            "python_vs_cpp_extract_full": max_abs(python_full_q, python_on_cpp_full_q),
+            "python_vs_cpp_extract_twohop": max_abs(python_twohop_q, python_on_cpp_twohop_q),
+            "python_vs_cpp_runner_full": max_abs(python_on_cpp_full_q, cpp_runner_full_q),
+            "python_vs_cpp_runner_twohop": max_abs(python_twohop_q, cpp_runner_twohop_q),
             "python_full_argmax": stable_graph_argmax(python_full_q, full),
             "python_twohop_argmax": stable_graph_argmax(python_twohop_q, twohop),
-            "cpp_full_argmax": stable_graph_argmax(cpp_full_q, cpp_full),
-            "cpp_twohop_argmax": stable_graph_argmax(cpp_twohop_q, cpp_twohop),
+            "cpp_extract_full_argmax": stable_graph_argmax(python_on_cpp_full_q, cpp_full),
+            "cpp_extract_twohop_argmax": stable_graph_argmax(python_on_cpp_twohop_q, cpp_twohop),
+            "cpp_runner_full_argmax": stable_graph_argmax(cpp_runner_full_q, cpp_full),
+            "cpp_runner_twohop_argmax": stable_graph_argmax(cpp_runner_twohop_q, cpp_twohop),
         },
     }
     report["q"]["argmax_equal"] = (
         report["q"]["python_full_argmax"]
         == report["q"]["python_twohop_argmax"]
-        == report["q"]["cpp_full_argmax"]
-        == report["q"]["cpp_twohop_argmax"]
+        == report["q"]["cpp_extract_full_argmax"]
+        == report["q"]["cpp_extract_twohop_argmax"]
+        == report["q"]["cpp_runner_full_argmax"]
+        == report["q"]["cpp_runner_twohop_argmax"]
     )
     feature_ok = all(
         report[side][key] <= FEATURE_TOL
@@ -187,8 +269,13 @@ def main() -> int:
         for key in report[side]
     )
     q_ok = (
-        report["q"]["python_vs_cpp_full"] <= Q_TOL
-        and report["q"]["python_vs_cpp_twohop"] <= Q_TOL
+        report["q"]["python_full_vs_twohop"] <= Q_TOL
+        and report["q"]["cpp_full_vs_twohop"] <= Q_TOL
+        and report["q"]["cpp_runner_full_vs_twohop"] <= Q_TOL
+        and report["q"]["python_vs_cpp_extract_full"] <= Q_TOL
+        and report["q"]["python_vs_cpp_extract_twohop"] <= Q_TOL
+        and report["q"]["python_vs_cpp_runner_full"] <= Q_TOL
+        and report["q"]["python_vs_cpp_runner_twohop"] <= Q_TOL
         and report["q"]["argmax_equal"]
         and report["effective_dump_equal"]
         and report["local_lower_bounds_max_abs"] <= FEATURE_TOL

@@ -8,6 +8,7 @@ from rl_branching.scip_profile import (
     canonicalize_profile_value,
     dump_effective_search_params,
     ecole_params_from_profile,
+    load_seed_overlay,
     parse_scip_set,
     profile_dump,
     resolve_scip_profile,
@@ -80,3 +81,30 @@ def test_effective_dump_reads_the_same_key_set():
     assert "limits/time = 3600" in dump
     assert "estimation/restarts/restartpolicy = 'c'" in dump
     assert dump == dump_effective_search_params(values.__getitem__)
+
+
+def test_seed_overlay_reads_the_syn_medium_triple():
+    overlay = load_seed_overlay("results/probes/syn_medium_s101_seed_overlay.txt")
+    assert overlay == {
+        "randomization/randomseedshift": 1273124119,
+        "randomization/permutationseed": 1178568022,
+        "randomization/lpseed": 1535857466,
+    }
+
+
+def test_scip_tree_help_exposes_remapped_seed_triple():
+    binary = Path("build/scip_tree")
+    if not binary.is_file():
+        raise AssertionError("build/scip_tree is required for remapped-seed CLI parity")
+    import subprocess
+
+    help_text = subprocess.run(
+        [str(binary), "--help"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    assert "--randomseedshift" in help_text
+    assert "--permutationseed" in help_text
+    assert "--lpseed" in help_text
+    assert "--seed-overlay" in help_text

@@ -57,6 +57,10 @@ struct RunConfig {
     int rl_max_depth = -1;
     int rl_min_candidates = 1;
     int seed = 0;
+    int randomseedshift = 0;
+    int permutationseed = 0;
+    int lpseed = 0;
+    std::string seed_overlay;
     double time_limit = 1e20;
     SCIP_Longint node_limit = -1;
     int threads = 1;
@@ -166,6 +170,10 @@ void writeRunJson(const std::string& path, const RunConfig& config, const Solver
     out << "  \"method\": \"" << jsonEscape(config.branching) << "\",\n";
     out << "  \"protocol\": \"" << jsonEscape(config.protocol) << "\",\n";
     out << "  \"seed\": " << config.seed << ",\n";
+    out << "  \"randomization/randomseedshift\": " << config.randomseedshift << ",\n";
+    out << "  \"randomization/permutationseed\": " << config.permutationseed << ",\n";
+    out << "  \"randomization/lpseed\": " << config.lpseed << ",\n";
+    out << "  \"seed_overlay\": \"" << jsonEscape(config.seed_overlay) << "\",\n";
     out << "  \"scip_version\": \"" << SCIPmajorVersion() << "." << SCIPminorVersion()
         << "." << SCIPtechVersion() << "\",\n";
     out << "  \"status\": \"" << jsonEscape(metrics.status) << "\",\n";
@@ -251,7 +259,11 @@ void printUsage(const char* program) {
         << "  --div-part <int>          Keep 1/div_part center pairs (default: 1)\n"
         << "  --branching <method>      default|relpscost|random|mostinf|strong|custom-random|custom-mostinf|rl-gcnn\n"
         << "  --scip-profile <path>     Frozen SCIP set file (default: project-production-v1)\n"
-        << "  --seed <int>              SCIP random seed shift\n"
+        << "  --seed <int>              Default for all three SCIP randomization seeds\n"
+        << "  --randomseedshift <int>   Override randomization/randomseedshift\n"
+        << "  --permutationseed <int>   Override randomization/permutationseed\n"
+        << "  --lpseed <int>            Override randomization/lpseed\n"
+        << "  --seed-overlay <path>     Load the remapped seed triple from a .set file\n"
         << "  --time-limit <seconds>    Solver time limit\n"
         << "  --node-limit <int>        Solver node limit (-1 means unlimited)\n"
         << "  --threads <int>           Must be 1 for formal runs; defaults to profile\n"
@@ -286,6 +298,9 @@ RunConfig parseArguments(int argc, char* argv[]) {
     config.legacy_cli = argc == 1;
     bool explicit_edges = false;
     bool explicit_pairs = false;
+    bool explicit_shift = false;
+    bool explicit_perm = false;
+    bool explicit_lp = false;
     for (int i = 1; i < argc; ++i) {
         const std::string arg = argv[i];
         auto requireValue = [&]() -> std::string {
@@ -319,6 +334,17 @@ RunConfig parseArguments(int argc, char* argv[]) {
                 "configs/scip/project-production-v1.set");
         } else if (arg == "--seed") {
             config.seed = std::stoi(requireValue());
+        } else if (arg == "--randomseedshift") {
+            config.randomseedshift = std::stoi(requireValue());
+            explicit_shift = true;
+        } else if (arg == "--permutationseed") {
+            config.permutationseed = std::stoi(requireValue());
+            explicit_perm = true;
+        } else if (arg == "--lpseed") {
+            config.lpseed = std::stoi(requireValue());
+            explicit_lp = true;
+        } else if (arg == "--seed-overlay") {
+            config.seed_overlay = requireValue();
         } else if (arg == "--time-limit") {
             config.time_limit = std::stod(requireValue());
         } else if (arg == "--node-limit") {
@@ -360,7 +386,23 @@ RunConfig parseArguments(int argc, char* argv[]) {
     if (methods.find(config.branching) == methods.end()) {
         throw std::invalid_argument("unsupported branching method: " + config.branching);
     }
+    config.randomseedshift = explicit_shift ? config.randomseedshift : config.seed;
+    config.permutationseed = explicit_perm ? config.permutationseed : config.seed;
+    config.lpseed = explicit_lp ? config.lpseed : config.seed;
+    if (!config.seed_overlay.empty()) {
+        const auto overlay = rlbranch::loadSeedOverlay(config.seed_overlay);
+        if (!explicit_shift) {
+            config.randomseedshift = overlay.randomseedshift;
+        }
+        if (!explicit_perm) {
+            config.permutationseed = overlay.permutationseed;
+        }
+        if (!explicit_lp) {
+            config.lpseed = overlay.lpseed;
+        }
+    }
     if (copy_num <= 0 || div_part <= 0 || config.seed < 0 || config.time_limit <= 0.0
+        || config.randomseedshift < 0 || config.permutationseed < 0 || config.lpseed < 0
         || config.node_limit < -1 || (config.threads_explicit && config.threads != 1)
         || config.rl_max_depth < -1 || config.rl_min_candidates <= 0) {
         throw std::invalid_argument("numeric options are outside their valid range");
@@ -769,9 +811,9 @@ SCIP_RETCODE configureScip(SCIP* scip, const RunConfig& config, SolverMetrics& m
     SCIP_CALL(rlbranch::applyScipProfile(scip, profile));
     SCIP_CALL(SCIPsetRealParam(scip, "limits/time", config.time_limit));
     SCIP_CALL(SCIPsetLongintParam(scip, "limits/nodes", config.node_limit));
-    SCIP_CALL(SCIPsetIntParam(scip, "randomization/randomseedshift", config.seed));
-    SCIP_CALL(SCIPsetIntParam(scip, "randomization/permutationseed", config.seed));
-    SCIP_CALL(SCIPsetIntParam(scip, "randomization/lpseed", config.seed));
+    SCIP_CALL(SCIPsetIntParam(scip, "randomization/randomseedshift", config.randomseedshift));
+    SCIP_CALL(SCIPsetIntParam(scip, "randomization/permutationseed", config.permutationseed));
+    SCIP_CALL(SCIPsetIntParam(scip, "randomization/lpseed", config.lpseed));
     if (config.threads_explicit) {
         if (config.threads != 1) {
             throw std::invalid_argument("formal project-production-v1 runs require --threads 1");

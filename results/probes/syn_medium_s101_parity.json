@@ -18,6 +18,20 @@
     "python": 4039,
     "cpp": 4039
   },
+  "seed_overlay": "results/probes/syn_medium_s101_seed_overlay.txt",
+  "primal_bound": {
+    "python": 0.0054032023999999994,
+    "cpp": 0.0054032023999999994
+  },
+  "independent_solve_primal_bound_side_evidence": {
+    "value": 0.0054032024,
+    "automatic_gate": false,
+    "note": "prior aligned independent solve; not an automatic gate"
+  },
+  "dual_bound": {
+    "python": 0.0039583333,
+    "cpp": 0.0039583333
+  },
   "local_lower_bounds_max_abs": 0.0,
   "full": {
     "candidate_names_equal": true,
@@ -44,12 +58,17 @@
   "q": {
     "python_full_vs_twohop": 0.0,
     "cpp_full_vs_twohop": 0.0,
-    "python_vs_cpp_full": 0.0,
-    "python_vs_cpp_twohop": 0.0,
+    "cpp_runner_full_vs_twohop": 0.0,
+    "python_vs_cpp_extract_full": 0.0,
+    "python_vs_cpp_extract_twohop": 0.0,
+    "python_vs_cpp_runner_full": 0.0,
+    "python_vs_cpp_runner_twohop": 0.0,
     "python_full_argmax": 75,
     "python_twohop_argmax": 75,
-    "cpp_full_argmax": 75,
-    "cpp_twohop_argmax": 75,
+    "cpp_extract_full_argmax": 75,
+    "cpp_extract_twohop_argmax": 75,
+    "cpp_runner_full_argmax": 75,
+    "cpp_runner_twohop_argmax": 75,
     "argmax_equal": true
   },
   "gate_passed": true

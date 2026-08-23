@@ -17,7 +17,14 @@ struct ScipProfile {
 std::string sha256File(const std::string& path);
 std::string sha256Text(const std::string& text);
 
+struct SeedOverlay {
+    int randomseedshift = 0;
+    int permutationseed = 0;
+    int lpseed = 0;
+};
+
 ScipProfile loadScipProfile(const std::string& path);
+SeedOverlay loadSeedOverlay(const std::string& path);
 SCIP_RETCODE applyScipProfile(SCIP* scip, const ScipProfile& profile);
 std::string dumpAppliedProfile(SCIP* scip, const ScipProfile& profile);
 std::string dumpEffectiveSearchParams(SCIP* scip, bool include_seeds = true);

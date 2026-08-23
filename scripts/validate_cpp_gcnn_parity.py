@@ -20,15 +20,17 @@ def write_fixture(path: Path, data) -> None:
         "row_categories": np.asarray(data["row_categories"], dtype="<f4"),
         "candidate_indices": np.asarray(data["candidate_indices"], dtype="<i8"),
     }
+    variable_dim = int(arrays["variable_features"].shape[1]) if arrays["variable_features"].ndim == 2 else 19
     with path.open("wb") as stream:
-        stream.write(b"GCNNP001")
+        stream.write(b"GCNNP002")
         stream.write(
             struct.pack(
-                "<QQQQ",
+                "<QQQQQ",
                 arrays["row_features"].shape[0],
                 arrays["variable_features"].shape[0],
                 arrays["edge_features"].shape[0],
                 arrays["candidate_indices"].size,
+                variable_dim,
             )
         )
         for values in (

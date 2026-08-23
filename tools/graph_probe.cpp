@@ -286,7 +286,11 @@ void writeStateDump(SCIP* scip, SCIP_BRANCHRULEDATA* data) {
     writeJsonNumber(out, data->options.time_limit);
     out << ",\n  \"limits/nodes\": " << data->options.node_limit << ",\n";
     out << "  \"lp_iterations\": " << SCIPgetNLPIterations(scip) << ",\n";
-    out << "  \"full\": ";
+    out << "  \"primal_bound\": ";
+    writeJsonNumber(out, SCIPgetPrimalbound(scip));
+    out << ",\n  \"dual_bound\": ";
+    writeJsonNumber(out, SCIPgetDualbound(scip));
+    out << ",\n  \"full\": ";
     writeGraphObservation(out, full);
     out << ",\n  \"twohop\": ";
     writeGraphObservation(out, twohop);

@@ -122,6 +122,36 @@ ScipProfile loadScipProfile(const std::string& path) {
     return profile;
 }
 
+SeedOverlay loadSeedOverlay(const std::string& path) {
+    const ScipProfile profile = loadScipProfile(path);
+    SeedOverlay overlay;
+    bool have_shift = false;
+    bool have_perm = false;
+    bool have_lp = false;
+    for (const auto& entry : profile.entries) {
+        if (entry.first == "randomization/randomseedshift") {
+            overlay.randomseedshift = std::stoi(entry.second);
+            have_shift = true;
+        } else if (entry.first == "randomization/permutationseed") {
+            overlay.permutationseed = std::stoi(entry.second);
+            have_perm = true;
+        } else if (entry.first == "randomization/lpseed") {
+            overlay.lpseed = std::stoi(entry.second);
+            have_lp = true;
+        } else {
+            throw std::runtime_error("unsupported seed-overlay key: " + entry.first);
+        }
+    }
+    if (!have_shift || !have_perm || !have_lp) {
+        throw std::runtime_error(
+            "seed overlay must set randomseedshift, permutationseed, and lpseed");
+    }
+    if (overlay.randomseedshift < 0 || overlay.permutationseed < 0 || overlay.lpseed < 0) {
+        throw std::runtime_error("seed overlay values must be non-negative");
+    }
+    return overlay;
+}
+
 SCIP_RETCODE applyScipProfile(SCIP* scip, const ScipProfile& profile) {
     SCIP_CALL(SCIPreadParams(scip, profile.path.c_str()));
     // Match Ecole BranchingDynamics::set_dynamics_random_state overlays.

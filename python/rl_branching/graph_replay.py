@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import Sequence
 
 import numpy as np
 
@@ -15,10 +18,23 @@ MEDIUM_SAMPLE_QUOTA = 12
 
 
 @dataclass(frozen=True)
+class ReplayHandle:
+    pool: str
+    entry_id: int
+
+    def __post_init__(self) -> None:
+        if self.pool not in {"medium", "large"}:
+            raise ValueError(f"unknown replay pool: {self.pool}")
+        if int(self.entry_id) <= 0:
+            raise ValueError("replay entry_id must be positive")
+
+
+@dataclass(frozen=True)
 class PrioritizedBatch:
     experiences: tuple[ReplayExperience, ...]
     indices: np.ndarray
     weights: np.ndarray
+    handles: tuple[ReplayHandle, ...] = ()
 
 
 class PrioritizedReplayBuffer:
@@ -104,6 +120,11 @@ def _reject_oversized_state(state: GraphState | None) -> None:
         )
 
 
+def _importance_beta(beta_start: float, beta_steps: int, gradient_step: int) -> float:
+    beta_fraction = min(max(int(gradient_step), 0) / max(int(beta_steps), 1), 1.0)
+    return float(beta_start) + beta_fraction * (1.0 - float(beta_start))
+
+
 @dataclass
 class DualPoolSnapshot:
     medium_count: int
@@ -119,33 +140,82 @@ class _ByteLimitedPool:
     def __init__(self, count_limit: int, byte_limit: int) -> None:
         self.count_limit = int(count_limit)
         self.byte_limit = int(byte_limit)
-        self.storage: list[ReplayExperience] = []
-        self.nbytes: list[int] = []
+        self.order: list[int] = []
+        self.experiences: dict[int, ReplayExperience] = {}
+        self.nbytes: dict[int, int] = {}
+        self.priorities: dict[int, float] = {}
+        self._next_id = 1
         self.total_bytes = 0
         self.evictions_by_count = 0
         self.evictions_by_bytes = 0
 
     def __len__(self) -> int:
-        return len(self.storage)
+        return len(self.order)
 
-    def add(self, experience: ReplayExperience, nbytes: int) -> None:
+    @property
+    def storage(self) -> list[ReplayExperience]:
+        return [self.experiences[entry_id] for entry_id in self.order]
+
+    def max_priority(self) -> float:
+        if not self.priorities:
+            return 1.0
+        return float(max(self.priorities.values()))
+
+    def add(self, experience: ReplayExperience, nbytes: int) -> int:
         if nbytes > self.byte_limit:
             raise MemoryError(
                 f"transition is {nbytes} bytes, exceeds pool budget {self.byte_limit}"
             )
-        while self.storage and (
-            len(self.storage) >= self.count_limit
+        while self.order and (
+            len(self.order) >= self.count_limit
             or self.total_bytes + nbytes > self.byte_limit
         ):
-            if len(self.storage) >= self.count_limit:
+            if len(self.order) >= self.count_limit:
                 self.evictions_by_count += 1
             else:
                 self.evictions_by_bytes += 1
-            self.storage.pop(0)
-            self.total_bytes -= self.nbytes.pop(0)
-        self.storage.append(experience)
-        self.nbytes.append(nbytes)
+            evicted = self.order.pop(0)
+            self.total_bytes -= self.nbytes.pop(evicted)
+            del self.experiences[evicted]
+            del self.priorities[evicted]
+        entry_id = self._next_id
+        self._next_id += 1
+        self.order.append(entry_id)
+        self.experiences[entry_id] = experience
+        self.nbytes[entry_id] = nbytes
+        self.priorities[entry_id] = self.max_priority()
         self.total_bytes += nbytes
+        return entry_id
+
+    def sample_ids(
+        self,
+        count: int,
+        rng: np.random.Generator,
+        *,
+        alpha: float,
+        beta: float,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        size = len(self.order)
+        if count > size:
+            raise ValueError("not enough replay entries")
+        if count == 0:
+            return np.empty(0, dtype=np.int64), np.empty(0, dtype=np.float64)
+        ids = np.asarray(self.order, dtype=np.int64)
+        scaled = np.power(
+            np.asarray([self.priorities[int(entry_id)] for entry_id in ids], dtype=np.float64),
+            alpha,
+        )
+        probabilities = scaled / scaled.sum()
+        chosen = rng.choice(size, size=count, replace=False, p=probabilities)
+        weights = np.power(size * probabilities[chosen], -beta)
+        return ids[chosen], weights
+
+    def update_priority(self, entry_id: int, td_error: float, epsilon: float) -> None:
+        if entry_id not in self.priorities:
+            raise KeyError(f"stale replay handle: {entry_id}")
+        if not np.isfinite(td_error):
+            raise FloatingPointError("PER TD errors contain NaN or Inf")
+        self.priorities[entry_id] = abs(float(td_error)) + float(epsilon)
 
 
 class DualPoolGraphReplay:
@@ -158,11 +228,23 @@ class DualPoolGraphReplay:
         large_byte_limit: int = LARGE_BYTE_LIMIT,
         large_sample_quota: int = LARGE_SAMPLE_QUOTA,
         medium_sample_quota: int = MEDIUM_SAMPLE_QUOTA,
+        alpha: float = 0.6,
+        beta_start: float = 0.4,
+        beta_steps: int = 10000,
+        epsilon: float = 1.0e-5,
     ) -> None:
+        if not 0.0 <= alpha <= 1.0:
+            raise ValueError("PER alpha must be in [0, 1]")
+        if not 0.0 <= beta_start <= 1.0:
+            raise ValueError("PER beta_start must be in [0, 1]")
         self.medium = _ByteLimitedPool(medium_count_limit, medium_byte_limit)
         self.large = _ByteLimitedPool(large_count_limit, large_byte_limit)
         self.large_sample_quota = int(large_sample_quota)
         self.medium_sample_quota = int(medium_sample_quota)
+        self.alpha = float(alpha)
+        self.beta_start = float(beta_start)
+        self.beta_steps = max(int(beta_steps), 1)
+        self.epsilon = float(epsilon)
         self._rng = np.random.default_rng(seed)
 
     def add(self, experience: ReplayExperience, pool: str) -> int:
@@ -170,11 +252,10 @@ class DualPoolGraphReplay:
         if isinstance(experience.next_state, GraphState):
             _reject_oversized_state(experience.next_state)
         nbytes = _experience_bytes(experience)
-        target = self.large if pool == "large" else self.medium
         if pool not in {"medium", "large"}:
             raise ValueError(f"unknown replay pool: {pool}")
-        target.add(experience, nbytes)
-        return nbytes
+        target = self.large if pool == "large" else self.medium
+        return target.add(experience, nbytes)
 
     def can_hold_large(self, n_transitions: int, typical_bytes: int) -> bool:
         return int(n_transitions) * int(typical_bytes) <= self.large.byte_limit
@@ -190,7 +271,7 @@ class DualPoolGraphReplay:
             can_sample_large_quota=len(self.large) >= self.large_sample_quota,
         )
 
-    def sample_logical_batch(self) -> tuple[ReplayExperience, ...]:
+    def sample_logical_batch(self, gradient_step: int = 0) -> PrioritizedBatch:
         large_take = (
             self.large_sample_quota
             if len(self.large) >= self.large_sample_quota
@@ -199,12 +280,63 @@ class DualPoolGraphReplay:
         medium_take = self.medium_sample_quota + (self.large_sample_quota - large_take)
         if len(self.medium) < medium_take:
             raise ValueError("not enough medium replay entries")
-        if large_take and len(self.large) < large_take:
-            raise ValueError("not enough large replay entries")
-        batch: list[ReplayExperience] = []
+        beta = _importance_beta(self.beta_start, self.beta_steps, gradient_step)
+        experiences: list[ReplayExperience] = []
+        handles: list[ReplayHandle] = []
+        weights: list[np.ndarray] = []
         if large_take:
-            large_idx = self._rng.choice(len(self.large), size=large_take, replace=False)
-            batch.extend(self.large.storage[int(index)] for index in large_idx)
-        medium_idx = self._rng.choice(len(self.medium), size=medium_take, replace=False)
-        batch.extend(self.medium.storage[int(index)] for index in medium_idx)
-        return tuple(batch)
+            large_ids, large_weights = self.large.sample_ids(
+                large_take, self._rng, alpha=self.alpha, beta=beta
+            )
+            experiences.extend(self.large.experiences[int(entry_id)] for entry_id in large_ids)
+            handles.extend(ReplayHandle("large", int(entry_id)) for entry_id in large_ids)
+            weights.append(large_weights)
+        medium_ids, medium_weights = self.medium.sample_ids(
+            medium_take, self._rng, alpha=self.alpha, beta=beta
+        )
+        experiences.extend(self.medium.experiences[int(entry_id)] for entry_id in medium_ids)
+        handles.extend(ReplayHandle("medium", int(entry_id)) for entry_id in medium_ids)
+        weights.append(medium_weights)
+        combined = np.concatenate(weights) if weights else np.empty(0, dtype=np.float64)
+        if combined.size:
+            if not np.isfinite(combined).all():
+                raise FloatingPointError("PER importance weights contain NaN or Inf")
+            combined = combined / combined.max()
+        return PrioritizedBatch(
+            experiences=tuple(experiences),
+            indices=np.asarray(
+                [(handle.pool, handle.entry_id) for handle in handles], dtype=object
+            ),
+            weights=np.asarray(combined, dtype=np.float32),
+            handles=tuple(handles),
+        )
+
+    def update_priorities(
+        self,
+        handles: Sequence[ReplayHandle] | np.ndarray,
+        td_errors: np.ndarray,
+    ) -> None:
+        parsed = _parse_handles(handles)
+        td_errors = np.asarray(td_errors, dtype=np.float64)
+        if len(parsed) != td_errors.size:
+            raise ValueError("PER handles and TD errors must align")
+        if not np.isfinite(td_errors).all():
+            raise FloatingPointError("PER TD errors contain NaN or Inf")
+        for handle, error in zip(parsed, td_errors.reshape(-1)):
+            pool = self.large if handle.pool == "large" else self.medium
+            pool.update_priority(handle.entry_id, float(error), self.epsilon)
+
+
+def _parse_handles(handles: Sequence[ReplayHandle] | np.ndarray) -> tuple[ReplayHandle, ...]:
+    if isinstance(handles, PrioritizedBatch):
+        raise TypeError("pass batch.handles, not the batch itself")
+    parsed: list[ReplayHandle] = []
+    for item in handles:
+        if isinstance(item, ReplayHandle):
+            parsed.append(item)
+            continue
+        if isinstance(item, (tuple, list, np.ndarray)) and len(item) == 2:
+            parsed.append(ReplayHandle(str(item[0]), int(item[1])))
+            continue
+        raise TypeError(f"unsupported replay handle: {item!r}")
+    return tuple(parsed)

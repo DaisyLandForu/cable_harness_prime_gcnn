@@ -98,6 +98,21 @@ def parse_scip_set(path: str | Path) -> list[tuple[str, str]]:
     return entries
 
 
+def load_seed_overlay(path: str | Path) -> dict[str, int]:
+    required = EFFECTIVE_SEED_PARAM_NAMES
+    values: dict[str, int] = {}
+    for name, raw in parse_scip_set(path):
+        if name not in required:
+            raise ValueError(f"unsupported seed-overlay key: {name}")
+        values[name] = int(parse_scip_value(raw))
+    missing = set(required) - set(values)
+    if missing:
+        raise ValueError("seed overlay missing: " + ", ".join(sorted(missing)))
+    if any(value < 0 for value in values.values()):
+        raise ValueError("seed overlay values must be non-negative")
+    return values
+
+
 def parse_scip_value(raw: str) -> Any:
     if raw in {"TRUE", "FALSE"}:
         return raw == "TRUE"

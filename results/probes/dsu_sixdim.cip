@@ -1,0 +1,19 @@
+STATISTICS
+  Problem name     : model
+  Variables        : 9 (9 binary, 0 integer, 0 implicit integer, 0 continuous)
+  Constraints      : 0 initial, 1 maximal
+OBJECTIVE
+  Sense            : minimize
+VARIABLES
+  [binary] <z_1_2_0>: obj=0, original bounds=[1,1]
+  [binary] <z_3_4_0>: obj=0, original bounds=[1,1]
+  [binary] <z_2_3_0>: obj=0, original bounds=[0,1]
+  [binary] <z_5_6_0>: obj=0, original bounds=[0,1]
+  [binary] <z_1_9_0>: obj=0, original bounds=[0,1]
+  [binary] <m_1_0>: obj=0, original bounds=[0,1]
+  [binary] <x_a>: obj=1, original bounds=[0,1]
+  [binary] <x_b>: obj=1.5, original bounds=[0,1]
+  [binary] <x_c>: obj=1.25, original bounds=[0,1]
+CONSTRAINTS
+  [linear] <c1>: <x_a>[B] +<x_b>[B] +<x_c>[B] >= 1.5;
+END

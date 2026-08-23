@@ -11,6 +11,8 @@
   "limits/time": 60,
   "limits/nodes": -1,
   "lp_iterations": 4039,
+  "primal_bound": 0.0054032023999999994,
+  "dual_bound": 0.0039583333000000002,
   "full": {
     "row_count": 6043,
     "variable_count": 2102,

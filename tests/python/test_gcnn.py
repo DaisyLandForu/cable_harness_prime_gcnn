@@ -14,7 +14,12 @@ from rl_branching.graph_features import (
     graph_state_storage_bytes,
     transition_storage_bytes,
 )
-from rl_branching.graph_replay import DualPoolGraphReplay, PrioritizedReplayBuffer
+from rl_branching.graph_replay import (
+    DualPoolGraphReplay,
+    PrioritizedBatch,
+    PrioritizedReplayBuffer,
+    ReplayHandle,
+)
 from rl_branching.replay import ReplayExperience
 
 
@@ -108,6 +113,110 @@ def test_dual_pool_can_keep_four_large_transitions():
     assert snapshot.can_sample_large_quota
     too_big = DualPoolGraphReplay(seed=0, large_byte_limit=nbytes * 3)
     assert not too_big.can_hold_large(4, nbytes)
+
+
+def _fill_dual_pool(replay: DualPoolGraphReplay, medium: int, large: int) -> None:
+    sample = graph_state()
+    for index in range(medium):
+        replay.add(ReplayExperience(sample, index, -1.0, sample, 1.0, 1), "medium")
+    for index in range(large):
+        replay.add(ReplayExperience(sample, 100 + index, -2.0, sample, 1.0, 1), "large")
+
+
+def test_dual_pool_sample_returns_prioritized_batch_and_12_4_mix():
+    replay = DualPoolGraphReplay(seed=0)
+    _fill_dual_pool(replay, medium=20, large=6)
+    batch = replay.sample_logical_batch(gradient_step=0)
+    assert isinstance(batch, PrioritizedBatch)
+    assert len(batch.experiences) == 16
+    assert len(batch.handles) == 16
+    assert batch.weights.shape == (16,)
+    assert np.isfinite(batch.weights).all()
+    assert float(batch.weights.max()) == 1.0
+    pools = [handle.pool for handle in batch.handles]
+    assert pools.count("large") == 4
+    assert pools.count("medium") == 12
+
+
+def test_dual_pool_falls_back_to_16_medium_when_large_is_3():
+    replay = DualPoolGraphReplay(seed=1)
+    _fill_dual_pool(replay, medium=20, large=3)
+    batch = replay.sample_logical_batch()
+    assert [handle.pool for handle in batch.handles] == ["medium"] * 16
+    replay.add(ReplayExperience(graph_state(), 0, -1.0, graph_state(), 1.0, 1), "large")
+    mixed = replay.sample_logical_batch()
+    assert [handle.pool for handle in mixed.handles].count("large") == 4
+
+
+def test_dual_pool_priority_update_and_sampling_bias():
+    replay = DualPoolGraphReplay(
+        seed=0,
+        alpha=1.0,
+        beta_start=0.0,
+        beta_steps=1,
+        medium_sample_quota=4,
+        large_sample_quota=4,
+    )
+    sample = graph_state()
+    ids = [
+        replay.add(ReplayExperience(sample, index, -1.0, sample, 1.0, 1), "medium")
+        for index in range(8)
+    ]
+    _fill_dual_pool(replay, medium=0, large=4)
+    hot = ReplayHandle("medium", ids[0])
+    replay.update_priorities([hot], np.asarray([100.0]))
+    for other in ids[1:]:
+        replay.update_priorities([ReplayHandle("medium", other)], np.asarray([1.0e-5]))
+    hits = 0
+    for step in range(80):
+        batch = replay.sample_logical_batch(gradient_step=step)
+        if any(handle.entry_id == ids[0] for handle in batch.handles if handle.pool == "medium"):
+            hits += 1
+    assert hits >= 40
+
+
+def test_dual_pool_eviction_invalidates_handle_and_keeps_new_ids():
+    replay = DualPoolGraphReplay(
+        seed=0,
+        medium_count_limit=2,
+        medium_byte_limit=64 * 1024 * 1024,
+    )
+    sample = graph_state()
+    first = replay.add(ReplayExperience(sample, 0, -1.0, sample, 1.0, 1), "medium")
+    second = replay.add(ReplayExperience(sample, 1, -1.0, sample, 1.0, 1), "medium")
+    third = replay.add(ReplayExperience(sample, 2, -1.0, sample, 1.0, 1), "medium")
+    assert replay.snapshot().evictions_by_count == 1
+    assert third != first
+    try:
+        replay.update_priorities([ReplayHandle("medium", first)], np.asarray([1.0]))
+        raised = False
+    except KeyError:
+        raised = True
+    assert raised
+    replay.update_priorities([ReplayHandle("medium", second)], np.asarray([0.3]))
+    replay.update_priorities([( "medium", third)], np.asarray([0.4]))
+
+
+def test_dual_pool_same_seed_is_reproducible():
+    def draw(seed: int) -> list[tuple[str, int]]:
+        replay = DualPoolGraphReplay(seed=seed)
+        _fill_dual_pool(replay, medium=16, large=5)
+        batch = replay.sample_logical_batch(gradient_step=3)
+        return [(handle.pool, handle.entry_id) for handle in batch.handles]
+
+    assert draw(11) == draw(11)
+    assert draw(11) != draw(12)
+
+
+def test_dual_pool_beta_anneals_and_stays_normalized():
+    replay = DualPoolGraphReplay(seed=0, beta_start=0.4, beta_steps=10)
+    _fill_dual_pool(replay, medium=16, large=4)
+    early = replay.sample_logical_batch(gradient_step=0)
+    late = DualPoolGraphReplay(seed=0, beta_start=0.4, beta_steps=10)
+    _fill_dual_pool(late, medium=16, large=4)
+    late_batch = late.sample_logical_batch(gradient_step=10)
+    assert np.isfinite(early.weights).all() and float(early.weights.max()) == 1.0
+    assert np.isfinite(late_batch.weights).all() and float(late_batch.weights.max()) == 1.0
 
 
 def test_constraint_categories_and_graph_validation():

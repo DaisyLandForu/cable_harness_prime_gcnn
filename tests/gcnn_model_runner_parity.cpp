@@ -25,13 +25,16 @@ rlbranch::GraphObservation readFixture(const std::string& path) {
     }
     std::array<char, 8> magic{};
     stream.read(magic.data(), magic.size());
-    if (std::string(magic.data(), magic.size()) != "GCNNP001") {
+    const std::string magic_text(magic.data(), magic.size());
+    const bool version2 = magic_text == "GCNNP002";
+    if (magic_text != "GCNNP001" && !version2) {
         throw std::runtime_error("invalid GCNN parity fixture magic");
     }
-    std::array<std::uint64_t, 4> dimensions{};
+    std::array<std::uint64_t, 5> dimensions{};
+    const std::size_t dim_count = version2 ? 5 : 4;
     stream.read(
         reinterpret_cast<char*>(dimensions.data()),
-        dimensions.size() * sizeof(std::uint64_t));
+        dim_count * sizeof(std::uint64_t));
     if (!stream) {
         throw std::runtime_error("truncated GCNN fixture dimensions");
     }
@@ -40,6 +43,9 @@ rlbranch::GraphObservation readFixture(const std::string& path) {
     observation.variable_count = dimensions[1];
     const std::size_t edge_count = dimensions[2];
     const std::size_t candidate_count = dimensions[3];
+    observation.variable_feature_dim = version2
+        ? static_cast<int>(dimensions[4])
+        : rlbranch::kCandidateVariableFeatureCount;
     readValues(
         stream,
         observation.row_features,
@@ -47,7 +53,8 @@ rlbranch::GraphObservation readFixture(const std::string& path) {
     readValues(
         stream,
         observation.variable_features,
-        observation.variable_count * rlbranch::kCandidateVariableFeatureCount);
+        observation.variable_count
+            * static_cast<std::size_t>(observation.variable_feature_dim));
     readValues(stream, observation.edge_row_indices, edge_count);
     readValues(stream, observation.edge_variable_indices, edge_count);
     readValues(
@@ -81,7 +88,8 @@ int main(int argc, char** argv) {
     }
     try {
         rlbranch::GraphObservation observation = readFixture(argv[2]);
-        rlbranch::GcnnModelRunner runner(argv[1], argv[3]);
+        rlbranch::GcnnModelRunner runner(
+            argv[1], argv[3], observation.variable_feature_dim);
         if (!runner.ready()) {
             throw std::runtime_error(runner.error());
         }
