@@ -23,9 +23,9 @@ from .graph_features import (
     AVIATION_CONSTRAINT_CATEGORIES,
     GraphState,
     RunningGraphNormalizer,
-    extract_graph_state,
+    training_graph_state,
 )
-from .graph_replay import PrioritizedReplayBuffer
+from .graph_replay import DualPoolGraphReplay
 from .observation import EDGE_FEATURE_NAMES, EXTENDED_ROW_FEATURE_NAMES, GLOBAL_FEATURE_NAMES
 from .replay import NStepAccumulator, OneStepExperience
 
@@ -92,6 +92,16 @@ def _set_deterministic(seed: int) -> None:
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
     torch.use_deterministic_algorithms(True)
+
+
+def _pool_for_instance(instance: str) -> str:
+    return "large" if Path(instance).stem.startswith("real_02") else "medium"
+
+
+def _can_sample_logical_batch(replay: DualPoolGraphReplay) -> bool:
+    if len(replay.large) >= replay.large_sample_quota:
+        return len(replay.medium) >= replay.medium_sample_quota
+    return len(replay.medium) >= replay.medium_sample_quota + replay.large_sample_quota
 
 
 def _device(name: str) -> torch.device:
@@ -204,7 +214,7 @@ def evaluate_gcnn_episode(
     rng = np.random.default_rng(policy_seed)
     env = BBMDPBranchingEnv(replace(environment_config, seed=int(seed)))
     state = env.reset(instance)
-    graph = None if state.observation is None else extract_graph_state(state.observation, state.action_set)
+    graph = None if state.observation is None else training_graph_state(state.observation, state.action_set)
     reward = 0.0
     transitions = 0
     ranks = []
@@ -231,7 +241,7 @@ def evaluate_gcnn_episode(
         graph = (
             None
             if transition.next_observation is None or transition.next_action_set.size == 0
-            else extract_graph_state(transition.next_observation, transition.next_action_set)
+            else training_graph_state(transition.next_observation, transition.next_action_set)
         )
     result = GraphEpisodeMetrics(
         method=method,
@@ -279,16 +289,28 @@ def train_gcnn(config_path: Path | str) -> dict:
     device = _device(config.device)
     rng = np.random.default_rng(config.seed)
     learner = _learner(config, device)
-    replay = PrioritizedReplayBuffer(
-        config.optimization.replay_capacity,
+    replay = DualPoolGraphReplay(
         config.seed,
-        config.optimization.per_alpha,
-        config.optimization.per_beta_start,
-        config.optimization.per_beta_steps,
-        config.optimization.per_epsilon,
+        alpha=config.optimization.per_alpha,
+        beta_start=config.optimization.per_beta_start,
+        beta_steps=config.optimization.per_beta_steps,
+        epsilon=config.optimization.per_epsilon,
     )
-    normalizer = RunningGraphNormalizer()
-    normalizer_frozen = False
+    shared_norm = Path(config.normalization_path) if config.normalization_path else Path()
+    if shared_norm.is_file():
+        raw = json.loads(shared_norm.read_text(encoding="utf-8"))
+        statistics = {
+            key: np.asarray(value, dtype=np.float32)
+            for key, value in raw.items()
+            if key.endswith("_mean") or key.endswith("_std")
+        }
+        normalizer = RunningGraphNormalizer.from_statistics(statistics)
+        learner.online.set_normalization(normalizer.statistics())
+        learner.target.set_normalization(normalizer.statistics())
+        normalizer_frozen = True
+    else:
+        normalizer = RunningGraphNormalizer()
+        normalizer_frozen = False
     observed_states = 0
     history = HistoryWriter(output / "training_history.csv")
     latest: Optional[GraphUpdateMetrics] = None
@@ -303,7 +325,7 @@ def train_gcnn(config_path: Path | str) -> dict:
             instance = config.train_instances[episode % len(config.train_instances)]
             env = BBMDPBranchingEnv(replace(config.environment, seed=config.seed + episode))
             state = env.reset(instance)
-            graph = None if state.observation is None else extract_graph_state(state.observation, state.action_set)
+            graph = None if state.observation is None else training_graph_state(state.observation, state.action_set)
             accumulator = NStepAccumulator(
                 config.optimization.n_step, config.optimization.gamma
             )
@@ -321,6 +343,7 @@ def train_gcnn(config_path: Path | str) -> dict:
                         statistics = normalizer.statistics()
                         learner.online.set_normalization(statistics)
                         learner.target.set_normalization(statistics)
+                        normalizer.freeze()
                         normalizer_frozen = True
 
                 epsilon = config.exploration.epsilon(learner.gradient_step)
@@ -336,7 +359,7 @@ def train_gcnn(config_path: Path | str) -> dict:
                     None
                     if transition.next_observation is None
                     or transition.next_action_set.size == 0
-                    else extract_graph_state(
+                    else training_graph_state(
                         transition.next_observation, transition.next_action_set
                     )
                 )
@@ -349,24 +372,22 @@ def train_gcnn(config_path: Path | str) -> dict:
                         transition.bootstrap_mask,
                     )
                 ):
-                    replay.add(experience)
+                    replay.add(experience, _pool_for_instance(instance))
                 episode_reward += transition.reward
                 graph = next_graph
                 state = env.current_state
 
-                if normalizer_frozen and len(replay) >= config.optimization.min_replay_size:
+                if normalizer_frozen and _can_sample_logical_batch(replay):
                     for _ in range(config.optimization.updates_per_env_step):
                         if learner.gradient_step >= config.optimization.total_gradient_steps:
                             break
-                        sample = replay.sample(
-                            config.optimization.batch_size, learner.gradient_step
-                        )
+                        sample = replay.sample_logical_batch(learner.gradient_step)
                         forward_start = time.monotonic()
                         latest = learner.update(sample)
                         if device.type == "cuda":
                             torch.cuda.synchronize(device)
                         forward_time = time.monotonic() - forward_start
-                        replay.update_priorities(sample.indices, latest.priorities)
+                        replay.update_priorities(sample.handles, latest.priorities)
                         if learner.gradient_step % config.log_interval_steps == 0:
                             cpu_mb, gpu_mb = _memory(device)
                             history.write(

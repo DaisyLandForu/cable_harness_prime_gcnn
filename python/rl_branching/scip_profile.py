@@ -113,6 +113,19 @@ def load_seed_overlay(path: str | Path) -> dict[str, int]:
     return values
 
 
+def write_seed_overlay(path: str | Path, seeds: dict[str, int]) -> None:
+    values = {name: int(seeds[name]) for name in EFFECTIVE_SEED_PARAM_NAMES}
+    if any(value < 0 for value in values.values()):
+        raise ValueError("seed overlay values must be non-negative")
+    destination = Path(path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(
+        "# Live Ecole remapped SCIP seed triple.\n"
+        + "".join(f"{name} = {values[name]}\n" for name in EFFECTIVE_SEED_PARAM_NAMES),
+        encoding="utf-8",
+    )
+
+
 def parse_scip_value(raw: str) -> Any:
     if raw in {"TRUE", "FALSE"}:
         return raw == "TRUE"

@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <limits>
 #include <numeric>
+#include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -129,10 +130,12 @@ RlGcnnBranchrule::RlGcnnBranchrule(
       model_runner_(
           options.model_path,
           options.device,
-          options.use_prim_features
-              ? kGraphVariableFeatureCount
-              : kCandidateVariableFeatureCount),
+          kGraphVariableFeatureCount),
       stats_(stats) {
+    if (!model_runner_.ready()) {
+        throw std::runtime_error(
+            "RL-GCNN requires a 25-dim TorchScript model: " + model_runner_.error());
+    }
     if (!options.log_path.empty()) {
         const std::filesystem::path parent =
             std::filesystem::path(options.log_path).parent_path();

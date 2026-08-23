@@ -184,6 +184,14 @@ def extract_graph_state(
     return state
 
 
+def training_graph_state(
+    observation: BipartiteObservation,
+    action_set: np.ndarray,
+) -> GraphState:
+    """Official training input: candidate exact two-hop closure."""
+    return candidate_twohop_state(extract_graph_state(observation, action_set))
+
+
 def graph_state_storage_bytes(state: GraphState) -> int:
     return int(
         state.row_features.nbytes
@@ -275,6 +283,7 @@ class RunningGraphNormalizer:
             for name, width in self.FEATURE_GROUPS.items()
         }
         self.m2 = {name: np.zeros_like(mean) for name, mean in self.means.items()}
+        self.frozen = False
 
     @staticmethod
     def _update_batch(count, mean, m2, values):
@@ -296,7 +305,12 @@ class RunningGraphNormalizer:
             m2 + batch_m2 + delta**2 * count * batch_count / total,
         )
 
+    def freeze(self) -> None:
+        self.frozen = True
+
     def update(self, state: GraphState) -> None:
+        if self.frozen:
+            raise RuntimeError("shared normalization is read-only")
         values = {
             "variable": state.variable_features,
             "row": state.row_features,
@@ -324,5 +338,17 @@ class RunningGraphNormalizer:
     def to_json(self) -> dict:
         return {
             "counts": self.counts,
+            "frozen": self.frozen,
             **{key: value.tolist() for key, value in self.statistics().items()},
         }
+
+    @classmethod
+    def from_statistics(cls, statistics: dict[str, np.ndarray]) -> "RunningGraphNormalizer":
+        normalizer = cls()
+        for name in cls.FEATURE_GROUPS:
+            normalizer.means[name] = np.asarray(statistics[f"{name}_mean"], dtype=np.float64)
+            std = np.asarray(statistics[f"{name}_std"], dtype=np.float64)
+            normalizer.m2[name] = np.square(std)
+            normalizer.counts[name] = max(int(statistics.get(f"{name}_count", 2)), 2)
+        normalizer.freeze()
+        return normalizer

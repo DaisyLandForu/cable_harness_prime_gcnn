@@ -96,6 +96,7 @@ class GCNNTrainingConfig:
     exploration: GCNNExplorationConfig = field(default_factory=GCNNExplorationConfig)
     evaluation: GCNNEvaluationConfig = field(default_factory=GCNNEvaluationConfig)
     normalization_warmup_states: int = 2
+    normalization_path: str = ""
     log_interval_steps: int = 10
 
     def __post_init__(self) -> None:
@@ -125,6 +126,7 @@ class GCNNTrainingConfig:
             "exploration",
             "evaluation",
             "normalization_warmup_states",
+            "normalization_path",
             "log_interval_steps",
         }
         unknown = set(raw) - expected
@@ -150,6 +152,7 @@ class GCNNTrainingConfig:
             exploration=GCNNExplorationConfig(**raw.get("exploration", {})),
             evaluation=GCNNEvaluationConfig(**evaluation),
             normalization_warmup_states=int(raw.get("normalization_warmup_states", 2)),
+            normalization_path=str(raw.get("normalization_path", "")),
             log_interval_steps=int(raw.get("log_interval_steps", 10)),
         )
 

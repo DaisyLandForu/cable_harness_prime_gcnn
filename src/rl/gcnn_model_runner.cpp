@@ -4,6 +4,7 @@
 #include <cstring>
 #include <filesystem>
 #include <stdexcept>
+#include <string>
 
 #include <c10/core/InferenceMode.h>
 #include <torch/cuda.h>
@@ -69,10 +70,12 @@ GcnnModelRunner::GcnnModelRunner(
         if (!std::filesystem::is_regular_file(model_path)) {
             throw std::runtime_error("model file does not exist: " + model_path);
         }
-        if (variable_feature_dim != kCandidateVariableFeatureCount
-            && variable_feature_dim != kGraphVariableFeatureCount) {
-            throw std::runtime_error("unsupported variable_feature_dim");
+        if (variable_feature_dim != kGraphVariableFeatureCount) {
+            throw std::runtime_error(
+                "official RL-GCNN is fixed at 25 variable features; "
+                "got " + std::to_string(variable_feature_dim));
         }
+        variable_feature_dim_ = variable_feature_dim;
         implementation_ = std::make_unique<Impl>();
         if (device_name == "cuda") {
             if (!torch::cuda::is_available()) {
@@ -124,6 +127,10 @@ const std::string& GcnnModelRunner::error() const {
 std::vector<float> GcnnModelRunner::predict(const GraphObservation& observation) {
     if (!ready()) {
         throw std::runtime_error("GCNN model is unavailable: " + error_);
+    }
+    if (observation.variable_feature_dim != kGraphVariableFeatureCount
+        || observation.variable_feature_dim != variable_feature_dim_) {
+        throw std::runtime_error("GCNN observation is not the official 25-dim variable layout");
     }
     if (observation.row_count == 0 || observation.variable_count == 0
         || observation.edge_row_indices.empty() || observation.candidate_indices.empty()) {

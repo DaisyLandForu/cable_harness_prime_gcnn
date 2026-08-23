@@ -71,5 +71,17 @@
     "cpp_runner_twohop_argmax": 75,
     "argmax_equal": true
   },
+  "scip_tree_smoke": {
+    "output": "results/probes/syn_medium_s101_scip_tree_smoke.json",
+    "seed_overlay": "results/probes/syn_medium_s101_seed_overlay.txt",
+    "randomization/randomseedshift": 1273124119,
+    "randomization/permutationseed": 1178568022,
+    "randomization/lpseed": 1535857466,
+    "effective_search_params_sha256": "da528034e66aa8b60eddfb02f5d868f93935e8f4cd59e35223326cc2fc3663af",
+    "effective_search_params_core_sha256": "07bdb44fdb32d56bd04028535dd0bf1096167fc4b9d53a65a8491699bfaa0b4b",
+    "branch_decisions": 2,
+    "fallback_count": 0,
+    "custom_illegal_actions": 0
+  },
   "gate_passed": true
 }

@@ -17,6 +17,10 @@ LARGE_SAMPLE_QUOTA = 4
 MEDIUM_SAMPLE_QUOTA = 12
 
 
+class DualPoolQuotaUnfillable(ValueError):
+    """Raised when the 12:4 or 16:0 logical batch cannot be filled."""
+
+
 @dataclass(frozen=True)
 class ReplayHandle:
     pool: str
@@ -81,7 +85,7 @@ class PrioritizedReplayBuffer:
             raise ValueError("not enough replay entries")
         scaled = np.power(self._priorities[:size], self.alpha)
         probabilities = scaled / scaled.sum()
-        indices = self._rng.choice(size, size=batch_size, replace=False, p=probabilities)
+        indices = self._rng.choice(size, size=batch_size, replace=True, p=probabilities)
         beta_fraction = min(max(int(gradient_step), 0) / self.beta_steps, 1.0)
         beta = self.beta_start + beta_fraction * (1.0 - self.beta_start)
         weights = np.power(size * probabilities[indices], -beta)
@@ -206,7 +210,7 @@ class _ByteLimitedPool:
             alpha,
         )
         probabilities = scaled / scaled.sum()
-        chosen = rng.choice(size, size=count, replace=False, p=probabilities)
+        chosen = rng.choice(size, size=count, replace=True, p=probabilities)
         weights = np.power(size * probabilities[chosen], -beta)
         return ids[chosen], weights
 
@@ -247,6 +251,9 @@ class DualPoolGraphReplay:
         self.epsilon = float(epsilon)
         self._rng = np.random.default_rng(seed)
 
+    def __len__(self) -> int:
+        return len(self.medium) + len(self.large)
+
     def add(self, experience: ReplayExperience, pool: str) -> int:
         _reject_oversized_state(experience.state)
         if isinstance(experience.next_state, GraphState):
@@ -279,7 +286,9 @@ class DualPoolGraphReplay:
         )
         medium_take = self.medium_sample_quota + (self.large_sample_quota - large_take)
         if len(self.medium) < medium_take:
-            raise ValueError("not enough medium replay entries")
+            raise DualPoolQuotaUnfillable(
+                f"quota_unfillable: need {medium_take} medium, have {len(self.medium)}"
+            )
         beta = _importance_beta(self.beta_start, self.beta_steps, gradient_step)
         experiences: list[ReplayExperience] = []
         handles: list[ReplayHandle] = []

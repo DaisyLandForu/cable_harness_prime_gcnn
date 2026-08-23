@@ -167,16 +167,18 @@ class GraphDoubleDQNLearner:
                     -(histogram * torch.log_softmax(logits, dim=0)).sum()
                 )
 
-        predicted_tensor = torch.stack(predicted_values)
-        target_tensor = torch.stack(target_values)
-        td_errors = (target_tensor - predicted_tensor.detach()).abs()
         weights = torch.as_tensor(batch.weights, dtype=torch.float32, device=self.device)
-        loss = (torch.stack(sample_losses) * weights).mean()
-        if not torch.isfinite(loss):
-            raise FloatingPointError("GCNN DQN loss is NaN or Inf")
-
+        if weights.shape[0] != len(sample_losses):
+            raise ValueError("PER weights must align with the logical batch")
+        batch_size = len(sample_losses)
         self.optimizer.zero_grad(set_to_none=True)
-        loss.backward()
+        weighted_losses = []
+        for sample_loss, weight in zip(sample_losses, weights):
+            weighted = sample_loss * weight / batch_size
+            if not torch.isfinite(weighted):
+                raise FloatingPointError("GCNN DQN loss is NaN or Inf")
+            weighted.backward()
+            weighted_losses.append(weighted.detach())
         gradient_norm = torch.nn.utils.clip_grad_norm_(
             self.online.parameters(), self.gradient_clip
         )
@@ -184,12 +186,19 @@ class GraphDoubleDQNLearner:
         self.gradient_step += 1
         self._soft_update()
 
-        priorities = td_errors.detach().cpu().numpy()
+        predicted_tensor = torch.stack([value.detach() for value in predicted_values])
+        target_tensor = torch.stack(
+            [
+                value.detach() if torch.is_tensor(value) else torch.as_tensor(value)
+                for value in target_values
+            ]
+        )
+        td_errors = (target_tensor - predicted_tensor).abs()
         return GraphUpdateMetrics(
-            loss=float(loss.detach()),
+            loss=float(torch.stack(weighted_losses).sum()),
             td_error=float(td_errors.mean()),
-            q_mean=float(predicted_tensor.detach().mean()),
-            q_std=float(predicted_tensor.detach().std(unbiased=False)),
+            q_mean=float(predicted_tensor.mean()),
+            q_std=float(predicted_tensor.std(unbiased=False)),
             gradient_norm=float(gradient_norm),
-            priorities=priorities,
+            priorities=td_errors.detach().cpu().numpy(),
         )

@@ -16,6 +16,7 @@ from rl_branching.graph_features import (
 )
 from rl_branching.graph_replay import (
     DualPoolGraphReplay,
+    DualPoolQuotaUnfillable,
     PrioritizedBatch,
     PrioritizedReplayBuffer,
     ReplayHandle,
@@ -208,6 +209,63 @@ def test_dual_pool_same_seed_is_reproducible():
     assert draw(11) != draw(12)
 
 
+def test_dual_pool_exact_is_weights_when_pool_size_equals_quota():
+    replay = DualPoolGraphReplay(
+        seed=0,
+        alpha=1.0,
+        beta_start=1.0,
+        beta_steps=1,
+        medium_sample_quota=4,
+        large_sample_quota=4,
+    )
+    sample = graph_state()
+    medium_ids = [
+        replay.add(ReplayExperience(sample, index, -1.0, sample, 1.0, 1), "medium")
+        for index in range(4)
+    ]
+    large_ids = [
+        replay.add(ReplayExperience(sample, 10 + index, -2.0, sample, 1.0, 1), "large")
+        for index in range(4)
+    ]
+    medium_priorities = np.asarray([1.0, 2.0, 3.0, 4.0], dtype=np.float64)
+    large_priorities = np.asarray([4.0, 3.0, 2.0, 1.0], dtype=np.float64)
+    replay.update_priorities(
+        [ReplayHandle("medium", entry_id) for entry_id in medium_ids],
+        medium_priorities,
+    )
+    replay.update_priorities(
+        [ReplayHandle("large", entry_id) for entry_id in large_ids],
+        large_priorities,
+    )
+    batch = replay.sample_logical_batch(gradient_step=1)
+    assert len(batch.handles) == 8
+    medium_prob = medium_priorities / medium_priorities.sum()
+    large_prob = large_priorities / large_priorities.sum()
+    expected = []
+    for handle in batch.handles:
+        if handle.pool == "large":
+            probability = large_prob[large_ids.index(handle.entry_id)]
+            expected.append((4.0 * probability) ** -1.0)
+        else:
+            probability = medium_prob[medium_ids.index(handle.entry_id)]
+            expected.append((4.0 * probability) ** -1.0)
+    expected = np.asarray(expected, dtype=np.float64)
+    expected /= expected.max()
+    assert np.allclose(batch.weights, expected, atol=1.0e-6)
+
+
+def test_dual_pool_quota_unfillable_when_medium_is_short():
+    replay = DualPoolGraphReplay(seed=0)
+    _fill_dual_pool(replay, medium=3, large=4)
+    try:
+        replay.sample_logical_batch()
+        raised = False
+    except DualPoolQuotaUnfillable as error:
+        raised = True
+        assert "quota_unfillable" in str(error)
+    assert raised
+
+
 def test_dual_pool_beta_anneals_and_stays_normalized():
     replay = DualPoolGraphReplay(seed=0, beta_start=0.4, beta_steps=10)
     _fill_dual_pool(replay, medium=16, large=4)
@@ -217,6 +275,21 @@ def test_dual_pool_beta_anneals_and_stays_normalized():
     late_batch = late.sample_logical_batch(gradient_step=10)
     assert np.isfinite(early.weights).all() and float(early.weights.max()) == 1.0
     assert np.isfinite(late_batch.weights).all() and float(late_batch.weights.max()) == 1.0
+
+
+def test_shared_normalization_is_readonly_after_freeze():
+    normalizer = RunningGraphNormalizer()
+    normalizer.update(graph_state())
+    normalizer.freeze()
+    try:
+        normalizer.update(graph_state(1.0))
+        raised = False
+    except RuntimeError as error:
+        raised = True
+        assert "read-only" in str(error)
+    assert raised
+    shared = RunningGraphNormalizer.from_statistics(normalizer.statistics())
+    assert shared.frozen
 
 
 def test_constraint_categories_and_graph_validation():

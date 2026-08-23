@@ -18,13 +18,16 @@ from rl_branching.graph_features import (
     candidate_twohop_state,
     extract_graph_state,
 )
-from rl_branching.scip_profile import dump_effective_search_params, sha256_text
+from rl_branching.scip_profile import sha256_text, write_seed_overlay
 
 INSTANCE = Path("data/instances/train/syn_medium_s101.cip")
 OUTPUT = Path("results/probes/syn_medium_s101_parity.json")
 CPP_STATE = Path("results/probes/syn_medium_s101_cpp_first_state.json")
 SCRIPTED_MODEL = Path("results/probes/syn_medium_s101_gcnn_scripted.pt")
 SEED_OVERLAY = Path("results/probes/syn_medium_s101_seed_overlay.txt")
+SCIP_TREE = Path("build/scip_tree")
+SMOKE_JSON = Path("results/probes/syn_medium_s101_scip_tree_smoke.json")
+SMOKE_LOG = Path("results/probes/syn_medium_s101_scip_tree_smoke.branches.csv")
 RUNNER = Path("build/gcnn_model_runner_parity")
 TIME_LIMIT = 60.0
 NODE_LIMIT = -1
@@ -159,6 +162,7 @@ def main() -> int:
     python_dump = env.effective_search_params_dump()
     python_core = env.effective_search_params_sha256(include_seeds=False)
     python_full = sha256_text(python_dump)
+    write_seed_overlay(SEED_OVERLAY, seeds)
     full = extract_graph_state(state.observation, state.action_set)
     twohop = candidate_twohop_state(full)
     env.close()
@@ -280,7 +284,66 @@ def main() -> int:
         and report["effective_dump_equal"]
         and report["local_lower_bounds_max_abs"] <= FEATURE_TOL
     )
-    report["gate_passed"] = bool(feature_ok and q_ok)
+    if not SCIP_TREE.is_file():
+        raise SystemExit("build/scip_tree is missing; run make")
+    subprocess.run(
+        [
+            str(SCIP_TREE),
+            "--instance",
+            str(INSTANCE),
+            "--branching",
+            "rl-gcnn",
+            "--rl-model",
+            str(SCRIPTED_MODEL),
+            "--rl-device",
+            "cpu",
+            "--seed-overlay",
+            str(SEED_OVERLAY),
+            "--scip-profile",
+            "configs/scip/project-production-v1.set",
+            "--time-limit",
+            str(TIME_LIMIT),
+            "--node-limit",
+            str(NODE_LIMIT),
+            "--solve-node-limit",
+            "2",
+            "--threads",
+            "1",
+            "--output-json",
+            str(SMOKE_JSON),
+            "--rl-log",
+            str(SMOKE_LOG),
+        ],
+        check=True,
+    )
+    smoke = json.loads(SMOKE_JSON.read_text(encoding="utf-8"))
+    report["scip_tree_smoke"] = {
+        "output": str(SMOKE_JSON),
+        "seed_overlay": str(SEED_OVERLAY),
+        "randomization/randomseedshift": smoke.get("randomization/randomseedshift"),
+        "randomization/permutationseed": smoke.get("randomization/permutationseed"),
+        "randomization/lpseed": smoke.get("randomization/lpseed"),
+        "effective_search_params_sha256": smoke.get("effective_search_params_sha256"),
+        "effective_search_params_core_sha256": smoke.get(
+            "effective_search_params_core_sha256"
+        ),
+        "branch_decisions": smoke.get("branch_decisions"),
+        "fallback_count": smoke.get("fallback_count"),
+        "custom_illegal_actions": smoke.get("custom_illegal_actions"),
+    }
+    smoke_ok = (
+        int(smoke.get("branch_decisions", 0)) >= 1
+        and int(smoke.get("fallback_count", -1)) == 0
+        and int(smoke.get("custom_illegal_actions", -1)) == 0
+        and int(smoke.get("randomization/randomseedshift"))
+        == seeds["randomization/randomseedshift"]
+        and int(smoke.get("randomization/permutationseed"))
+        == seeds["randomization/permutationseed"]
+        and int(smoke.get("randomization/lpseed")) == seeds["randomization/lpseed"]
+        and smoke.get("effective_search_params_sha256") == python_full
+        and smoke.get("effective_search_params_core_sha256") == python_core
+    )
+    report["gate_passed"] = bool(feature_ok and q_ok and smoke_ok)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))

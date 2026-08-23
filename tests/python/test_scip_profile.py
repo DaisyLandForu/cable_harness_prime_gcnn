@@ -14,6 +14,7 @@ from rl_branching.scip_profile import (
     resolve_scip_profile,
     sha256_file,
     sha256_text,
+    write_seed_overlay,
 )
 
 
@@ -83,13 +84,17 @@ def test_effective_dump_reads_the_same_key_set():
     assert dump == dump_effective_search_params(values.__getitem__)
 
 
-def test_seed_overlay_reads_the_syn_medium_triple():
-    overlay = load_seed_overlay("results/probes/syn_medium_s101_seed_overlay.txt")
-    assert overlay == {
+def test_seed_overlay_reads_the_syn_medium_triple(tmp_path: Path):
+    live = {
         "randomization/randomseedshift": 1273124119,
         "randomization/permutationseed": 1178568022,
         "randomization/lpseed": 1535857466,
     }
+    path = tmp_path / "overlay.set"
+    write_seed_overlay(path, live)
+    assert load_seed_overlay(path) == live
+    overlay = load_seed_overlay("results/probes/syn_medium_s101_seed_overlay.txt")
+    assert overlay == live
 
 
 def test_scip_tree_help_exposes_remapped_seed_triple():
@@ -108,3 +113,5 @@ def test_scip_tree_help_exposes_remapped_seed_triple():
     assert "--permutationseed" in help_text
     assert "--lpseed" in help_text
     assert "--seed-overlay" in help_text
+    assert "--instance" in help_text
+    assert "--solve-node-limit" in help_text

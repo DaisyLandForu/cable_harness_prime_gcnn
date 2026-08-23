@@ -13,7 +13,7 @@ public:
     GcnnModelRunner(
         const std::string& model_path,
         const std::string& device_name,
-        int variable_feature_dim = kCandidateVariableFeatureCount);
+        int variable_feature_dim = kGraphVariableFeatureCount);
     ~GcnnModelRunner();
 
     GcnnModelRunner(GcnnModelRunner&&) noexcept;
@@ -30,6 +30,7 @@ private:
     struct Impl;
     std::unique_ptr<Impl> implementation_;
     std::string error_;
+    int variable_feature_dim_ = kGraphVariableFeatureCount;
 };
 
 }  // namespace rlbranch

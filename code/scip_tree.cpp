@@ -61,8 +61,10 @@ struct RunConfig {
     int permutationseed = 0;
     int lpseed = 0;
     std::string seed_overlay;
+    std::string instance_cip;
     double time_limit = 1e20;
     SCIP_Longint node_limit = -1;
+    SCIP_Longint solve_node_limit = -1;
     int threads = 1;
     bool threads_explicit = false;
     bool build_only = false;
@@ -174,6 +176,8 @@ void writeRunJson(const std::string& path, const RunConfig& config, const Solver
     out << "  \"randomization/permutationseed\": " << config.permutationseed << ",\n";
     out << "  \"randomization/lpseed\": " << config.lpseed << ",\n";
     out << "  \"seed_overlay\": \"" << jsonEscape(config.seed_overlay) << "\",\n";
+    out << "  \"cip_instance\": \"" << jsonEscape(config.instance_cip) << "\",\n";
+    out << "  \"solve_node_limit\": " << config.solve_node_limit << ",\n";
     out << "  \"scip_version\": \"" << SCIPmajorVersion() << "." << SCIPminorVersion()
         << "." << SCIPtechVersion() << "\",\n";
     out << "  \"status\": \"" << jsonEscape(metrics.status) << "\",\n";
@@ -253,6 +257,7 @@ void printUsage(const char* program) {
         << "  " << program << " [options]\n\n"
         << "Options:\n"
         << "  --instance-id <1-9>       Use code/data/edges-N.csv and pairs-N.csv\n"
+        << "  --instance <cip>          Official CIP instance (skips edges/pairs modeling)\n"
         << "  --edges <path>            Edge CSV path\n"
         << "  --pairs <path>            Pair CSV path\n"
         << "  --copy-num <int>          Number of topology copies (default: 4)\n"
@@ -266,6 +271,7 @@ void printUsage(const char* program) {
         << "  --seed-overlay <path>     Load the remapped seed triple from a .set file\n"
         << "  --time-limit <seconds>    Solver time limit\n"
         << "  --node-limit <int>        Solver node limit (-1 means unlimited)\n"
+        << "  --solve-node-limit <int>  Cap nodes after hashing effective params\n"
         << "  --threads <int>           Must be 1 for formal runs; defaults to profile\n"
         << "  --output-json <path>      Write structured run metrics\n"
         << "  --branch-log <path>       Write custom branching decisions as CSV\n"
@@ -314,6 +320,8 @@ RunConfig parseArguments(int argc, char* argv[]) {
             std::exit(0);
         } else if (arg == "--instance-id") {
             config.instance_id = requireValue();
+        } else if (arg == "--instance") {
+            config.instance_cip = requireValue();
         } else if (arg == "--edges") {
             config.edges_path = requireValue();
             explicit_edges = true;
@@ -349,6 +357,8 @@ RunConfig parseArguments(int argc, char* argv[]) {
             config.time_limit = std::stod(requireValue());
         } else if (arg == "--node-limit") {
             config.node_limit = std::stoll(requireValue());
+        } else if (arg == "--solve-node-limit") {
+            config.solve_node_limit = std::stoll(requireValue());
         } else if (arg == "--threads") {
             config.threads = std::stoi(requireValue());
             config.threads_explicit = true;
@@ -403,7 +413,8 @@ RunConfig parseArguments(int argc, char* argv[]) {
     }
     if (copy_num <= 0 || div_part <= 0 || config.seed < 0 || config.time_limit <= 0.0
         || config.randomseedshift < 0 || config.permutationseed < 0 || config.lpseed < 0
-        || config.node_limit < -1 || (config.threads_explicit && config.threads != 1)
+        || config.node_limit < -1 || config.solve_node_limit < -1
+        || (config.threads_explicit && config.threads != 1)
         || config.rl_max_depth < -1 || config.rl_min_candidates <= 0) {
         throw std::invalid_argument("numeric options are outside their valid range");
     }
@@ -415,6 +426,10 @@ RunConfig parseArguments(int argc, char* argv[]) {
     }
     if (config.branching == "rl-gcnn" && config.rl_model.empty()) {
         throw std::invalid_argument("--rl-model is required for RL branching");
+    }
+    if (!config.instance_cip.empty()) {
+        config.instance_cip = resolveInputPath(config.instance_cip);
+        return config;
     }
     if (!explicit_edges) {
         config.edges_path = "data/edges-" + config.instance_id + ".csv";
@@ -892,12 +907,17 @@ SCIP_RETCODE SolveMIPProblem(std::set<int> nodes,
         options.lambda_prim = 0.0F;
         options.prim_min_depth = 0;
         options.prim_require_grown = false;
-        options.use_prim_features = false;
         options.bias_mode = "none";
-        SCIP_CALL(rlbranch::includeRlGcnnBranchrule(
-            scip,
-            options,
-            &custom_branching_stats));
+        try {
+            SCIP_CALL(rlbranch::includeRlGcnnBranchrule(
+                scip,
+                options,
+                &custom_branching_stats));
+        } catch (const std::exception& exception) {
+            throw std::runtime_error(
+                std::string("RL-GCNN startup failed (no silent fallback): ")
+                + exception.what());
+        }
     }
     SCIP_CALL(SCIPcreateProbBasic(scip, "MIPProblem"));
 
@@ -1271,6 +1291,9 @@ SCIP_RETCODE SolveMIPProblem(std::set<int> nodes,
     }
 
     cout << "Solving..." << endl;
+    if (config.solve_node_limit >= 0) {
+        SCIP_CALL(SCIPsetLongintParam(scip, "limits/nodes", config.solve_node_limit));
+    }
     SCIP_CALL(SCIPsolve(scip));
     rlbranch::requireEstimateNodeSelector(scip);
     metrics.node_selector = rlbranch::activeNodeSelectorName(scip);
@@ -1623,6 +1646,80 @@ int print_ret_edges(std::set<std::pair<int, int>>& ret_edges,
     return 0;
 }
 
+SCIP_RETCODE SolveCipProblem(
+    const RunConfig& config,
+    SolverMetrics& metrics,
+    double& obj_value) {
+    const auto solver_wall_start = std::chrono::steady_clock::now();
+    SCIP* scip = nullptr;
+    rlbranch::BranchruleStats custom_branching_stats;
+    SCIP_CALL(SCIPcreate(&scip));
+    SCIP_CALL(SCIPincludeDefaultPlugins(scip));
+    if (isRlGcnnBranching(config.branching)) {
+        rlbranch::RlGcnnOptions options;
+        options.model_path = config.rl_model;
+        options.device = config.rl_device;
+        options.fallback = config.rl_fallback;
+        options.log_path = config.rl_log;
+        options.max_depth = config.rl_max_depth;
+        options.min_candidates = config.rl_min_candidates;
+        options.lambda_prim = 0.0F;
+        options.prim_min_depth = 0;
+        options.prim_require_grown = false;
+        options.bias_mode = "none";
+        try {
+            SCIP_CALL(rlbranch::includeRlGcnnBranchrule(
+                scip, options, &custom_branching_stats));
+        } catch (const std::exception& exception) {
+            SCIPfree(&scip);
+            throw std::runtime_error(
+                std::string("RL-GCNN startup failed (no silent fallback): ")
+                + exception.what());
+        }
+    }
+    // Read first, then overlay profile/seeds so permutation hits the transformed problem.
+    SCIP_CALL(SCIPreadProb(scip, config.instance_cip.c_str(), nullptr));
+    SCIP_CALL(configureScip(scip, config, metrics));
+    metrics.n_vars = SCIPgetNOrigVars(scip);
+    metrics.n_integer_vars = SCIPgetNOrigBinVars(scip) + SCIPgetNOrigIntVars(scip);
+    metrics.n_constraints = SCIPgetNOrigConss(scip);
+    if (config.solve_node_limit >= 0) {
+        SCIP_CALL(SCIPsetLongintParam(scip, "limits/nodes", config.solve_node_limit));
+    }
+    SCIP_CALL(SCIPsolve(scip));
+    rlbranch::requireEstimateNodeSelector(scip);
+    metrics.node_selector = rlbranch::activeNodeSelectorName(scip);
+    metrics.status = statusName(SCIPgetStatus(scip));
+    metrics.primal_bound = SCIPgetPrimalbound(scip);
+    metrics.dual_bound = SCIPgetDualbound(scip);
+    metrics.final_gap = SCIPgetGap(scip);
+    metrics.solving_time = SCIPgetSolvingTime(scip);
+    metrics.presolve_time = SCIPgetPresolvingTime(scip);
+    metrics.solve_time_after_presolve = std::max(0.0, metrics.solving_time - metrics.presolve_time);
+    metrics.nodes = SCIPgetNNodes(scip);
+    metrics.lp_iterations = SCIPgetNLPIterations(scip);
+    metrics.primal_dual_integral = scip->stat->primaldualintegral;
+    metrics.has_solution = SCIPgetNSols(scip) > 0;
+    if (metrics.has_solution) {
+        metrics.objective = metrics.primal_bound;
+        metrics.first_solution_time = scip->stat->firstprimaltime;
+        obj_value = metrics.objective;
+    }
+    SCIP_BRANCHRULE* selected_branchrule =
+        SCIPfindBranchrule(scip, metrics.active_branchrule.c_str());
+    if (selected_branchrule != nullptr) {
+        metrics.branchrule_calls = SCIPbranchruleGetNLPCalls(selected_branchrule)
+            + SCIPbranchruleGetNExternCalls(selected_branchrule)
+            + SCIPbranchruleGetNPseudoCalls(selected_branchrule);
+        metrics.branchrule_priority = SCIPbranchruleGetPriority(selected_branchrule);
+    }
+    metrics.custom_branching = custom_branching_stats;
+    metrics.wall_clock_time = std::chrono::duration<double>(
+        std::chrono::steady_clock::now() - solver_wall_start).count();
+    SCIP_CALL(SCIPfree(&scip));
+    return SCIP_OKAY;
+}
+
 int main(int argc, char* argv[]) {
     const auto app_start = std::chrono::steady_clock::now();
     RunConfig config;
@@ -1632,6 +1729,34 @@ int main(int argc, char* argv[]) {
         std::cerr << "Argument error: " << error.what() << std::endl;
         printUsage(argv[0]);
         return 2;
+    }
+    if (!config.instance_cip.empty()) {
+        if (!std::filesystem::exists(config.instance_cip)) {
+            std::cerr << "CIP instance not found: " << config.instance_cip << std::endl;
+            return 1;
+        }
+        SolverMetrics metrics;
+        double obj = 0.0;
+        try {
+            const SCIP_RETCODE solve_code = SolveCipProblem(config, metrics, obj);
+            if (solve_code != SCIP_OKAY) {
+                std::cerr << "SCIP failed with return code " << solve_code << std::endl;
+                return 1;
+            }
+        } catch (const std::exception& error) {
+            std::cerr << error.what() << std::endl;
+            return 1;
+        }
+        metrics.wall_clock_time = std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - app_start).count();
+        try {
+            writeRunJson(config.output_json, config, metrics, obj);
+        } catch (const std::exception& error) {
+            std::cerr << "Output error: " << error.what() << std::endl;
+            return 1;
+        }
+        std::cout << "Execute success" << std::endl;
+        return 0;
     }
     const std::string file_path1 = config.edges_path;
     const std::string file_path2 = config.pairs_path;
@@ -1691,9 +1816,15 @@ int main(int argc, char* argv[]) {
     std::cout << "Solving problem" << std::endl;
     double obj = 0;
     SolverMetrics metrics;
-    SCIP_RETCODE solve_code = SolveMIPProblem(center_nodes, center_edges, edges_to_weight, id_to_center_pairs,
+    SCIP_RETCODE solve_code = SCIP_OKAY;
+    try {
+        solve_code = SolveMIPProblem(center_nodes, center_edges, edges_to_weight, id_to_center_pairs,
                                 center_pairs_to_weight, adj_list, cpairs_to_ret_edges_prime, cret_edges_prime,
                                 k2prime, id_to_copynums, entry_edges, cpid_to_entry_edges, config, metrics, obj);
+    } catch (const std::exception& error) {
+        std::cerr << error.what() << std::endl;
+        return 1;
+    }
     if (solve_code != SCIP_OKAY) {
         std::cerr << "SCIP failed with return code " << solve_code << std::endl;
         return 1;

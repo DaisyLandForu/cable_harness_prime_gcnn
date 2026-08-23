@@ -25,8 +25,6 @@ struct RlGcnnOptions {
     int prim_min_depth = 0;
     // If true, skip Prim bias while all grown sets S_p are empty.
     bool prim_require_grown = false;
-    // Phase B: append 6 Prim neighborhood dims to variable features (needs matching model).
-    bool use_prim_features = false;
     // C0 bias modes: none | z | root_z | prim | topology
     // topology = PrimScore without empty-S uniform z prior (+0.5).
     std::string bias_mode = "prim";
