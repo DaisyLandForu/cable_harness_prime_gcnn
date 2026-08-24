@@ -1,0 +1,112 @@
+original problem has 3626 variables (512 bin, 0 int, 0 impl, 3114 cont) and 8363 constraints
+permute transformed problem using random seed 1178568022
+presolving:
+(round 1, fast)       1251 del vars, 2166 del conss, 0 add conss, 686 chg bounds, 4056 chg sides, 10410 chg coeffs, 0 upgd conss, 0 impls, 114 clqs
+(round 2, fast)       1349 del vars, 2712 del conss, 0 add conss, 709 chg bounds, 4382 chg sides, 10410 chg coeffs, 0 upgd conss, 0 impls, 114 clqs
+(round 3, fast)       1504 del vars, 2718 del conss, 0 add conss, 709 chg bounds, 4382 chg sides, 10410 chg coeffs, 0 upgd conss, 0 impls, 114 clqs
+(round 4, fast)       1504 del vars, 2718 del conss, 0 add conss, 749 chg bounds, 4382 chg sides, 10410 chg coeffs, 0 upgd conss, 0 impls, 114 clqs
+(round 5, fast)       1524 del vars, 2758 del conss, 0 add conss, 749 chg bounds, 4382 chg sides, 10410 chg coeffs, 0 upgd conss, 0 impls, 114 clqs
+(round 6, exhaustive) 1524 del vars, 2758 del conss, 0 add conss, 749 chg bounds, 4382 chg sides, 10410 chg coeffs, 189 upgd conss, 0 impls, 114 clqs
+   (0.1s) probing: 51/472 (10.8%) - 0 fixings, 0 aggregations, 0 implications, 0 bound changes
+   (0.1s) probing aborted: 50/50 successive totally useless probings
+   (0.1s) symmetry computation started: requiring (bin +, int -, cont +), (fixed: bin -, int +, cont -)
+   (0.1s) no symmetry present
+presolving (7 rounds: 7 fast, 2 medium, 2 exhaustive):
+ 1524 deleted vars, 2758 deleted constraints, 0 added constraints, 749 tightened bounds, 0 added holes, 4382 changed sides, 10410 changed coefficients
+ 0 implications, 114 cliques
+presolved problem has 2102 variables (472 bin, 0 int, 0 impl, 1630 cont) and 5605 constraints
+      3 constraints of type <knapsack>
+    114 constraints of type <setppc>
+   5416 constraints of type <linear>
+     72 constraints of type <logicor>
+Presolving Time: 0.07
+
+ time | node  | left  |LP iter|LP it/n|mem/heur|mdpt |vars |cons |rows |cuts |sepa|confs|strbr|  dualbound   | primalbound  |  gap   | compl. 
+  0.1s|     1 |     0 |  2681 |     - |    35M |   0 |2102 |5610 |5605 |   0 |  0 |   4 |   0 | 3.958333e-03 |      --      |    Inf | unknown
+o 0.3s|     1 |     0 |  3748 |     - |feaspump|   0 |2102 |5615 |5605 |   0 |  0 |   9 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.3s|     1 |     0 |  3775 |     - |    37M |   0 |2102 |5615 |5610 |   5 |  1 |   9 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.3s|     1 |     0 |  3783 |     - |    39M |   0 |2102 |5615 |5611 |   6 |  2 |   9 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.3s|     1 |     0 |  3797 |     - |    41M |   0 |2102 |5616 |5613 |   8 |  3 |  10 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.3s|     1 |     0 |  3803 |     - |    41M |   0 |2102 |5617 |5614 |   9 |  4 |  11 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.4s|     1 |     0 |  3813 |     - |    44M |   0 |2102 |5617 |5616 |  11 |  5 |  11 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.4s|     1 |     0 |  3817 |     - |    47M |   0 |2102 |5619 |5618 |  13 |  6 |  13 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.4s|     1 |     0 |  3830 |     - |    50M |   0 |2102 |5620 |5620 |  15 |  7 |  14 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.5s|     1 |     0 |  3838 |     - |    50M |   0 |2102 |5620 |5622 |  17 |  8 |  14 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.5s|     1 |     0 |  3846 |     - |    53M |   0 |2102 |5620 |5624 |  19 |  9 |  14 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.6s|     1 |     0 |  3863 |     - |    55M |   0 |2102 |5621 |5627 |  22 | 10 |  15 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.6s|     1 |     0 |  3875 |     - |    56M |   0 |2102 |5621 |5629 |  24 | 11 |  15 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+  0.7s|     1 |     2 |  4039 |     - |    56M |   0 |2102 |5626 |5629 |  24 | 11 |  20 |   0 | 3.958333e-03 | 5.403202e-03 |  36.50%| unknown
+
+SCIP Status        : solving was interrupted [node limit reached]
+Solving Time (sec) : 0.76
+Solving Nodes      : 2
+Primal Bound       : +5.40320240000000e-03 (1 solutions)
+Dual Bound         : +3.95833330000000e-03
+Gap                : 36.50 %
+Execute success
+{
+  "run_name": "bipartite_gcnn_r1",
+  "gradient_steps": 2,
+  "optimizer_steps": 2,
+  "episodes": 3,
+  "replay_size": 20,
+  "replay_medium_count": 16,
+  "replay_large_count": 4,
+  "replay_evictions_by_count": 0,
+  "replay_evictions_by_bytes": 0,
+  "mix_16_0": 1,
+  "mix_12_4": 1,
+  "stop_reason": "mix_gates",
+  "best_validation_nodes": Infinity,
+  "wall_time": 152.45483386702836,
+  "device": "cuda",
+  "torch_version": "2.5.1+cu121",
+  "loss_mode": "scalar",
+  "normalization_path": "results/probes/shared_normalization.json",
+  "normalization_sha256": "62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24",
+  "normalization_source": "shared",
+  "evaluation": [],
+  "deploy_retest": {
+    "instance": "data/instances/train/syn_medium_s101.cip",
+    "model": "artifacts/models/gcnn_r1/last_model_scripted.pt",
+    "output_json": "artifacts/models/gcnn_r1/deploy_retest.json",
+    "rl_device": "cpu",
+    "branch_decisions": 2,
+    "fallback_count": 0,
+    "custom_illegal_actions": 0,
+    "solving_time": 0.763513,
+    "graph_extract_time": 0.007660916,
+    "inference_time": 0.067642409,
+    "gcnn_overhead": 0.075303325,
+    "gcnn_overhead_ratio": 0.09862743005030694,
+    "passed": true
+  },
+  "r1_gate": {
+    "stop_reason": "mix_gates",
+    "mix_16_0": 1,
+    "mix_12_4": 1,
+    "optimizer_steps": 2,
+    "finite_metrics": true,
+    "torchscript_exported": true,
+    "replay_medium_count": 16,
+    "replay_large_count": 4,
+    "replay_evictions_by_count": 0,
+    "replay_evictions_by_bytes": 0,
+    "deploy_retest": {
+      "instance": "data/instances/train/syn_medium_s101.cip",
+      "model": "artifacts/models/gcnn_r1/last_model_scripted.pt",
+      "output_json": "artifacts/models/gcnn_r1/deploy_retest.json",
+      "rl_device": "cpu",
+      "branch_decisions": 2,
+      "fallback_count": 0,
+      "custom_illegal_actions": 0,
+      "solving_time": 0.763513,
+      "graph_extract_time": 0.007660916,
+      "inference_time": 0.067642409,
+      "gcnn_overhead": 0.075303325,
+      "gcnn_overhead_ratio": 0.09862743005030694,
+      "passed": true
+    },
+    "passed": true
+  }
+}

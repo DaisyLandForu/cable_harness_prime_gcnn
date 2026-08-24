@@ -1,0 +1,28 @@
+{
+  "stop_reason": "mix_gates",
+  "mix_16_0": 1,
+  "mix_12_4": 1,
+  "optimizer_steps": 2,
+  "finite_metrics": true,
+  "torchscript_exported": true,
+  "replay_medium_count": 16,
+  "replay_large_count": 4,
+  "replay_evictions_by_count": 0,
+  "replay_evictions_by_bytes": 0,
+  "deploy_retest": {
+    "instance": "data/instances/train/syn_medium_s101.cip",
+    "model": "artifacts/models/gcnn_r1/last_model_scripted.pt",
+    "output_json": "artifacts/models/gcnn_r1/deploy_retest.json",
+    "rl_device": "cpu",
+    "branch_decisions": 2,
+    "fallback_count": 0,
+    "custom_illegal_actions": 0,
+    "solving_time": 0.763513,
+    "graph_extract_time": 0.007660916,
+    "inference_time": 0.067642409,
+    "gcnn_overhead": 0.075303325,
+    "gcnn_overhead_ratio": 0.09862743005030694,
+    "passed": true
+  },
+  "passed": true
+}

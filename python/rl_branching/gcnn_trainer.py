@@ -1,9 +1,11 @@
 import csv
 import hashlib
 import json
+import math
 import os
 import random
 import shutil
+import subprocess
 import time
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -14,6 +16,7 @@ import psutil
 import torch
 import yaml
 
+from .config import BBMDPConfig
 from .candidate_features import AVIATION_VARIABLE_CATEGORIES
 from .graph_features import GRAPH_VARIABLE_FEATURE_NAMES
 from .environment import BBMDPBranchingEnv
@@ -26,7 +29,7 @@ from .graph_features import (
     RunningGraphNormalizer,
     training_graph_state,
 )
-from .graph_replay import DualPoolGraphReplay, DualPoolQuotaUnfillable
+from .graph_replay import DualPoolGraphReplay, DualPoolQuotaUnfillable, LOGICAL_BATCH_SIZE
 from .observation import EDGE_FEATURE_NAMES, EXTENDED_ROW_FEATURE_NAMES, GLOBAL_FEATURE_NAMES
 from .replay import NStepAccumulator, OneStepExperience
 
@@ -35,8 +38,10 @@ HISTORY_FIELDS = (
     "event",
     "episode",
     "gradient_step",
+    "optimizer_steps",
     "loss",
     "td_error",
+    "gradient_norm",
     "epsilon",
     "reward",
     "episode_nodes",
@@ -44,6 +49,16 @@ HISTORY_FIELDS = (
     "validation_nodes",
     "validation_time",
     "replay_size",
+    "replay_medium_count",
+    "replay_large_count",
+    "replay_medium_bytes",
+    "replay_large_bytes",
+    "replay_evictions_by_count",
+    "replay_evictions_by_bytes",
+    "medium_samples",
+    "large_samples",
+    "per_weight_min",
+    "per_weight_max",
     "q_value_mean",
     "q_value_std",
     "selected_candidate_rank",
@@ -53,6 +68,16 @@ HISTORY_FIELDS = (
     "status",
     "instance",
 )
+
+SHARED_NORMALIZATION_INSTANCES = (
+    "data/instances/transfer/real_01.cip",
+    "data/instances/transfer/real_02.cip",
+    "data/instances/transfer/real_03.cip",
+    "data/instances/transfer/real_05.cip",
+    "data/instances/train/real_06.cip",
+    "data/instances/train/real_07.cip",
+)
+EXCLUDED_NORMALIZATION_STEMS = frozenset({"real_04"})
 
 
 @dataclass(frozen=True)
@@ -99,10 +124,306 @@ def _pool_for_instance(instance: str) -> str:
     return "large" if Path(instance).stem.startswith("real_02") else "medium"
 
 
+def _ecole_action(action_set: np.ndarray, graph: GraphState, position: int) -> int:
+    if position < 0 or position >= graph.candidate_count:
+        raise ValueError("candidate position is out of range")
+    if int(graph.candidate_count) != int(np.asarray(action_set).size):
+        raise ValueError("two-hop candidates must stay aligned with the Ecole action set")
+    return int(np.asarray(action_set)[position])
+
+
 def _can_sample_logical_batch(replay: DualPoolGraphReplay) -> bool:
     if len(replay.large) >= replay.large_sample_quota:
         return len(replay.medium) >= replay.medium_sample_quota
     return len(replay.medium) >= replay.medium_sample_quota + replay.large_sample_quota
+
+
+def _batch_mix_counts(batch) -> tuple[int, int]:
+    medium = sum(1 for handle in batch.handles if handle.pool == "medium")
+    large = sum(1 for handle in batch.handles if handle.pool == "large")
+    return medium, large
+
+
+def _select_mix_instance(
+    guard: "InstanceQuotaGuard",
+    *,
+    require_mix_16_0: bool,
+    require_mix_12_4: bool,
+    mix_16_0: int,
+    mix_12_4: int,
+) -> str:
+    remaining = guard.available()
+    medium = [name for name in remaining if _pool_for_instance(name) == "medium"]
+    large = [name for name in remaining if _pool_for_instance(name) == "large"]
+    if require_mix_16_0 and mix_16_0 == 0:
+        if not medium:
+            raise DualPoolQuotaUnfillable(
+                "quota_unfillable: no medium instances left for the 16+0 mix"
+            )
+        return medium[0]
+    if require_mix_12_4 and mix_12_4 == 0:
+        if not large:
+            raise DualPoolQuotaUnfillable(
+                "quota_unfillable: no real_02 instances left for the 12+4 mix"
+            )
+        return large[0]
+    return guard.next_instance()
+
+
+def _ready_for_update(
+    replay: DualPoolGraphReplay,
+    *,
+    min_replay_size: int,
+    require_mix_16_0: bool,
+    require_mix_12_4: bool,
+    mix_16_0: int,
+    mix_12_4: int,
+) -> bool:
+    if not _can_sample_logical_batch(replay):
+        return False
+    if len(replay) < int(min_replay_size):
+        return False
+    large_ready = len(replay.large) >= replay.large_sample_quota
+    if require_mix_16_0 and mix_16_0 == 0:
+        return not large_ready
+    if require_mix_12_4 and mix_12_4 == 0:
+        return large_ready
+    return True
+
+
+def _training_should_stop(
+    *,
+    gradient_step: int,
+    total_gradient_steps: int,
+    elapsed: float,
+    wall_time_limit: float,
+    require_mix_16_0: bool,
+    require_mix_12_4: bool,
+    mix_16_0: int,
+    mix_12_4: int,
+) -> str:
+    mixes_done = (not require_mix_16_0 or mix_16_0 > 0) and (
+        not require_mix_12_4 or mix_12_4 > 0
+    )
+    if wall_time_limit > 0.0 and elapsed >= wall_time_limit:
+        return "wall_time"
+    if mixes_done and (require_mix_16_0 or require_mix_12_4):
+        return "mix_gates"
+    if mixes_done and gradient_step >= total_gradient_steps:
+        return "gradient_steps"
+    return ""
+
+
+def _replay_log_fields(replay: DualPoolGraphReplay) -> dict:
+    snapshot = replay.snapshot()
+    return {
+        "replay_size": len(replay),
+        "replay_medium_count": snapshot.medium_count,
+        "replay_large_count": snapshot.large_count,
+        "replay_medium_bytes": snapshot.medium_bytes,
+        "replay_large_bytes": snapshot.large_bytes,
+        "replay_evictions_by_count": snapshot.evictions_by_count,
+        "replay_evictions_by_bytes": snapshot.evictions_by_bytes,
+    }
+
+
+def _collect_normalization_states(
+    instance: str,
+    *,
+    states_needed: int,
+    seed: int,
+    time_limit: float,
+    node_limit: int,
+) -> list[GraphState]:
+    env = BBMDPBranchingEnv(
+        BBMDPConfig(seed=seed, time_limit=time_limit, node_limit=node_limit)
+    )
+    collected: list[GraphState] = []
+    try:
+        state = env.reset(instance)
+        while (
+            len(collected) < states_needed
+            and not state.terminated
+            and not state.truncated
+            and state.observation is not None
+            and state.action_set.size > 0
+        ):
+            collected.append(training_graph_state(state.observation, state.action_set))
+            action = int(state.action_set[0])
+            transition = env.step(action)
+            state = env.current_state
+            if transition.next_observation is None or transition.next_action_set.size == 0:
+                break
+    finally:
+        env.close()
+    return collected
+
+
+def build_shared_normalization(
+    output_path: Path | str,
+    *,
+    instances: tuple[str, ...] = SHARED_NORMALIZATION_INSTANCES,
+    states_per_instance: int = 2,
+    seed: int = 0,
+    default_time_limit: float = 180.0,
+    large_time_limit: float = 300.0,
+    node_limit: int = 20,
+) -> dict:
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    stems = [Path(path).stem for path in instances]
+    if any(stem in EXCLUDED_NORMALIZATION_STEMS for stem in stems):
+        raise ValueError("shared normalization must exclude real_04")
+    missing = [stem for stem in ("real_01", "real_02", "real_03", "real_05", "real_06", "real_07") if stem not in stems]
+    if missing:
+        raise ValueError(f"shared normalization is missing required instances: {missing}")
+    if states_per_instance < 2:
+        raise ValueError("shared normalization needs at least 2 states per instance")
+
+    normalizer = RunningGraphNormalizer()
+    per_instance: dict[str, dict] = {}
+    for index, instance in enumerate(instances):
+        path = Path(instance)
+        if not path.is_file():
+            raise FileNotFoundError(instance)
+        if path.stem in EXCLUDED_NORMALIZATION_STEMS:
+            raise ValueError(f"refusing excluded instance {path.stem}")
+        time_limit = large_time_limit if path.stem.startswith("real_02") else default_time_limit
+        graphs = _collect_normalization_states(
+            str(path),
+            states_needed=states_per_instance,
+            seed=seed + index,
+            time_limit=time_limit,
+            node_limit=node_limit,
+        )
+        if len(graphs) < states_per_instance:
+            raise RuntimeError(
+                f"{path.stem} produced {len(graphs)} branching states, need {states_per_instance}"
+            )
+        for graph in graphs:
+            normalizer.update(graph)
+        per_instance[path.stem] = {
+            "path": str(path),
+            "states": len(graphs),
+            "time_limit": time_limit,
+            "node_limit": node_limit,
+            "variable_count": int(graphs[0].variable_features.shape[0]),
+            "row_count": int(graphs[0].row_features.shape[0]),
+        }
+    normalizer.freeze()
+    payload = {
+        "schema": "shared_graph_normalization_v1",
+        "frozen": True,
+        "excluded_instances": sorted(EXCLUDED_NORMALIZATION_STEMS),
+        "source_instances": per_instance,
+        "states_per_instance": states_per_instance,
+        **normalizer.to_json(),
+    }
+    output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    sha256 = _file_sha256(output)
+    manifest = {
+        "normalization_path": str(output),
+        "sha256": sha256,
+        "excluded_instances": sorted(EXCLUDED_NORMALIZATION_STEMS),
+        "source_instances": per_instance,
+        "states_per_instance": states_per_instance,
+        "readonly": True,
+    }
+    manifest_path = output.with_name(output.stem + "_manifest.json")
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return manifest
+
+
+def run_deploy_retest(
+    model_path: Path | str,
+    *,
+    instance: str,
+    seed_overlay: str,
+    solve_node_limit: int,
+    output_json: Path,
+    output_log: Path,
+    scip_tree: Path | str = "build/scip_tree",
+    time_limit: float = 60.0,
+    overhead_fraction: float = 0.10,
+    rl_device: str = "cpu",
+) -> dict:
+    runner = Path(scip_tree)
+    if not runner.is_file():
+        raise FileNotFoundError(f"scip_tree is missing: {runner}")
+    overlay = Path(seed_overlay)
+    if not overlay.is_file():
+        raise FileNotFoundError(f"seed overlay is missing: {overlay}")
+    output_json.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        [
+            str(runner),
+            "--instance",
+            instance,
+            "--branching",
+            "rl-gcnn",
+            "--rl-model",
+            str(model_path),
+            "--rl-device",
+            str(rl_device),
+            "--seed-overlay",
+            str(overlay),
+            "--scip-profile",
+            "configs/scip/project-production-v1.set",
+            "--time-limit",
+            str(time_limit),
+            "--node-limit",
+            "-1",
+            "--solve-node-limit",
+            str(solve_node_limit),
+            "--threads",
+            "1",
+            "--output-json",
+            str(output_json),
+            "--rl-log",
+            str(output_log),
+        ],
+        check=True,
+    )
+    smoke = json.loads(output_json.read_text(encoding="utf-8"))
+    extract_time = 0.0
+    inference_time = 0.0
+    if output_log.is_file():
+        with output_log.open(encoding="utf-8") as stream:
+            for row in csv.DictReader(stream):
+                extract_time += float(row.get("graph_extract_time_seconds") or 0.0)
+                inference_time += float(row.get("inference_time_seconds") or 0.0)
+    solving_time = float(smoke.get("solving_time") or 0.0)
+    overhead = extract_time + inference_time
+    overhead_ratio = overhead / solving_time if solving_time > 0.0 else float("inf")
+    branch_decisions = int(smoke.get("branch_decisions", 0) or 0)
+    fallback_count = int(smoke.get("fallback_count", -1) if smoke.get("fallback_count") is not None else -1)
+    illegal_actions = int(
+        smoke.get("custom_illegal_actions", -1)
+        if smoke.get("custom_illegal_actions") is not None
+        else -1
+    )
+    gate = {
+        "instance": instance,
+        "model": str(model_path),
+        "output_json": str(output_json),
+        "rl_device": str(rl_device),
+        "branch_decisions": branch_decisions,
+        "fallback_count": fallback_count,
+        "custom_illegal_actions": illegal_actions,
+        "solving_time": solving_time,
+        "graph_extract_time": extract_time,
+        "inference_time": inference_time,
+        "gcnn_overhead": overhead,
+        "gcnn_overhead_ratio": overhead_ratio,
+        "passed": bool(
+            branch_decisions >= 1
+            and fallback_count == 0
+            and illegal_actions == 0
+            and math.isfinite(overhead_ratio)
+            and overhead_ratio <= overhead_fraction
+        ),
+    }
+    return gate
 
 
 ZERO_DECISION_SKIP_N = 3
@@ -291,16 +612,17 @@ def evaluate_gcnn_episode(
             raise RuntimeError("live GCNN environment state has no graph")
         if method == "random":
             position = int(rng.integers(graph.candidate_count))
-            action = int(graph.actions[position])
+            action = _ecole_action(state.action_set, graph, position)
         else:
             if learner is None:
                 raise ValueError(f"method {method} requires a learner")
             start = time.monotonic()
-            action, position, rank, _ = learner.select_action(graph, 0.0, rng)
+            _, position, rank, _ = learner.select_action(graph, 0.0, rng)
             if learner.device.type == "cuda":
                 torch.cuda.synchronize(learner.device)
             inference += time.monotonic() - start
             ranks.append(rank)
+            action = _ecole_action(state.action_set, graph, position)
         transition = env.step(action)
         reward += transition.reward
         transitions += 1
@@ -358,6 +680,8 @@ def train_gcnn(config_path: Path | str) -> dict:
     learner = _learner(config, device)
     replay = DualPoolGraphReplay(
         config.seed,
+        medium_count_limit=config.optimization.medium_count_limit,
+        large_count_limit=config.optimization.large_count_limit,
         alpha=config.optimization.per_alpha,
         beta_start=config.optimization.per_beta_start,
         beta_steps=config.optimization.per_beta_steps,
@@ -386,10 +710,35 @@ def train_gcnn(config_path: Path | str) -> dict:
     stale_validations = 0
     next_validation = config.evaluation.interval_steps
     start_wall = time.monotonic()
+    mix_16_0 = 0
+    mix_12_4 = 0
+    stop_reason = ""
+    finite_metrics = True
+    last_medium_samples = 0
+    last_large_samples = 0
 
     try:
-        while learner.gradient_step < config.optimization.total_gradient_steps:
-            instance = instance_guard.next_instance()
+        while not stop_reason:
+            elapsed = time.monotonic() - start_wall
+            stop_reason = _training_should_stop(
+                gradient_step=learner.gradient_step,
+                total_gradient_steps=config.optimization.total_gradient_steps,
+                elapsed=elapsed,
+                wall_time_limit=config.wall_time_limit,
+                require_mix_16_0=config.require_mix_16_0,
+                require_mix_12_4=config.require_mix_12_4,
+                mix_16_0=mix_16_0,
+                mix_12_4=mix_12_4,
+            )
+            if stop_reason:
+                break
+            instance = _select_mix_instance(
+                instance_guard,
+                require_mix_16_0=config.require_mix_16_0,
+                require_mix_12_4=config.require_mix_12_4,
+                mix_16_0=mix_16_0,
+                mix_12_4=mix_12_4,
+            )
             env = BBMDPBranchingEnv(replace(config.environment, seed=config.seed + episode))
             state = env.reset(instance)
             graph = None if state.observation is None else training_graph_state(state.observation, state.action_set)
@@ -399,6 +748,11 @@ def train_gcnn(config_path: Path | str) -> dict:
             episode_reward = 0.0
             ranks = []
             while not (state.terminated or state.truncated):
+                if config.wall_time_limit > 0.0 and (
+                    time.monotonic() - start_wall >= config.wall_time_limit
+                ):
+                    stop_reason = "wall_time"
+                    break
                 if graph is None:
                     raise RuntimeError("live training state has no graph")
                 if not (output / "parity_observation.npz").exists():
@@ -414,14 +768,14 @@ def train_gcnn(config_path: Path | str) -> dict:
                         normalizer_frozen = True
 
                 epsilon = config.exploration.epsilon(learner.gradient_step)
-                action, position, rank, _ = learner.select_action(
+                _, position, rank, _ = learner.select_action(
                     graph,
                     epsilon,
                     rng,
                     config.exploration.boltzmann_temperature,
                 )
                 ranks.append(rank)
-                transition = env.step(action)
+                transition = env.step(_ecole_action(state.action_set, graph, position))
                 next_graph = (
                     None
                     if transition.next_observation is None
@@ -444,27 +798,74 @@ def train_gcnn(config_path: Path | str) -> dict:
                 graph = next_graph
                 state = env.current_state
 
-                if normalizer_frozen and _can_sample_logical_batch(replay):
-                    for _ in range(config.optimization.updates_per_env_step):
-                        if learner.gradient_step >= config.optimization.total_gradient_steps:
+                hunting_mix = (config.require_mix_16_0 and mix_16_0 == 0) or (
+                    config.require_mix_12_4 and mix_12_4 == 0
+                )
+                if normalizer_frozen and _ready_for_update(
+                    replay,
+                    min_replay_size=config.optimization.min_replay_size,
+                    require_mix_16_0=config.require_mix_16_0,
+                    require_mix_12_4=config.require_mix_12_4,
+                    mix_16_0=mix_16_0,
+                    mix_12_4=mix_12_4,
+                ):
+                    update_count = (
+                        1 if hunting_mix else config.optimization.updates_per_env_step
+                    )
+                    for _ in range(update_count):
+                        if (
+                            not hunting_mix
+                            and learner.gradient_step
+                            >= config.optimization.total_gradient_steps
+                        ):
+                            stop_reason = "gradient_steps"
                             break
                         sample = replay.sample_logical_batch(learner.gradient_step)
+                        last_medium_samples, last_large_samples = _batch_mix_counts(sample)
                         forward_start = time.monotonic()
                         latest = learner.update(sample)
                         if device.type == "cuda":
                             torch.cuda.synchronize(device)
                         forward_time = time.monotonic() - forward_start
                         replay.update_priorities(sample.handles, latest.priorities)
-                        if learner.gradient_step % config.log_interval_steps == 0:
+                        metric_values = (
+                            latest.loss,
+                            latest.td_error,
+                            latest.gradient_norm,
+                            float(np.min(sample.weights)),
+                            float(np.max(sample.weights)),
+                        )
+                        if not all(math.isfinite(float(value)) for value in metric_values):
+                            finite_metrics = False
+                            raise FloatingPointError(
+                                "GCNN train update produced a non-finite metric"
+                            )
+                        if last_medium_samples == LOGICAL_BATCH_SIZE and last_large_samples == 0:
+                            mix_16_0 += 1
+                            mix_event = "mix_16_0"
+                        elif last_medium_samples == 12 and last_large_samples == 4:
+                            mix_12_4 += 1
+                            mix_event = "mix_12_4"
+                        else:
+                            mix_event = ""
+                        if (
+                            mix_event
+                            or learner.gradient_step % config.log_interval_steps == 0
+                        ):
                             cpu_mb, gpu_mb = _memory(device)
                             history.write(
-                                event="train_update",
+                                event=mix_event or "train_update",
                                 episode=episode,
                                 gradient_step=learner.gradient_step,
+                                optimizer_steps=learner.gradient_step,
                                 loss=latest.loss,
                                 td_error=latest.td_error,
+                                gradient_norm=latest.gradient_norm,
                                 epsilon=epsilon,
-                                replay_size=len(replay),
+                                medium_samples=last_medium_samples,
+                                large_samples=last_large_samples,
+                                per_weight_min=float(np.min(sample.weights)),
+                                per_weight_max=float(np.max(sample.weights)),
                                 q_value_mean=latest.q_mean,
                                 q_value_std=latest.q_std,
                                 selected_candidate_rank=rank,
@@ -472,7 +873,30 @@ def train_gcnn(config_path: Path | str) -> dict:
                                 cpu_memory_mb=cpu_mb,
                                 gpu_memory_mb=gpu_mb,
                                 instance=instance,
+                                **_replay_log_fields(replay),
                             )
+                        stop_reason = _training_should_stop(
+                            gradient_step=learner.gradient_step,
+                            total_gradient_steps=config.optimization.total_gradient_steps,
+                            elapsed=time.monotonic() - start_wall,
+                            wall_time_limit=config.wall_time_limit,
+                            require_mix_16_0=config.require_mix_16_0,
+                            require_mix_12_4=config.require_mix_12_4,
+                            mix_16_0=mix_16_0,
+                            mix_12_4=mix_12_4,
+                        )
+                        if stop_reason:
+                            break
+                if (
+                    not stop_reason
+                    and config.require_mix_12_4
+                    and mix_16_0 > 0
+                    and mix_12_4 == 0
+                    and _pool_for_instance(instance) == "medium"
+                ):
+                    break
+                if stop_reason:
+                    break
             final_info = state.info
             env.close()
             cpu_mb, gpu_mb = _memory(device)
@@ -480,30 +904,44 @@ def train_gcnn(config_path: Path | str) -> dict:
                 event="episode",
                 episode=episode,
                 gradient_step=learner.gradient_step,
+                optimizer_steps=learner.gradient_step,
                 loss="" if latest is None else latest.loss,
                 td_error="" if latest is None else latest.td_error,
+                gradient_norm="" if latest is None else latest.gradient_norm,
                 epsilon=config.exploration.epsilon(learner.gradient_step),
                 reward=episode_reward,
                 episode_nodes=final_info.get("node_count", 0),
                 episode_solving_time=final_info.get("solving_time", 0.0),
-                replay_size=len(replay),
+                medium_samples=last_medium_samples,
+                large_samples=last_large_samples,
                 selected_candidate_rank=float(np.mean(ranks)) if ranks else 0.0,
                 cpu_memory_mb=cpu_mb,
                 gpu_memory_mb=gpu_mb,
                 status=final_info.get("status", "unknown"),
                 instance=instance,
+                **_replay_log_fields(replay),
             )
             if instance_guard.record_episode(instance, len(ranks)):
                 history.write(
                     event="quota_unfillable",
                     episode=episode,
                     gradient_step=learner.gradient_step,
+                    optimizer_steps=learner.gradient_step,
                     status="skipped_zero_decision",
                     instance=instance,
                 )
             episode += 1
+            if stop_reason:
+                break
 
-            if learner.gradient_step >= next_validation or learner.gradient_step >= config.optimization.total_gradient_steps:
+            reached_validation = (
+                not config.skip_mid_validation
+                and (
+                    learner.gradient_step >= next_validation
+                    or learner.gradient_step >= config.optimization.total_gradient_steps
+                )
+            )
+            if reached_validation:
                 validation = []
                 for instance_index, validation_instance in enumerate(config.validation_instances):
                     for seed in config.evaluation.seeds:
@@ -523,11 +961,12 @@ def train_gcnn(config_path: Path | str) -> dict:
                     event="validation",
                     episode=episode,
                     gradient_step=learner.gradient_step,
+                    optimizer_steps=learner.gradient_step,
                     validation_nodes=validation_nodes,
                     validation_time=validation_time,
-                    replay_size=len(replay),
                     status=";".join(item.status for item in validation),
                     instance=";".join(config.validation_instances),
+                    **_replay_log_fields(replay),
                 )
                 if validation_nodes < best_validation:
                     best_validation = validation_nodes
@@ -540,6 +979,7 @@ def train_gcnn(config_path: Path | str) -> dict:
                     stale_validations += 1
                 next_validation += config.evaluation.interval_steps
                 if stale_validations >= config.evaluation.early_stopping_patience:
+                    stop_reason = "early_stop"
                     break
     finally:
         history.close()
@@ -548,55 +988,109 @@ def train_gcnn(config_path: Path | str) -> dict:
         statistics = normalizer.statistics()
         learner.online.set_normalization(statistics)
         learner.target.set_normalization(statistics)
-    (output / "normalization.json").write_text(
-        json.dumps(normalizer.to_json(), indent=2) + "\n", encoding="utf-8"
-    )
+    if config.normalization_path:
+        shutil.copyfile(config.normalization_path, output / "normalization.json")
+        copied_sha = _file_sha256(output / "normalization.json")
+        if copied_sha != normalization_sha256:
+            raise RuntimeError("copied shared normalization SHA256 does not match source")
+    else:
+        (output / "normalization.json").write_text(
+            json.dumps(normalizer.to_json(), indent=2) + "\n", encoding="utf-8"
+        )
     _save_checkpoint(output / "last_model.pt", learner, config)
     export_gcnn_torchscript(learner.online, output / "last_model_scripted.pt")
     if not (output / "best_model.pt").exists():
         _save_checkpoint(output / "best_model.pt", learner, config)
         export_gcnn_torchscript(learner.online, output / "best_model_scripted.pt")
 
-    best_model = load_gcnn_model(output / "best_model.pt", config, device)
-    best_learner = _learner(config, device)
-    best_learner.online.load_state_dict(best_model.state_dict())
-    best_learner.target.load_state_dict(best_model.state_dict())
-
-    torch.manual_seed(config.seed + 1_000_000)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(config.seed + 1_000_000)
-    untrained = _learner(config, device)
-    untrained.online.set_normalization(normalizer.statistics())
-    untrained.target.set_normalization(normalizer.statistics())
-
     comparisons = []
-    for instance_index, instance in enumerate(config.validation_instances):
-        for seed in config.evaluation.compare_seeds:
-            for method, evaluation_learner in (
-                ("random", None),
-                ("untrained", untrained),
-                ("rl", best_learner),
-            ):
-                comparisons.append(
-                    evaluate_gcnn_episode(
-                        instance,
-                        seed,
-                        config.environment,
-                        method,
-                        evaluation_learner,
-                        _policy_seed(config.seed, seed, method, instance_index),
+    if not config.skip_final_comparison:
+        best_model = load_gcnn_model(output / "best_model.pt", config, device)
+        best_learner = _learner(config, device)
+        best_learner.online.load_state_dict(best_model.state_dict())
+        best_learner.target.load_state_dict(best_model.state_dict())
+
+        torch.manual_seed(config.seed + 1_000_000)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(config.seed + 1_000_000)
+        untrained = _learner(config, device)
+        untrained.online.set_normalization(normalizer.statistics())
+        untrained.target.set_normalization(normalizer.statistics())
+
+        for instance_index, instance in enumerate(config.validation_instances):
+            for seed in config.evaluation.compare_seeds:
+                for method, evaluation_learner in (
+                    ("random", None),
+                    ("untrained", untrained),
+                    ("rl", best_learner),
+                ):
+                    comparisons.append(
+                        evaluate_gcnn_episode(
+                            instance,
+                            seed,
+                            config.environment,
+                            method,
+                            evaluation_learner,
+                            _policy_seed(config.seed, seed, method, instance_index),
+                        )
                     )
-                )
     with (output / "evaluation.csv").open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=GraphEpisodeMetrics.__dataclass_fields__)
         writer.writeheader()
         writer.writerows(item.__dict__ for item in comparisons)
 
+    deploy_retest = {}
+    if config.deploy_retest_instance:
+        deploy_retest = run_deploy_retest(
+            output / "last_model_scripted.pt",
+            instance=config.deploy_retest_instance,
+            seed_overlay=config.deploy_retest_seed_overlay,
+            solve_node_limit=config.deploy_retest_solve_node_limit,
+            output_json=output / "deploy_retest.json",
+            output_log=output / "deploy_retest.branches.csv",
+            rl_device="cpu",
+            overhead_fraction=0.12,
+        )
+
+    snapshot = replay.snapshot()
+    r1_gate = {
+        "stop_reason": stop_reason,
+        "mix_16_0": mix_16_0,
+        "mix_12_4": mix_12_4,
+        "optimizer_steps": learner.gradient_step,
+        "finite_metrics": finite_metrics,
+        "torchscript_exported": (output / "last_model_scripted.pt").is_file(),
+        "replay_medium_count": snapshot.medium_count,
+        "replay_large_count": snapshot.large_count,
+        "replay_evictions_by_count": snapshot.evictions_by_count,
+        "replay_evictions_by_bytes": snapshot.evictions_by_bytes,
+        "deploy_retest": deploy_retest,
+    }
+    mix_ok = (not config.require_mix_16_0 or mix_16_0 > 0) and (
+        not config.require_mix_12_4 or mix_12_4 > 0
+    )
+    deploy_ok = (not config.deploy_retest_instance) or bool(deploy_retest.get("passed"))
+    r1_gate["passed"] = bool(
+        mix_ok
+        and finite_metrics
+        and learner.gradient_step >= 1
+        and r1_gate["torchscript_exported"]
+        and deploy_ok
+    )
+
     summary = {
         "run_name": config.run_name,
         "gradient_steps": learner.gradient_step,
+        "optimizer_steps": learner.gradient_step,
         "episodes": episode,
         "replay_size": len(replay),
+        "replay_medium_count": snapshot.medium_count,
+        "replay_large_count": snapshot.large_count,
+        "replay_evictions_by_count": snapshot.evictions_by_count,
+        "replay_evictions_by_bytes": snapshot.evictions_by_bytes,
+        "mix_16_0": mix_16_0,
+        "mix_12_4": mix_12_4,
+        "stop_reason": stop_reason,
         "best_validation_nodes": best_validation,
         "wall_time": time.monotonic() - start_wall,
         "device": str(device),
@@ -606,8 +1100,15 @@ def train_gcnn(config_path: Path | str) -> dict:
         "normalization_sha256": normalization_sha256,
         "normalization_source": "shared" if normalization_sha256 else "local_warmup",
         "evaluation": [item.__dict__ for item in comparisons],
+        "deploy_retest": deploy_retest,
+        "r1_gate": r1_gate,
     }
     (output / "summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
+    (output / "r1_gate.json").write_text(
+        json.dumps(r1_gate, indent=2) + "\n", encoding="utf-8"
+    )
+    if (config.require_mix_16_0 or config.require_mix_12_4) and not r1_gate["passed"]:
+        raise RuntimeError(f"R1 gate failed: {json.dumps(r1_gate)}")
     return summary

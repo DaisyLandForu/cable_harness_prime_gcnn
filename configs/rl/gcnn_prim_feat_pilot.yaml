@@ -2,7 +2,13 @@ run_name: bipartite_gcnn_prim_feat_pilot
 seed: 0
 device: cuda
 output_dir: artifacts/models/gcnn_prim_feat
+# Formal mix: DualPool 12 medium + 4 real_02 is frozen at 25%. real_04 is excluded.
+# Stage A (still to split): real_01/03/05/06/07 for 2400 steps.
+# Stage B (still to split): add real_02 for 600 steps at 300s/100 nodes.
 train_instances:
+  - data/instances/transfer/real_01.cip
+  - data/instances/transfer/real_03.cip
+  - data/instances/transfer/real_05.cip
   - data/instances/train/real_06.cip
   - data/instances/train/real_07.cip
   - data/instances/transfer/real_02.cip
@@ -14,7 +20,7 @@ environment:
   node_limit: 100
   gamma: 1.0
   reward_mode: negative_node_increment
-  bootstrap_on_truncation: false
+  bootstrap_on_truncation: true
   cache_static_features: true
 model:
   embedding_dim: 64
@@ -28,8 +34,10 @@ optimization:
   # DualPool logical batch is always 16 (12 medium + 4 real_02, or 16 medium).
   total_gradient_steps: 3000
   batch_size: 16
-  replay_capacity: 2048
-  min_replay_size: 128
+  medium_count_limit: 224
+  large_count_limit: 32
+  replay_capacity: 256
+  min_replay_size: 16
   learning_rate: 0.0003
   updates_per_env_step: 8
   n_step: 3
@@ -50,5 +58,6 @@ evaluation:
   interval_steps: 250
   early_stopping_patience: 8
   compare_seeds: [100, 101, 102]
+normalization_path: results/probes/shared_normalization.json
 normalization_warmup_states: 8
 log_interval_steps: 20

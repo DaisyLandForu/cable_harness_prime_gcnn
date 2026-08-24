@@ -1,14 +1,29 @@
 #!/usr/bin/env bash
-# Phase B: 4 independent seeds on separate GPUs. DualPool logical batch is
-# always 16 (not batch_size=64). This script is not approval for formal 4-card R1.
+# Independent single-GPU seeds (no DDP). DualPool logical batch is always 16
+# (12 medium + 4 real_02 = 25%, or 16 medium + 0 large). All workers must load
+# the same read-only normalization.json. This script is not approval to launch
+# six-card formal training.
 set -eo pipefail
 PROJ="${PROJ:-/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn}"
 ENV_DIR="${ENV_DIR:-/data/hanchengcheng/envs/rl4scip}"
 BASE_CFG="${BASE_CFG:-$PROJ/configs/rl/gcnn_prim_feat_pilot.yaml}"
-GPUS=(${GPUS:-1 2 4 5})
-SEEDS=(${SEEDS:-0 1 2 3})
+NORMALIZATION_PATH="${NORMALIZATION_PATH:-$PROJ/results/probes/shared_normalization.json}"
+EXPECTED_NORM_SHA="${EXPECTED_NORM_SHA:-62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24}"
 OUT_ROOT="${OUT_ROOT:-$PROJ/artifacts/models/gcnn_prim_feat}"
-LOG_DIR="$PROJ/logs/phaseB_train_4gpu"
+LOG_DIR="${LOG_DIR:-$PROJ/logs/seed_parallel_train}"
+
+if [[ -z "${GPUS:-}" || -z "${SEEDS:-}" ]]; then
+  echo "usage: GPUS='0 1 2' SEEDS='0 1 2' $0" >&2
+  echo "refusing to default-launch GPUs; six-card formal training is not approved yet" >&2
+  exit 2
+fi
+GPUS=($GPUS)
+SEEDS=($SEEDS)
+if [[ ${#GPUS[@]} -ne ${#SEEDS[@]} ]]; then
+  echo "GPUS and SEEDS must have the same length" >&2
+  exit 2
+fi
+
 mkdir -p "$LOG_DIR" "$OUT_ROOT" "$PROJ/configs/rl/generated"
 
 set +u
@@ -24,7 +39,12 @@ export CUBLAS_WORKSPACE_CONFIG=:4096:8
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
 
 cd "$PROJ"
-echo "[$(date '+%F %T')] Phase B 4-GPU train start gpus=${GPUS[*]} seeds=${SEEDS[*]}"
+actual_sha="$(sha256sum "$NORMALIZATION_PATH" | awk '{print $1}')"
+if [[ "$actual_sha" != "$EXPECTED_NORM_SHA" ]]; then
+  echo "normalization SHA mismatch: $actual_sha != $EXPECTED_NORM_SHA" >&2
+  exit 2
+fi
+echo "[$(date '+%F %T')] seed-parallel train start gpus=${GPUS[*]} seeds=${SEEDS[*]} norm_sha=$actual_sha"
 
 pids=()
 for i in "${!SEEDS[@]}"; do
@@ -34,16 +54,27 @@ for i in "${!SEEDS[@]}"; do
   out="$OUT_ROOT/seed${seed}"
   python - <<PY
 from pathlib import Path
+import hashlib
 import yaml
 cfg = yaml.safe_load(Path("$BASE_CFG").read_text())
-if int(cfg.get("optimization", {}).get("batch_size", -1)) != 16:
+opt = cfg.get("optimization", {})
+if int(opt.get("batch_size", -1)) != 16:
     raise SystemExit("stale DualPool batch_size: must be 16")
+if int(opt.get("medium_count_limit", -1)) != 224 or int(opt.get("large_count_limit", -1)) != 32:
+    raise SystemExit("DualPool limits must stay 224 medium + 32 large")
+if int(opt.get("replay_capacity", -1)) != 256:
+    raise SystemExit("replay_capacity must equal 224+32=256")
+norm = Path("$NORMALIZATION_PATH")
+sha = hashlib.sha256(norm.read_bytes()).hexdigest()
+if sha != "$EXPECTED_NORM_SHA":
+    raise SystemExit(f"normalization SHA mismatch: {sha}")
 cfg["seed"] = int("$seed")
 cfg["run_name"] = f"bipartite_gcnn_prim_feat_pilot_seed{int('$seed')}"
 cfg["output_dir"] = "$out"
 cfg["environment"]["seed"] = int("$seed")
+cfg["normalization_path"] = str(norm)
 Path("$cfg").write_text(yaml.safe_dump(cfg, sort_keys=False))
-print("wrote", "$cfg", "->", "$out")
+print("wrote", "$cfg", "->", "$out", "norm", sha)
 PY
   echo "[$(date '+%F %T')] launch seed=$seed gpu=$gpu"
   CUDA_VISIBLE_DEVICES="$gpu" python scripts/train_gcnn.py --config "$cfg" \
@@ -61,66 +92,40 @@ for i in "${!pids[@]}"; do
   fi
 done
 
-python - <<'PY'
+python - <<PY
 import json, csv
 from pathlib import Path
 
-root = Path("artifacts/models/gcnn_prim_feat")
+root = Path("$OUT_ROOT")
+expected = "$EXPECTED_NORM_SHA"
 rows = []
 for seed_dir in sorted(root.glob("seed*")):
     hist = seed_dir / "training_history.csv"
     best_pt = seed_dir / "best_model_scripted.pt"
-    if not best_pt.is_file():
-        rows.append({"seed": seed_dir.name, "status": "missing"})
-        continue
-    best_val = None
-    if hist.is_file():
-        for r in csv.DictReader(hist.open()):
-            if r.get("event") != "validation":
-                continue
-            raw = r.get("validation_nodes", "")
-            if raw in ("", None):
-                continue
-            try:
-                val = float(raw)
-            except ValueError:
-                continue
-            best_val = val if best_val is None else min(best_val, val)
-    rows.append({
+    summary_path = seed_dir / "summary.json"
+    sha = None
+    if summary_path.is_file():
+        sha = json.loads(summary_path.read_text()).get("normalization_sha256")
+    if sha and sha != expected:
+        raise SystemExit(f"{seed_dir} normalization SHA {sha} != {expected}")
+    row = {
         "seed": seed_dir.name.replace("seed", ""),
-        "status": "ok",
-        "best_validation_nodes": best_val,
-        "model": str(best_pt),
-    })
+        "status": "ok" if best_pt.is_file() else "missing",
+        "model": str(best_pt) if best_pt.is_file() else "",
+        "normalization_sha256": sha,
+    }
+    rows.append(row)
 
-ok = [r for r in rows if r["status"] == "ok" and r["best_validation_nodes"] is not None]
-ok.sort(key=lambda r: r["best_validation_nodes"])
-summary = {"seeds": rows, "best_seed": ok[0]["seed"] if ok else None}
-if ok:
-    best_dir = root / f"seed{ok[0]['seed']}"
-    # promote best to canonical paths used by phaseB eval
-    for name in (
-        "best_model.pt",
-        "best_model_scripted.pt",
-        "last_model.pt",
-        "last_model_scripted.pt",
-        "feature_schema.json",
-        "config.yaml",
-        "normalization.json",
-        "parity_observation.npz",
-        "training_history.csv",
-    ):
-        src = best_dir / name
-        dst = root / name
-        if src.is_file():
-            dst.write_bytes(src.read_bytes())
-    summary["promoted_from"] = str(best_dir)
-
+summary = {
+    "seeds": rows,
+    "best_seed": None,
+    "normalization_sha256": expected,
+    "selection_rule": "pdi_gap_composite_not_implemented",
+    "note": "do not promote by minimum validation nodes; wait for frozen PDI/gap ranking",
+}
 (root / "seed_ranking.json").write_text(json.dumps(summary, indent=2) + "\n")
-Path("results/outputs").mkdir(parents=True, exist_ok=True)
-Path("results/outputs/phaseB_seed_ranking.json").write_text(json.dumps(summary, indent=2) + "\n")
 print(json.dumps(summary, indent=2))
 PY
 
-echo "[$(date '+%F %T')] Phase B 4-GPU train DONE fail=$fail"
+echo "[$(date '+%F %T')] seed-parallel train DONE fail=$fail"
 exit "$fail"

@@ -1,0 +1,59 @@
+{
+  "normalization_path": "results/probes/shared_normalization.json",
+  "sha256": "62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24",
+  "excluded_instances": [
+    "real_04"
+  ],
+  "source_instances": {
+    "real_01": {
+      "path": "data/instances/transfer/real_01.cip",
+      "states": 2,
+      "time_limit": 180.0,
+      "node_limit": 20,
+      "variable_count": 4692,
+      "row_count": 21794
+    },
+    "real_02": {
+      "path": "data/instances/transfer/real_02.cip",
+      "states": 2,
+      "time_limit": 300.0,
+      "node_limit": 20,
+      "variable_count": 14755,
+      "row_count": 63300
+    },
+    "real_03": {
+      "path": "data/instances/transfer/real_03.cip",
+      "states": 2,
+      "time_limit": 180.0,
+      "node_limit": 20,
+      "variable_count": 4450,
+      "row_count": 14683
+    },
+    "real_05": {
+      "path": "data/instances/transfer/real_05.cip",
+      "states": 2,
+      "time_limit": 180.0,
+      "node_limit": 20,
+      "variable_count": 5490,
+      "row_count": 18799
+    },
+    "real_06": {
+      "path": "data/instances/train/real_06.cip",
+      "states": 2,
+      "time_limit": 180.0,
+      "node_limit": 20,
+      "variable_count": 4027,
+      "row_count": 8930
+    },
+    "real_07": {
+      "path": "data/instances/train/real_07.cip",
+      "states": 2,
+      "time_limit": 180.0,
+      "node_limit": 20,
+      "variable_count": 5889,
+      "row_count": 20919
+    }
+  },
+  "states_per_instance": 2,
+  "readonly": true
+}

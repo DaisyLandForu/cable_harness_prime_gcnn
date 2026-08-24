@@ -5,7 +5,7 @@ from typing import Any
 import yaml
 
 from .config import BBMDPConfig, RewardMode
-from .graph_replay import LOGICAL_BATCH_SIZE
+from .graph_replay import LARGE_COUNT_LIMIT, LARGE_SAMPLE_QUOTA, LOGICAL_BATCH_SIZE, MEDIUM_COUNT_LIMIT
 
 
 @dataclass(frozen=True)
@@ -39,7 +39,9 @@ class GCNNModelConfig:
 class GCNNOptimizationConfig:
     total_gradient_steps: int = 100
     batch_size: int = LOGICAL_BATCH_SIZE
-    replay_capacity: int = 32
+    medium_count_limit: int = MEDIUM_COUNT_LIMIT
+    large_count_limit: int = LARGE_COUNT_LIMIT
+    replay_capacity: int = MEDIUM_COUNT_LIMIT + LARGE_COUNT_LIMIT
     min_replay_size: int = LOGICAL_BATCH_SIZE
     learning_rate: float = 0.0003
     updates_per_env_step: int = 4
@@ -56,6 +58,17 @@ class GCNNOptimizationConfig:
         if self.batch_size != LOGICAL_BATCH_SIZE:
             raise ValueError(
                 "GCNN DualPool always samples 16 graphs; set optimization.batch_size=16"
+            )
+        if self.medium_count_limit < LOGICAL_BATCH_SIZE:
+            raise ValueError("medium_count_limit must be at least the DualPool logical batch of 16")
+        if self.large_count_limit < LARGE_SAMPLE_QUOTA:
+            raise ValueError("large_count_limit must be at least the DualPool large quota of 4")
+        expected_capacity = self.medium_count_limit + self.large_count_limit
+        if self.replay_capacity != expected_capacity:
+            raise ValueError(
+                "optimization.replay_capacity must equal medium_count_limit + "
+                f"large_count_limit ({self.medium_count_limit}+{self.large_count_limit}"
+                f"={expected_capacity}); DualPool does not use a flat 2048-slot buffer"
             )
         if self.min_replay_size < LOGICAL_BATCH_SIZE:
             raise ValueError("min_replay_size must be at least the DualPool logical batch of 16")
@@ -103,6 +116,14 @@ class GCNNTrainingConfig:
     normalization_warmup_states: int = 2
     normalization_path: str = ""
     log_interval_steps: int = 10
+    wall_time_limit: float = 0.0
+    require_mix_16_0: bool = False
+    require_mix_12_4: bool = False
+    skip_mid_validation: bool = False
+    skip_final_comparison: bool = False
+    deploy_retest_instance: str = ""
+    deploy_retest_seed_overlay: str = ""
+    deploy_retest_solve_node_limit: int = 2
 
     def __post_init__(self) -> None:
         if not self.train_instances or not self.validation_instances:
@@ -113,6 +134,14 @@ class GCNNTrainingConfig:
             raise ValueError("GCNN device must be cpu or cuda")
         if self.normalization_warmup_states <= 0:
             raise ValueError("normalization_warmup_states must be positive")
+        if self.wall_time_limit < 0.0:
+            raise ValueError("wall_time_limit must be non-negative")
+        if self.require_mix_12_4 and not any(
+            Path(path).stem.startswith("real_02") for path in self.train_instances
+        ):
+            raise ValueError("require_mix_12_4 needs a real_02 train instance")
+        if self.deploy_retest_solve_node_limit < 1:
+            raise ValueError("deploy_retest_solve_node_limit must be at least 1")
 
     @classmethod
     def from_yaml(cls, path: Path | str) -> "GCNNTrainingConfig":
@@ -133,6 +162,14 @@ class GCNNTrainingConfig:
             "normalization_warmup_states",
             "normalization_path",
             "log_interval_steps",
+            "wall_time_limit",
+            "require_mix_16_0",
+            "require_mix_12_4",
+            "skip_mid_validation",
+            "skip_final_comparison",
+            "deploy_retest_instance",
+            "deploy_retest_seed_overlay",
+            "deploy_retest_solve_node_limit",
         }
         unknown = set(raw) - expected
         if unknown:
@@ -159,6 +196,14 @@ class GCNNTrainingConfig:
             normalization_warmup_states=int(raw.get("normalization_warmup_states", 2)),
             normalization_path=str(raw.get("normalization_path", "")),
             log_interval_steps=int(raw.get("log_interval_steps", 10)),
+            wall_time_limit=float(raw.get("wall_time_limit", 0.0)),
+            require_mix_16_0=bool(raw.get("require_mix_16_0", False)),
+            require_mix_12_4=bool(raw.get("require_mix_12_4", False)),
+            skip_mid_validation=bool(raw.get("skip_mid_validation", False)),
+            skip_final_comparison=bool(raw.get("skip_final_comparison", False)),
+            deploy_retest_instance=str(raw.get("deploy_retest_instance", "")),
+            deploy_retest_seed_overlay=str(raw.get("deploy_retest_seed_overlay", "")),
+            deploy_retest_solve_node_limit=int(raw.get("deploy_retest_solve_node_limit", 2)),
         )
 
     def to_dict(self) -> dict[str, Any]:

@@ -7,7 +7,16 @@ import torch
 
 from rl_branching.gcnn_config import GCNNOptimizationConfig, GCNNTrainingConfig
 from rl_branching.gcnn_dqn import GraphDoubleDQNLearner, stable_graph_argmax
-from rl_branching.gcnn_trainer import InstanceQuotaGuard, load_shared_normalizer
+from rl_branching.gcnn_trainer import (
+    EXCLUDED_NORMALIZATION_STEMS,
+    InstanceQuotaGuard,
+    SHARED_NORMALIZATION_INSTANCES,
+    _ecole_action,
+    _ready_for_update,
+    _select_mix_instance,
+    build_shared_normalization,
+    load_shared_normalizer,
+)
 from rl_branching.gcnn_model import BipartiteGCNNQNetwork, export_gcnn_torchscript
 from rl_branching.graph_features import (
     GraphState,
@@ -93,6 +102,10 @@ def test_union_twohop_keeps_candidate_rows_and_all_row_variables():
     assert twohop.row_features.shape[0] == 3
     assert twohop.actions.tolist() == [0, 1, 2]
     assert twohop.candidate_names == full.candidate_names
+    original_actions = np.asarray(full.actions)
+    assert original_actions.tolist() == [0, 2, 4]
+    assert _ecole_action(original_actions, twohop, 1) == 2
+    assert _ecole_action(original_actions, twohop, 1) != int(twohop.actions[1])
     assert graph_state_storage_bytes(twohop) > 0
     assert transition_storage_bytes(twohop, twohop) == (
         2 * graph_state_storage_bytes(twohop) + 64
@@ -419,22 +432,130 @@ def test_all_gcnn_configs_load():
         ("ablation_hlgauss.yaml", "hl_gauss"),
         ("ablation_no_categories.yaml", "scalar"),
         ("ablation_no_global.yaml", "scalar"),
+        ("gcnn_r1.yaml", "scalar"),
     ):
         config = GCNNTrainingConfig.from_yaml(Path("configs/rl") / name)
         assert config.model.loss_mode == mode
-        assert config.optimization.n_step == (1 if name == "ablation_nstep1.yaml" else 3)
+        assert config.optimization.n_step == (
+            1 if name in {"ablation_nstep1.yaml", "gcnn_r1.yaml"} else 3
+        )
         assert config.optimization.gamma == 1.0
         assert config.optimization.batch_size == LOGICAL_BATCH_SIZE
 
 
-def test_stale_batch_size_is_rejected():
+def test_stale_replay_capacity_is_rejected():
     try:
-        GCNNOptimizationConfig(batch_size=2)
+        GCNNOptimizationConfig(replay_capacity=2048)
         raised = False
     except ValueError as error:
         raised = True
-        assert "batch_size=16" in str(error)
+        assert "medium_count_limit" in str(error)
     assert raised
+    matched = GCNNOptimizationConfig()
+    assert matched.replay_capacity == 256
+    assert matched.medium_count_limit == 224
+    assert matched.large_count_limit == 32
+
+
+def test_mix_gate_selects_medium_then_real_02():
+    guard = InstanceQuotaGuard(
+        (
+            "data/instances/train/syn_medium_s101.cip",
+            "data/instances/train/real_06.cip",
+            "data/instances/transfer/real_02.cip",
+        )
+    )
+    first = _select_mix_instance(
+        guard,
+        require_mix_16_0=True,
+        require_mix_12_4=True,
+        mix_16_0=0,
+        mix_12_4=0,
+    )
+    assert Path(first).stem == "syn_medium_s101"
+    second = _select_mix_instance(
+        guard,
+        require_mix_16_0=True,
+        require_mix_12_4=True,
+        mix_16_0=1,
+        mix_12_4=0,
+    )
+    assert Path(second).stem == "real_02"
+
+
+def test_ready_for_update_uses_min_replay_size_and_mix_pause():
+    replay = DualPoolGraphReplay(seed=0)
+    _fill_dual_pool(replay, medium=16, large=0)
+    assert _ready_for_update(
+        replay,
+        min_replay_size=16,
+        require_mix_16_0=True,
+        require_mix_12_4=True,
+        mix_16_0=0,
+        mix_12_4=0,
+    )
+    assert not _ready_for_update(
+        replay,
+        min_replay_size=128,
+        require_mix_16_0=False,
+        require_mix_12_4=False,
+        mix_16_0=0,
+        mix_12_4=0,
+    )
+    _fill_dual_pool(replay, medium=0, large=4)
+    assert not _ready_for_update(
+        replay,
+        min_replay_size=16,
+        require_mix_16_0=True,
+        require_mix_12_4=True,
+        mix_16_0=0,
+        mix_12_4=0,
+    )
+    assert _ready_for_update(
+        replay,
+        min_replay_size=16,
+        require_mix_16_0=True,
+        require_mix_12_4=True,
+        mix_16_0=1,
+        mix_12_4=0,
+    )
+
+
+def test_r1_config_wires_dualpool_and_mix_gates():
+    config = GCNNTrainingConfig.from_yaml(Path("configs/rl/gcnn_r1.yaml"))
+    assert config.require_mix_16_0 and config.require_mix_12_4
+    assert config.optimization.updates_per_env_step == 1
+    assert config.optimization.medium_count_limit == 224
+    assert config.optimization.large_count_limit == 32
+    assert config.optimization.replay_capacity == 256
+    assert config.optimization.min_replay_size == 16
+    assert config.wall_time_limit == 600.0
+    assert Path(config.normalization_path).name == "shared_normalization.json"
+    replay = DualPoolGraphReplay(
+        config.seed,
+        medium_count_limit=config.optimization.medium_count_limit,
+        large_count_limit=config.optimization.large_count_limit,
+    )
+    assert replay.medium.count_limit == 224
+    assert replay.large.count_limit == 32
+
+
+def test_shared_normalization_contract_excludes_real_04(tmp_path: Path):
+    try:
+        build_shared_normalization(
+            tmp_path / "normalization.json",
+            instances=("data/instances/transfer/real_04.cip",),
+            states_per_instance=2,
+        )
+        raised = False
+    except ValueError as error:
+        raised = True
+        assert "real_04" in str(error)
+    assert raised
+    assert EXCLUDED_NORMALIZATION_STEMS == frozenset({"real_04"})
+    stems = {Path(path).stem for path in SHARED_NORMALIZATION_INSTANCES}
+    assert stems == {"real_01", "real_02", "real_03", "real_05", "real_06", "real_07"}
+    assert "real_04" not in stems
 
 
 def test_microbatch_one_backward_before_next_forward():

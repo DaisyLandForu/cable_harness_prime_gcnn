@@ -1,55 +1,65 @@
-run_name: bipartite_gcnn_scalar_smoke
+run_name: bipartite_gcnn_r1
 seed: 0
 device: cuda
-output_dir: artifacts/models/gcnn/smoke
+output_dir: artifacts/models/gcnn_r1
 train_instances:
   - data/instances/train/syn_medium_s101.cip
   - data/instances/train/real_06.cip
   - data/instances/transfer/real_02.cip
 validation_instances:
-  - data/instances/validation/real_08.cip
+  - data/instances/train/syn_medium_s101.cip
 environment:
   seed: 0
-  time_limit: 60.0
+  time_limit: 300.0
   node_limit: 30
   gamma: 1.0
   reward_mode: negative_node_increment
-  bootstrap_on_truncation: false
+  bootstrap_on_truncation: true
   cache_static_features: true
 model:
-  embedding_dim: 32
-  hidden_dim: 64
+  embedding_dim: 64
+  hidden_dim: 128
   loss_mode: scalar
   distributional_bins: 18
   z_min: -1.0
   z_max: 12.0
   hl_gauss_sigma: 0.75
 optimization:
-  total_gradient_steps: 100
+  # Stop after both DualPool mixes are logged; this is a safety cap, not a target.
+  total_gradient_steps: 8
   batch_size: 16
   medium_count_limit: 224
   large_count_limit: 32
   replay_capacity: 256
   min_replay_size: 16
   learning_rate: 0.0003
-  updates_per_env_step: 4
-  n_step: 3
+  updates_per_env_step: 1
+  n_step: 1
   gamma: 1.0
   gradient_clip: 10.0
   target_tau: 0.02
   per_alpha: 0.6
   per_beta_start: 0.4
-  per_beta_steps: 100
+  per_beta_steps: 8
   per_epsilon: 0.00001
 exploration:
   epsilon_start: 1.0
   epsilon_end: 0.1
-  decay_steps: 80
+  decay_steps: 8
   boltzmann_temperature: 0.0
 evaluation:
   seeds: [100]
-  interval_steps: 50
-  early_stopping_patience: 3
+  interval_steps: 100000
+  early_stopping_patience: 8
   compare_seeds: [100]
+normalization_path: results/probes/shared_normalization.json
 normalization_warmup_states: 2
-log_interval_steps: 5
+log_interval_steps: 1
+wall_time_limit: 600.0
+require_mix_16_0: true
+require_mix_12_4: true
+skip_mid_validation: true
+skip_final_comparison: true
+deploy_retest_instance: data/instances/train/syn_medium_s101.cip
+deploy_retest_seed_overlay: results/probes/syn_medium_s101_seed_overlay.txt
+deploy_retest_solve_node_limit: 2
