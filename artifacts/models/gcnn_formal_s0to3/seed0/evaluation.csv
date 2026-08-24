@@ -1,0 +1,10 @@
+method,instance,seed,policy_seed,status,nodes,solving_time,reward,transitions,mean_rank,inference_time,pdi,final_gap,par2,first_solution_time,solved,lp_iterations,node_reward,lp_reward,total_reward,reward_identity_ok,trainer_truncated
+random,data/instances/validation/real_08.cip,100,10111,optimal,1,9.724552,0.0,0,0.0,0.0,inf,0.0,9.724552,9.724552,1.0,8436,0.0,0.0,0.0,True,False
+untrained,data/instances/validation/real_08.cip,100,10123,optimal,1,9.5458,0.0,0,0.0,0.0,inf,0.0,9.5458,9.5458,1.0,8436,0.0,0.0,0.0,True,False
+rl,data/instances/validation/real_08.cip,100,10137,optimal,1,10.634267,0.0,0,0.0,0.0,inf,0.0,10.634267,10.634267,1.0,8436,0.0,0.0,0.0,True,False
+random,data/instances/validation/real_08.cip,101,10212,optimal,23,37.077315,-22.941999999999993,23,0.0,0.0,inf,0.0,37.077315,22.830291,1.0,20967,-22.0,-0.9420000000000001,-22.941999999999993,True,False
+untrained,data/instances/validation/real_08.cip,101,10224,timelimit,56,61.440786,-55.01850000000003,51,1.0,0.42379676550626755,inf,1e+20,120.0,inf,0.0,11732,-55.0,-0.018499999999999992,-55.01850000000003,True,True
+rl,data/instances/validation/real_08.cip,101,10238,optimal,53,57.689705000000004,-52.07370000000001,52,1.0,0.4118342697620392,inf,0.0,57.689705000000004,57.689705000000004,1.0,12284,-52.0,-0.07370000000000002,-52.07370000000001,True,False
+random,data/instances/validation/real_08.cip,102,10313,optimal,14,20.640482,-13.0589,14,0.0,0.0,inf,0.0,20.640482,20.640482,1.0,12123,-13.0,-0.0589,-13.0589,True,False
+untrained,data/instances/validation/real_08.cip,102,10325,timelimit,56,60.849639,-55.24210000000003,55,1.0,0.42721022479236126,inf,1e+20,120.0,inf,0.0,13955,-55.0,-0.2420999999999999,-55.24210000000003,True,True
+rl,data/instances/validation/real_08.cip,102,10339,timelimit,47,60.026239,-47.26720000000002,46,1.0,0.3650459963828325,inf,0.10191523184319831,120.0,38.496592,0.0,24206,-46.0,-1.2671999999999999,-47.26720000000002,True,True

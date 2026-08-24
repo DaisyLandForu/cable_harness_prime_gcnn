@@ -1,0 +1,16 @@
+{
+  "rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+  "missing_value": "inf",
+  "tie_break": "earlier_gradient_step then lower_seed",
+  "best": {
+    "rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+    "gradient_step": 1500,
+    "seed": 3,
+    "solved_rate": 1.0,
+    "mean_pdi": Infinity,
+    "mean_final_gap": 0.0,
+    "mean_par2": 8.980678,
+    "mean_lp": 8436.0,
+    "mean_nodes": 1.0
+  }
+}

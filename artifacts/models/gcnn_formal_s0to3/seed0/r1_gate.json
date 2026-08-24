@@ -1,0 +1,15 @@
+{
+  "stop_reason": "gradient_steps",
+  "mix_16_0": 2400,
+  "mix_12_4": 600,
+  "optimizer_steps": 3000,
+  "finite_metrics": true,
+  "torchscript_exported": true,
+  "replay_medium_count": 224,
+  "replay_large_count": 32,
+  "replay_evictions_by_count": 516,
+  "replay_evictions_by_bytes": 0,
+  "bootstrap_target_updates": 3000,
+  "deploy_retest": {},
+  "passed": true
+}

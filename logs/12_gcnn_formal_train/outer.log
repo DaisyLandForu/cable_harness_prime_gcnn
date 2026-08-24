@@ -1,0 +1,100 @@
+[2026-08-24 22:56:32] seed-parallel train start gpus=0 1 2 3 seeds=0 1 2 3 norm_sha=62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed0.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed0 norm 62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24
+[2026-08-24 22:56:32] launch seed=0 gpu=0
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed1.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed1 norm 62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24
+[2026-08-24 22:56:32] launch seed=1 gpu=1
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed2.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed2 norm 62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24
+[2026-08-24 22:56:32] launch seed=2 gpu=2
+wrote /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/configs/rl/generated/gcnn_prim_feat_pilot_seed3.yaml -> /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed3 norm 62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24
+[2026-08-24 22:56:32] launch seed=3 gpu=3
+[2026-08-25 00:11:27] seed=0 OK
+[2026-08-25 00:11:27] seed=1 OK
+[2026-08-25 00:11:27] seed=2 OK
+[2026-08-25 00:11:27] seed=3 OK
+{
+  "requested_seeds": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "seeds": [
+    {
+      "seed": "0",
+      "status": "ok",
+      "model": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed0/best_model_scripted.pt",
+      "normalization_sha256": "62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24",
+      "selection": {
+        "rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+        "gradient_step": 1040,
+        "seed": 0,
+        "solved_rate": 1.0,
+        "mean_pdi": Infinity,
+        "mean_final_gap": 0.0,
+        "mean_par2": 9.004817,
+        "mean_lp": 8436.0,
+        "mean_nodes": 1.0
+      },
+      "history": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed0/training_history.csv"
+    },
+    {
+      "seed": "1",
+      "status": "ok",
+      "model": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed1/best_model_scripted.pt",
+      "normalization_sha256": "62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24",
+      "selection": {
+        "rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+        "gradient_step": 1516,
+        "seed": 1,
+        "solved_rate": 1.0,
+        "mean_pdi": Infinity,
+        "mean_final_gap": 0.0,
+        "mean_par2": 8.962051,
+        "mean_lp": 8436.0,
+        "mean_nodes": 1.0
+      },
+      "history": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed1/training_history.csv"
+    },
+    {
+      "seed": "2",
+      "status": "ok",
+      "model": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed2/best_model_scripted.pt",
+      "normalization_sha256": "62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24",
+      "selection": {
+        "rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+        "gradient_step": 2028,
+        "seed": 2,
+        "solved_rate": 1.0,
+        "mean_pdi": Infinity,
+        "mean_final_gap": 0.0,
+        "mean_par2": 8.848901,
+        "mean_lp": 8436.0,
+        "mean_nodes": 1.0
+      },
+      "history": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed2/training_history.csv"
+    },
+    {
+      "seed": "3",
+      "status": "ok",
+      "model": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed3/best_model_scripted.pt",
+      "normalization_sha256": "62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24",
+      "selection": {
+        "rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+        "gradient_step": 1500,
+        "seed": 3,
+        "solved_rate": 1.0,
+        "mean_pdi": Infinity,
+        "mean_final_gap": 0.0,
+        "mean_par2": 8.980678,
+        "mean_lp": 8436.0,
+        "mean_nodes": 1.0
+      },
+      "history": "/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/models/gcnn_formal_s0to3/seed3/training_history.csv"
+    }
+  ],
+  "best_seed": null,
+  "normalization_sha256": "62d8ce546167a50d23c79389609a91d88eae351a7f83d76f8f11284eaa31cc24",
+  "selection_rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+  "note": "independent single-GPU seeds; do not promote across seeds"
+}
+[2026-08-25 00:11:27] seed-parallel train DONE fail=0
