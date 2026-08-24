@@ -1,8 +1,8 @@
 # 航空线束 MILP 分支强化学习：`cable_harness_prim_gcnn` 技术方案与实验事实
 
 > 用途：作为可交给外部模型评估的自包含事实底稿。  
-> 数据截止：2026-08-23；工作区：`cable_harness_prim_gcnn/`。  
-> 请严格基于本文评估，不要虚构未做的实验，不要把 pilot 当成正式结论，不要声称当前 RL 已经超过 SCIP-default。
+> 数据截止：2026-08-25；工作区：`cable_harness_prim_gcnn/`。  
+> 请严格基于本文评估，不要虚构未做的实验，不要把 pilot / 单 seed 当成多 seed 正式结论，不要用 nodes 单独定胜负。
 
 相关分阶段原稿：`docs/FINAL_RL_BRANCHING_REPORT.md`、`docs/PROJECT_HANDOFF_FOR_CHATGPT.md`、`docs/gcnn_report.md`、`results/outputs/phaseA_*.md`、`results/outputs/phaseB_*.md`、`results/c0_prim_decomposition/C0_PRIM_DECOMPOSITION.md`、`88/`。仓库总览见根目录 [`EXPERIMENT_REPORT.md`](../../EXPERIMENT_REPORT.md)。
 
@@ -10,14 +10,10 @@
 
 ## 0. 一句话结论（先读）
 
-工程闭环已经打通：SCIP 8.0.4 + Ecole BBMDP + Candidate MLP / 二部图 GCNN-DQN + C++ TorchScript 部署 + 双协议评测。
-**策略质量尚未达到可部署标准。**
+工程闭环已经打通：SCIP 8.0.4 + Ecole BBMDP + Candidate MLP / 二部图 GCNN-DQN + C++ TorchScript 部署。
+**旧 30s 双协议上，策略质量尚未达到可部署标准。** 当前最强的 *learned* 30s 变体仍是冻结旧 GCNN + 解码偏置 `score = Q + 0.5 · PrimScore`（阶段 A），跨实例符号会翻转，不能替换 SCIP-default。
 
-当前最强的 *learned* 变体不是再训练后的 Prim-GCNN，而是：
-
-> **冻结旧 GCNN + 解码偏置 `score = Q + 0.5 · PrimScore`（阶段 A）**
-
-它能纠偏弱势 GCNN，并在 `real_01` 上出现大幅节点/墙钟收益；但跨实例符号会翻转（`real_05` 可变灾难），整体仍未稳定超过 SCIP `default` / `random` / `mostinf`。后续诊断（C0）表明：`real_01` 的收益来自**非空生长集上的割边/连通先验**，不是 root 上的空集 z 先验。C1 模仿学习因 Strong Branching teacher 退化而暂停。
+**2026-08-25 更新（DSU-Prime-GCNN，`real_04`，seed0，7200s）**：最大实例已经进入 B&B，可以评 branching。相对同期重跑的 `project-default` / `random`，正式权重的 DSU-Prime-GCNN **PDI 最低、首解最快**，推理开销 0.82%、构图+选择总开销 5.4%，均低于 10% 门禁，且 `fallback=0`。但它在 7200s 内 **未证明最优**（final gap 0.017%），而 default / random 分别在 6689s / 6141s 证到 `optimal`。这是 **单 seed、三路并行** 的结果，不能外推为稳定部署结论，也不能按 `real_04` 回头选模。详见 §5.10。
 
 ---
 
@@ -93,7 +89,7 @@ Phase B      6 维 Prim 特征拼进变量节点，在线 DQN 再训
 Phase C0     Prim 拆解（z / root-z / full-prim / topology-only）
 Phase C1     SB ranking 采数（pilot 失败）
 Phase C1.1   SB teacher repair（当前允许推进，尚未通过门禁）
-Phase C2–C6  未实现：cheap ranker / DSU topology / confidence gate / RL fine-tune / real_04
+Phase DSU    DSU-Prime-GCNN：候选精确二跳 + Stage A/B 正式训练 + `real_04` 7200s 评测（§5.10）
 ```
 
 硬禁令（已写入方法契约）：禁止 hard-mask `prim_both_in`；禁止以最小节点数为唯一训练/选模目标；禁止用 test/transfer 调参；禁止在 C1.1 未通过时扩 30k 采数。
@@ -387,11 +383,73 @@ pilot_v2：132 states，0 crash，但：
 
 根因（已验证）：Ecole `StrongBranchingScores` 在该家族上 **没有真正做 SB LP**（二次 extract 的 NLPIterations delta=0），分数几乎全是地板 `1e-12`。PySCIPOpt 无 `startStrongbranch` 绑定，native 路径必须走 SCIP C++。
 
-C1.1 teacher repair 是当前允许推进的阶段，门禁：SB valid-state ≥60% 才允许扩到 ≥20k 高质量 SB。**尚未宣布通过。** C2–C6 未实现。
+C1.1 teacher repair 是当前允许推进的阶段，门禁：SB valid-state ≥60% 才允许扩到 ≥20k 高质量 SB。**尚未宣布通过。** 其后的 cheap ranker / confidence gate 仍未做。DSU-Prime-GCNN 与 `real_04` 7200s 评测见 §5.10，不再走 C1→C6 那条线。
+
+### 5.10 DSU-Prime-GCNN：`real_04` seed0 7200s 结论
+
+这是当前 DSU 主线的第一份可比较 held-out 结果。口径按修订方案：主指标是固定预算下的 **final gap、PDI、首解时间、是否 optimal**；nodes 只作支撑，禁止单独定胜负。`real_04` 未参与 normalization、训练或选模。
+
+#### 设定
+
+| 项 | 值 |
+|---|---|
+| 实例 | `data/instances/transfer/real_04.cip`（326,502 vars / 5,168 int / 863,691 cons） |
+| 协议 | `project-production-v1`，threads=1，`estimate` node selector |
+| 方法 | `project-default`（relpscost）/ `random`（custom-random）/ **DSU-Prime-GCNN** |
+| 时限 | 7200s，node_limit=-1 |
+| seed | 0（未补 1/2） |
+| 模型 | `artifacts/models/gcnn_formal_s0to3/seed0/best_model_scripted.pt`（Stage A 2400×16+0 + Stage B 600×12+4；在 `real_08` 上按 PDI/gap/PAR-2 选出，step=1040） |
+| 配置 | `configs/experiments/real04_formal_seed0.json` |
+| 产物 | `results/12_real04_formal_seed0_three_method/` |
+| 并行 | workers=3，三路同时跑；相对排序有效，绝对墙钟可能慢于串行隔离跑 |
+
+对照：`results/11_seed0_three_method_quicklook/` 是同一实例、同一协议、3600s、**R1 近乎未训权重**（约 2 次更新），不能与本表混称“正式训练结论”。
+
+#### 7200s 主表（seed0）
+
+| 方法 | 状态 | gap | PDI ↓ | 首解 (s) ↓ | 节点 | LP iter | 墙钟 (s) | 接管 | fallback | 非法 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **DSU-Prime-GCNN** | time_limit | 0.017% | **9.18e4** | **852** | 945 | 464k | 7204 | 1994 | 0 | 0 |
+| project-default | **optimal** | **0** | 1.79e5 | 1789 | 2556 | 224k | 6689 | 0 | 0 | 0 |
+| random | **optimal** | **0** | 3.02e5 | 2944 | 1992 | 395k | 6141 | 1947 | 0 | 0 |
+
+相对 default：PDI 低约 **49%**，首解快约 **2.1×**。相对 random：PDI 低约 **70%**，首解快约 **3.5×**。三方法协议哈希一致（`scip_profile_sha256=91bdea83…`，`effective_search_params_sha256=3413ed82…`）。GCNN 推理 `rl_inference_total=59.4s`（占 solving time **0.82%**）；含构图的选择总耗时 `custom_selection_time_total=386s`（**5.4%**）。均低于 10% 开销门禁。
+
+#### 和 3600s R1 quick-look 的差别（同一 `real_04` / seed0）
+
+| 方法 | 3600s（R1 权重）gap / PDI / 首解 | 7200s（正式权重）gap / PDI / 首解 |
+|---|---|---|
+| project-default | 0.019% / 1.76e5 / 1758s | **optimal 0** / 1.79e5 / 1789s |
+| DSU-Prime-GCNN | 3.03% / 1.97e5 / 1925s | 0.017% / **9.18e4** / **852s** |
+| random | 3.87% / 2.95e5 / 2918s | **optimal 0** / 3.02e5 / 2944s |
+
+正式 Stage A/B 权重把 GCNN 从“劣于 default、略好于 random”改成“PDI 与首解最好、gap 接近但未证优”。default 的 3600s 可行解与 7200s 证优用的是同一 primal 量级（约 3.07254 → 3.07196）。random 在 3600s 仍有 3.87% gap，多给的一小时里证到了最优——说明 **3600s 不够给 random/GCNN 下“证优”结论**，7200s 才分开了“找可行解”和“收紧证明”。
+
+#### 可以下的结论
+
+1. **工程门禁通过**：GCNN 真正接管 1994 次，非法候选 0，静默 fallback 0，无 OOM/NaN/crash，开销 <10%。旧 30s 协议上“`real_04` 未进 B&B、无法评 branching”这条，在 7200s 生产协议下已经作废。
+2. **PDI / 首解：GCNN 明显更好。** 它更早给出可行解（852s vs 1789/2944），所以整段预算的 primal-dual 积分最低。这正是方案指定的主指标之一。
+3. **证优 / 最终 gap：GCNN 尚未赢。** default 与 random 在时限内把 gap 收到 0；GCNN 打满 7200s 仍剩 0.017%。不能写成“已经可以替换 SCIP-default”。
+4. **不能用节点数宣称胜利。** GCNN 945 节点 vs default 2556，但 default 已经最优；历史已有“节点更少、gap 更差”的反例，本表 gap 方向虽未恶化到那个程度，仍禁止用 nodes 单独定胜负。
+
+#### 还不能下的结论
+
+- 不能外推到 seed 1/2 或其它线束实例；方案要求三 seed 上 PDI 或 gap 相对 default **稳定**改善，目前只有 seed0。
+- 不能根据本表在四个训练 seed 间重挑模型（`best_seed` 保持为 null；本评测固定用 seed0 的 `real_08` checkpoint）。
+- `real_08` 选模信号弱：验证实例常在 1 个节点就最优，PDI 记成 inf，实际靠 PAR-2 打破平手。seed0 选出的是 step 1040，不是 3000 步 last 权重。
+- workers=3 有 CPU 争用；若要严格 wall-time 论文数字，应 workers=1 重跑。
+
+复现：
+
+```bash
+python scripts/run_final_experiments.py --config configs/experiments/real04_formal_seed0.json
+```
 
 ---
 
-## 6. 失败原因（已写入报告，评估时应逐条审视）
+## 6. 失败原因（30s / Prim 线，评估时应逐条审视）
+
+下列 12 条主要针对阶段 8 与 Prim-A/B/C1，**不要直接套到 §5.10 的 DSU 7200s 单次结果上**。DSU 线已改：多真实实例训练、hybrid 奖励、生产协议统一、`real_04` 已进 B&B；仍缺的是多 seed 稳定性与证优。
 
 1. **训练分布过窄**：正式 GCNN 实际 1 个实例；B 也只有 2 个。
 2. **训练预算过小**：GCNN 1000–3000 gradient steps、单/四训练 seed，对高维图策略不够。
@@ -402,7 +460,7 @@ C1.1 teacher repair 是当前允许推进的阶段，门禁：SB valid-state ≥
 7. **GCNN 成本**：每次 callback 重建动态大图；活跃运行推理约 9.4%；短实例 CUDA 冷启动可占主导。
 8. **全树接管**：高优先级 + `max_depth=-1`，模型失败时才看到 relpscost，没有置信度门控。
 9. **Prim 过粗且不可自适应**：固定 λ，跨实例可正可负。
-10. **大实例不可评**：`real_04` 30s 耗尽在 presolve。
+10. **大实例曾不可评**：旧 30s 协议下 `real_04` 耗尽在 presolve。7200s 生产协议下已进入 B&B（§5.10）；当前缺口改成“单 seed、未证优”。
 11. **教师信号失败**：C1 没采到真正的 SB ranking 标签。
 12. **1 轮 mean MP**：图模型容量可能不足以表达连通扩张（C0 却显示连通先验有效），特征和网络可能不匹配。
 
@@ -412,11 +470,12 @@ C1.1 teacher repair 是当前允许推进的阶段，门禁：SB valid-state ≥
 
 | 优先级 | 策略 | 依据 |
 |---|---|---|
-| 1 研究折中 | **旧 rl-gcnn + Prim decode λ=0.5** | A / A-ext / B 中相对纯 GCNN 最稳；`real_01` 极强 |
-| 2 求解器基线 | **default / random / mostinf** | 阶段 8 上 mostinf 墙钟最好；random 也强于 RL |
-| 3 实验基线 | 旧 rl-mlp / B prim-feat | 未赢 random；B 未赢 A |
+| 1 `real_04` 研究候选 | **DSU-Prime-GCNN（正式 seed0 权重）** | 7200s 上 PDI/首解最好，开销合格；但未证优，仅 seed0 |
+| 2 `real_04` 求解器基线 | **project-default / random** | 7200s 内均证到 optimal；default 的 PDI 仍差于 GCNN |
+| 3 30s 中小实例研究折中 | 旧 rl-gcnn + Prim decode λ=0.5 | A / A-ext / B 中相对纯 GCNN 最稳；`real_01` 极强、跨实例会翻号 |
+| 4 30s 求解器基线 | default / random / mostinf | 阶段 8 上 mostinf 墙钟最好 |
 | 禁止当默认 | λ=1.0、当前 gated、hard-mask both_in | 灾难或未验证 |
-| 未完成 | C1.1+ 残差排序 / gate / multi-obj RL | 缺高质量 teacher |
+| 未完成 | C1.1+ 残差排序 / gate；`real_04` seeds 1/2 | 缺高质量 teacher；缺多 seed 稳定性 |
 
 预设最终验收（尚未达到）：vs default wall shifted-geomean ≥1.10×；vs random ≥1.05×；medium/hard paired win >60%；无不可控 >2× 变慢；推理+提取 < 总 wall 约 5–10%。
 
@@ -427,14 +486,14 @@ C1.1 teacher repair 是当前允许推进的阶段，门禁：SB valid-state ≥
 请从科研和方法论角度回答：
 
 1. **总体路线是否合理？** 在“不改 MILP、只学 branching”的约束下，BBMDP + Double DQN + GCNN + C++ 部署这条链，哪些步骤必要，哪些过早？
-2. **阶段 8 能否支持“RL 无效”？** 还是只能支持“当前预算/数据/奖励下无效”？最弱的统计环节是什么（30s、solved rate 低、`real_04` 未进 B&B、训练实例=1）？
+2. **阶段 8 能否支持“RL 无效”？** 还是只能支持“当前 30s 预算/数据/奖励下无效”？最弱的统计环节曾是 30s、`real_04` 未进 B&B、训练实例=1。DSU 7200s seed0 之后，这些问题哪些已经关闭、哪些变成“单 seed 未证优”？
 3. **Prim-A 是否构成有效结构先验？** C0 支持 topology connectivity，但跨实例符号翻转。固定 `Q+λ·Prim` 是否本质上不可部署？更合理的是可学习 α(s)、confidence gate，还是根本不该碰 hand-crafted Prim？
 4. **阶段 B 失败说明什么？** 是“特征无用”，还是“在线 DQN + 2 实例 + 3000 step 学不会先验”？若重做，应 imitation / listwise ranking / 更长 RL / 改图编码器，哪条更合理？
 5. **奖励设计是否致命？** 负节点增量 + 按节点选模 + 按墙钟验收，是否保证学偏？应改成什么（wall、PDI、SB-regret、推理代价）？
 6. **C1.1→C2 残差排序是否对症？** `Score=S_SCIP+Δ_θ`、SB teacher、listwise、浅层覆盖，能否同时解决：数据窄、目标错位、relpscost 过强、Prim 不可自适应、GCNN 太贵？有没有更简单的对照（例如只学何时信任 Prim / 只在 z-cut 上加权）？
 7. **GCNN 是否选错模型族？** 阶段 8 已显示 MLP 更便宜、GCNN 更慢；C0 又显示需要连通信息。静态 root encoder + cheap candidate MLP + DSU 连通特征，是否比动态二部图 GCNN 更匹配问题和部署约束？
 8. **实验设计缺陷清单**：协议污染、2-seed C0、单训练 seed 消融、test 参与 λ 扫描、30s 切掉 branching 空间。哪些必须先修，才能再谈“方法无效”？
-9. **若只能再做 1–2 个实验**，最有信息量的是什么？请给出可证伪假设、实例/协议、成功/失败标准。
+9. **若只能再做 1–2 个实验**，最有信息量的是什么？请给出可证伪假设、实例/协议、成功/失败标准。（当前最缺的是 `real_04` seeds 1/2 是否重复 PDI 优势。）
 10. **对组会/论文的诚实表述**：哪些是工程贡献，哪些是阴性科学结果，哪些还不能下结论。
 
-评估时请区分三层：**(A) 工程正确性**（已通过）、**(B) 科学信号**（Prim-A / C0 topology 有条件成立）、**(C) 部署价值**（当前没有）。
+评估时请区分三层：**(A) 工程正确性**（30s 线与 DSU 7200s 均通过）、**(B) 科学信号**（Prim-A / C0 topology 有条件成立；DSU 在 `real_04` seed0 上 PDI/首解有信号）、**(C) 部署价值**（30s 线没有；DSU 7200s 单 seed 也不能替换 default，因为未证优）。

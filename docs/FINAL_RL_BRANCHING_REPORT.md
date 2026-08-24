@@ -1,5 +1,8 @@
 # 航空布线 SCIP 强化学习分支最终可行性报告
 
+> 本文是 **30s 双协议、旧 GCNN/MLP** 的可行性终报。`real_04` 当时未进入 B&B。  
+> DSU-Prime-GCNN 正式训练与 `real_04` seed0 **7200s** 结论见 [`implementation_and_experiments.md` §5.10](implementation_and_experiments.md)。不要把两套协议的数字混在一张表里。
+
 ## 1. 结论摘要
 
 本项目已经完成从航空布线真实 MILP、可复现 baseline、BBMDP 环境、Candidate
