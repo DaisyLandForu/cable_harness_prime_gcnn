@@ -16,11 +16,22 @@ import psutil
 import torch
 import yaml
 
-from .config import BBMDPConfig
+from .config import (
+    BBMDPConfig,
+    RewardMode,
+    SELECTION_RULE,
+    finalized_gap,
+    hybrid_identity_holds,
+    metric_mean,
+    missing_to_inf,
+    par2_time,
+    selection_key,
+    solved_flag,
+)
 from .candidate_features import AVIATION_VARIABLE_CATEGORIES
 from .graph_features import GRAPH_VARIABLE_FEATURE_NAMES
 from .environment import BBMDPBranchingEnv
-from .gcnn_config import GCNNTrainingConfig
+from .gcnn_config import GCNNTrainingConfig, LARGE_INSTANCE_PREFIX
 from .gcnn_dqn import GraphDoubleDQNLearner, GraphUpdateMetrics
 from .gcnn_model import BipartiteGCNNQNetwork, export_gcnn_torchscript
 from .graph_features import (
@@ -39,15 +50,36 @@ HISTORY_FIELDS = (
     "episode",
     "gradient_step",
     "optimizer_steps",
+    "stage",
+    "stage_boundary_step",
+    "instance_time_limit",
+    "instance_node_limit",
     "loss",
     "td_error",
     "gradient_norm",
     "epsilon",
     "reward",
+    "node_reward",
+    "lp_reward",
+    "total_reward",
+    "reward_identity_ok",
     "episode_nodes",
     "episode_solving_time",
     "validation_nodes",
     "validation_time",
+    "mean_pdi",
+    "mean_final_gap",
+    "mean_par2",
+    "mean_solved",
+    "mean_lp",
+    "pdi",
+    "final_gap",
+    "par2",
+    "first_solution_time",
+    "solved",
+    "lp_iterations",
+    "bootstrap_target_used",
+    "trainer_truncated",
     "replay_size",
     "replay_medium_count",
     "replay_large_count",
@@ -93,6 +125,17 @@ class GraphEpisodeMetrics:
     transitions: int
     mean_rank: float
     inference_time: float
+    pdi: float
+    final_gap: float
+    par2: float
+    first_solution_time: float
+    solved: float
+    lp_iterations: int
+    node_reward: float
+    lp_reward: float
+    total_reward: float
+    reward_identity_ok: bool
+    trainer_truncated: bool
 
 
 class HistoryWriter:
@@ -178,7 +221,16 @@ def _ready_for_update(
     require_mix_12_4: bool,
     mix_16_0: int,
     mix_12_4: int,
+    stage: str | None = None,
 ) -> bool:
+    if stage == "A":
+        return len(replay.medium) >= LOGICAL_BATCH_SIZE and len(replay) >= int(min_replay_size)
+    if stage == "B":
+        return (
+            len(replay.large) >= replay.large_sample_quota
+            and len(replay.medium) >= replay.medium_sample_quota
+            and len(replay) >= int(min_replay_size)
+        )
     if not _can_sample_logical_batch(replay):
         return False
     if len(replay) < int(min_replay_size):
@@ -201,12 +253,18 @@ def _training_should_stop(
     require_mix_12_4: bool,
     mix_16_0: int,
     mix_12_4: int,
+    stage_a_steps: int = 0,
+    stage_b_steps: int = 0,
 ) -> str:
+    if wall_time_limit > 0.0 and elapsed >= wall_time_limit:
+        return "wall_time"
+    if stage_a_steps > 0:
+        if gradient_step >= int(stage_a_steps) + int(stage_b_steps):
+            return "gradient_steps"
+        return ""
     mixes_done = (not require_mix_16_0 or mix_16_0 > 0) and (
         not require_mix_12_4 or mix_12_4 > 0
     )
-    if wall_time_limit > 0.0 and elapsed >= wall_time_limit:
-        return "wall_time"
     if mixes_done and (require_mix_16_0 or require_mix_12_4):
         return "mix_gates"
     if mixes_done and gradient_step >= total_gradient_steps:
@@ -225,6 +283,75 @@ def _replay_log_fields(replay: DualPoolGraphReplay) -> dict:
         "replay_evictions_by_count": snapshot.evictions_by_count,
         "replay_evictions_by_bytes": snapshot.evictions_by_bytes,
     }
+
+
+def _environment_for_instance(
+    config: GCNNTrainingConfig,
+    instance: str,
+    seed: int,
+) -> BBMDPConfig:
+    time_limit, node_limit = config.instance_budget(instance)
+    return replace(
+        config.environment,
+        seed=int(seed),
+        time_limit=float(time_limit),
+        node_limit=int(node_limit),
+    )
+
+
+def _apply_live_truncation(env: BBMDPBranchingEnv, transition):
+    if not env.config.bootstrap_on_truncation:
+        return transition
+    return env.mark_live_budget_truncation(transition)
+
+
+def _optional_metric(value) -> float:
+    if value is None:
+        return float("inf")
+    try:
+        return missing_to_inf(float(value))
+    except (TypeError, ValueError):
+        return float("inf")
+
+
+def _episode_identity_ok(
+    *,
+    reward_mode: RewardMode,
+    rewards: list[float],
+    n0: int,
+    n_t: int,
+    lp0: int,
+    lp_t: int,
+) -> bool:
+    if reward_mode != RewardMode.HYBRID_NODE_LP or not rewards:
+        return True
+    if n_t < n0 or lp_t < lp0:
+        return hybrid_identity_holds(rewards, n0, n_t, lp0, lp_t)
+    ok = hybrid_identity_holds(rewards, n0, n_t, lp0, lp_t)
+    if not ok:
+        raise RuntimeError(
+            "hybrid reward identity failed: "
+            f"sum_r={sum(rewards)} n0={n0} nT={n_t} lp0={lp0} lpT={lp_t}"
+        )
+    return True
+
+
+def _selection_from_episodes(
+    episodes: list[GraphEpisodeMetrics],
+    *,
+    gradient_step: int,
+    seed: int,
+) -> tuple:
+    return selection_key(
+        solved_rate=float(np.mean([item.solved for item in episodes])) if episodes else 0.0,
+        mean_pdi=metric_mean(item.pdi for item in episodes),
+        mean_final_gap=metric_mean(item.final_gap for item in episodes),
+        mean_par2=metric_mean(item.par2 for item in episodes),
+        mean_lp=metric_mean(float(item.lp_iterations) for item in episodes),
+        mean_nodes=metric_mean(float(item.nodes) for item in episodes),
+        gradient_step=int(gradient_step),
+        seed=int(seed),
+    )
 
 
 def _collect_normalization_states(
@@ -603,10 +730,15 @@ def evaluate_gcnn_episode(
     env = BBMDPBranchingEnv(replace(environment_config, seed=int(seed)))
     state = env.reset(instance)
     graph = None if state.observation is None else training_graph_state(state.observation, state.action_set)
-    reward = 0.0
+    n0 = int(state.info.get("node_count", 0))
+    lp0 = int(state.info.get("lp_iterations", 0))
+    rewards: list[float] = []
+    node_reward = 0.0
+    lp_reward = 0.0
     transitions = 0
     ranks = []
     inference = 0.0
+    trainer_truncated = False
     while not (state.terminated or state.truncated):
         if graph is None:
             raise RuntimeError("live GCNN environment state has no graph")
@@ -623,8 +755,11 @@ def evaluate_gcnn_episode(
             inference += time.monotonic() - start
             ranks.append(rank)
             action = _ecole_action(state.action_set, graph, position)
-        transition = env.step(action)
-        reward += transition.reward
+        transition = _apply_live_truncation(env, env.step(action))
+        rewards.append(float(transition.reward))
+        node_reward += float(transition.info.get("node_reward", 0.0))
+        lp_reward += float(transition.info.get("lp_reward", 0.0))
+        trainer_truncated = trainer_truncated or bool(transition.info.get("trainer_truncated"))
         transitions += 1
         state = env.current_state
         graph = (
@@ -632,18 +767,46 @@ def evaluate_gcnn_episode(
             if transition.next_observation is None or transition.next_action_set.size == 0
             else training_graph_state(transition.next_observation, transition.next_action_set)
         )
+    status = str(state.info.get("status", "unknown"))
+    nodes = int(state.info.get("node_count", 0))
+    lp_iterations = int(state.info.get("lp_iterations", 0))
+    time_limit = float(environment_config.time_limit)
+    identity_ok = _episode_identity_ok(
+        reward_mode=environment_config.reward_mode,
+        rewards=rewards,
+        n0=n0,
+        n_t=nodes,
+        lp0=lp0,
+        lp_t=lp_iterations,
+    )
     result = GraphEpisodeMetrics(
         method=method,
         instance=str(instance),
         seed=int(seed),
         policy_seed=int(policy_seed),
-        status=str(state.info.get("status", "unknown")),
-        nodes=int(state.info.get("node_count", 0)),
+        status=status,
+        nodes=nodes,
         solving_time=float(state.info.get("solving_time", 0.0)),
-        reward=float(reward),
+        reward=float(sum(rewards)),
         transitions=transitions,
         mean_rank=float(np.mean(ranks)) if ranks else 0.0,
         inference_time=inference,
+        pdi=_optional_metric(state.info.get("primal_dual_integral")),
+        final_gap=finalized_gap(
+            status,
+            float(state.info.get("primal_bound", float("inf"))),
+            float(state.info.get("dual_bound", float("-inf"))),
+            float(state.info.get("gap", float("inf"))),
+        ),
+        par2=par2_time(status, float(state.info.get("solving_time", 0.0)), time_limit),
+        first_solution_time=_optional_metric(state.info.get("first_solution_time")),
+        solved=solved_flag(status),
+        lp_iterations=lp_iterations,
+        node_reward=float(node_reward),
+        lp_reward=float(lp_reward),
+        total_reward=float(sum(rewards)),
+        reward_identity_ok=bool(identity_ok),
+        trainer_truncated=bool(trainer_truncated),
     )
     env.close()
     return result
@@ -705,8 +868,17 @@ def train_gcnn(config_path: Path | str) -> dict:
     )
     latest: Optional[GraphUpdateMetrics] = None
     episode = 0
-    instance_guard = InstanceQuotaGuard(config.train_instances)
-    best_validation = float("inf")
+    stage_guards = {
+        None: InstanceQuotaGuard(config.train_instances),
+        "A": InstanceQuotaGuard(config.instances_for_stage("A"))
+        if config.curriculum_enabled()
+        else None,
+        "B": InstanceQuotaGuard(config.instances_for_stage("B"))
+        if config.curriculum_enabled()
+        else None,
+    }
+    best_key = None
+    best_selection = {}
     stale_validations = 0
     next_validation = config.evaluation.interval_steps
     start_wall = time.monotonic()
@@ -716,10 +888,29 @@ def train_gcnn(config_path: Path | str) -> dict:
     finite_metrics = True
     last_medium_samples = 0
     last_large_samples = 0
+    logged_stage_boundary = False
+    bootstrap_target_updates = 0
 
     try:
         while not stop_reason:
             elapsed = time.monotonic() - start_wall
+            stage = config.stage_for_step(learner.gradient_step)
+            if (
+                config.curriculum_enabled()
+                and stage == "B"
+                and not logged_stage_boundary
+            ):
+                history.write(
+                    event="stage_boundary",
+                    episode=episode,
+                    gradient_step=learner.gradient_step,
+                    optimizer_steps=learner.gradient_step,
+                    stage="B",
+                    stage_boundary_step=learner.gradient_step,
+                    instance_time_limit=config.large_time_limit,
+                    instance_node_limit=config.large_node_limit,
+                )
+                logged_stage_boundary = True
             stop_reason = _training_should_stop(
                 gradient_step=learner.gradient_step,
                 total_gradient_steps=config.optimization.total_gradient_steps,
@@ -729,23 +920,51 @@ def train_gcnn(config_path: Path | str) -> dict:
                 require_mix_12_4=config.require_mix_12_4,
                 mix_16_0=mix_16_0,
                 mix_12_4=mix_12_4,
+                stage_a_steps=config.stage_a_steps,
+                stage_b_steps=config.stage_b_steps,
             )
             if stop_reason:
                 break
+            instance_guard = stage_guards[stage]
+            if stage is None:
+                hunt_16 = config.require_mix_16_0
+                hunt_12 = config.require_mix_12_4
+                mix_16_for_select = mix_16_0
+                mix_12_for_select = mix_12_4
+            elif stage == "A":
+                hunt_16 = False
+                hunt_12 = False
+                mix_16_for_select = 1
+                mix_12_for_select = 1
+            else:
+                hunt_16 = False
+                hunt_12 = mix_12_4 == 0
+                mix_16_for_select = 1
+                mix_12_for_select = mix_12_4
             instance = _select_mix_instance(
                 instance_guard,
-                require_mix_16_0=config.require_mix_16_0,
-                require_mix_12_4=config.require_mix_12_4,
-                mix_16_0=mix_16_0,
-                mix_12_4=mix_12_4,
+                require_mix_16_0=hunt_16,
+                require_mix_12_4=hunt_12,
+                mix_16_0=mix_16_for_select,
+                mix_12_4=mix_12_for_select,
             )
-            env = BBMDPBranchingEnv(replace(config.environment, seed=config.seed + episode))
+            if stage == "A" and Path(instance).stem.startswith(LARGE_INSTANCE_PREFIX):
+                raise RuntimeError(f"real_02 entered Stage A: {instance}")
+            instance_time_limit, instance_node_limit = config.instance_budget(instance)
+            env = BBMDPBranchingEnv(
+                _environment_for_instance(config, instance, config.seed + episode)
+            )
             state = env.reset(instance)
             graph = None if state.observation is None else training_graph_state(state.observation, state.action_set)
             accumulator = NStepAccumulator(
                 config.optimization.n_step, config.optimization.gamma
             )
-            episode_reward = 0.0
+            n0 = int(state.info.get("node_count", 0))
+            lp0 = int(state.info.get("lp_iterations", 0))
+            step_rewards: list[float] = []
+            node_reward_sum = 0.0
+            lp_reward_sum = 0.0
+            trainer_truncated = False
             ranks = []
             while not (state.terminated or state.truncated):
                 if config.wall_time_limit > 0.0 and (
@@ -775,7 +994,12 @@ def train_gcnn(config_path: Path | str) -> dict:
                     config.exploration.boltzmann_temperature,
                 )
                 ranks.append(rank)
-                transition = env.step(_ecole_action(state.action_set, graph, position))
+                transition = _apply_live_truncation(
+                    env, env.step(_ecole_action(state.action_set, graph, position))
+                )
+                trainer_truncated = trainer_truncated or bool(
+                    transition.info.get("trainer_truncated")
+                )
                 next_graph = (
                     None
                     if transition.next_observation is None
@@ -794,12 +1018,20 @@ def train_gcnn(config_path: Path | str) -> dict:
                     )
                 ):
                     replay.add(experience, _pool_for_instance(instance))
-                episode_reward += transition.reward
+                step_rewards.append(float(transition.reward))
+                node_reward_sum += float(transition.info.get("node_reward", 0.0))
+                lp_reward_sum += float(transition.info.get("lp_reward", 0.0))
                 graph = next_graph
                 state = env.current_state
 
-                hunting_mix = (config.require_mix_16_0 and mix_16_0 == 0) or (
-                    config.require_mix_12_4 and mix_12_4 == 0
+                hunting_mix = (not config.curriculum_enabled()) and (
+                    (config.require_mix_16_0 and mix_16_0 == 0)
+                    or (config.require_mix_12_4 and mix_12_4 == 0)
+                )
+                stage_cap = (
+                    config.stage_a_steps
+                    if stage == "A"
+                    else config.optimization.total_gradient_steps
                 )
                 if normalizer_frozen and _ready_for_update(
                     replay,
@@ -808,26 +1040,32 @@ def train_gcnn(config_path: Path | str) -> dict:
                     require_mix_12_4=config.require_mix_12_4,
                     mix_16_0=mix_16_0,
                     mix_12_4=mix_12_4,
+                    stage=stage,
                 ):
                     update_count = (
                         1 if hunting_mix else config.optimization.updates_per_env_step
                     )
                     for _ in range(update_count):
-                        if (
-                            not hunting_mix
-                            and learner.gradient_step
-                            >= config.optimization.total_gradient_steps
-                        ):
+                        if not hunting_mix and learner.gradient_step >= stage_cap:
+                            if stage == "A":
+                                break
                             stop_reason = "gradient_steps"
                             break
-                        sample = replay.sample_logical_batch(learner.gradient_step)
+                        sample = replay.sample_logical_batch(
+                            learner.gradient_step,
+                            allow_large=stage != "A",
+                        )
                         last_medium_samples, last_large_samples = _batch_mix_counts(sample)
+                        if stage == "A" and last_large_samples != 0:
+                            raise RuntimeError("Stage A sampled a large-pool transition")
                         forward_start = time.monotonic()
                         latest = learner.update(sample)
                         if device.type == "cuda":
                             torch.cuda.synchronize(device)
                         forward_time = time.monotonic() - forward_start
                         replay.update_priorities(sample.handles, latest.priorities)
+                        if latest.bootstrap_target_used:
+                            bootstrap_target_updates += 1
                         metric_values = (
                             latest.loss,
                             latest.td_error,
@@ -858,10 +1096,14 @@ def train_gcnn(config_path: Path | str) -> dict:
                                 episode=episode,
                                 gradient_step=learner.gradient_step,
                                 optimizer_steps=learner.gradient_step,
+                                stage=stage or "",
+                                instance_time_limit=instance_time_limit,
+                                instance_node_limit=instance_node_limit,
                                 loss=latest.loss,
                                 td_error=latest.td_error,
                                 gradient_norm=latest.gradient_norm,
                                 epsilon=epsilon,
+                                bootstrap_target_used=latest.bootstrap_target_used,
                                 medium_samples=last_medium_samples,
                                 large_samples=last_large_samples,
                                 per_weight_min=float(np.min(sample.weights)),
@@ -884,11 +1126,16 @@ def train_gcnn(config_path: Path | str) -> dict:
                             require_mix_12_4=config.require_mix_12_4,
                             mix_16_0=mix_16_0,
                             mix_12_4=mix_12_4,
+                            stage_a_steps=config.stage_a_steps,
+                            stage_b_steps=config.stage_b_steps,
                         )
                         if stop_reason:
                             break
+                        if stage == "A" and learner.gradient_step >= config.stage_a_steps:
+                            break
                 if (
                     not stop_reason
+                    and not config.curriculum_enabled()
                     and config.require_mix_12_4
                     and mix_16_0 > 0
                     and mix_12_4 == 0
@@ -897,7 +1144,19 @@ def train_gcnn(config_path: Path | str) -> dict:
                     break
                 if stop_reason:
                     break
+                if stage == "A" and learner.gradient_step >= config.stage_a_steps:
+                    break
+            for experience in accumulator.flush():
+                replay.add(experience, _pool_for_instance(instance))
             final_info = state.info
+            identity_ok = _episode_identity_ok(
+                reward_mode=config.environment.reward_mode,
+                rewards=step_rewards,
+                n0=n0,
+                n_t=int(final_info.get("node_count", 0)),
+                lp0=lp0,
+                lp_t=int(final_info.get("lp_iterations", 0)),
+            )
             env.close()
             cpu_mb, gpu_mb = _memory(device)
             history.write(
@@ -905,13 +1164,37 @@ def train_gcnn(config_path: Path | str) -> dict:
                 episode=episode,
                 gradient_step=learner.gradient_step,
                 optimizer_steps=learner.gradient_step,
+                stage=stage or "",
+                instance_time_limit=instance_time_limit,
+                instance_node_limit=instance_node_limit,
                 loss="" if latest is None else latest.loss,
                 td_error="" if latest is None else latest.td_error,
                 gradient_norm="" if latest is None else latest.gradient_norm,
                 epsilon=config.exploration.epsilon(learner.gradient_step),
-                reward=episode_reward,
+                reward=float(sum(step_rewards)),
+                node_reward=node_reward_sum,
+                lp_reward=lp_reward_sum,
+                total_reward=float(sum(step_rewards)),
+                reward_identity_ok=identity_ok,
                 episode_nodes=final_info.get("node_count", 0),
                 episode_solving_time=final_info.get("solving_time", 0.0),
+                pdi=_optional_metric(final_info.get("primal_dual_integral")),
+                final_gap=finalized_gap(
+                    str(final_info.get("status", "unknown")),
+                    float(final_info.get("primal_bound", float("inf"))),
+                    float(final_info.get("dual_bound", float("-inf"))),
+                    float(final_info.get("gap", float("inf"))),
+                ),
+                par2=par2_time(
+                    str(final_info.get("status", "unknown")),
+                    float(final_info.get("solving_time", 0.0)),
+                    float(instance_time_limit),
+                ),
+                first_solution_time=_optional_metric(final_info.get("first_solution_time")),
+                solved=solved_flag(str(final_info.get("status", "unknown"))),
+                lp_iterations=final_info.get("lp_iterations", 0),
+                trainer_truncated=trainer_truncated,
+                bootstrap_target_used="" if latest is None else latest.bootstrap_target_used,
                 medium_samples=last_medium_samples,
                 large_samples=last_large_samples,
                 selected_candidate_rank=float(np.mean(ranks)) if ranks else 0.0,
@@ -927,6 +1210,7 @@ def train_gcnn(config_path: Path | str) -> dict:
                     episode=episode,
                     gradient_step=learner.gradient_step,
                     optimizer_steps=learner.gradient_step,
+                    stage=stage or "",
                     status="skipped_zero_decision",
                     instance=instance,
                 )
@@ -944,17 +1228,25 @@ def train_gcnn(config_path: Path | str) -> dict:
             if reached_validation:
                 validation = []
                 for instance_index, validation_instance in enumerate(config.validation_instances):
+                    validation_env = _environment_for_instance(
+                        config, validation_instance, config.evaluation.seeds[0]
+                    )
                     for seed in config.evaluation.seeds:
                         validation.append(
                             evaluate_gcnn_episode(
                                 validation_instance,
                                 seed,
-                                config.environment,
+                                validation_env,
                                 "rl",
                                 learner,
                                 _policy_seed(config.seed, seed, "rl", instance_index),
                             )
                         )
+                current_key = _selection_from_episodes(
+                    validation,
+                    gradient_step=learner.gradient_step,
+                    seed=config.seed,
+                )
                 validation_nodes = float(np.mean([item.nodes for item in validation]))
                 validation_time = float(np.mean([item.solving_time for item in validation]))
                 history.write(
@@ -962,14 +1254,31 @@ def train_gcnn(config_path: Path | str) -> dict:
                     episode=episode,
                     gradient_step=learner.gradient_step,
                     optimizer_steps=learner.gradient_step,
+                    stage=stage or "",
                     validation_nodes=validation_nodes,
                     validation_time=validation_time,
+                    mean_solved=current_key[0] * -1.0,
+                    mean_pdi=current_key[1],
+                    mean_final_gap=current_key[2],
+                    mean_par2=current_key[3],
+                    mean_lp=current_key[4],
                     status=";".join(item.status for item in validation),
                     instance=";".join(config.validation_instances),
                     **_replay_log_fields(replay),
                 )
-                if validation_nodes < best_validation:
-                    best_validation = validation_nodes
+                if best_key is None or current_key < best_key:
+                    best_key = current_key
+                    best_selection = {
+                        "rule": SELECTION_RULE,
+                        "gradient_step": learner.gradient_step,
+                        "seed": config.seed,
+                        "solved_rate": -current_key[0],
+                        "mean_pdi": current_key[1],
+                        "mean_final_gap": current_key[2],
+                        "mean_par2": current_key[3],
+                        "mean_lp": current_key[4],
+                        "mean_nodes": current_key[5],
+                    }
                     stale_validations = 0
                     _save_checkpoint(output / "best_model.pt", learner, config)
                     export_gcnn_torchscript(
@@ -1018,6 +1327,9 @@ def train_gcnn(config_path: Path | str) -> dict:
         untrained.target.set_normalization(normalizer.statistics())
 
         for instance_index, instance in enumerate(config.validation_instances):
+            eval_env = _environment_for_instance(
+                config, instance, config.evaluation.compare_seeds[0]
+            )
             for seed in config.evaluation.compare_seeds:
                 for method, evaluation_learner in (
                     ("random", None),
@@ -1028,7 +1340,7 @@ def train_gcnn(config_path: Path | str) -> dict:
                         evaluate_gcnn_episode(
                             instance,
                             seed,
-                            config.environment,
+                            eval_env,
                             method,
                             evaluation_learner,
                             _policy_seed(config.seed, seed, method, instance_index),
@@ -1049,7 +1361,7 @@ def train_gcnn(config_path: Path | str) -> dict:
             output_json=output / "deploy_retest.json",
             output_log=output / "deploy_retest.branches.csv",
             rl_device="cpu",
-            overhead_fraction=0.12,
+            overhead_fraction=0.10,
         )
 
     snapshot = replay.snapshot()
@@ -1064,6 +1376,7 @@ def train_gcnn(config_path: Path | str) -> dict:
         "replay_large_count": snapshot.large_count,
         "replay_evictions_by_count": snapshot.evictions_by_count,
         "replay_evictions_by_bytes": snapshot.evictions_by_bytes,
+        "bootstrap_target_updates": bootstrap_target_updates,
         "deploy_retest": deploy_retest,
     }
     mix_ok = (not config.require_mix_16_0 or mix_16_0 > 0) and (
@@ -1091,7 +1404,11 @@ def train_gcnn(config_path: Path | str) -> dict:
         "mix_16_0": mix_16_0,
         "mix_12_4": mix_12_4,
         "stop_reason": stop_reason,
-        "best_validation_nodes": best_validation,
+        "stage_a_steps": config.stage_a_steps,
+        "stage_b_steps": config.stage_b_steps,
+        "selection_rule": SELECTION_RULE,
+        "best_selection": best_selection,
+        "bootstrap_target_updates": bootstrap_target_updates,
         "wall_time": time.monotonic() - start_wall,
         "device": str(device),
         "torch_version": torch.__version__,
@@ -1108,6 +1425,19 @@ def train_gcnn(config_path: Path | str) -> dict:
     )
     (output / "r1_gate.json").write_text(
         json.dumps(r1_gate, indent=2) + "\n", encoding="utf-8"
+    )
+    (output / "selection.json").write_text(
+        json.dumps(
+            {
+                "rule": SELECTION_RULE,
+                "missing_value": "inf",
+                "tie_break": "earlier_gradient_step then lower_seed",
+                "best": best_selection,
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
     )
     if (config.require_mix_16_0 or config.require_mix_12_4) and not r1_gate["passed"]:
         raise RuntimeError(f"R1 gate failed: {json.dumps(r1_gate)}")

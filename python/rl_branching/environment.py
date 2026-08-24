@@ -1,11 +1,11 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 import ecole
 import numpy as np
 
-from .config import BBMDPConfig, RewardMode
+from .config import BBMDPConfig, RewardMode, hybrid_rewards
 from .observation import BipartiteObservation, CopiedNodeBipartite
 from .scip_profile import (
     assert_production_live_invariants,
@@ -37,7 +37,11 @@ def _immutable_actions(action_set) -> np.ndarray:
 
 
 class SolverInformation:
+    def __init__(self) -> None:
+        self._first_solution_time: Optional[float] = None
+
     def before_reset(self, model) -> None:
+        self._first_solution_time = None
         return None
 
     def extract(self, model, done) -> Dict[str, Any]:
@@ -50,6 +54,14 @@ class SolverInformation:
             for group in open_node_groups
             for node in group
         )
+        solution_count = int(pyscip_model.getNSols())
+        solving_time = float(pyscip_model.getSolvingTime())
+        if solution_count > 0 and self._first_solution_time is None:
+            self._first_solution_time = solving_time
+        try:
+            pdi = float(pyscip_model.getPrimalDualIntegral())
+        except Exception:
+            pdi = float("nan")
         return {
             "status": str(pyscip_model.getStatus()).lower(),
             "done": bool(done),
@@ -57,11 +69,13 @@ class SolverInformation:
             "total_node_count": int(pyscip_model.getNTotalNodes()),
             "depth": int(pyscip_model.getDepth()),
             "lp_iterations": int(pyscip_model.getNLPIterations()),
-            "solving_time": float(pyscip_model.getSolvingTime()),
+            "solving_time": solving_time,
             "primal_bound": float(pyscip_model.getPrimalbound()),
             "dual_bound": float(pyscip_model.getDualbound()),
             "gap": float(pyscip_model.getGap()),
-            "solution_count": int(pyscip_model.getNSols()),
+            "solution_count": solution_count,
+            "primal_dual_integral": pdi,
+            "first_solution_time": self._first_solution_time,
             "current_node_id": None if current_node is None else int(current_node.getNumber()),
             "parent_node_id": None if parent_node is None else int(parent_node.getNumber()),
             "open_node_ids": open_node_ids,
@@ -125,9 +139,9 @@ class BBMDPBranchingEnv:
     def __init__(self, config: BBMDPConfig):
         self.config = config
         reward_function = (
-            -ecole.reward.NNodes()
-            if config.reward_mode == RewardMode.NEGATIVE_NODE_INCREMENT
-            else ecole.reward.Constant(-1.0)
+            ecole.reward.Constant(-1.0)
+            if config.reward_mode == RewardMode.CONSTANT_MINUS_ONE
+            else -ecole.reward.NNodes()
         )
         self._ecole_env = ecole.environment.Branching(
             observation_function=CopiedNodeBipartite(cache=config.cache_static_features),
@@ -199,6 +213,12 @@ class BBMDPBranchingEnv:
             done = True
         info = dict(info)
         terminated, truncated = self._classify_done(bool(done), info.get("status", "unknown"))
+        node_reward, lp_reward, total_reward = self._step_rewards(state.info, info, float(reward))
+        info["node_reward"] = node_reward
+        info["lp_reward"] = lp_reward
+        info["total_reward"] = total_reward
+        info["delta_nodes"] = int(info.get("node_count", 0)) - int(state.info.get("node_count", 0))
+        info["delta_lp"] = int(info.get("lp_iterations", 0)) - int(state.info.get("lp_iterations", 0))
         next_state = EnvironmentState(
             observation=next_observation,
             action_set=_immutable_actions(next_action_set),
@@ -215,12 +235,14 @@ class BBMDPBranchingEnv:
             bootstrap_mask = 0.0
         else:
             bootstrap_mask = 1.0
+        if truncated and next_observation is None:
+            bootstrap_mask = 0.0
 
         transition = Transition(
             observation=state.observation,
             action=int(action),
             action_position=action_position,
-            reward=float(reward),
+            reward=float(total_reward),
             next_observation=next_observation,
             next_action_set=next_state.action_set,
             terminated=terminated,
@@ -230,6 +252,54 @@ class BBMDPBranchingEnv:
         )
         self._state = next_state
         return transition
+
+    def _step_rewards(
+        self,
+        previous_info: Dict[str, Any],
+        next_info: Dict[str, Any],
+        ecole_reward: float,
+    ) -> tuple[float, float, float]:
+        delta_nodes = int(next_info.get("node_count", 0)) - int(previous_info.get("node_count", 0))
+        delta_lp = int(next_info.get("lp_iterations", 0)) - int(previous_info.get("lp_iterations", 0))
+        if delta_nodes < 0 or delta_lp < 0:
+            delta_nodes = max(0, delta_nodes)
+            delta_lp = max(0, delta_lp)
+        node_reward, lp_reward, hybrid_total = hybrid_rewards(delta_nodes, delta_lp)
+        if self.config.reward_mode == RewardMode.HYBRID_NODE_LP:
+            return node_reward, lp_reward, hybrid_total
+        if self.config.reward_mode == RewardMode.NEGATIVE_NODE_INCREMENT:
+            return node_reward, 0.0, node_reward
+        return 0.0, 0.0, float(ecole_reward)
+
+    def mark_live_budget_truncation(self, transition: Transition) -> Transition:
+        if transition.next_observation is None or transition.next_action_set.size == 0:
+            return transition
+        over_nodes = (
+            self.config.node_limit > 0
+            and int(transition.info.get("node_count", 0)) >= int(self.config.node_limit)
+        )
+        over_time = float(transition.info.get("solving_time", 0.0)) >= float(self.config.time_limit)
+        if not (over_nodes or over_time):
+            return transition
+        reason = "nodelimit" if over_nodes else "timelimit"
+        info = dict(transition.info)
+        info["status"] = reason
+        info["trainer_truncated"] = True
+        truncated = replace(
+            transition,
+            terminated=False,
+            truncated=True,
+            bootstrap_mask=1.0,
+            info=info,
+        )
+        self._state = EnvironmentState(
+            observation=truncated.next_observation,
+            action_set=truncated.next_action_set,
+            terminated=False,
+            truncated=True,
+            info=info,
+        )
+        return truncated
 
     def candidate_name(self, action: int) -> str:
         state = self.current_state

@@ -54,9 +54,14 @@ class NStepAccumulator:
             emitted.append(self._build(self.n_steps))
             self._pending.popleft()
         if experience.bootstrap_mask == 0.0:
-            while self._pending:
-                emitted.append(self._build(len(self._pending)))
-                self._pending.popleft()
+            emitted.extend(self.flush())
+        return emitted
+
+    def flush(self) -> list[ReplayExperience]:
+        emitted: list[ReplayExperience] = []
+        while self._pending:
+            emitted.append(self._build(len(self._pending)))
+            self._pending.popleft()
         return emitted
 
     def clear(self) -> None:

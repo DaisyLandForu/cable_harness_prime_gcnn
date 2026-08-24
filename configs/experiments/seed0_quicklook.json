@@ -1,0 +1,37 @@
+{
+  "binary": "build/scip_tree",
+  "output_dir": "results/11_seed0_three_method_quicklook",
+  "scip_profile": "configs/scip/project-production-v1.set",
+  "time_limit": 3600.0,
+  "node_limit": -1,
+  "threads": 1,
+  "workers": 3,
+  "max_concurrent_large": 3,
+  "process_grace_seconds": 300.0,
+  "seeds": [0],
+  "protocols": ["project-production-v1"],
+  "notes": "Seed0 three-method 3600s quick-look. GCNN uses the accepted R1 TorchScript until Stage A/B training is approved. Do not reuse this directory.",
+  "gcnn_model": "artifacts/models/gcnn_r1/last_model_scripted.pt",
+  "instances": [
+    {
+      "instance_id": "real_04",
+      "cli_id": "4",
+      "split": "transfer",
+      "size": "large",
+      "time_limit": 3600.0
+    }
+  ],
+  "methods": [
+    {"name": "project-default", "branching": "default"},
+    {"name": "random", "branching": "custom-random"},
+    {
+      "name": "DSU-Prime-GCNN",
+      "branching": "rl-gcnn",
+      "model": "artifacts/models/gcnn_r1/last_model_scripted.pt",
+      "device": "cuda",
+      "fallback": "relpscost",
+      "max_depth": -1,
+      "min_candidates": 1
+    }
+  ]
+}

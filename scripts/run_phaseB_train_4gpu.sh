@@ -52,6 +52,11 @@ for i in "${!SEEDS[@]}"; do
   gpu="${GPUS[$i]}"
   cfg="$PROJ/configs/rl/generated/gcnn_prim_feat_pilot_seed${seed}.yaml"
   out="$OUT_ROOT/seed${seed}"
+  if [[ -e "$out" ]]; then
+    echo "refusing to reuse existing output directory: $out" >&2
+    echo "delete it or choose a new OUT_ROOT; old checkpoints must not enter ranking" >&2
+    exit 2
+  fi
   python - <<PY
 from pathlib import Path
 import hashlib
@@ -62,8 +67,14 @@ if int(opt.get("batch_size", -1)) != 16:
     raise SystemExit("stale DualPool batch_size: must be 16")
 if int(opt.get("medium_count_limit", -1)) != 224 or int(opt.get("large_count_limit", -1)) != 32:
     raise SystemExit("DualPool limits must stay 224 medium + 32 large")
-if int(opt.get("replay_capacity", -1)) != 256:
-    raise SystemExit("replay_capacity must equal 224+32=256")
+if int(opt.get("updates_per_env_step", -1)) != 4:
+    raise SystemExit("formal protocol requires updates_per_env_step=4")
+if int(cfg.get("stage_a_steps", 0)) != 2400 or int(cfg.get("stage_b_steps", 0)) != 600:
+    raise SystemExit("formal protocol requires Stage A 2400 + Stage B 600")
+if str(cfg.get("environment", {}).get("reward_mode", "")) != "hybrid_node_lp":
+    raise SystemExit("formal protocol requires hybrid_node_lp")
+if not cfg.get("environment", {}).get("bootstrap_on_truncation", False):
+    raise SystemExit("formal protocol requires bootstrap_on_truncation")
 norm = Path("$NORMALIZATION_PATH")
 sha = hashlib.sha256(norm.read_bytes()).hexdigest()
 if sha != "$EXPECTED_NORM_SHA":
@@ -93,35 +104,46 @@ for i in "${!pids[@]}"; do
 done
 
 python - <<PY
-import json, csv
+import json
 from pathlib import Path
 
 root = Path("$OUT_ROOT")
 expected = "$EXPECTED_NORM_SHA"
+requested = [item for item in "${SEEDS[*]}".split() if item]
 rows = []
-for seed_dir in sorted(root.glob("seed*")):
+for seed in requested:
+    seed_dir = root / f"seed{seed}"
     hist = seed_dir / "training_history.csv"
     best_pt = seed_dir / "best_model_scripted.pt"
     summary_path = seed_dir / "summary.json"
+    selection_path = seed_dir / "selection.json"
     sha = None
+    selection = None
     if summary_path.is_file():
-        sha = json.loads(summary_path.read_text()).get("normalization_sha256")
+        summary = json.loads(summary_path.read_text())
+        sha = summary.get("normalization_sha256")
+        selection = summary.get("best_selection")
     if sha and sha != expected:
         raise SystemExit(f"{seed_dir} normalization SHA {sha} != {expected}")
+    if selection_path.is_file():
+        selection = json.loads(selection_path.read_text()).get("best", selection)
     row = {
-        "seed": seed_dir.name.replace("seed", ""),
+        "seed": seed,
         "status": "ok" if best_pt.is_file() else "missing",
         "model": str(best_pt) if best_pt.is_file() else "",
         "normalization_sha256": sha,
+        "selection": selection,
+        "history": str(hist) if hist.is_file() else "",
     }
     rows.append(row)
 
 summary = {
+    "requested_seeds": requested,
     "seeds": rows,
     "best_seed": None,
     "normalization_sha256": expected,
-    "selection_rule": "pdi_gap_composite_not_implemented",
-    "note": "do not promote by minimum validation nodes; wait for frozen PDI/gap ranking",
+    "selection_rule": "neg_solved_rate, mean_pdi, mean_final_gap, mean_par2, mean_lp, mean_nodes, earlier_gradient_step, lower_seed",
+    "note": "independent single-GPU seeds; do not promote across seeds",
 }
 (root / "seed_ranking.json").write_text(json.dumps(summary, indent=2) + "\n")
 print(json.dumps(summary, indent=2))

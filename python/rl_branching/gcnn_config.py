@@ -8,6 +8,11 @@ from .config import BBMDPConfig, RewardMode
 from .graph_replay import LARGE_COUNT_LIMIT, LARGE_SAMPLE_QUOTA, LOGICAL_BATCH_SIZE, MEDIUM_COUNT_LIMIT
 
 
+STAGE_A_STEMS = frozenset({"real_01", "real_03", "real_05", "real_06", "real_07"})
+EXCLUDED_TRAIN_STEMS = frozenset({"real_04"})
+LARGE_INSTANCE_PREFIX = "real_02"
+
+
 @dataclass(frozen=True)
 class GCNNModelConfig:
     embedding_dim: int = 64
@@ -124,6 +129,43 @@ class GCNNTrainingConfig:
     deploy_retest_instance: str = ""
     deploy_retest_seed_overlay: str = ""
     deploy_retest_solve_node_limit: int = 2
+    stage_a_steps: int = 0
+    stage_b_steps: int = 0
+    medium_time_limit: float = 60.0
+    medium_node_limit: int = 100
+    large_time_limit: float = 300.0
+    large_node_limit: int = 100
+
+    def curriculum_enabled(self) -> bool:
+        return self.stage_a_steps > 0
+
+    def stage_for_step(self, gradient_step: int) -> str | None:
+        if not self.curriculum_enabled():
+            return None
+        return "A" if int(gradient_step) < int(self.stage_a_steps) else "B"
+
+    def instances_for_stage(self, stage: str | None) -> tuple[str, ...]:
+        if stage is None:
+            return self.train_instances
+        selected = []
+        for path in self.train_instances:
+            stem = Path(path).stem
+            if stem in EXCLUDED_TRAIN_STEMS or stem.startswith("real_04"):
+                continue
+            if stem in STAGE_A_STEMS:
+                selected.append(path)
+            elif stage == "B" and stem.startswith(LARGE_INSTANCE_PREFIX):
+                selected.append(path)
+        if not selected:
+            raise ValueError(f"no train instances remain for stage {stage}")
+        return tuple(selected)
+
+    def instance_budget(self, instance: str) -> tuple[float, int]:
+        if not self.curriculum_enabled():
+            return float(self.environment.time_limit), int(self.environment.node_limit)
+        if Path(instance).stem.startswith(LARGE_INSTANCE_PREFIX):
+            return float(self.large_time_limit), int(self.large_node_limit)
+        return float(self.medium_time_limit), int(self.medium_node_limit)
 
     def __post_init__(self) -> None:
         if not self.train_instances or not self.validation_instances:
@@ -137,11 +179,36 @@ class GCNNTrainingConfig:
         if self.wall_time_limit < 0.0:
             raise ValueError("wall_time_limit must be non-negative")
         if self.require_mix_12_4 and not any(
-            Path(path).stem.startswith("real_02") for path in self.train_instances
+            Path(path).stem.startswith(LARGE_INSTANCE_PREFIX) for path in self.train_instances
         ):
             raise ValueError("require_mix_12_4 needs a real_02 train instance")
         if self.deploy_retest_solve_node_limit < 1:
             raise ValueError("deploy_retest_solve_node_limit must be at least 1")
+        if self.stage_a_steps < 0 or self.stage_b_steps < 0:
+            raise ValueError("stage step counts must be non-negative")
+        if (self.stage_a_steps == 0) != (self.stage_b_steps == 0):
+            raise ValueError("stage_a_steps and stage_b_steps must both be zero or both positive")
+        if self.medium_time_limit <= 0.0 or self.large_time_limit <= 0.0:
+            raise ValueError("instance time limits must be positive")
+        if self.medium_node_limit == 0 or self.medium_node_limit < -1:
+            raise ValueError("medium_node_limit must be -1 or a positive integer")
+        if self.large_node_limit == 0 or self.large_node_limit < -1:
+            raise ValueError("large_node_limit must be -1 or a positive integer")
+        if any(Path(path).stem.startswith("real_04") for path in self.train_instances):
+            raise ValueError("real_04 cannot be a GCNN train instance")
+        if self.curriculum_enabled():
+            expected_steps = self.stage_a_steps + self.stage_b_steps
+            if self.optimization.total_gradient_steps != expected_steps:
+                raise ValueError(
+                    "optimization.total_gradient_steps must equal stage_a_steps + "
+                    f"stage_b_steps ({self.stage_a_steps}+{self.stage_b_steps}={expected_steps})"
+                )
+            if not any(Path(path).stem in STAGE_A_STEMS for path in self.train_instances):
+                raise ValueError("Stage A needs at least one of real_01/03/05/06/07")
+            if not any(
+                Path(path).stem.startswith(LARGE_INSTANCE_PREFIX) for path in self.train_instances
+            ):
+                raise ValueError("Stage B needs a real_02 train instance")
 
     @classmethod
     def from_yaml(cls, path: Path | str) -> "GCNNTrainingConfig":
@@ -170,6 +237,12 @@ class GCNNTrainingConfig:
             "deploy_retest_instance",
             "deploy_retest_seed_overlay",
             "deploy_retest_solve_node_limit",
+            "stage_a_steps",
+            "stage_b_steps",
+            "medium_time_limit",
+            "medium_node_limit",
+            "large_time_limit",
+            "large_node_limit",
         }
         unknown = set(raw) - expected
         if unknown:
@@ -204,6 +277,12 @@ class GCNNTrainingConfig:
             deploy_retest_instance=str(raw.get("deploy_retest_instance", "")),
             deploy_retest_seed_overlay=str(raw.get("deploy_retest_seed_overlay", "")),
             deploy_retest_solve_node_limit=int(raw.get("deploy_retest_solve_node_limit", 2)),
+            stage_a_steps=int(raw.get("stage_a_steps", 0)),
+            stage_b_steps=int(raw.get("stage_b_steps", 0)),
+            medium_time_limit=float(raw.get("medium_time_limit", 60.0)),
+            medium_node_limit=int(raw.get("medium_node_limit", 100)),
+            large_time_limit=float(raw.get("large_time_limit", 300.0)),
+            large_node_limit=int(raw.get("large_node_limit", 100)),
         )
 
     def to_dict(self) -> dict[str, Any]:

@@ -14,10 +14,14 @@ from rl_branching.gcnn_trainer import (
     _ecole_action,
     _ready_for_update,
     _select_mix_instance,
+    _training_should_stop,
     build_shared_normalization,
     load_shared_normalizer,
+    run_deploy_retest,
 )
+from rl_branching.config import hybrid_identity_holds, hybrid_rewards, metric_mean, selection_key
 from rl_branching.gcnn_model import BipartiteGCNNQNetwork, export_gcnn_torchscript
+from rl_branching.replay import NStepAccumulator, OneStepExperience, ReplayExperience
 from rl_branching.graph_features import (
     GraphState,
     RunningGraphNormalizer,
@@ -34,7 +38,6 @@ from rl_branching.graph_replay import (
     PrioritizedReplayBuffer,
     ReplayHandle,
 )
-from rl_branching.replay import ReplayExperience
 
 
 def immutable(values, dtype=np.float32):
@@ -362,6 +365,32 @@ def test_scalar_and_hl_gauss_updates_are_finite():
         assert values.shape == (first.candidate_count,)
 
 
+def test_bootstrap_target_used_requires_next_state():
+    first = graph_state()
+    second = graph_state(1.0)
+    learner = GraphDoubleDQNLearner(
+        model_for_state(),
+        model_for_state(),
+        torch.device("cpu"),
+        learning_rate=0.001,
+        gamma=1.0,
+        gradient_clip=5.0,
+        target_tau=0.1,
+    )
+    live = PrioritizedBatch(
+        experiences=(ReplayExperience(first, 1, -2.0, second, 1.0, 1),),
+        indices=np.asarray([0]),
+        weights=np.asarray([1.0], dtype=np.float32),
+    )
+    dead = PrioritizedBatch(
+        experiences=(ReplayExperience(first, 1, -2.0, None, 1.0, 1),),
+        indices=np.asarray([0]),
+        weights=np.asarray([1.0], dtype=np.float32),
+    )
+    assert learner.update(live).bootstrap_target_used == 1
+    assert learner.update(dead).bootstrap_target_used == 0
+
+
 def test_torchscript_full_q_parity(tmp_path: Path):
     state = graph_state()
     model = model_for_state().eval()
@@ -669,3 +698,158 @@ def test_smoke_and_pilot_use_dualpool_logical_batch():
     assert pilot.optimization.batch_size == LOGICAL_BATCH_SIZE
     assert any(Path(path).stem == "real_02" for path in smoke.train_instances)
     assert any(Path(path).stem == "real_02" for path in pilot.train_instances)
+    assert pilot.stage_a_steps == 2400
+    assert pilot.stage_b_steps == 600
+    assert pilot.optimization.total_gradient_steps == 3000
+    assert pilot.optimization.updates_per_env_step == 4
+    assert pilot.environment.reward_mode.value == "hybrid_node_lp"
+    assert pilot.environment.bootstrap_on_truncation
+    assert "real_02" not in {Path(path).stem for path in pilot.instances_for_stage("A")}
+    assert any(Path(path).stem.startswith("real_02") for path in pilot.instances_for_stage("B"))
+    assert pilot.stage_for_step(2399) == "A"
+    assert pilot.stage_for_step(2400) == "B"
+    assert pilot.instance_budget("data/instances/train/real_06.cip") == (60.0, 100)
+    assert pilot.instance_budget("data/instances/transfer/real_02.cip") == (300.0, 100)
+
+
+def test_dual_pool_can_force_stage_a_mix_when_large_is_ready():
+    replay = DualPoolGraphReplay(seed=0)
+    _fill_dual_pool(replay, medium=20, large=6)
+    forced = replay.sample_logical_batch(allow_large=False)
+    assert [handle.pool for handle in forced.handles] == ["medium"] * 16
+    mixed = replay.sample_logical_batch(allow_large=True)
+    assert [handle.pool for handle in mixed.handles].count("large") == 4
+
+
+def test_nstep_flush_keeps_bootstrap_tail():
+    first = graph_state()
+    second = graph_state(1.0)
+    accumulator = NStepAccumulator(3, 1.0)
+    assert accumulator.append(OneStepExperience(first, 0, -1.0, second, 1.0)) == []
+    assert accumulator.append(OneStepExperience(second, 1, -2.0, first, 1.0)) == []
+    flushed = accumulator.flush()
+    assert len(flushed) == 2
+    assert all(item.bootstrap_mask == 1.0 for item in flushed)
+    assert all(item.next_state is not None for item in flushed)
+    assert accumulator.flush() == []
+
+
+def test_hybrid_identity_and_selection_key():
+    first_node, first_lp, first_total = hybrid_rewards(2, 150)
+    second_node, second_lp, second_total = hybrid_rewards(3, 50)
+    assert first_node == -2.0
+    assert second_node == -3.0
+    assert abs(first_lp + 1.0e-4 * 150) < 1.0e-12
+    assert hybrid_identity_holds(
+        [first_total, second_total],
+        n0=2,
+        n_t=7,
+        lp0=100,
+        lp_t=300,
+    )
+    better = selection_key(
+        solved_rate=1.0,
+        mean_pdi=10.0,
+        mean_final_gap=0.2,
+        mean_par2=80.0,
+        mean_lp=100.0,
+        mean_nodes=40.0,
+        gradient_step=20,
+        seed=1,
+    )
+    worse_unsolved = selection_key(
+        solved_rate=0.0,
+        mean_pdi=0.1,
+        mean_final_gap=0.0,
+        mean_par2=10.0,
+        mean_lp=1.0,
+        mean_nodes=1.0,
+        gradient_step=1,
+        seed=0,
+    )
+    missing = selection_key(
+        solved_rate=1.0,
+        mean_pdi=float("inf"),
+        mean_final_gap=0.0,
+        mean_par2=10.0,
+        mean_lp=1.0,
+        mean_nodes=1.0,
+        gradient_step=1,
+        seed=0,
+    )
+    earlier = selection_key(
+        solved_rate=1.0,
+        mean_pdi=10.0,
+        mean_final_gap=0.2,
+        mean_par2=80.0,
+        mean_lp=100.0,
+        mean_nodes=40.0,
+        gradient_step=5,
+        seed=9,
+    )
+    assert better < worse_unsolved
+    assert better < missing
+    assert earlier < better
+    assert metric_mean([1.0, 3.0]) == 2.0
+    assert metric_mean([1.0, float("inf")]) == float("inf")
+
+
+def test_curriculum_does_not_stop_on_mix_gates():
+    still_running = _training_should_stop(
+        gradient_step=10,
+        total_gradient_steps=3000,
+        elapsed=1.0,
+        wall_time_limit=0.0,
+        require_mix_16_0=True,
+        require_mix_12_4=True,
+        mix_16_0=1,
+        mix_12_4=1,
+        stage_a_steps=2400,
+        stage_b_steps=600,
+    )
+    assert still_running == ""
+    finished = _training_should_stop(
+        gradient_step=3000,
+        total_gradient_steps=3000,
+        elapsed=1.0,
+        wall_time_limit=0.0,
+        require_mix_16_0=True,
+        require_mix_12_4=True,
+        mix_16_0=1,
+        mix_12_4=1,
+        stage_a_steps=2400,
+        stage_b_steps=600,
+    )
+    assert finished == "gradient_steps"
+
+
+def test_deploy_retest_overhead_default_is_ten_percent():
+    import inspect
+
+    default = inspect.signature(run_deploy_retest).parameters["overhead_fraction"].default
+    assert default == 0.10
+
+
+def test_stage_a_ready_for_update_ignores_large_pool():
+    replay = DualPoolGraphReplay(seed=0)
+    _fill_dual_pool(replay, medium=16, large=4)
+    assert _ready_for_update(
+        replay,
+        min_replay_size=16,
+        require_mix_16_0=False,
+        require_mix_12_4=False,
+        mix_16_0=0,
+        mix_12_4=0,
+        stage="A",
+    )
+    empty_large = DualPoolGraphReplay(seed=1)
+    _fill_dual_pool(empty_large, medium=16, large=0)
+    assert not _ready_for_update(
+        empty_large,
+        min_replay_size=16,
+        require_mix_16_0=False,
+        require_mix_12_4=False,
+        mix_16_0=0,
+        mix_12_4=0,
+        stage="B",
+    )

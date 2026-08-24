@@ -99,6 +99,74 @@ def test_real_transition_contract_and_terminal_bootstrap():
     assert not retained_observation.variable_features.flags.writeable
 
 
+def test_scip_caps_widen_when_bootstrap_is_enabled():
+    config = BBMDPConfig(
+        seed=0,
+        time_limit=60.0,
+        node_limit=3,
+        bootstrap_on_truncation=True,
+    )
+    assert config.time_limit == 60.0
+    assert config.node_limit == 3
+    assert config.scip_search_limits() == (65.0, 4)
+
+
+def test_hybrid_reward_identity_on_real_instance():
+    config = BBMDPConfig(
+        seed=0,
+        time_limit=60.0,
+        node_limit=3,
+        reward_mode=RewardMode.HYBRID_NODE_LP,
+    )
+    environment = BBMDPBranchingEnv(config)
+    state = environment.reset(REAL_INSTANCE)
+    n0 = int(state.info["node_count"])
+    lp0 = int(state.info["lp_iterations"])
+    rewards = []
+    while not state.terminated and not state.truncated:
+        transition = environment.step(int(state.action_set[0]))
+        rewards.append(float(transition.reward))
+        assert transition.info["total_reward"] == transition.reward
+        assert abs(
+            transition.info["node_reward"] + transition.info["lp_reward"] - transition.reward
+        ) <= 1.0e-12
+        state = environment.current_state
+    n_t = int(state.info["node_count"])
+    lp_t = int(state.info["lp_iterations"])
+    if n_t >= n0 and lp_t >= lp0:
+        from rl_branching.config import hybrid_identity_holds
+
+        assert hybrid_identity_holds(rewards, n0, n_t, lp0, lp_t)
+    environment.close()
+
+
+def test_live_budget_truncation_keeps_bootstrap_state():
+    config = BBMDPConfig(
+        seed=0,
+        time_limit=60.0,
+        node_limit=3,
+        bootstrap_on_truncation=True,
+        reward_mode=RewardMode.HYBRID_NODE_LP,
+    )
+    environment = BBMDPBranchingEnv(config)
+    state = environment.reset(REAL_INSTANCE)
+    last = None
+    while not state.terminated and not state.truncated:
+        last = environment.mark_live_budget_truncation(
+            environment.step(int(state.action_set[0]))
+        )
+        state = environment.current_state
+    assert last is not None
+    assert last.truncated
+    assert not last.terminated
+    assert last.info.get("trainer_truncated") is True
+    assert last.bootstrap_mask == 1.0
+    assert last.next_observation is not None
+    assert last.next_action_set.size > 0
+    assert state.observation is not None
+    environment.close()
+
+
 def test_timeout_is_an_explicit_truncation():
     environment = BBMDPBranchingEnv(
         BBMDPConfig(seed=0, time_limit=0.001, node_limit=1000)

@@ -53,6 +53,7 @@ class GraphUpdateMetrics:
     q_std: float
     gradient_norm: float
     priorities: np.ndarray
+    bootstrap_target_used: int
 
 
 class GraphDoubleDQNLearner:
@@ -136,6 +137,7 @@ class GraphDoubleDQNLearner:
         predicted_values = []
         target_values = []
         weighted_losses = []
+        bootstrap_target_used = 0
 
         for experience, weight in zip(batch.experiences, weights):
             state_tensors = graph_state_tensors(experience.state, self.device)
@@ -165,6 +167,7 @@ class GraphDoubleDQNLearner:
                         * float(experience.bootstrap_mask)
                         * target_next
                     )
+                    bootstrap_target_used += 1
                 target_value = torch.as_tensor(
                     experience.reward, dtype=torch.float32, device=self.device
                 ) + bootstrap
@@ -202,4 +205,5 @@ class GraphDoubleDQNLearner:
             q_std=float(predicted_tensor.std(unbiased=False)),
             gradient_norm=float(gradient_norm),
             priorities=td_errors.detach().cpu().numpy(),
+            bootstrap_target_used=int(bootstrap_target_used),
         )

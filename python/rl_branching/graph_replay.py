@@ -279,10 +279,15 @@ class DualPoolGraphReplay:
             can_sample_large_quota=len(self.large) >= self.large_sample_quota,
         )
 
-    def sample_logical_batch(self, gradient_step: int = 0) -> PrioritizedBatch:
+    def sample_logical_batch(
+        self,
+        gradient_step: int = 0,
+        *,
+        allow_large: bool = True,
+    ) -> PrioritizedBatch:
         large_take = (
             self.large_sample_quota
-            if len(self.large) >= self.large_sample_quota
+            if allow_large and len(self.large) >= self.large_sample_quota
             else 0
         )
         medium_take = self.medium_sample_quota + (self.large_sample_quota - large_take)
