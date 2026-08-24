@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Phase B: 4-seed GCNN Prim-feature training on free A100s (1,2,4,5).
-# Trainer is single-process; we scale batch and fan out seeds across GPUs.
+# Phase B: 4 independent seeds on separate GPUs. DualPool logical batch is
+# always 16 (not batch_size=64). This script is not approval for formal 4-card R1.
 set -eo pipefail
 PROJ="${PROJ:-/data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn}"
 ENV_DIR="${ENV_DIR:-/data/hanchengcheng/envs/rl4scip}"
@@ -36,6 +36,8 @@ for i in "${!SEEDS[@]}"; do
 from pathlib import Path
 import yaml
 cfg = yaml.safe_load(Path("$BASE_CFG").read_text())
+if int(cfg.get("optimization", {}).get("batch_size", -1)) != 16:
+    raise SystemExit("stale DualPool batch_size: must be 16")
 cfg["seed"] = int("$seed")
 cfg["run_name"] = f"bipartite_gcnn_prim_feat_pilot_seed{int('$seed')}"
 cfg["output_dir"] = "$out"

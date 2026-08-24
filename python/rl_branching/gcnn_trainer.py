@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import os
 import random
@@ -25,7 +26,7 @@ from .graph_features import (
     RunningGraphNormalizer,
     training_graph_state,
 )
-from .graph_replay import DualPoolGraphReplay
+from .graph_replay import DualPoolGraphReplay, DualPoolQuotaUnfillable
 from .observation import EDGE_FEATURE_NAMES, EXTENDED_ROW_FEATURE_NAMES, GLOBAL_FEATURE_NAMES
 from .replay import NStepAccumulator, OneStepExperience
 
@@ -102,6 +103,72 @@ def _can_sample_logical_batch(replay: DualPoolGraphReplay) -> bool:
     if len(replay.large) >= replay.large_sample_quota:
         return len(replay.medium) >= replay.medium_sample_quota
     return len(replay.medium) >= replay.medium_sample_quota + replay.large_sample_quota
+
+
+ZERO_DECISION_SKIP_N = 3
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_shared_normalizer(path: Path | str) -> tuple[RunningGraphNormalizer, str]:
+    shared_norm = Path(path)
+    if not shared_norm.is_file():
+        raise FileNotFoundError(
+            f"normalization_path is set but does not exist: {shared_norm}"
+        )
+    sha256 = _file_sha256(shared_norm)
+    raw = json.loads(shared_norm.read_text(encoding="utf-8"))
+    statistics = {
+        key: np.asarray(value, dtype=np.float32)
+        for key, value in raw.items()
+        if key.endswith("_mean") or key.endswith("_std")
+    }
+    return RunningGraphNormalizer.from_statistics(statistics), sha256
+
+
+class InstanceQuotaGuard:
+    def __init__(
+        self,
+        instances: tuple[str, ...] | list[str],
+        skip_after: int = ZERO_DECISION_SKIP_N,
+    ) -> None:
+        if not instances:
+            raise ValueError("train instances must be non-empty")
+        self.instances = tuple(instances)
+        self.skip_after = int(skip_after)
+        self.zero_streak = {name: 0 for name in self.instances}
+        self.unfillable: set[str] = set()
+        self._cursor = 0
+
+    def available(self) -> list[str]:
+        return [name for name in self.instances if name not in self.unfillable]
+
+    def next_instance(self) -> str:
+        remaining = self.available()
+        if not remaining:
+            raise DualPoolQuotaUnfillable(
+                "quota_unfillable: all train instances skipped after consecutive "
+                "zero-decision episodes"
+            )
+        instance = remaining[self._cursor % len(remaining)]
+        self._cursor += 1
+        return instance
+
+    def record_episode(self, instance: str, n_decisions: int) -> bool:
+        if n_decisions > 0:
+            self.zero_streak[instance] = 0
+            return False
+        self.zero_streak[instance] = self.zero_streak.get(instance, 0) + 1
+        if self.zero_streak[instance] >= self.skip_after:
+            self.unfillable.add(instance)
+            return True
+        return False
 
 
 def _device(name: str) -> torch.device:
@@ -296,15 +363,9 @@ def train_gcnn(config_path: Path | str) -> dict:
         beta_steps=config.optimization.per_beta_steps,
         epsilon=config.optimization.per_epsilon,
     )
-    shared_norm = Path(config.normalization_path) if config.normalization_path else Path()
-    if shared_norm.is_file():
-        raw = json.loads(shared_norm.read_text(encoding="utf-8"))
-        statistics = {
-            key: np.asarray(value, dtype=np.float32)
-            for key, value in raw.items()
-            if key.endswith("_mean") or key.endswith("_std")
-        }
-        normalizer = RunningGraphNormalizer.from_statistics(statistics)
+    normalization_sha256 = ""
+    if config.normalization_path:
+        normalizer, normalization_sha256 = load_shared_normalizer(config.normalization_path)
         learner.online.set_normalization(normalizer.statistics())
         learner.target.set_normalization(normalizer.statistics())
         normalizer_frozen = True
@@ -313,8 +374,14 @@ def train_gcnn(config_path: Path | str) -> dict:
         normalizer_frozen = False
     observed_states = 0
     history = HistoryWriter(output / "training_history.csv")
+    history.write(
+        event="normalization",
+        status=normalization_sha256 or "local_warmup",
+        instance=config.normalization_path,
+    )
     latest: Optional[GraphUpdateMetrics] = None
     episode = 0
+    instance_guard = InstanceQuotaGuard(config.train_instances)
     best_validation = float("inf")
     stale_validations = 0
     next_validation = config.evaluation.interval_steps
@@ -322,7 +389,7 @@ def train_gcnn(config_path: Path | str) -> dict:
 
     try:
         while learner.gradient_step < config.optimization.total_gradient_steps:
-            instance = config.train_instances[episode % len(config.train_instances)]
+            instance = instance_guard.next_instance()
             env = BBMDPBranchingEnv(replace(config.environment, seed=config.seed + episode))
             state = env.reset(instance)
             graph = None if state.observation is None else training_graph_state(state.observation, state.action_set)
@@ -426,6 +493,14 @@ def train_gcnn(config_path: Path | str) -> dict:
                 status=final_info.get("status", "unknown"),
                 instance=instance,
             )
+            if instance_guard.record_episode(instance, len(ranks)):
+                history.write(
+                    event="quota_unfillable",
+                    episode=episode,
+                    gradient_step=learner.gradient_step,
+                    status="skipped_zero_decision",
+                    instance=instance,
+                )
             episode += 1
 
             if learner.gradient_step >= next_validation or learner.gradient_step >= config.optimization.total_gradient_steps:
@@ -527,6 +602,9 @@ def train_gcnn(config_path: Path | str) -> dict:
         "device": str(device),
         "torch_version": torch.__version__,
         "loss_mode": config.model.loss_mode,
+        "normalization_path": config.normalization_path,
+        "normalization_sha256": normalization_sha256,
+        "normalization_source": "shared" if normalization_sha256 else "local_warmup",
         "evaluation": [item.__dict__ for item in comparisons],
     }
     (output / "summary.json").write_text(

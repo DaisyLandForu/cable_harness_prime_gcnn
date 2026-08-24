@@ -1,10 +1,13 @@
+import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
 import torch
 
-from rl_branching.gcnn_config import GCNNTrainingConfig
+from rl_branching.gcnn_config import GCNNOptimizationConfig, GCNNTrainingConfig
 from rl_branching.gcnn_dqn import GraphDoubleDQNLearner, stable_graph_argmax
+from rl_branching.gcnn_trainer import InstanceQuotaGuard, load_shared_normalizer
 from rl_branching.gcnn_model import BipartiteGCNNQNetwork, export_gcnn_torchscript
 from rl_branching.graph_features import (
     GraphState,
@@ -17,6 +20,7 @@ from rl_branching.graph_features import (
 from rl_branching.graph_replay import (
     DualPoolGraphReplay,
     DualPoolQuotaUnfillable,
+    LOGICAL_BATCH_SIZE,
     PrioritizedBatch,
     PrioritizedReplayBuffer,
     ReplayHandle,
@@ -420,3 +424,127 @@ def test_all_gcnn_configs_load():
         assert config.model.loss_mode == mode
         assert config.optimization.n_step == (1 if name == "ablation_nstep1.yaml" else 3)
         assert config.optimization.gamma == 1.0
+        assert config.optimization.batch_size == LOGICAL_BATCH_SIZE
+
+
+def test_stale_batch_size_is_rejected():
+    try:
+        GCNNOptimizationConfig(batch_size=2)
+        raised = False
+    except ValueError as error:
+        raised = True
+        assert "batch_size=16" in str(error)
+    assert raised
+
+
+def test_microbatch_one_backward_before_next_forward():
+    events = []
+    first = graph_state()
+    second = graph_state(1.0)
+    online = model_for_state()
+    target = model_for_state()
+
+    def forward_hook(_module, _args):
+        if torch.is_grad_enabled() and _module.training:
+            events.append("forward")
+
+    def backward_hook(_module, _grad_input, _grad_output):
+        events.append("backward")
+
+    online.register_forward_pre_hook(forward_hook)
+    online.register_full_backward_hook(backward_hook)
+
+    learner = GraphDoubleDQNLearner(
+        online,
+        target,
+        torch.device("cpu"),
+        learning_rate=0.001,
+        gamma=1.0,
+        gradient_clip=5.0,
+        target_tau=0.1,
+    )
+    zero_calls = {"n": 0}
+    step_calls = {"n": 0}
+    original_zero = learner.optimizer.zero_grad
+    original_step = learner.optimizer.step
+
+    def counted_zero(*args, **kwargs):
+        zero_calls["n"] += 1
+        events.append("zero_grad")
+        return original_zero(*args, **kwargs)
+
+    def counted_step(*args, **kwargs):
+        step_calls["n"] += 1
+        events.append("step")
+        return original_step(*args, **kwargs)
+
+    learner.optimizer.zero_grad = counted_zero
+    learner.optimizer.step = counted_step
+    replay = PrioritizedReplayBuffer(8, seed=0)
+    replay.add(ReplayExperience(first, 1, -2.0, second, 1.0, 3))
+    replay.add(ReplayExperience(second, 0, -1.0, None, 0.0, 1))
+    metrics = learner.update(replay.sample(2, gradient_step=0))
+    assert zero_calls["n"] == 1
+    assert step_calls["n"] == 1
+    assert events[0] == "zero_grad"
+    assert events[-1] == "step"
+    flow = [item for item in events if item in {"forward", "backward"}]
+    forwards = [index for index, item in enumerate(flow) if item == "forward"]
+    first_backward = flow.index("backward")
+    assert len(forwards) >= 2
+    assert forwards[1] > first_backward
+    assert np.isfinite(
+        [metrics.loss, metrics.td_error, metrics.gradient_norm, metrics.q_mean]
+    ).all()
+
+
+def test_instance_quota_guard_skips_after_three_zero_decision_episodes():
+    guard = InstanceQuotaGuard(("real_06", "real_08"), skip_after=3)
+    assert guard.next_instance() == "real_06"
+    assert guard.record_episode("real_06", 0) is False
+    assert guard.record_episode("real_06", 0) is False
+    assert guard.record_episode("real_06", 0) is True
+    assert "real_06" in guard.unfillable
+    assert guard.next_instance() == "real_08"
+    assert guard.record_episode("real_08", 2) is False
+    assert guard.record_episode("real_08", 0) is False
+    assert guard.zero_streak["real_08"] == 1
+    only = InstanceQuotaGuard(("real_09",), skip_after=3)
+    for _ in range(3):
+        only.record_episode("real_09", 0)
+    try:
+        only.next_instance()
+        raised = False
+    except DualPoolQuotaUnfillable as error:
+        raised = True
+        assert "quota_unfillable" in str(error)
+    assert raised
+
+
+def test_shared_normalization_missing_path_fails_fast(tmp_path: Path):
+    missing = tmp_path / "missing_normalization.json"
+    try:
+        load_shared_normalizer(missing)
+        raised = False
+    except FileNotFoundError as error:
+        raised = True
+        assert "normalization_path is set but does not exist" in str(error)
+    assert raised
+    normalizer = RunningGraphNormalizer()
+    normalizer.update(graph_state())
+    normalizer.update(graph_state(1.0))
+    present = tmp_path / "normalization.json"
+    present.write_text(json.dumps(normalizer.to_json()), encoding="utf-8")
+    loaded, sha256 = load_shared_normalizer(present)
+    assert loaded.frozen
+    assert len(sha256) == 64
+    assert sha256 == hashlib.sha256(present.read_bytes()).hexdigest()
+
+
+def test_smoke_and_pilot_use_dualpool_logical_batch():
+    smoke = GCNNTrainingConfig.from_yaml(Path("configs/rl/gcnn_smoke.yaml"))
+    pilot = GCNNTrainingConfig.from_yaml(Path("configs/rl/gcnn_prim_feat_pilot.yaml"))
+    assert smoke.optimization.batch_size == LOGICAL_BATCH_SIZE
+    assert pilot.optimization.batch_size == LOGICAL_BATCH_SIZE
+    assert any(Path(path).stem == "real_02" for path in smoke.train_instances)
+    assert any(Path(path).stem == "real_02" for path in pilot.train_instances)

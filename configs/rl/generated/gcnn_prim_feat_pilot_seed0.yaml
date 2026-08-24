@@ -5,6 +5,7 @@ output_dir: /data/hanchengcheng/hcc_1/du/cable_harness_prim_gcnn/artifacts/model
 train_instances:
 - data/instances/train/real_06.cip
 - data/instances/train/real_07.cip
+- data/instances/transfer/real_02.cip
 validation_instances:
 - data/instances/validation/real_08.cip
 environment:
@@ -25,7 +26,7 @@ model:
   hl_gauss_sigma: 0.75
 optimization:
   total_gradient_steps: 3000
-  batch_size: 64
+  batch_size: 16
   replay_capacity: 2048
   min_replay_size: 128
   learning_rate: 0.0003

@@ -24,9 +24,9 @@ model:
   hl_gauss_sigma: 0.75
 optimization:
   total_gradient_steps: 40
-  batch_size: 2
+  batch_size: 16
   replay_capacity: 24
-  min_replay_size: 4
+  min_replay_size: 16
   learning_rate: 0.0003
   updates_per_env_step: 4
   n_step: 3

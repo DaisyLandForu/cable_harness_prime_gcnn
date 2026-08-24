@@ -3,7 +3,9 @@ seed: 0
 device: cuda
 output_dir: artifacts/models/gcnn/smoke
 train_instances:
+  - data/instances/train/syn_medium_s101.cip
   - data/instances/train/real_06.cip
+  - data/instances/transfer/real_02.cip
 validation_instances:
   - data/instances/validation/real_08.cip
 environment:
@@ -24,9 +26,9 @@ model:
   hl_gauss_sigma: 0.75
 optimization:
   total_gradient_steps: 100
-  batch_size: 2
+  batch_size: 16
   replay_capacity: 32
-  min_replay_size: 4
+  min_replay_size: 16
   learning_rate: 0.0003
   updates_per_env_step: 4
   n_step: 3

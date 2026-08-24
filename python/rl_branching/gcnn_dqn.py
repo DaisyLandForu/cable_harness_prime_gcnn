@@ -126,16 +126,30 @@ class GraphDoubleDQNLearner:
                 target_parameter.add_(online_parameter, alpha=self.target_tau)
 
     def update(self, batch: PrioritizedBatch) -> GraphUpdateMetrics:
+        weights = torch.as_tensor(batch.weights, dtype=torch.float32, device=self.device)
+        batch_size = len(batch.experiences)
+        if weights.shape[0] != batch_size:
+            raise ValueError("PER weights must align with the logical batch")
+
+        self.online.train()
+        self.optimizer.zero_grad(set_to_none=True)
         predicted_values = []
         target_values = []
-        sample_losses = []
-        self.online.train()
+        weighted_losses = []
 
-        for experience in batch.experiences:
+        for experience, weight in zip(batch.experiences, weights):
             state_tensors = graph_state_tensors(experience.state, self.device)
-            q_values = self.online(*state_tensors)
-            predicted = q_values[experience.action_position]
-            predicted_values.append(predicted)
+            if self.online.distributional_bins == 1:
+                q_values = self.online(*state_tensors)
+                predicted = q_values[experience.action_position]
+            else:
+                logits_all = self.online.logits(*state_tensors)
+                logits = logits_all[experience.action_position]
+                probabilities = torch.softmax(logits_all, dim=1)
+                transformed = (probabilities * self.online.z_centers).sum(dim=1)
+                predicted = (-torch.pow(torch.full_like(transformed, 2.0), transformed))[
+                    experience.action_position
+                ]
 
             with torch.no_grad():
                 bootstrap = 0.0
@@ -154,31 +168,23 @@ class GraphDoubleDQNLearner:
                 target_value = torch.as_tensor(
                     experience.reward, dtype=torch.float32, device=self.device
                 ) + bootstrap
-            target_values.append(target_value)
 
             if self.online.distributional_bins == 1:
-                sample_losses.append(
-                    nn.functional.smooth_l1_loss(predicted, target_value, reduction="none")
+                sample_loss = nn.functional.smooth_l1_loss(
+                    predicted, target_value, reduction="none"
                 )
             else:
-                logits = self.online.logits(*state_tensors)[experience.action_position]
                 histogram = self._target_histogram(target_value)
-                sample_losses.append(
-                    -(histogram * torch.log_softmax(logits, dim=0)).sum()
-                )
+                sample_loss = -(histogram * torch.log_softmax(logits, dim=0)).sum()
 
-        weights = torch.as_tensor(batch.weights, dtype=torch.float32, device=self.device)
-        if weights.shape[0] != len(sample_losses):
-            raise ValueError("PER weights must align with the logical batch")
-        batch_size = len(sample_losses)
-        self.optimizer.zero_grad(set_to_none=True)
-        weighted_losses = []
-        for sample_loss, weight in zip(sample_losses, weights):
             weighted = sample_loss * weight / batch_size
             if not torch.isfinite(weighted):
                 raise FloatingPointError("GCNN DQN loss is NaN or Inf")
             weighted.backward()
+            predicted_values.append(predicted.detach())
+            target_values.append(target_value.detach())
             weighted_losses.append(weighted.detach())
+
         gradient_norm = torch.nn.utils.clip_grad_norm_(
             self.online.parameters(), self.gradient_clip
         )
@@ -186,13 +192,8 @@ class GraphDoubleDQNLearner:
         self.gradient_step += 1
         self._soft_update()
 
-        predicted_tensor = torch.stack([value.detach() for value in predicted_values])
-        target_tensor = torch.stack(
-            [
-                value.detach() if torch.is_tensor(value) else torch.as_tensor(value)
-                for value in target_values
-            ]
-        )
+        predicted_tensor = torch.stack(predicted_values)
+        target_tensor = torch.stack(target_values)
         td_errors = (target_tensor - predicted_tensor).abs()
         return GraphUpdateMetrics(
             loss=float(torch.stack(weighted_losses).sum()),

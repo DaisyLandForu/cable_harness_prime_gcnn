@@ -5,6 +5,7 @@ from typing import Any
 import yaml
 
 from .config import BBMDPConfig, RewardMode
+from .graph_replay import LOGICAL_BATCH_SIZE
 
 
 @dataclass(frozen=True)
@@ -37,9 +38,9 @@ class GCNNModelConfig:
 @dataclass(frozen=True)
 class GCNNOptimizationConfig:
     total_gradient_steps: int = 100
-    batch_size: int = 2
+    batch_size: int = LOGICAL_BATCH_SIZE
     replay_capacity: int = 32
-    min_replay_size: int = 4
+    min_replay_size: int = LOGICAL_BATCH_SIZE
     learning_rate: float = 0.0003
     updates_per_env_step: int = 4
     n_step: int = 3
@@ -52,8 +53,12 @@ class GCNNOptimizationConfig:
     per_epsilon: float = 1.0e-5
 
     def __post_init__(self) -> None:
-        if self.batch_size <= 0 or self.batch_size > self.min_replay_size:
-            raise ValueError("invalid GCNN batch/min replay sizes")
+        if self.batch_size != LOGICAL_BATCH_SIZE:
+            raise ValueError(
+                "GCNN DualPool always samples 16 graphs; set optimization.batch_size=16"
+            )
+        if self.min_replay_size < LOGICAL_BATCH_SIZE:
+            raise ValueError("min_replay_size must be at least the DualPool logical batch of 16")
         if self.replay_capacity < self.min_replay_size:
             raise ValueError("GCNN replay capacity is too small")
         if self.n_step <= 0 or self.gamma != 1.0:
