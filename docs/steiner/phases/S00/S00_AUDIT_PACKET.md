@@ -4,14 +4,14 @@
 
 - 阶段：S00 研究契约与环境冻结
 - base SHA：`88ade1ac614fb12f882a10ba9b5d35b15c7b4d01`
-- content head SHA：`PENDING_GATE_COMMIT`（本地 Gate PASS 后冻结；审计本文件所在 branch 的记录值）
-- commit range：`88ade1ac614fb12f882a10ba9b5d35b15c7b4d01..CONTENT_HEAD_SHA`
+- content head SHA：`8b90375b6617a1ddcba34b872dbdbc11411cc042`
+- substantive commit range：`88ade1ac614fb12f882a10ba9b5d35b15c7b4d01..8b90375b6617a1ddcba34b872dbdbc11411cc042`
 - branch：`research/steiner-s00-contract`
 - remote/PR：push 前 pending；不创建 PR、不 merge
 - 主方案：`plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md`
 - 阶段计划：`docs/steiner/phases/S00/S00_PLAN.md`
 
-`content head SHA` 将指向包含契约、配置、测试、结果文档的提交；随后仅允许一个 audit-metadata commit 把上述 placeholder 换成该 SHA。这样避免 Git commit 不能在自身内容中自引用其 SHA 的循环。
+`content head SHA` 指向包含契约、配置、测试和结果文档的冻结提交。其后的 branch-tip commit 只允许更新 `STATUS.md`、本审计包和命令记录中的 SHA/remote metadata；这是为避免 Git commit 不能在自身内容中自引用其 SHA 的循环。审计者应检查 substantive range，并确认 `8b90375b6617a1ddcba34b872dbdbc11411cc042..research/steiner-s00-contract` 只有这三份 metadata 文档。
 
 ## 需求到证据映射
 
@@ -45,8 +45,9 @@ tests/steiner/test_s00_contract.py
 
 ```text
 /home/duweiyue25/conda/envs/rl4scip/bin/python -m unittest -v tests/steiner/test_s00_contract.py
-git diff --check 88ade1ac614fb12f882a10ba9b5d35b15c7b4d01..CONTENT_HEAD_SHA
-git diff --name-only 88ade1ac614fb12f882a10ba9b5d35b15c7b4d01..CONTENT_HEAD_SHA
+git diff --check 88ade1ac614fb12f882a10ba9b5d35b15c7b4d01..8b90375b6617a1ddcba34b872dbdbc11411cc042
+git diff --name-only 88ade1ac614fb12f882a10ba9b5d35b15c7b4d01..8b90375b6617a1ddcba34b872dbdbc11411cc042
+git diff --name-only 8b90375b6617a1ddcba34b872dbdbc11411cc042..research/steiner-s00-contract
 ```
 
 本阶段没有 solver/learning reproduction command，因为没有运行这些实验。

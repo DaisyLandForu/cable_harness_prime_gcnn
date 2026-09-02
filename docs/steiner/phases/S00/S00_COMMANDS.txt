@@ -63,3 +63,5 @@ git diff --cached --check
 git diff --cached --name-status
 git diff --cached --stat
 git status --short --branch
+git commit -m "docs(steiner): freeze S00 research contract"
+git rev-parse HEAD

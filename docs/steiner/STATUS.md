@@ -15,7 +15,7 @@
 
 | 阶段 | 目标 | 本地 Gate | GPT 审计 | branch | commit |
 |---|---|---|---|---|---|
-| S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `research/steiner-s00-contract` | pending content commit |
+| S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `research/steiner-s00-contract` | `8b90375b6617a1ddcba34b872dbdbc11411cc042` |
 | S01 | 独立研究栈骨架 | NOT_STARTED | NOT_RUN | — | — |
 | S02 | 数据解析与 MCF correctness | NOT_STARTED | NOT_RUN | — | — |
 | S03 | Branchability 与资源审计 | NOT_STARTED | NOT_RUN | — | — |
