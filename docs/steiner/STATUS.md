@@ -5,10 +5,16 @@
 ## 当前状态
 
 - 当前阶段：S02 数据解析与 MCF correctness
-- 阶段状态：LOCAL_GATE_PASS（内容提交完成；S03 未开始）
-- base SHA：`35a90ec5e52e2fad8301e3441ff6b286c7701d04`
-- 工作 branch：`research/steiner-s02-formulation`
+- 阶段状态：LOCAL_GATE_PASS；正在完成 S02→S03 之间的 Git 治理迁移
+- S02 base SHA：`35a90ec5e52e2fad8301e3441ff6b286c7701d04`
+- 唯一活动 branch：`research/steiner-migration`
+- 长期分支起点：S02 phase head
+  `25be2e18c4020bed4cb8563618687b148d1f405f`
+- 治理策略：master plan v1.2；阶段审计使用不可变 SHA/range/tag，不再创建
+  远端阶段分支
+- 研究契约：v1.1，仅更新 Git 治理；科学/实验契约未改变，治理修订待 GPT 审计
 - S00 远端：`origin/research/steiner-s00-contract` 已核实指向 `a0bf0e3c1a702e1c85384f864defc86abbda29a5`
+- 旧 S00/S01/S02 远端分支：保留为只读历史指针，不删除、不续写、不改写
 - 治理偏差：S00 GPT 审计仍为 NOT_RUN；用户明确要求继续 S01--S02，未把缺失审计改写为 PASS
 - S01：本地 Gate PASS，phase head `35a90ec5e52e2fad8301e3441ff6b286c7701d04`
 - 下一阶段：本次请求止于 S02；未开始 S03
@@ -17,11 +23,13 @@
 
 ## 阶段登记表
 
-| 阶段 | 目标 | 本地 Gate | GPT 审计 | branch | commit |
+所有阶段均由 `research/steiner-migration` 累计承载；表中 SHA/tag 是审计身份。
+
+| 阶段 | 目标 | 本地 Gate | GPT 审计 | content head | phase head / local tag |
 |---|---|---|---|---|---|
-| S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `research/steiner-s00-contract` | `8b90375b6617a1ddcba34b872dbdbc11411cc042` |
-| S01 | 独立研究栈骨架 | PASS | NOT_RUN | `research/steiner-s01-scaffold` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` |
-| S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `research/steiner-s02-formulation` | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` |
+| S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `8b90375b6617a1ddcba34b872dbdbc11411cc042` | `a0bf0e3c1a702e1c85384f864defc86abbda29a5` / `steiner-s00-local-gate-v1` |
+| S01 | 独立研究栈骨架 | PASS | NOT_RUN | `05b42791226347d31647547c344ef46c9dc4e87d` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` / `steiner-s01-local-gate-v1` |
+| S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | NOT_STARTED | NOT_RUN | — | — |
 | S04 | B0 二部图与动作映射 | NOT_STARTED | NOT_RUN | — | — |
 | S05 | Strong-branch teacher 与 IL | NOT_STARTED | NOT_RUN | — | — |
@@ -41,6 +49,8 @@
 - split 规则：`configs/steiner/splits/split_policy_v1.yml`
 - final-test selector：`configs/steiner/splits/final_test_v1.yml`
 - 环境事实与决策：`configs/steiner/environment.lock.yml`
+- Git 治理：`configs/steiner/git_governance_v1.yml`
+- 单分支决策：`docs/steiner/adr/0005-single-branch-git-governance.md`
 - S00 审计入口：`docs/steiner/phases/S00/S00_AUDIT_PACKET.md`
 - S01 审计入口：`docs/steiner/phases/S01/S01_AUDIT_PACKET.md`
 - S02 审计入口：`docs/steiner/phases/S02/S02_AUDIT_PACKET.md`
@@ -56,3 +66,5 @@
    可执行权限）；S01/S02 未修改旧源码，详见 S01/S02 test report。
 6. PACE odd correctness 样例在 1 node 求解；尚不能证明 branchability，必须由
    S03 预注册 Gate 判断。
+7. S00--S02 GPT audit 均为 NOT_RUN；local-gate tag 不能当作 audited tag。
+8. master plan v1.2 / research contract v1.1 的单分支治理修订尚未做 GPT 审计。

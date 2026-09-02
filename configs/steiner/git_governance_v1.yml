@@ -1,0 +1,58 @@
+schema_version: 1
+strategy_id: steiner-single-long-lived-branch-v1
+active_branch: research/steiner-migration
+one_active_migration_branch: true
+stage_branch_creation_allowed: false
+force_push_allowed: false
+rebase_published_history_allowed: false
+phase_merge_required: false
+final_merge_first_allowed_stage: S13
+
+checkpoint_tags:
+  local_gate_pattern: steiner-sXX-local-gate-vN
+  audited_pattern: steiner-sXX-audited-vN
+  annotated_required: true
+  published_tag_move_allowed: false
+  version_increment_on_remediation: true
+
+audit_identity:
+  immutable_fields:
+    - base_sha
+    - content_head_sha
+    - phase_head_sha
+    - substantive_commit_range
+  moving_branch_name_is_sufficient: false
+  pull_request_is_sufficient: false
+
+push_policy:
+  local_gate_pass_required: true
+  fast_forward_only: true
+  remote_ahead_or_diverged_is_blocking: true
+  external_write_requires_explicit_authorization: true
+
+legacy_stage_branches:
+  policy: retain_read_only_no_new_commits
+  branches:
+    - research/steiner-s00-contract
+    - research/steiner-s01-scaffold
+    - research/steiner-s02-formulation
+
+historical_checkpoints:
+  S00:
+    base_sha: 88ade1ac614fb12f882a10ba9b5d35b15c7b4d01
+    content_head_sha: 8b90375b6617a1ddcba34b872dbdbc11411cc042
+    phase_head_sha: a0bf0e3c1a702e1c85384f864defc86abbda29a5
+    local_gate_tag: steiner-s00-local-gate-v1
+    gpt_audit: NOT_RUN
+  S01:
+    base_sha: a0bf0e3c1a702e1c85384f864defc86abbda29a5
+    content_head_sha: 05b42791226347d31647547c344ef46c9dc4e87d
+    phase_head_sha: 35a90ec5e52e2fad8301e3441ff6b286c7701d04
+    local_gate_tag: steiner-s01-local-gate-v1
+    gpt_audit: NOT_RUN
+  S02:
+    base_sha: 35a90ec5e52e2fad8301e3441ff6b286c7701d04
+    content_head_sha: 19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a
+    phase_head_sha: 25be2e18c4020bed4cb8563618687b148d1f405f
+    local_gate_tag: steiner-s02-local-gate-v1
+    gpt_audit: NOT_RUN

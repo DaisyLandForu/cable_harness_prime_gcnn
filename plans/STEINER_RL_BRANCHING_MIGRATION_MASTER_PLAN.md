@@ -1,10 +1,10 @@
 # Steiner 系列图优化问题的 MILP 强化学习分支迁移主实施方案
 
-> 版本：v1.1
+> 版本：v1.2
 >
 > 日期：2026-09-02
 >
-> 状态：待按阶段实施
+> 状态：实施中（S00--S02 本地 Gate PASS）
 >
 > 适用仓库：`cable_harness_prim_gcnn`
 >
@@ -996,23 +996,43 @@ N CPU rollout/teacher workers
 
 ---
 
-## 12. 每阶段 GitHub 工作流
+## 12. 单一长期分支 GitHub 工作流
 
 ### 12.1 从当前脏工作区隔离
 
 当前仓库可能包含未提交实验产物。正式迁移开始前，应从确定的 base SHA 创建新的干净 worktree 或 clone，不要在现有脏目录中批量清理用户文件。
 
-建议分支结构：
+迁移只维护一个活动分支：
 
 ```text
-research/steiner-main
-research/steiner-s00-contract
-research/steiner-s01-scaffold
-research/steiner-s02-formulation
-...
+research/steiner-migration
 ```
 
-每个阶段分支从已审计通过的 `research/steiner-main` 创建。一个阶段只解决一个 Gate，不把下一阶段“顺手做一半”。
+S00--S02 已产生的 `research/steiner-s00-contract`、
+`research/steiner-s01-scaffold`、`research/steiner-s02-formulation` 只作为历史
+只读指针保留；不得删除、重置、force-push 或继续提交。它们的提交历史本来
+线性相连，`research/steiner-s02-formulation` 已包含 S00--S02，因此迁移到
+长期分支时从其 phase head 创建 `research/steiner-migration`，不制造重复
+merge commit。
+
+从 S03 开始不再创建 `research/steiner-sxx-*` 阶段分支。每个阶段直接以长期
+分支当前已允许推进的 head 为 base；一个阶段只解决一个 Gate，不把下一阶段
+“顺手做一半”。需要隔离脏工作区时可使用指向同一 base SHA 的新 worktree，
+但不得把临时 worktree 变成新的远端阶段分支。
+
+分支名是移动指针，不能单独作为审计身份。每阶段必须记录不可变的
+`base_sha`、`content_head_sha`、`phase_head_sha` 和精确 commit range：
+
+- `content_head_sha`：源码、配置、测试、结果和过程文档的实质提交终点；
+- `phase_head_sha`：只允许在 content head 后追加审计 SHA、remote metadata
+  和阶段状态回填；
+- 本地 Gate PASS 可创建 annotated tag `steiner-sXX-local-gate-vN`；tag message
+  必须写明 GPT audit 状态，不能把 NOT_RUN 写成 PASS；
+- GPT 最终 PASS 后创建 `steiner-sXX-audited-vN`；修复复审使用递增 `vN`，
+  禁止移动、复用或 force-push 已发布 tag。
+
+机器可读规则与历史 checkpoint 在
+`configs/steiner/git_governance_v1.yml`，治理变更理由在 ADR 0005。
 
 ### 12.2 阶段提交顺序
 
@@ -1025,18 +1045,27 @@ research/steiner-s02-formulation
 
 机械小阶段可合并，但 commit message 必须表达因果。禁止把 build、checkpoint、原始 benchmark 数据混入源码提交。
 
-### 12.3 本地 Gate、push、审计、合并
+### 12.3 本地 Gate、push、审计和阶段推进
 
 1. Codex 在阶段开始记录 base SHA 和初始 `git status`。
 2. Codex 只修改本阶段授权范围。
 3. 运行阶段测试和必要实验。
 4. 生成结果分析与审计包。
-5. 本地 Gate 通过后 commit 并 push 阶段分支；不要直接 merge。
-6. 将 branch/PR、commit range 和审计包交给 GPT 做只读审计。
-7. 审计结果保存回仓库；若 FAIL，创建 remediation commit 后重新审计。
-8. 只有最终 PASS 才合并到 `research/steiner-main` 并更新 `STATUS.md`。
+5. 本地 Gate 通过后 commit；确认远端不是 ahead/diverged 后，只允许把
+   `research/steiner-migration` fast-forward push 到同名远端分支。
+6. 以 immutable base/content/phase SHA、commit range 和审计包交给 GPT 做
+   只读审计；PR 只是可选导航入口，不是审计身份。
+7. 审计结果提交回同一长期分支；若 FAIL，在同一分支追加 remediation commit
+   并重新审计，禁止 rebase/amend/force-push 擦除失败历史。
+8. GPT 最终 PASS 后创建 audited tag、更新 `STATUS.md`，才允许开始下一阶段。
+   若用户明确豁免先行，必须把 NOT_RUN/waiver 和风险写入 STATUS，不能伪称
+   已审计。
+9. 阶段之间不做 merge。只有 S13 完成、关键阶段审计通过并获得显式授权后，
+   才把长期迁移分支合并到仓库目标主线。
 
-外部 push、创建 PR 和 merge 都是显式 GitHub 写操作；每次给 Codex 的阶段提示中应明确授权到哪一步。默认只授权 push 阶段分支，不授权 merge。
+外部 push、创建/修改 PR、push tag 和最终 merge 都是显式 GitHub 写操作；
+每次给 Codex 的阶段提示中应明确授权到哪一步。默认只授权本地 commit，不
+授权外部写入、force-push 或最终 merge。
 
 ---
 
@@ -1092,7 +1121,8 @@ docs/steiner/phases/SXX/
 
 ### 13.5 `SXX_AUDIT_PACKET.md`
 
-- 审计对象：base SHA、head SHA、commit range、branch/PR；
+- 审计对象：base SHA、content head SHA、phase head SHA、精确 commit range、
+  固定长期 branch 和 checkpoint tag/可选 PR；
 - 本阶段需求逐条映射到代码和测试；
 - 变更文件清单；
 - 一键复现命令；
@@ -1110,7 +1140,7 @@ docs/steiner/phases/SXX/
 
 ### 14.1 审计结论
 
-- **PASS**：本阶段目标完成，Gate 证据充分，可以合并并进入下一阶段。
+- **PASS**：本阶段目标完成，Gate 证据充分，可以标记 audited tag 并进入下一阶段。
 - **CONDITIONAL PASS**：仅有不影响正确性和下一阶段的非阻塞问题；必须列出关闭日期/阶段。若问题会影响实验结论，不得使用此状态放行。
 - **FAIL**：存在 correctness、数据泄漏、实验口径、复现、接口或安全阻塞项；修复后重新审计。
 
@@ -1135,7 +1165,9 @@ docs/steiner/phases/SXX/
 docs/steiner/audits/SXX_GPT_AUDIT.md
 ```
 
-内容至少包括审计模型/日期、审计 commit、结论、blocking issues、non-blocking issues、证据位置和复审结果。审计记录本身也进入阶段分支，再由最终 PASS 对应的 commit 合并。
+内容至少包括审计模型/日期、不可变审计 commit/range、结论、blocking
+issues、non-blocking issues、证据位置和复审结果。审计记录提交到
+`research/steiner-migration`；最终 PASS 后创建 audited tag，不做阶段 merge。
 
 ---
 
@@ -1163,8 +1195,10 @@ docs/steiner/audits/SXX_GPT_AUDIT.md
 - 明确给出 Gate 的 PASS/FAIL 判断；FAIL 时停止，不开始 SXX+1。
 
 GitHub 授权：若且仅若本地 Gate PASS，提交本阶段源码和过程文档，push 到
-research/steiner-sxx-<topic>；不要 merge，不要改写远端历史。若无 GitHub 凭证，报告
-准确命令和 blocker，不得伪称已 push。
+research/steiner-migration；push 前确认远端可 fast-forward。不要创建阶段分支，
+不要 merge/rebase/amend/force-push，不要移动已发布 tag。若获准 push checkpoint
+tag，只能新建带版本的 annotated tag。若无 GitHub 凭证，报告准确命令和
+blocker，不得伪称已 push。
 
 最后回复必须包含：完成内容、关键结果、测试、Gate、commit SHA、远端 branch/PR、
 已知风险和交给 GPT 审计的入口文件。
@@ -1181,8 +1215,11 @@ research/steiner-sxx-<topic>；不要 merge，不要改写远端历史。若无 
 
 审计对象：
 - 仓库/PR：<URL>
+- 长期 branch：research/steiner-migration
 - base SHA：<BASE_SHA>
-- head SHA：<HEAD_SHA>
+- content head SHA：<CONTENT_HEAD_SHA>
+- phase head SHA：<PHASE_HEAD_SHA>
+- substantive range：<BASE_SHA>..<CONTENT_HEAD_SHA>
 - 主方案：plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md
 - 审计包：docs/steiner/phases/SXX/SXX_AUDIT_PACKET.md
 
@@ -1233,7 +1270,7 @@ research/steiner-sxx-<topic>；不要 merge，不要改写远端历史。若无 
 - per-variant、SPG-pretrained fine-tuning 或 multi-task transfer 的公平对照；
 - 完整指标、置信区间、开销与失败结果；
 - Python 或 C++ 至少一个可复现推理入口；
-- 所有关键阶段有 GitHub commit 和 GPT PASS 审计。
+- 所有关键阶段在长期分支上有不可变 GitHub commit/tag 和 GPT PASS 审计。
 
 ### 18.2 理想完整成果
 

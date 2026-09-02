@@ -17,6 +17,7 @@ SPLITS = REPO / "configs/steiner/splits/split_policy_v1.yml"
 FINAL = REPO / "configs/steiner/splits/final_test_v1.yml"
 FINAL_CONTENT = REPO / "configs/steiner/splits/final_test_content_v1.json"
 ENVIRONMENT = REPO / "configs/steiner/environment.lock.yml"
+GIT_GOVERNANCE = REPO / "configs/steiner/git_governance_v1.yml"
 
 
 def load_yaml(path: Path) -> dict:
@@ -58,6 +59,7 @@ class S00ContractTest(unittest.TestCase):
         cls.splits = load_yaml(SPLITS)
         cls.final = load_yaml(FINAL)
         cls.environment = load_yaml(ENVIRONMENT)
+        cls.git_governance = load_yaml(GIT_GOVERNANCE)
 
     def test_required_documents_exist(self) -> None:
         required = [
@@ -68,6 +70,7 @@ class S00ContractTest(unittest.TestCase):
             "docs/steiner/adr/0002-representation.md",
             "docs/steiner/adr/0003-learning.md",
             "docs/steiner/adr/0004-evaluation.md",
+            "docs/steiner/adr/0005-single-branch-git-governance.md",
             "docs/steiner/phases/S00/S00_PLAN.md",
             "docs/steiner/phases/S00/S00_CHANGELOG.md",
             "docs/steiner/phases/S00/S00_TEST_REPORT.md",
@@ -287,6 +290,49 @@ class S00ContractTest(unittest.TestCase):
         self.assertGreaterEqual(
             len(self.environment["formal_run_preconditions"]), 4
         )
+
+    def test_single_branch_git_governance_uses_immutable_phase_checkpoints(self) -> None:
+        governance = self.git_governance
+        self.assertEqual(governance["schema_version"], 1)
+        self.assertEqual(governance["active_branch"], "research/steiner-migration")
+        self.assertTrue(governance["one_active_migration_branch"])
+        self.assertFalse(governance["stage_branch_creation_allowed"])
+        self.assertFalse(governance["force_push_allowed"])
+        self.assertFalse(governance["rebase_published_history_allowed"])
+        self.assertTrue(governance["push_policy"]["fast_forward_only"])
+        self.assertFalse(
+            governance["audit_identity"]["moving_branch_name_is_sufficient"]
+        )
+        self.assertEqual(
+            set(governance["audit_identity"]["immutable_fields"]),
+            {
+                "base_sha",
+                "content_head_sha",
+                "phase_head_sha",
+                "substantive_commit_range",
+            },
+        )
+        checkpoints = governance["historical_checkpoints"]
+        self.assertEqual(set(checkpoints), {"S00", "S01", "S02"})
+        for stage, checkpoint in checkpoints.items():
+            self.assertRegex(checkpoint["base_sha"], r"^[0-9a-f]{40}$")
+            self.assertRegex(checkpoint["content_head_sha"], r"^[0-9a-f]{40}$")
+            self.assertRegex(checkpoint["phase_head_sha"], r"^[0-9a-f]{40}$")
+            self.assertEqual(
+                checkpoint["local_gate_tag"],
+                f"steiner-{stage.lower()}-local-gate-v1",
+            )
+            self.assertEqual(checkpoint["gpt_audit"], "NOT_RUN")
+        master_plan = (
+            REPO / "plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md"
+        ).read_text(encoding="utf-8")
+        research_contract = (REPO / "docs/steiner/RESEARCH_CONTRACT.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("版本：v1.2", master_plan)
+        self.assertIn("research/steiner-migration", master_plan)
+        self.assertIn("v1.1 冻结候选", research_contract)
+        self.assertIn("research/steiner-migration", research_contract)
 
 
 if __name__ == "__main__":

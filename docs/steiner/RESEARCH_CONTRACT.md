@@ -1,6 +1,8 @@
 # Steiner RL Branching 研究契约 v1
 
-状态：S00 冻结候选；只有修改本文件及对应 ADR/config、记录理由、提升版本并重新审计，才能改变本契约。
+状态：v1.1 冻结候选；S02 后仅按 ADR 0005 把 Git 治理改为单一长期分支，
+研究问题、Gate、数据、seed、指标和主张纪律未改变。只有修改本文件及对应
+ADR/config、记录理由、提升版本并重新审计，才能改变本契约。
 
 ## 1. 研究边界
 
@@ -97,4 +99,7 @@ S03 branchability 预注册阈值由 `protocols_v1.yml` 固定：至少 60% 实�
 - 从 SPG-only 证据声称 Steiner-family 泛化；
 - 在 typed action 尚未验证时把 edge Q 直接用于 vertex/arc branching。
 
-工程 Gate 只说明阶段产物可信，不等于 learned policy 有效。每阶段 FAIL 时停止，不进入下一阶段；外部 GPT 审计通过后才允许合并到研究主线。
+工程 Gate 只说明阶段产物可信，不等于 learned policy 有效。每阶段 FAIL 时
+停止，不进入下一阶段；外部 GPT 审计通过后才允许在
+`research/steiner-migration` 创建 audited tag 并进入下一阶段。阶段之间不再
+merge；只有 S13 完成并获得显式授权后才合并到仓库目标主线。
