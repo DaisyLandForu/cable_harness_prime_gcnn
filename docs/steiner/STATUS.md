@@ -8,6 +8,7 @@
 - 阶段状态：LOCAL_GATE_PASS（等待 GPT 只读审计；S01 仍未开始）
 - base SHA：`88ade1ac614fb12f882a10ba9b5d35b15c7b4d01`
 - 工作 branch：`research/steiner-s00-contract`
+- 远端状态：NOT_PUSHED；`git push -u origin research/steiner-s00-contract` 因当前环境缺少 GitHub HTTPS 凭证退出 128
 - 下一阶段：S01 未开始，只有 S00 本地 Gate 和 GPT 审计均通过后才可进入
 - final test：`steiner-spg-final-test-v1` 已封存；learning runs = 0
 
@@ -45,3 +46,4 @@
 2. SCIP 8.0.4 prefix 的 `scip`/`soplex` 当前 mode 为 `0644`；Ecole/PySCIPOpt bare import 缺少 `libscip.so.8.0` 搜索路径。S00 只记录，不修改用户环境产物。
 3. 当前 shell 无 `nvidia-smi`，PyTorch 报告 CUDA unavailable；训练前必须重新探测。
 4. final suites 的下载 archive/per-file content hashes 将由 S02 在不运行 final learned policy 的前提下补充；selector membership 已在 S00 冻结。
+5. GitHub push 被凭证阻塞；恢复凭证后应执行 `git push -u origin research/steiner-s00-contract`，不得 force-push。

@@ -7,7 +7,9 @@
 - content head SHA：`8b90375b6617a1ddcba34b872dbdbc11411cc042`
 - substantive commit range：`88ade1ac614fb12f882a10ba9b5d35b15c7b4d01..8b90375b6617a1ddcba34b872dbdbc11411cc042`
 - branch：`research/steiner-s00-contract`
-- remote/PR：push 前 pending；不创建 PR、不 merge
+- remote branch：NOT_PUSHED（目标 `origin/research/steiner-s00-contract`）
+- push blocker：`git push -u origin research/steiner-s00-contract` 退出 128，`fatal: could not read Username for 'https://github.com': No such device or address`
+- PR：未创建；本阶段不授权 merge
 - 主方案：`plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md`
 - 阶段计划：`docs/steiner/phases/S00/S00_PLAN.md`
 
@@ -81,6 +83,7 @@ git diff --name-only 8b90375b6617a1ddcba34b872dbdbc11411cc042..research/steiner-
 3. final selector 是 membership hash；数据 content hashes 需 S02 下载后补充。发现 source mismatch 必须 FAIL，不得替换实例。
 4. SCIP-Jack 具体版本尚未接入；只能使用已冻结的 P3/P4角色，不能宣称已有可运行 profile。
 5. 主方案最初是用户未跟踪文件；阶段提交会首次纳入，审计者应确认它与 S00 configs 一致。
+6. GitHub HTTPS 凭证不可用，阶段仅有本地 commits；恢复凭证后必须普通 push 同名 branch，不得 force-push。
 
 ## 给 GPT 审计者的问题
 
