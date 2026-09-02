@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import hashlib
+import json
+import re
 import unittest
 from pathlib import Path
 
@@ -13,6 +15,7 @@ REPO = Path(__file__).resolve().parents[2]
 PROTOCOLS = REPO / "configs/steiner/experiments/protocols_v1.yml"
 SPLITS = REPO / "configs/steiner/splits/split_policy_v1.yml"
 FINAL = REPO / "configs/steiner/splits/final_test_v1.yml"
+FINAL_CONTENT = REPO / "configs/steiner/splits/final_test_content_v1.json"
 ENVIRONMENT = REPO / "configs/steiner/environment.lock.yml"
 
 
@@ -203,6 +206,70 @@ class S00ContractTest(unittest.TestCase):
             hashlib.sha256(canonical).hexdigest(),
             self.final["canonical_entries_sha256"],
         )
+
+    def test_final_content_lock_is_byte_only_complete_and_self_consistent(self) -> None:
+        reference = self.final["content_lock"]
+        self.assertEqual(reference["operation"], "byte_hash_only_no_parse_no_solve")
+        self.assertEqual(reference["locked_stage"], "S02")
+        content_path = REPO / reference["manifest_path"]
+        raw = content_path.read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), reference["manifest_sha256"])
+        lock = json.loads(raw)
+        self.assertEqual(lock["operation"], reference["operation"])
+        self.assertEqual(lock["learning_runs_total"], 0)
+        self.assertEqual(
+            lock["canonical_entries_sha256"], self.final["canonical_entries_sha256"]
+        )
+        expected_counts = {
+            "pace2018_track1_even": 50,
+            "pace2018_track2_even": 50,
+            "steinlib_spg_final_families": 188,
+            "dimacs11_official_spg_bundle": 50,
+        }
+        self.assertEqual(
+            {suite["suite_id"]: suite["instance_count"] for suite in lock["suites"]},
+            expected_counts,
+        )
+        self.assertEqual(sum(expected_counts.values()), reference["instance_count"])
+        digest = re.compile(r"^[0-9a-f]{64}$")
+        self.assertEqual(
+            {notice["source_id"] for notice in lock["source_notices"]},
+            {"pace2018", "steinlib", "dimacs11"},
+        )
+        self.assertEqual(
+            next(
+                notice["notice_kind"]
+                for notice in lock["source_notices"]
+                if notice["source_id"] == "pace2018"
+            ),
+            "license",
+        )
+        for notice in lock["source_notices"]:
+            self.assertRegex(notice["sha256"], digest)
+            self.assertGreater(notice["size_bytes"], 0)
+        for suite in lock["suites"]:
+            member_groups = [suite.get("members", [])]
+            for archive in suite.get("archives", []):
+                self.assertRegex(archive["archive_sha256"], digest)
+                member_groups.append(archive["members"])
+            if "archive_sha256" in suite:
+                self.assertRegex(suite["archive_sha256"], digest)
+            for members in member_groups:
+                for member in members:
+                    self.assertRegex(member["sha256"], digest)
+                    self.assertGreater(member["size_bytes"], 0)
+        pace_suites = [
+            suite for suite in lock["suites"] if suite["suite_id"].startswith("pace2018")
+        ]
+        for suite in pace_suites:
+            self.assertTrue(
+                all(int(Path(member["relative_path"]).stem[-3:]) % 2 == 0 for member in suite["members"])
+            )
+        lock_script = (REPO / "scripts/steiner/lock_final_content.py").read_text(
+            encoding="utf-8"
+        )
+        for forbidden_import in ("pyscipopt", "parse_pace", "parse_steinlib", "build_mcf"):
+            self.assertNotIn(forbidden_import, lock_script)
 
     def test_environment_records_selected_and_conflicting_stacks(self) -> None:
         decision = self.environment["decision"]

@@ -1,0 +1,38 @@
+# S02 commands executed from repository root; no secrets or private URLs.
+
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+git switch -c research/steiner-s02-formulation
+
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" /home/duweiyue25/conda/envs/rl4scip/bin/python -c 'from pyscipopt import Model; m=Model(); x=m.addVar(vtype="B", obj=1); m.addCons(x >= 1); m.optimize(); print(m.getStatus(), m.getObjVal(), x.vtype())'
+
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" STEINER_PACE_DEV_ROOT=/tmp/steiner-s02-pace-dev PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -m pytest -q tests/steiner
+# First S02 run: 33 passed, 4 failed due to two invalid test expectations; retained in TEST_REPORT.
+
+/home/duweiyue25/conda/envs/rl4scip/bin/python scripts/steiner/download_data.py --pace-track 1 --instances 1 --destination /tmp/steiner-s02-gate.Ckzl19/pace
+/home/duweiyue25/conda/envs/rl4scip/bin/python scripts/steiner/generate_data.py --config configs/steiner/data/synthetic_v1.yml --output-root /tmp/steiner-s02-gate.Ckzl19/generated
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" /home/duweiyue25/conda/envs/rl4scip/bin/python scripts/steiner/build_milp.py tests/steiner/fixtures/triangle.stp --lp-output /tmp/steiner-s02-gate.Ckzl19/triangle.lp --metadata-output /tmp/steiner-s02-gate.Ckzl19/problem_meta.json
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" /home/duweiyue25/conda/envs/rl4scip/bin/python scripts/steiner/check_solution.py /tmp/steiner-s02-gate.Ckzl19/pace/Track1/instance001.gr --known-objective 503 --output /tmp/steiner-s02-gate.Ckzl19/pace_instance001_result.json
+
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -c 'import pyscipopt; from steiner_branching.data import load_graph; from steiner_branching.milp import build_mcf; g=load_graph("/tmp/steiner-s02-gate.Ckzl19/pace/Track1/instance001.gr"); b=build_mcf(g); print(pyscipopt.__version__, b.model.version(), len(g.nodes), len(g.edges), len(g.terminals), b.counts, b.metadata.sha256)'
+# Earlier getMajorVersion() probe exited 1 because that API is absent in PySCIPOpt 4.3.0.
+
+/home/duweiyue25/conda/envs/rl4scip/bin/python scripts/steiner/lock_final_content.py --manifest configs/steiner/splits/final_test_v1.yml --output /tmp/steiner-s02-gate.Ckzl19/final_test_content_v1.json --cache-dir /tmp/steiner-s02-gate.Ckzl19/final-cache
+# Sequential attempt manually interrupted at 46 cached files (exit 130); fixed 8-worker run completed 338/338.
+/home/duweiyue25/conda/envs/rl4scip/bin/python scripts/steiner/lock_final_content.py --manifest configs/steiner/splits/final_test_v1.yml --output configs/steiner/splits/final_test_content_v1.json --cache-dir /tmp/steiner-s02-gate.Ckzl19/final-cache
+sha256sum configs/steiner/splits/final_test_content_v1.json
+
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" STEINER_PACE_DEV_ROOT=/tmp/steiner-s02-gate.Ckzl19/pace PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -m pytest -q tests/steiner
+env -u STEINER_PACE_DEV_ROOT LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -m pytest -q tests/steiner
+/home/duweiyue25/conda/envs/rl4scip/bin/python -m compileall -q python/steiner_branching scripts/steiner
+PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -c 'import sys, steiner_branching; print(steiner_branching.__version__); print(sorted(name for name in ("ecole", "pyscipopt", "rl_branching") if name in sys.modules))'
+git diff --exit-code 35a90ec5e52e2fad8301e3441ff6b286c7701d04 -- python/rl_branching src/rl CMakeLists.txt
+
+git add -- .gitignore python/steiner_branching/data python/steiner_branching/milp configs/steiner/data configs/steiner/splits/final_test_v1.yml configs/steiner/splits/final_test_content_v1.json scripts/steiner tests/steiner docs/steiner/STATUS.md docs/steiner/phases/S02
+git diff --cached --check
+git diff --cached --name-status
+# First size loop used zsh-special variable `path` and failed; corrected variable follows.
+git diff --cached --name-only -z | while IFS= read -r -d '' staged_file; do staged_bytes=$(git cat-file -s ":$staged_file"); if [ "$staged_bytes" -gt 1048576 ]; then printf '%s %s\n' "$staged_bytes" "$staged_file"; fi; done
+git commit -m "feat(steiner): add S02 data and MCF correctness stack"
+git rev-parse HEAD

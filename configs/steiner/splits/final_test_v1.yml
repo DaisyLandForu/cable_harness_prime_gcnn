@@ -9,6 +9,13 @@ canonicalization: >-
   Expand numeric sequences, emit the canonical IDs defined below, sort them
   bytewise, join with LF, and append one final LF before SHA-256.
 canonical_entries_sha256: 8c0324c1a82485c2187825977fe2807e31512a6435e2f58f6a1d17babbfbddd1
+content_lock:
+  schema_version: 1
+  locked_stage: S02
+  operation: byte_hash_only_no_parse_no_solve
+  manifest_path: configs/steiner/splits/final_test_content_v1.json
+  manifest_sha256: 9cb8117abb00859d5a2a0bb179f4fd03e824b731e3d5c17c9f09ef04b8f67236
+  instance_count: 338
 
 suites:
   - suite_id: pace2018_track1_even
@@ -55,7 +62,7 @@ suites:
     learning_runs: 0
 
 content_lock_policy: >-
-  S02 must record archive and per-instance SHA-256 values before parsing or
+  S02 records archive and per-instance SHA-256 values without parsing or
   solving. A source-content mismatch is a Gate failure; it is not permission to
   substitute, remove, or reclassify an instance. The selector hash above freezes
-  membership identity and is deliberately distinct from future content hashes.
+  membership identity and is deliberately distinct from content hashes.

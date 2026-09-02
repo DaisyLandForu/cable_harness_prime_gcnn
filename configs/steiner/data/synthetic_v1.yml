@@ -1,0 +1,28 @@
+schema_version: 1
+dataset_id: steiner-synthetic-v1-smoke
+instances:
+  - instance_id: bridge-bottleneck-n16-t4-s100004
+    family: bridge_bottleneck
+    n_nodes: 16
+    n_terminals: 4
+    seed: 100004
+  - instance_id: community-block-n16-t4-s100003
+    family: community_block
+    n_nodes: 16
+    n_terminals: 4
+    seed: 100003
+  - instance_id: grid-with-holes-n16-t4-s100002
+    family: grid_with_holes
+    n_nodes: 16
+    n_terminals: 4
+    seed: 100002
+  - instance_id: random-geometric-n16-t4-s100001
+    family: random_geometric
+    n_nodes: 16
+    n_terminals: 4
+    seed: 100001
+  - instance_id: sparse-erdos-renyi-n16-t4-s100000
+    family: sparse_erdos_renyi
+    n_nodes: 16
+    n_terminals: 4
+    seed: 100000

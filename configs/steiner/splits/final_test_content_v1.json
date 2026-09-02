@@ -1,0 +1,1812 @@
+{
+  "canonical_entries_sha256": "8c0324c1a82485c2187825977fe2807e31512a6435e2f58f6a1d17babbfbddd1",
+  "content_lock_id": "steiner-spg-final-content-v1",
+  "learning_runs_total": 0,
+  "locked_stage": "S02",
+  "operation": "byte_hash_only_no_parse_no_solve",
+  "schema_version": 1,
+  "selector_manifest_id": "steiner-spg-final-test-v1",
+  "source_notices": [
+    {
+      "notice_kind": "license",
+      "sha256": "e67b2338fcfeafe14c69719a7095918d7c779230e7adbe1e464f61efba31073c",
+      "size_bytes": 7487,
+      "source_id": "pace2018",
+      "source_url": "https://raw.githubusercontent.com/PACE-challenge/SteinerTree-PACE-2018-instances/4df73cea9c311faea7d03e6d6bffa8733c34a1aa/LICENSE"
+    },
+    {
+      "notice_kind": "source_notice_not_explicit_license",
+      "sha256": "ac98589ccc8f67dbaf0cd1b0029cfea1e2207c74e5cfa456fab0359247ef53d4",
+      "size_bytes": 15021,
+      "source_id": "steinlib",
+      "source_url": "https://steinlib.zib.de/testset.php"
+    },
+    {
+      "notice_kind": "source_notice_not_explicit_license",
+      "sha256": "a7ee7657c628d06ffa648b7384174818e85c53d56d0b2f5ba32bd373186c61be",
+      "size_bytes": 17581,
+      "source_id": "dimacs11",
+      "source_url": "https://dimacs11.zib.de/competition.html"
+    }
+  ],
+  "suites": [
+    {
+      "aggregate_members_sha256": "dc76321dbfc82d1387ad006b0156ce213c6cdda34c425503cde61ca60187ddc9",
+      "distribution_kind": "revision_pinned_files",
+      "instance_count": 50,
+      "members": [
+        {
+          "relative_path": "Track1/instance002.gr",
+          "sha256": "a051a8782307aa2c7ed2a0db2422157b58eb1c0e96dd3857c7ecd22ac3bb1d84",
+          "size_bytes": 41362
+        },
+        {
+          "relative_path": "Track1/instance004.gr",
+          "sha256": "48d5b30dce2db50a95507d4b7d31ec3e3fd6a311ae94001b2d44aa7690f7144c",
+          "size_bytes": 165307
+        },
+        {
+          "relative_path": "Track1/instance006.gr",
+          "sha256": "cf4042dc683ad69e511342820faae2a4d2b073ff20ccac51bd124e8087f48fd4",
+          "size_bytes": 986
+        },
+        {
+          "relative_path": "Track1/instance008.gr",
+          "sha256": "17244e6e1e910ee0c393e73ca62134d970ebe37971caa743b83af68a737dedab",
+          "size_bytes": 6677
+        },
+        {
+          "relative_path": "Track1/instance010.gr",
+          "sha256": "f1de42ed5cb2230b7ae31d34e48fc36136e26dba558ddcbfc9ce50a474ad63a5",
+          "size_bytes": 3491
+        },
+        {
+          "relative_path": "Track1/instance012.gr",
+          "sha256": "b282fce2d9488ef6e5477aa1ff4d0411c03e0ff925375ec665eb12516d4b273e",
+          "size_bytes": 3266
+        },
+        {
+          "relative_path": "Track1/instance014.gr",
+          "sha256": "09bde32cb061783619a0cbb09dbe335dbec395e80e26ad6fb9fb7739c9726583",
+          "size_bytes": 12747
+        },
+        {
+          "relative_path": "Track1/instance016.gr",
+          "sha256": "147773b4be66d7d399808851c5119747970bcd41b8a8929d241a52b3f3faf878",
+          "size_bytes": 12729
+        },
+        {
+          "relative_path": "Track1/instance018.gr",
+          "sha256": "75825d242450580defac7302a967b869a58408f9a3d3da86d7124a38d30e70a7",
+          "size_bytes": 54508
+        },
+        {
+          "relative_path": "Track1/instance020.gr",
+          "sha256": "06ee6127920c2c59848562dc51bbb6d23f323cfe1953041eabcc0bb6e2697698",
+          "size_bytes": 54568
+        },
+        {
+          "relative_path": "Track1/instance022.gr",
+          "sha256": "f847a4614fabe1f0682b771761193891b8e2b6bc94fc767ac1ab9400d10bc8d8",
+          "size_bytes": 54570
+        },
+        {
+          "relative_path": "Track1/instance024.gr",
+          "sha256": "a4403c3ec07c960e0329ea6a9dc929888d42eddd982b664b5646af63107cd991",
+          "size_bytes": 2694603
+        },
+        {
+          "relative_path": "Track1/instance026.gr",
+          "sha256": "9e1e0e733553f8b2a4c9eb2ceb0415c8cd8027a9aa17660c43b9f90d72c04ebf",
+          "size_bytes": 2694356
+        },
+        {
+          "relative_path": "Track1/instance028.gr",
+          "sha256": "bdd2c147a47f102cc7f908e6429f2f746fd28ac838eed1888bd9592a757d51f7",
+          "size_bytes": 3252
+        },
+        {
+          "relative_path": "Track1/instance030.gr",
+          "sha256": "5edf51d1724331c5c5241f150885b0a221628fea7a01268499fe3fcee366d921",
+          "size_bytes": 5604
+        },
+        {
+          "relative_path": "Track1/instance032.gr",
+          "sha256": "79a1bed6f5c4ea4d06b1f9e0bed795235b182d42cfe8899a6a9a597879dbd077",
+          "size_bytes": 6751
+        },
+        {
+          "relative_path": "Track1/instance034.gr",
+          "sha256": "e3b606f1c655580a2f52801f8f55c333cda9ed763c9af514b483e1c6615ce2ee",
+          "size_bytes": 11099
+        },
+        {
+          "relative_path": "Track1/instance036.gr",
+          "sha256": "e3ae045d4622f696b250bb1b2931d275e8f8b4cdc384f3211e4c8ddd2acb4294",
+          "size_bytes": 13359
+        },
+        {
+          "relative_path": "Track1/instance038.gr",
+          "sha256": "04134b0e1f243ad94f9b877665226cf7f9f349a558321392938063391009e2e6",
+          "size_bytes": 18960
+        },
+        {
+          "relative_path": "Track1/instance040.gr",
+          "sha256": "bf2b05e67c3f39b9cc65801168b74dae1127f26fcdf0c010268a85f92f5b1cfa",
+          "size_bytes": 19195
+        },
+        {
+          "relative_path": "Track1/instance042.gr",
+          "sha256": "5c502d388e54de12226b38b00d84a550355b3e89a98341a705fd90685700dfa7",
+          "size_bytes": 20481
+        },
+        {
+          "relative_path": "Track1/instance044.gr",
+          "sha256": "8246445c17870a2ece45248e9f77b3c068383c8b0984cdfddc9c2efcaea57d0a",
+          "size_bytes": 25245
+        },
+        {
+          "relative_path": "Track1/instance046.gr",
+          "sha256": "a6ade2fe762fb8add80a02f118ddaef75de135a4e44c97579e9d0dea2e490c32",
+          "size_bytes": 41442
+        },
+        {
+          "relative_path": "Track1/instance048.gr",
+          "sha256": "863ea4eada2dcf347a8499e9d7f1f357338bc448011052ba367211385ed499a6",
+          "size_bytes": 77135
+        },
+        {
+          "relative_path": "Track1/instance050.gr",
+          "sha256": "92f4b6e4c4919f273501a35f2ec8f57c7a06d9f621bcc584d6503e080a25b522",
+          "size_bytes": 125281
+        },
+        {
+          "relative_path": "Track1/instance052.gr",
+          "sha256": "90b4a5a97ec4ff4c24cba6dd30a14606ddd529b77e383339df7222826331886d",
+          "size_bytes": 826375
+        },
+        {
+          "relative_path": "Track1/instance054.gr",
+          "sha256": "e5e010f84ec8d5eab64f0789eaaa6c65f35f98c98d11c740e9dc681d9b286d72",
+          "size_bytes": 2786
+        },
+        {
+          "relative_path": "Track1/instance056.gr",
+          "sha256": "da2b40cfbf0a165c3410e34b975945b840b8ff29bb5dfa19340154cccce45c01",
+          "size_bytes": 4522
+        },
+        {
+          "relative_path": "Track1/instance058.gr",
+          "sha256": "b9422acaf8591e51821d23e23ce68823036581beca4f2c5f977c94ecc1d6dc0e",
+          "size_bytes": 5759
+        },
+        {
+          "relative_path": "Track1/instance060.gr",
+          "sha256": "165024aac055220a9d7aa51fd00ce86e597bdbad21e57d3030755b4cf53b6e34",
+          "size_bytes": 6581
+        },
+        {
+          "relative_path": "Track1/instance062.gr",
+          "sha256": "8ac661c3a68881ea8f4c5ff68d397f61da95f522a225f97ab3285c8ccb972552",
+          "size_bytes": 8465
+        },
+        {
+          "relative_path": "Track1/instance064.gr",
+          "sha256": "73e284afee979e962ac046c44bb79e4ef1911036c7b1101e5c26bf6d668a3483",
+          "size_bytes": 14194
+        },
+        {
+          "relative_path": "Track1/instance066.gr",
+          "sha256": "55f081bbb4d2d8def5b393cc7345466e734bf23f3f71bae62e0d5e2fa1080632",
+          "size_bytes": 19239
+        },
+        {
+          "relative_path": "Track1/instance068.gr",
+          "sha256": "4d50a281c8f4e85f081884fa93770ec02ea580e74feb65d71766eb7296db5be4",
+          "size_bytes": 1785
+        },
+        {
+          "relative_path": "Track1/instance070.gr",
+          "sha256": "3f245127465a81229f19c599255a7c0977e11aa0aff5b62e9aa679fd70bd016e",
+          "size_bytes": 2002
+        },
+        {
+          "relative_path": "Track1/instance072.gr",
+          "sha256": "8f934d06c21b5eb7e9a8ca4d8372f1e990afd208c71f83932c2dbba12ef6eab5",
+          "size_bytes": 6793
+        },
+        {
+          "relative_path": "Track1/instance074.gr",
+          "sha256": "a76cab35b48acd91ec31373893dba289775dc2e0096bd2bbd8c6c7d623d78381",
+          "size_bytes": 12079
+        },
+        {
+          "relative_path": "Track1/instance076.gr",
+          "sha256": "6ff1101705599e2cf1bc0005d70b23d89be457006f8fd4a2c035c307e71972cc",
+          "size_bytes": 39513
+        },
+        {
+          "relative_path": "Track1/instance078.gr",
+          "sha256": "200000c6fca9aac85bbc6524e135fbe0bc181afe155d8c8cb7781acc8a13e731",
+          "size_bytes": 72284
+        },
+        {
+          "relative_path": "Track1/instance080.gr",
+          "sha256": "c7358e4798e4460c08da61453a8483f443d88cd920bab6586194a2c5423c097c",
+          "size_bytes": 101551
+        },
+        {
+          "relative_path": "Track1/instance082.gr",
+          "sha256": "5f27ba5ad09109a1dac8bfdac7b671a5dea2d5342d751880dcec79555c59e5b5",
+          "size_bytes": 7017
+        },
+        {
+          "relative_path": "Track1/instance084.gr",
+          "sha256": "4b10000f386111e174fd5763bfe3012638415fd213cd9bf8bf3545cc2151744b",
+          "size_bytes": 7437
+        },
+        {
+          "relative_path": "Track1/instance086.gr",
+          "sha256": "cb7410e66eb2521914acb49ad49dda03bba073cbad74c7f9afd08cd10b9bcc9f",
+          "size_bytes": 9350
+        },
+        {
+          "relative_path": "Track1/instance088.gr",
+          "sha256": "ea149378031a73b104bfe3b30d5c4482ea3c5ab188fb580d9799ac96c521e505",
+          "size_bytes": 16759
+        },
+        {
+          "relative_path": "Track1/instance090.gr",
+          "sha256": "2985541de95f561f8ea2fc566992caa4b3dc4b697e818ef150e6eee2368d8c9c",
+          "size_bytes": 24014
+        },
+        {
+          "relative_path": "Track1/instance092.gr",
+          "sha256": "32996f57d7286752ae7dd64b9c31ecd59dede9e60e777e6b386caa6057eab271",
+          "size_bytes": 3035
+        },
+        {
+          "relative_path": "Track1/instance094.gr",
+          "sha256": "b849a432682af4f02e350fe8ac27eaef12c267cc29431d951ebd5c320fd88a0c",
+          "size_bytes": 3477
+        },
+        {
+          "relative_path": "Track1/instance096.gr",
+          "sha256": "f94818d0e27ec2554d1f0e26f97df89a1831856b2914cc27645103f709127b74",
+          "size_bytes": 10063
+        },
+        {
+          "relative_path": "Track1/instance098.gr",
+          "sha256": "a4c8aff4a8ec9e9cf35ecf199fb9de26b258ef026494db279390c8fbdec43e45",
+          "size_bytes": 3124
+        },
+        {
+          "relative_path": "Track1/instance100.gr",
+          "sha256": "6b770a02386cdee28e760e75877264d87260f6d8f815ed8211c072049e8591c8",
+          "size_bytes": 4528
+        }
+      ],
+      "source_revision": "4df73cea9c311faea7d03e6d6bffa8733c34a1aa",
+      "suite_id": "pace2018_track1_even"
+    },
+    {
+      "aggregate_members_sha256": "dd23c0508486677a339e5a5f903c77714ed557e69c248202df2bed2b423cb5a6",
+      "distribution_kind": "revision_pinned_files",
+      "instance_count": 50,
+      "members": [
+        {
+          "relative_path": "Track2/instance002.gr",
+          "sha256": "5e1419f683f331238110e5689c0d9344f98956a57d2cbd726c8e33a1b4b14d55",
+          "size_bytes": 4969
+        },
+        {
+          "relative_path": "Track2/instance004.gr",
+          "sha256": "6c72dc0688ce6af63628e903165d0d952fd339907b65cb77ee8022a15c05ab67",
+          "size_bytes": 5073
+        },
+        {
+          "relative_path": "Track2/instance006.gr",
+          "sha256": "714b06032d1874d8720fa9d89dbd8f9dcc7136b74d3ffe7397c495a30b717292",
+          "size_bytes": 9546
+        },
+        {
+          "relative_path": "Track2/instance008.gr",
+          "sha256": "2d42ecd2e3c0322e4de38856d93f1f7590e8c8a3ead154414f27d48233c28a6f",
+          "size_bytes": 10244
+        },
+        {
+          "relative_path": "Track2/instance010.gr",
+          "sha256": "a53916ee0dcbb479d4eae2488e1220dff7e8a9507af364aeb0936234ef2f995c",
+          "size_bytes": 10454
+        },
+        {
+          "relative_path": "Track2/instance012.gr",
+          "sha256": "cbd4e376f93f7a472c5059669b80a1e59bbe0095156da17cd6b721b5b6cbd257",
+          "size_bytes": 25537
+        },
+        {
+          "relative_path": "Track2/instance014.gr",
+          "sha256": "cfd5ef5490721bb7eb4102249f353faec505c89c7db15163b2a81aab4b95634b",
+          "size_bytes": 174955
+        },
+        {
+          "relative_path": "Track2/instance016.gr",
+          "sha256": "c2de36da0ef73e5cd45cb6d809e1e22d489818c3bfb068d97de8aa713a713b86",
+          "size_bytes": 7350
+        },
+        {
+          "relative_path": "Track2/instance018.gr",
+          "sha256": "581c438a5dc99f76fa3513d0e41e7c1b816fd81ddcb1b4fc6fd1dd340347d40a",
+          "size_bytes": 10016
+        },
+        {
+          "relative_path": "Track2/instance020.gr",
+          "sha256": "870179f35bfb4915a33e8a3e349f8ec0d8113f7e67eea3ac26ba8cf89837ae30",
+          "size_bytes": 13131
+        },
+        {
+          "relative_path": "Track2/instance022.gr",
+          "sha256": "7a9e34d93b1b1949495aff79f6274895953ea4aa2021bb843b1afc2db5c2c345",
+          "size_bytes": 40341
+        },
+        {
+          "relative_path": "Track2/instance024.gr",
+          "sha256": "8d892c6bdeb4b86e2a7b2fa13b920b3fe91a75216f6c5a73a90695276d2cd405",
+          "size_bytes": 77019
+        },
+        {
+          "relative_path": "Track2/instance026.gr",
+          "sha256": "3cf10007ce98efcebe7e6ec223e2d6198468fb94dcdd817f55f775acf80b8c41",
+          "size_bytes": 790908
+        },
+        {
+          "relative_path": "Track2/instance028.gr",
+          "sha256": "d47982fbfaf2150dbe04ed8187f311fa73a226b541f8b396d3c54a54035943bd",
+          "size_bytes": 6043
+        },
+        {
+          "relative_path": "Track2/instance030.gr",
+          "sha256": "fe02d507fba2fc0905bdc29027dfe294362874398c4fe82af4d5fe03d12c4353",
+          "size_bytes": 10305
+        },
+        {
+          "relative_path": "Track2/instance032.gr",
+          "sha256": "f9f3157213f1f830f468901a130465b1a21e034db19953921b5e4ddfa82883a4",
+          "size_bytes": 14730
+        },
+        {
+          "relative_path": "Track2/instance034.gr",
+          "sha256": "2a9c6b25f96811c888485d5b91079849a22b8b3f70b6956eb9dacf46e55e7101",
+          "size_bytes": 24230
+        },
+        {
+          "relative_path": "Track2/instance036.gr",
+          "sha256": "bb552cdc895b0ad0da39f6fe747da0a5a47a92db1a9e55eaa85aa0f19d210e7b",
+          "size_bytes": 31552
+        },
+        {
+          "relative_path": "Track2/instance038.gr",
+          "sha256": "f2eb981cb809ab5aa60d15db0ff80f8bd4e2aab1371c0f889f68a27106ce5543",
+          "size_bytes": 87787
+        },
+        {
+          "relative_path": "Track2/instance040.gr",
+          "sha256": "bd7a85c3090d83a6af34c4f3a0c1b513362ee4d7e7a59f17a669d0151ced18b2",
+          "size_bytes": 102437
+        },
+        {
+          "relative_path": "Track2/instance042.gr",
+          "sha256": "b6207f19ee3496c22151aee327875f56728c62e82e00d56e9d989343d188adaf",
+          "size_bytes": 354178
+        },
+        {
+          "relative_path": "Track2/instance044.gr",
+          "sha256": "beeedb7a7cb3b552834f396485c33913f5558610b7979a1801af4f7f7ccb3775",
+          "size_bytes": 13879
+        },
+        {
+          "relative_path": "Track2/instance046.gr",
+          "sha256": "69973ebba5adaffabebd9e876f0dd1f5d30ce4291885627c9b7b48b862ab2c3c",
+          "size_bytes": 20308
+        },
+        {
+          "relative_path": "Track2/instance048.gr",
+          "sha256": "6cc89f7bc8521b480a7d441617fb675a224f85ad0ef2944d44b61640b77d4e7f",
+          "size_bytes": 33479
+        },
+        {
+          "relative_path": "Track2/instance050.gr",
+          "sha256": "3c663bb8ee04c0c1a4061685fc789f9a24f6fe1abd7c5a0dda3b193e6c5abd3a",
+          "size_bytes": 60483
+        },
+        {
+          "relative_path": "Track2/instance052.gr",
+          "sha256": "ac894b34e007b11cd727a39b4b956cdb91e73e3adc8379b07e277cf6c2f569f0",
+          "size_bytes": 287585
+        },
+        {
+          "relative_path": "Track2/instance054.gr",
+          "sha256": "f86f96f64dbf4aa512ea1719df91bd1f9ce462fa24b19b4ea6da34a3afeebbbf",
+          "size_bytes": 10708
+        },
+        {
+          "relative_path": "Track2/instance056.gr",
+          "sha256": "14fad3001055125b7f8e53c1303a946e69cfa554a44dd746d263f317f43ab514",
+          "size_bytes": 11445
+        },
+        {
+          "relative_path": "Track2/instance058.gr",
+          "sha256": "33d7adf164644d054674031a4f84268c3a988842dc997d99635c466b30ff7b41",
+          "size_bytes": 24189
+        },
+        {
+          "relative_path": "Track2/instance060.gr",
+          "sha256": "5b206809a7e82e6576227fe424e09f63382d3eaf46be33161c627479a22a8343",
+          "size_bytes": 35991
+        },
+        {
+          "relative_path": "Track2/instance062.gr",
+          "sha256": "910cb38f4c8fa6a176e72d324d0db7a090b78cd132b033a54f1fefed1634559d",
+          "size_bytes": 66654
+        },
+        {
+          "relative_path": "Track2/instance064.gr",
+          "sha256": "6e59bb4b894fc6b735eeab95572b37ade01401d171fb112a423b4bfe09fc78b6",
+          "size_bytes": 73079
+        },
+        {
+          "relative_path": "Track2/instance066.gr",
+          "sha256": "b60a1f772920c8ed77d15704efe72512e99d9b7623599984526883ed47b54c3b",
+          "size_bytes": 154211
+        },
+        {
+          "relative_path": "Track2/instance068.gr",
+          "sha256": "c68343318a4f83095abd3e1b4e86b14cb8e56ef0a78e02bffa9c85880a0c8f0b",
+          "size_bytes": 12340
+        },
+        {
+          "relative_path": "Track2/instance070.gr",
+          "sha256": "768ce5a92bb909a9cc3de8f0deeffd214717708ac8081398dea7ba9cd629927a",
+          "size_bytes": 5178
+        },
+        {
+          "relative_path": "Track2/instance072.gr",
+          "sha256": "2a2fa5120456beeba1ca6c38a946e08511d7f32f45b7431f22bff66ccd1a7500",
+          "size_bytes": 15086
+        },
+        {
+          "relative_path": "Track2/instance074.gr",
+          "sha256": "e513bac12f5979ee4d16a632452755794bf35944bfc2a3af77f28f2bbbef6dee",
+          "size_bytes": 23837
+        },
+        {
+          "relative_path": "Track2/instance076.gr",
+          "sha256": "09da051222cdfb9406c75af19973e767aa5292a6f4dd3ab720ea41fbf1c28f90",
+          "size_bytes": 44465
+        },
+        {
+          "relative_path": "Track2/instance078.gr",
+          "sha256": "6e46ab6e4aa4350ae090265a46626f5b4b389b9454ff4963416cc460f25c58d2",
+          "size_bytes": 366953
+        },
+        {
+          "relative_path": "Track2/instance080.gr",
+          "sha256": "df4ef7b29ca71ef544b071310c60cb6a05b7e5a013b9a93fb3221e8e5c8c12f7",
+          "size_bytes": 10303
+        },
+        {
+          "relative_path": "Track2/instance082.gr",
+          "sha256": "3870ff86584f1c8e0dc7b62fc951b3067dba1e09e2faeca1e0d8e882d6b049c1",
+          "size_bytes": 13150
+        },
+        {
+          "relative_path": "Track2/instance084.gr",
+          "sha256": "1bea15e27ceef912fa6fee9f8648aa9b95417e07093087e3cc9042850363a626",
+          "size_bytes": 35965
+        },
+        {
+          "relative_path": "Track2/instance086.gr",
+          "sha256": "721f0f53ca4387d1304f01b9af3996570df1e410a2c0be8ab62e7977548ae0d4",
+          "size_bytes": 75287
+        },
+        {
+          "relative_path": "Track2/instance088.gr",
+          "sha256": "9e2647f004c39a160131b7ee47cb18bc7acf0951026657fee2a440b2042329a9",
+          "size_bytes": 101360
+        },
+        {
+          "relative_path": "Track2/instance090.gr",
+          "sha256": "bcbc935b38f25bf6394229a38a112ad1e239d63f70353b82140de49fc8b8ebd0",
+          "size_bytes": 16176
+        },
+        {
+          "relative_path": "Track2/instance092.gr",
+          "sha256": "05c2e0abe00d5c3a233c3e88d1d2af88a63e2ffbc89a8011769570ab18a4f638",
+          "size_bytes": 38691
+        },
+        {
+          "relative_path": "Track2/instance094.gr",
+          "sha256": "b245c338bf66a38c15d61c67b70d088fea56044d722d436f3b8044c061b62c6e",
+          "size_bytes": 73233
+        },
+        {
+          "relative_path": "Track2/instance096.gr",
+          "sha256": "9ae6fd7d63123de992f38b5ab453700d94c20b0740002745e2787cc27d1ab374",
+          "size_bytes": 77493
+        },
+        {
+          "relative_path": "Track2/instance098.gr",
+          "sha256": "daf7d9b6ae2675d18e0d4349df8471fea90dd7ce95fa2cf641956e7a4aaa86f8",
+          "size_bytes": 40777
+        },
+        {
+          "relative_path": "Track2/instance100.gr",
+          "sha256": "52ff06a13eca1e1711ff8d48b3119d7b570075b8d8ef5fdc3b0ca40fb25925f4",
+          "size_bytes": 86379
+        }
+      ],
+      "source_revision": "4df73cea9c311faea7d03e6d6bffa8733c34a1aa",
+      "suite_id": "pace2018_track2_even"
+    },
+    {
+      "archives": [
+        {
+          "aggregate_members_sha256": "9be1206fd93aa9a224c6900a7d84a5fb7302fcb982eb9d61a2aa51631567009c",
+          "archive_sha256": "0b7c6bd8e11c58c279c15af8a3d8a7f6d288b40e74d46aef76ef7e525a0fe0c4",
+          "archive_size_bytes": 754456,
+          "family": "D",
+          "instance_count": 20,
+          "members": [
+            {
+              "relative_path": "D/d01.stp",
+              "sha256": "331f855f2b56e4ad033c14d6b0a5104a954a6f4a1d5cbe9b74d8a2592617d616",
+              "size_bytes": 15075
+            },
+            {
+              "relative_path": "D/d02.stp",
+              "sha256": "dec6d6305f23330bb91d2720a6edc042d1b903f216d3cab2b769c62083c89ddd",
+              "size_bytes": 15140
+            },
+            {
+              "relative_path": "D/d03.stp",
+              "sha256": "17e58c2729b061660929b4ae68c6652af5244ae215cd0fc64558ad92a495b263",
+              "size_bytes": 16066
+            },
+            {
+              "relative_path": "D/d04.stp",
+              "sha256": "546ffae71dd929bfdcc5be0da1fe88ef6fd2e5cee639867bbe8adcd3d4390f23",
+              "size_bytes": 16549
+            },
+            {
+              "relative_path": "D/d05.stp",
+              "sha256": "817faa74d5b62f9387061d0eb751104a881650664fac8d6943bd4c0e29775420",
+              "size_bytes": 18048
+            },
+            {
+              "relative_path": "D/d06.stp",
+              "sha256": "775a0dfee30b307c445d8966f6e18f1b5d4b15b1276d1a3f32034d1da2992f27",
+              "size_bytes": 23985
+            },
+            {
+              "relative_path": "D/d07.stp",
+              "sha256": "8fb5a2a36664342b760d1f1da5c19a4b4403de355f49ccf6667b37b06e38ce7f",
+              "size_bytes": 24039
+            },
+            {
+              "relative_path": "D/d08.stp",
+              "sha256": "a98314d29fb578b191ab61fd0ed4587a7b7d082e532fa972b33681873c43e223",
+              "size_bytes": 24976
+            },
+            {
+              "relative_path": "D/d09.stp",
+              "sha256": "93988ce27890292fdb15cb8c993454b5f43b0aa6d3123b80dedd3bff6dae6635",
+              "size_bytes": 25478
+            },
+            {
+              "relative_path": "D/d10.stp",
+              "sha256": "d8a923e88f15d1f90b772e8e04aced7bc37dc7159e4a4c8335b9376ae5e154b0",
+              "size_bytes": 26969
+            },
+            {
+              "relative_path": "D/d11.stp",
+              "sha256": "09c6c16f5081926f0668bfc3081c927efa84cd161e8ca4e8d0d1a631900b1d51",
+              "size_bytes": 59611
+            },
+            {
+              "relative_path": "D/d12.stp",
+              "sha256": "c21c4ac710f66d7e9b9ee9c3fa9dbcff0ecb4dd141ce06b288cf65c293f48076",
+              "size_bytes": 59695
+            },
+            {
+              "relative_path": "D/d13.stp",
+              "sha256": "14d6f5a8e560d0052e691fc9df742bc67bb6749d8549d059a02951a99dd2547b",
+              "size_bytes": 60589
+            },
+            {
+              "relative_path": "D/d14.stp",
+              "sha256": "6c70d8b2b20ac89fca6d8965728c5e087f83cf550b0160fe7433f71f461b5e53",
+              "size_bytes": 61131
+            },
+            {
+              "relative_path": "D/d15.stp",
+              "sha256": "3d697ca3ec618588011c3eda1604d52f14a46e103b0f108317cad67ba2e6cdd9",
+              "size_bytes": 62613
+            },
+            {
+              "relative_path": "D/d16.stp",
+              "sha256": "2f20960c80252fb9abd3a0eab52d822dc8507c3dc5bb7bf5817ef1f0ce62cf8d",
+              "size_bytes": 297451
+            },
+            {
+              "relative_path": "D/d17.stp",
+              "sha256": "9fb3bcf623efdf42e805e274ad19208c00701febd6a291b4a21e9aee1fc781bb",
+              "size_bytes": 297453
+            },
+            {
+              "relative_path": "D/d18.stp",
+              "sha256": "ed7b6a15b0b1601d9a466b32ce76b73b54c8a24a9df571faa0d91222f2f7d31d",
+              "size_bytes": 298411
+            },
+            {
+              "relative_path": "D/d19.stp",
+              "sha256": "4c6c5641f88c8e4cd5043ce45378d25bdc0a6a1f015f8f7dcd09cffa2cf3e670",
+              "size_bytes": 298877
+            },
+            {
+              "relative_path": "D/d20.stp",
+              "sha256": "9d87b08b0d93bc795bd688b448a1c574dffd963d99d65c0fa1683a8c6e2be5ec",
+              "size_bytes": 300346
+            }
+          ],
+          "source_url": "https://steinlib.zib.de/download/D.tgz"
+        },
+        {
+          "aggregate_members_sha256": "964e335d09fcc755d8a65a77c0ef8ee7714e2ea2836c206562b0732e9bf8deab",
+          "archive_sha256": "10808df590459e81b1d567779fb9dafe19c39a0756864abfaecc6508dfd47582",
+          "archive_size_bytes": 2074903,
+          "family": "E",
+          "instance_count": 20,
+          "members": [
+            {
+              "relative_path": "E/e01.stp",
+              "sha256": "b50405cfa80e1395ed5f9a2c4746ac0f828597bdd7f0e641d7bcff5380aa7562",
+              "size_bytes": 41507
+            },
+            {
+              "relative_path": "E/e02.stp",
+              "sha256": "0d9f31c0ac5ba5b3615eb26d20aeca05ff46887a7d9690dd019599d7e6d08d5c",
+              "size_bytes": 41587
+            },
+            {
+              "relative_path": "E/e03.stp",
+              "sha256": "02de9798fbb100df6f984a0fb7767d98e93f1d501a97ce78e7aa1e93bd8386e1",
+              "size_bytes": 44287
+            },
+            {
+              "relative_path": "E/e04.stp",
+              "sha256": "73690b58cec5aac4953a7a3e511b181396482d0bc39d228532bfa306e6320894",
+              "size_bytes": 45650
+            },
+            {
+              "relative_path": "E/e05.stp",
+              "sha256": "1d7883155ec8b1665c6a1a64d31a1be1c8a1ce2957e0e80819531bf9f9334a6e",
+              "size_bytes": 49711
+            },
+            {
+              "relative_path": "E/e06.stp",
+              "sha256": "edc35444628be633eaaf4b093c535d979877deffb21cc45450374d768db80723",
+              "size_bytes": 66297
+            },
+            {
+              "relative_path": "E/e07.stp",
+              "sha256": "89fc420dce44e5655254e7e6905175905e2c0a6683586f38b3a58a2d95bb1ebc",
+              "size_bytes": 66383
+            },
+            {
+              "relative_path": "E/e08.stp",
+              "sha256": "d03a2e3f0f4d0a2833915519b61ccd6bf6aca9c43c54281f6fc33ae31c5a562c",
+              "size_bytes": 68987
+            },
+            {
+              "relative_path": "E/e09.stp",
+              "sha256": "c6edb578f14fd7a2b425323fdf43f8e80858e402ee00dc0297c8abe08df1a3ac",
+              "size_bytes": 70502
+            },
+            {
+              "relative_path": "E/e10.stp",
+              "sha256": "d46f609c56d9dea08f1968f71aa8f71a12bf07ffaeea40620168c49230f2663e",
+              "size_bytes": 74496
+            },
+            {
+              "relative_path": "E/e11.stp",
+              "sha256": "92967e61a8f3c027b34b83b5fcd7b46b633055d026a7d2f3d0a27819f1ff30c1",
+              "size_bytes": 165452
+            },
+            {
+              "relative_path": "E/e12.stp",
+              "sha256": "ad518859cbc6710f200cb12d18e283c0d4682d7f5a5b5d552c2b068a8001e7bd",
+              "size_bytes": 165512
+            },
+            {
+              "relative_path": "E/e13.stp",
+              "sha256": "9bd04126d2b01f7141d87d22bdb06fe5535ba0e342a8079ffcd9aaea901c8a93",
+              "size_bytes": 168296
+            },
+            {
+              "relative_path": "E/e14.stp",
+              "sha256": "487e5b3727cd04e86310bd7d18ea10273b9d4d7774d21a9c078697353128051e",
+              "size_bytes": 169474
+            },
+            {
+              "relative_path": "E/e15.stp",
+              "sha256": "ae7e66a0d155ce589fbe1f71cd4d0c0d8ae6ea5ce7c025c4110f6b3fcf6df109",
+              "size_bytes": 173684
+            },
+            {
+              "relative_path": "E/e16.stp",
+              "sha256": "c73a3acd9e1d98b7bd3ae14c3d953f31d768c733dc48fd7c6536ae7872e49161",
+              "size_bytes": 826535
+            },
+            {
+              "relative_path": "E/e17.stp",
+              "sha256": "f96698712e11ffdf06a6c5abcfc581500691d2c58f6647e42c8fa26ea73b13ed",
+              "size_bytes": 826520
+            },
+            {
+              "relative_path": "E/e18.stp",
+              "sha256": "86083dc46c94172610aaf683906d69c7cd407d131f73377b0b9f9682b815c2f7",
+              "size_bytes": 829062
+            },
+            {
+              "relative_path": "E/e19.stp",
+              "sha256": "b0ae5764b5eafb42eba725bb81d60f075004870f668f188670cbabcbfd8e966b",
+              "size_bytes": 830378
+            },
+            {
+              "relative_path": "E/e20.stp",
+              "sha256": "04997a03b111f36b76dffc0b72dce309f7d21e79e05664cd8a74f80946202791",
+              "size_bytes": 834296
+            }
+          ],
+          "source_url": "https://steinlib.zib.de/download/E.tgz"
+        },
+        {
+          "aggregate_members_sha256": "96e278186f2bbcc9bc94ee50bdc48a05cd98d36c49d6bc60c13fb9f67714f99e",
+          "archive_sha256": "9b45ab6d0af7eaffc512a1d100aa5e56bd7825afa37d013e4e6d52f40508e1d1",
+          "archive_size_bytes": 4206659,
+          "family": "I320",
+          "instance_count": 100,
+          "members": [
+            {
+              "relative_path": "I320/i320-001.stp",
+              "sha256": "b22c0c0e583fdee0cf172d150d3ae33d838453b74ae9a2c74ed49060210b6cd3",
+              "size_bytes": 6863
+            },
+            {
+              "relative_path": "I320/i320-002.stp",
+              "sha256": "c4d8a781ec75ced9e792ff2fbc95d508db5e4a2fcd6360dbb593ffcc5cce3d56",
+              "size_bytes": 6881
+            },
+            {
+              "relative_path": "I320/i320-003.stp",
+              "sha256": "bc820d101e8504da82d04f9030f3ad4255bf948a83185c8a3d65f17e1562a3c6",
+              "size_bytes": 6846
+            },
+            {
+              "relative_path": "I320/i320-004.stp",
+              "sha256": "5d50818933d0787e1a3db9f14ea3b9a85d8bc0fe1ac07631536342d03b784f6d",
+              "size_bytes": 6878
+            },
+            {
+              "relative_path": "I320/i320-005.stp",
+              "sha256": "86081595661af7cb51ab3b617cb67758f66adbce5a58c5f9d30042550395baee",
+              "size_bytes": 6891
+            },
+            {
+              "relative_path": "I320/i320-011.stp",
+              "sha256": "152c98ae95a1df2eca4ecc1a0b38d8fdc7c56342d3726effb87d18e0a538244a",
+              "size_bytes": 25768
+            },
+            {
+              "relative_path": "I320/i320-012.stp",
+              "sha256": "0c7ea9e95e4f2906f1ca479b77e96c3aa41725d55f3f39c776115c042a1fa8f5",
+              "size_bytes": 25755
+            },
+            {
+              "relative_path": "I320/i320-013.stp",
+              "sha256": "ea2a829602d05e0c4561bdea1edb0523f39ea47a05ff1b06fab8778b41fa267f",
+              "size_bytes": 25809
+            },
+            {
+              "relative_path": "I320/i320-014.stp",
+              "sha256": "0053d0d53b9fe0bf80e588f77a19f9599dd6b32b38bf3b3a42cc8d75fa0f94a0",
+              "size_bytes": 25747
+            },
+            {
+              "relative_path": "I320/i320-015.stp",
+              "sha256": "3ea45e311fc9593a4dfbef6c343ce98caa4bb291d0989e60715eafe0d6c7f481",
+              "size_bytes": 25769
+            },
+            {
+              "relative_path": "I320/i320-021.stp",
+              "sha256": "b78c66064671255c27a6a54434ddccedc31ee8715e5eb01cc8fcfd86d3dac222",
+              "size_bytes": 706958
+            },
+            {
+              "relative_path": "I320/i320-022.stp",
+              "sha256": "c429164be326cdee2eb8f319fb869da227622b322554cd06feb97c229b5a7ae3",
+              "size_bytes": 707340
+            },
+            {
+              "relative_path": "I320/i320-023.stp",
+              "sha256": "d604b0c65b935857b82fcf1b59c924692b85bf3eebb9ed4d202d26ead285431f",
+              "size_bytes": 707157
+            },
+            {
+              "relative_path": "I320/i320-024.stp",
+              "sha256": "71ea6b6124dea930a1f9a9b216d97868494ed5f0eb84194ba8260c30c8b29174",
+              "size_bytes": 706884
+            },
+            {
+              "relative_path": "I320/i320-025.stp",
+              "sha256": "c1f13c21871377a465d1d71d59dcb91a296630de35900e14a95fa9b84bd72db3",
+              "size_bytes": 707192
+            },
+            {
+              "relative_path": "I320/i320-031.stp",
+              "sha256": "d80b069b1c7c05302f22788e960ab40c3f7233f577af8be2811c4aad4b59b5f6",
+              "size_bytes": 9095
+            },
+            {
+              "relative_path": "I320/i320-032.stp",
+              "sha256": "b321d80fc1045577d383277fab0d1cffe1d2ef424b16e98d4176f5bec5ae4719",
+              "size_bytes": 9112
+            },
+            {
+              "relative_path": "I320/i320-033.stp",
+              "sha256": "a7dc07859b3e148d7cdeaabcbf8bce5c76ec12fda315c025d8130069e0757002",
+              "size_bytes": 9102
+            },
+            {
+              "relative_path": "I320/i320-034.stp",
+              "sha256": "db1b36b118b4ca403f4d11a39c5870b4232b812cb95ef25c2d08bddacc1252ee",
+              "size_bytes": 9148
+            },
+            {
+              "relative_path": "I320/i320-035.stp",
+              "sha256": "69779daa96e7e6295a9ad57deac93bc17198b56f1dc5500705f56f643d34cbcf",
+              "size_bytes": 9116
+            },
+            {
+              "relative_path": "I320/i320-041.stp",
+              "sha256": "aa9aeecf971193ead7b39cbac49f821f083a347a07301dc8f245f85d6b31cbd2",
+              "size_bytes": 141453
+            },
+            {
+              "relative_path": "I320/i320-042.stp",
+              "sha256": "ab50e02be8020aa16a6ecbcc05120f0b0c121f21ee0b78318f8542b96d03b8f1",
+              "size_bytes": 141625
+            },
+            {
+              "relative_path": "I320/i320-043.stp",
+              "sha256": "9800d11b05d66a912dde7d70fb66d04e70305de12f1a88065d1227456b7d8ff5",
+              "size_bytes": 141641
+            },
+            {
+              "relative_path": "I320/i320-044.stp",
+              "sha256": "bd03bafc929efcf2cdbca941440e4256017af2d1327b32fa49df01d06a0804da",
+              "size_bytes": 141609
+            },
+            {
+              "relative_path": "I320/i320-045.stp",
+              "sha256": "955406f36e27ddcc40d8abba4af69b6ebb020f1149fd59331f6fca19803b0746",
+              "size_bytes": 141775
+            },
+            {
+              "relative_path": "I320/i320-101.stp",
+              "sha256": "a287956f002827b79eca1fb2bfff685bb8afbb9e285cc8fc649ba7405e230b21",
+              "size_bytes": 6931
+            },
+            {
+              "relative_path": "I320/i320-102.stp",
+              "sha256": "0ea7214d0a1d7412b38962de1aab484a92064420882ec8d1eab822613f6853da",
+              "size_bytes": 6916
+            },
+            {
+              "relative_path": "I320/i320-103.stp",
+              "sha256": "6aa14602be6060656292fb6246e8a6e4c631b5699121c1e7a652816cc980feb2",
+              "size_bytes": 6954
+            },
+            {
+              "relative_path": "I320/i320-104.stp",
+              "sha256": "e52a5fcf22d1c854fb4595746a46335958f82075a31936313a817195f36ce424",
+              "size_bytes": 6921
+            },
+            {
+              "relative_path": "I320/i320-105.stp",
+              "sha256": "1a0f594ee4c22c6782b7b8580f57f06b5f6fdf26561b7356db553e2a531d6ccc",
+              "size_bytes": 6938
+            },
+            {
+              "relative_path": "I320/i320-111.stp",
+              "sha256": "f16959eb60a4cf837f8db7a2809be7214d753d1e2760299ca238b798f34fcea5",
+              "size_bytes": 25960
+            },
+            {
+              "relative_path": "I320/i320-112.stp",
+              "sha256": "f01207114bac42e5146071f2df81774c1c9f299c6d1c6db05ba29a96387a1a31",
+              "size_bytes": 25935
+            },
+            {
+              "relative_path": "I320/i320-113.stp",
+              "sha256": "39c33c53bb999ea8a7558de20b1a7029663b4e701a13607f381610e6a5fe1d69",
+              "size_bytes": 25904
+            },
+            {
+              "relative_path": "I320/i320-114.stp",
+              "sha256": "39b9b1707a43fc491deb5b6fe59b752b11b8816d2848b05ae46c429d735a1bab",
+              "size_bytes": 25884
+            },
+            {
+              "relative_path": "I320/i320-115.stp",
+              "sha256": "12477177b067e9cf624577c1aedac255fea583c157cefe1869c93eb4c768cdd9",
+              "size_bytes": 25886
+            },
+            {
+              "relative_path": "I320/i320-121.stp",
+              "sha256": "f350d1e4c45e14b610c6e61deba83ce257e8d6d954ea9b0975f85aae9afaaea4",
+              "size_bytes": 708515
+            },
+            {
+              "relative_path": "I320/i320-122.stp",
+              "sha256": "c12a5f0b05688805077447369e18a4a66f4fd0f47c6ec5449d065b4945b91af5",
+              "size_bytes": 708682
+            },
+            {
+              "relative_path": "I320/i320-123.stp",
+              "sha256": "684000dbf16c99ab0c1bfa595a5633ceeecad8b7acc910d6eec91a921dcc6bf8",
+              "size_bytes": 708687
+            },
+            {
+              "relative_path": "I320/i320-124.stp",
+              "sha256": "5fffa7d9e8504ac125ae58c653d312011dca5c4961880ef5c7c53bb4707eac82",
+              "size_bytes": 708551
+            },
+            {
+              "relative_path": "I320/i320-125.stp",
+              "sha256": "de39a990f1982aa4e21879104c05e120663bbbb22098e5fa40c35562600ab400",
+              "size_bytes": 708622
+            },
+            {
+              "relative_path": "I320/i320-131.stp",
+              "sha256": "b9f41de6a69cdcbf80c6d5cd89a7d00406b987dbc734aa4653f12b52450245da",
+              "size_bytes": 9156
+            },
+            {
+              "relative_path": "I320/i320-132.stp",
+              "sha256": "78e899a63d1e7f381d9d4cd5d3c9f260fa9cd5f2c70f92973a258694a1d862f9",
+              "size_bytes": 9149
+            },
+            {
+              "relative_path": "I320/i320-133.stp",
+              "sha256": "cccf78cfbc1dc12ce4085dc906efa7e6367fbb1f19a307097a1f39c0cf2bcacd",
+              "size_bytes": 9153
+            },
+            {
+              "relative_path": "I320/i320-134.stp",
+              "sha256": "ba297603022dbed406a0dfc93f8a1ebbfdb6d095bb2b64f2459f5cde4e0bf15e",
+              "size_bytes": 9154
+            },
+            {
+              "relative_path": "I320/i320-135.stp",
+              "sha256": "b64c2b59f00599ca53300098e530c48a93475d51e95188be4c202d9abff49491",
+              "size_bytes": 9165
+            },
+            {
+              "relative_path": "I320/i320-141.stp",
+              "sha256": "9e50eeac4dcb6094b01d9bafcad7f55eea7718f69eba49f0c51d92bbf7d89150",
+              "size_bytes": 141930
+            },
+            {
+              "relative_path": "I320/i320-142.stp",
+              "sha256": "a2364b45c8bc12a14096564f74bf5694c8d55a940a5d0d10d1df23d862b33572",
+              "size_bytes": 142050
+            },
+            {
+              "relative_path": "I320/i320-143.stp",
+              "sha256": "ed3e14ad90bbf6549a3f6f8930531a4e8e05eac3c64c29781f68fd52cd8d2264",
+              "size_bytes": 141993
+            },
+            {
+              "relative_path": "I320/i320-144.stp",
+              "sha256": "3064cb8e8cf76b10b6307777b1800cfa63fa3d67271cd2ee0a6b2247928a7f39",
+              "size_bytes": 141847
+            },
+            {
+              "relative_path": "I320/i320-145.stp",
+              "sha256": "be495eb6f6e7634a54b19d1a9d50135f9c2aff9dd9340b643652e943b5e858a5",
+              "size_bytes": 141906
+            },
+            {
+              "relative_path": "I320/i320-201.stp",
+              "sha256": "8f25543208c5b8b0e4f39a71458c1e44d13be24ddf401d23da018026863dfc78",
+              "size_bytes": 7061
+            },
+            {
+              "relative_path": "I320/i320-202.stp",
+              "sha256": "46d2b782882607868aa21acf2fb75f515cafad8d2dbf1877a4356a6c0865c28d",
+              "size_bytes": 7075
+            },
+            {
+              "relative_path": "I320/i320-203.stp",
+              "sha256": "f44f653b05de739744211d289a50f44f49fd6290b6e101638ca9f708321ac345",
+              "size_bytes": 7064
+            },
+            {
+              "relative_path": "I320/i320-204.stp",
+              "sha256": "7d2ec0c58144a5b7d32acafabd34b3cb1280998574a4a82717efabc185752d42",
+              "size_bytes": 7043
+            },
+            {
+              "relative_path": "I320/i320-205.stp",
+              "sha256": "6f69c4aa856f904c55673b8aa259493d09f159467ff0dd4461c5bb2542f22d3f",
+              "size_bytes": 7053
+            },
+            {
+              "relative_path": "I320/i320-211.stp",
+              "sha256": "31de7886c40be872499059ba17d3a8c0f8d11ab27883551cf488c3a6f9e18ba7",
+              "size_bytes": 26064
+            },
+            {
+              "relative_path": "I320/i320-212.stp",
+              "sha256": "b187e4be7da4d411512103aa52edf7161c69865731b94ca7702e794fe155a209",
+              "size_bytes": 26105
+            },
+            {
+              "relative_path": "I320/i320-213.stp",
+              "sha256": "a705154c1ace5a4c7d66fa08e5b21e8fd4d4081347529173d05f503de18e05f5",
+              "size_bytes": 26017
+            },
+            {
+              "relative_path": "I320/i320-214.stp",
+              "sha256": "52930b65d9e58ce577d1d2bf18e14ed40b1e1d0579b47bca853355f2816518cc",
+              "size_bytes": 26140
+            },
+            {
+              "relative_path": "I320/i320-215.stp",
+              "sha256": "7a5495c9a28cd691845790c4c2e912244c90aeb4b682b984bafd8ecb65fff90b",
+              "size_bytes": 26076
+            },
+            {
+              "relative_path": "I320/i320-221.stp",
+              "sha256": "74a1a2c77c55d2f128dd529a333757f48ba94b677357936b6743f9fe27e3336b",
+              "size_bytes": 710970
+            },
+            {
+              "relative_path": "I320/i320-222.stp",
+              "sha256": "0094ac63aaf78f5092604deaa660582fee20fceea9b96b24dfd38fd40612c033",
+              "size_bytes": 711336
+            },
+            {
+              "relative_path": "I320/i320-223.stp",
+              "sha256": "8c84e10393cbcd11b12d7b74b0bdc5054645bc15bd3b1ee4f6edfc663f515cd3",
+              "size_bytes": 711146
+            },
+            {
+              "relative_path": "I320/i320-224.stp",
+              "sha256": "c535ef168279b39e09bb4220424433906137587b7cd2ab76b7cca3104cbee8f8",
+              "size_bytes": 711258
+            },
+            {
+              "relative_path": "I320/i320-225.stp",
+              "sha256": "4dabe25a604059a6ae1a6ac896982c4695ce38a2757782f500ba911874ff40ed",
+              "size_bytes": 711196
+            },
+            {
+              "relative_path": "I320/i320-231.stp",
+              "sha256": "a83a53208e00413530406d20dd979e32ed284f7e79257f3987a6e9c9818a1ae7",
+              "size_bytes": 9316
+            },
+            {
+              "relative_path": "I320/i320-232.stp",
+              "sha256": "240f70b3de79d7311b3e1e68643cdc5ecefb712c2ba21405f743a63fc044ac23",
+              "size_bytes": 9297
+            },
+            {
+              "relative_path": "I320/i320-233.stp",
+              "sha256": "1a96ba4cab17a198246e35463ff52874053e8f28f9bcf0f9a8ebcfb9bbf266b6",
+              "size_bytes": 9271
+            },
+            {
+              "relative_path": "I320/i320-234.stp",
+              "sha256": "1b4bf31291a6df1b620b61cff07c9cccfe037e8985133300fcbfc1abc93323fe",
+              "size_bytes": 9267
+            },
+            {
+              "relative_path": "I320/i320-235.stp",
+              "sha256": "320b9d02f3d6395f4c4dce97cbcf07fe2772dedac820c87c02318224f682a908",
+              "size_bytes": 9273
+            },
+            {
+              "relative_path": "I320/i320-241.stp",
+              "sha256": "2ed7f8280bd467d104d92311efed5f12cd9249aea4828adc9e1bd57da94a735e",
+              "size_bytes": 142488
+            },
+            {
+              "relative_path": "I320/i320-242.stp",
+              "sha256": "231067ee8b59951284ae3a62bacecdb6b4824fa42dc4bf500678035ae505e984",
+              "size_bytes": 142642
+            },
+            {
+              "relative_path": "I320/i320-243.stp",
+              "sha256": "b63d95b80dc3cd165cf66e717297386854ae2d1fd55c66ba6b92fc2eadbb08d1",
+              "size_bytes": 142571
+            },
+            {
+              "relative_path": "I320/i320-244.stp",
+              "sha256": "cae544e39c3393c90e0198b9e80e880d1b0ab38b0c9a94cd58c795fe10044d95",
+              "size_bytes": 142565
+            },
+            {
+              "relative_path": "I320/i320-245.stp",
+              "sha256": "aa25b618c899ce967ef5afa73a82bec20d2f3282c3719fbdea250a8cc67e5c43",
+              "size_bytes": 142467
+            },
+            {
+              "relative_path": "I320/i320-301.stp",
+              "sha256": "13f2dcd295f39094980de6952e8f23a0c100ec08aa48202325b7fa8de214c0cf",
+              "size_bytes": 7340
+            },
+            {
+              "relative_path": "I320/i320-302.stp",
+              "sha256": "06b4182ffa95c4313f1d9e73db47efa5846dfd2388afc38d4c6c8738ee992940",
+              "size_bytes": 7346
+            },
+            {
+              "relative_path": "I320/i320-303.stp",
+              "sha256": "b7bcde7d409190187449f2b40094d80b9f61c7ad874a83972e623bda4c27b07c",
+              "size_bytes": 7339
+            },
+            {
+              "relative_path": "I320/i320-304.stp",
+              "sha256": "46d35540000e4ac7bafb9c9b1972171196a731502188963299872a82b82af50a",
+              "size_bytes": 7358
+            },
+            {
+              "relative_path": "I320/i320-305.stp",
+              "sha256": "5f000145cdf11773fac8bc52e5000cec23703f2ae2d6d14285bbbdf98c058058",
+              "size_bytes": 7353
+            },
+            {
+              "relative_path": "I320/i320-311.stp",
+              "sha256": "796d5a8e5ef58b0a4c8a07d6aba9bcf60b4e8b6c0070daab32b4fac568a491d4",
+              "size_bytes": 26526
+            },
+            {
+              "relative_path": "I320/i320-312.stp",
+              "sha256": "5a5030b3fdd6cebc1546fc2909dcbb3bbf96317fbb966974231ae5ff98b6317f",
+              "size_bytes": 26508
+            },
+            {
+              "relative_path": "I320/i320-313.stp",
+              "sha256": "a81d5bdc009a07ba65e6d7d7291ba0e77279196f3f163215556777b3c324553a",
+              "size_bytes": 26508
+            },
+            {
+              "relative_path": "I320/i320-314.stp",
+              "sha256": "b337877511f7e46dff97537750dd4f4564761f6f28a11442932499b2eda600ca",
+              "size_bytes": 26501
+            },
+            {
+              "relative_path": "I320/i320-315.stp",
+              "sha256": "d34cbc44719a89e060ade557e3ffb03799e97d5247ab1bd569f533faddf4bf4b",
+              "size_bytes": 26510
+            },
+            {
+              "relative_path": "I320/i320-321.stp",
+              "sha256": "f325b6b1fef5749a612bae92049d75982da00f21e6eec4dedb1f04dc8880ab62",
+              "size_bytes": 717441
+            },
+            {
+              "relative_path": "I320/i320-322.stp",
+              "sha256": "35ea7549f0ea73aabccac810b9be317f5865562f006c36ea61e89c44c3822fab",
+              "size_bytes": 717444
+            },
+            {
+              "relative_path": "I320/i320-323.stp",
+              "sha256": "7478fc5d947f3ed33dc470939f5666d30d9050a8b7cee6c7384e01f2395b37ce",
+              "size_bytes": 717513
+            },
+            {
+              "relative_path": "I320/i320-324.stp",
+              "sha256": "bbefb93d006ee5b8c0ad1a6e00db289adf1fe6162ed6eec3d810c7d45b1b2587",
+              "size_bytes": 717442
+            },
+            {
+              "relative_path": "I320/i320-325.stp",
+              "sha256": "2543619bd2d367f44325b0225ba8c80b6aa4bc922fbbc90fefe733db7d484996",
+              "size_bytes": 717633
+            },
+            {
+              "relative_path": "I320/i320-331.stp",
+              "sha256": "a50f89057a2d43c18657fb53b182a1e6cf539dff36bbf9f4024fa0cfe1f0ec23",
+              "size_bytes": 9580
+            },
+            {
+              "relative_path": "I320/i320-332.stp",
+              "sha256": "d7925dfcdd9f929c1c9d613cd56e22db801366afaad47f8005d0452bcc1364fc",
+              "size_bytes": 9622
+            },
+            {
+              "relative_path": "I320/i320-333.stp",
+              "sha256": "86606a218d36f3920421aae84f0109e060b661f400c6310040220ec07f8b34ee",
+              "size_bytes": 9576
+            },
+            {
+              "relative_path": "I320/i320-334.stp",
+              "sha256": "a5ae8edfaed5da96e5bf8c969f777fa27102f5bdbd266b27c68638f288c1a297",
+              "size_bytes": 9600
+            },
+            {
+              "relative_path": "I320/i320-335.stp",
+              "sha256": "86cac1285052dcd5822cd23435d8156ea3cde9ff7e638c9b65b77bb83a2b4757",
+              "size_bytes": 9601
+            },
+            {
+              "relative_path": "I320/i320-341.stp",
+              "sha256": "573df61d0075b671c95de26db58e2bd60a24ca909ee1b91858afefe0efa9d363",
+              "size_bytes": 143927
+            },
+            {
+              "relative_path": "I320/i320-342.stp",
+              "sha256": "b09667f18a2f6bf3d2d4f0a086a0a4342dfe22d29250e14f7c14b07bd641573b",
+              "size_bytes": 143930
+            },
+            {
+              "relative_path": "I320/i320-343.stp",
+              "sha256": "2124ea8da8220144e9164ae236288278f5b7d1472f86f9fe505e1733da80f1bb",
+              "size_bytes": 143949
+            },
+            {
+              "relative_path": "I320/i320-344.stp",
+              "sha256": "23dbc294471d205227cff926238cd4279d0240042f29fa64767312ea057a0b0b",
+              "size_bytes": 143950
+            },
+            {
+              "relative_path": "I320/i320-345.stp",
+              "sha256": "7278aadf2a7efe05dc6fd3d7eaa16b688cd314d26d37e4c6f5254640ebbad4e1",
+              "size_bytes": 143945
+            }
+          ],
+          "source_url": "https://steinlib.zib.de/download/I320.tgz"
+        },
+        {
+          "aggregate_members_sha256": "5daccc87f4b47bf1ac83540e6ad6243ebe605de88e42d0224381455dfc001710",
+          "archive_sha256": "e04f7d8627d9dd6333b771eb7b6dd15af9d128c310a7cf75ccb5b3a2531ce2dc",
+          "archive_size_bytes": 442928,
+          "family": "2R",
+          "instance_count": 27,
+          "members": [
+            {
+              "relative_path": "2R/2r111.stp",
+              "sha256": "59dd2a092a49a50e36116fce80c74509114eb8bb6027c63aa2241d247c9ba101",
+              "size_bytes": 115192
+            },
+            {
+              "relative_path": "2R/2r112.stp",
+              "sha256": "f4d4754c3d0cbdf78c56dc5a3df397f4c03f24dcbc5d8c1d5fc90014fa87772e",
+              "size_bytes": 115189
+            },
+            {
+              "relative_path": "2R/2r113.stp",
+              "sha256": "0e65f435b445135c153901e7fe7d64af845fda327bccffcbe367eedd250c5001",
+              "size_bytes": 115189
+            },
+            {
+              "relative_path": "2R/2r121.stp",
+              "sha256": "88eb17b86d8a69d3bde2d9a0e1928590c8b0ff4b31bce77d0b78362ed5b9a71c",
+              "size_bytes": 114770
+            },
+            {
+              "relative_path": "2R/2r122.stp",
+              "sha256": "716b6cf3675b7bd51104b518205f0aa419c86d6e0eed81be800eaa40f46b41d0",
+              "size_bytes": 114848
+            },
+            {
+              "relative_path": "2R/2r123.stp",
+              "sha256": "8041777df4666de3f2878dae37b1a301ac69ad042bd0e4ada081d6e36691b21b",
+              "size_bytes": 114482
+            },
+            {
+              "relative_path": "2R/2r131.stp",
+              "sha256": "e9d83a7065317fb1b2c388bacebbe783652cd0b9a512c94c16da20341e09010a",
+              "size_bytes": 114252
+            },
+            {
+              "relative_path": "2R/2r132.stp",
+              "sha256": "a6a44bb237de1501f9a6dec34150fac87cc5e23de46a9c89ffabc83975b42c6e",
+              "size_bytes": 114189
+            },
+            {
+              "relative_path": "2R/2r133.stp",
+              "sha256": "0c9dee55a8cf707083e8633bcb24ee8dfa1137e4ffc79e128876ef906a13dee2",
+              "size_bytes": 114249
+            },
+            {
+              "relative_path": "2R/2r211.stp",
+              "sha256": "6ca288d46ee7703de51d6289746f4d368146deba50cfcb6dcc758839d5de0028",
+              "size_bytes": 115434
+            },
+            {
+              "relative_path": "2R/2r212.stp",
+              "sha256": "ae0cfe93d3fd01dae4ae4f0a5cd33b330d874ed95d5df58e32e040bb7e381faf",
+              "size_bytes": 115429
+            },
+            {
+              "relative_path": "2R/2r213.stp",
+              "sha256": "b2fb3a72159823f92e4ff7294a475ff663c6b221c4cc64e02c3b4d9fe279a247",
+              "size_bytes": 115423
+            },
+            {
+              "relative_path": "2R/2r221.stp",
+              "sha256": "a9f087c74668eaae005328afea529a29a1c6f183ff14d21812136d698a8dc879",
+              "size_bytes": 114943
+            },
+            {
+              "relative_path": "2R/2r222.stp",
+              "sha256": "bf884db603ff038c7e59a6c62d2b0dd81a4b3ebbc259282acd5ab8889c1f3663",
+              "size_bytes": 114978
+            },
+            {
+              "relative_path": "2R/2r223.stp",
+              "sha256": "09bed213bb5b132095ffd5550c36598f8faf78fc9eb24e6b2b487f5d7c6b723c",
+              "size_bytes": 115054
+            },
+            {
+              "relative_path": "2R/2r231.stp",
+              "sha256": "6579f237c5d29b046997ef548defc7d4897ce029e8bc6a813cda9866503b47f1",
+              "size_bytes": 114676
+            },
+            {
+              "relative_path": "2R/2r232.stp",
+              "sha256": "c22de8fa9a9769eee5d60e6b4be4a508437280588af2cd0eb551fd13aa511ac8",
+              "size_bytes": 114582
+            },
+            {
+              "relative_path": "2R/2r233.stp",
+              "sha256": "118a3dae89eb8205f429d8620a2429c88f74a0428a46e1aeb1bc9886c2e20b6c",
+              "size_bytes": 114504
+            },
+            {
+              "relative_path": "2R/2r311.stp",
+              "sha256": "ea012d9a8279a6cb931e35663ca08e0112b79c0ae08f57afe4ea0923e01841b0",
+              "size_bytes": 115704
+            },
+            {
+              "relative_path": "2R/2r312.stp",
+              "sha256": "089ca3e74aabef485d8b3b3daa29bf7ceeeefa4d48664a42d0aeb68e96aeb82a",
+              "size_bytes": 115681
+            },
+            {
+              "relative_path": "2R/2r313.stp",
+              "sha256": "e9b69f6f3b344c5db14f6bc923d16d9a839a22d9a618216a3be53fed3b8d7c74",
+              "size_bytes": 115708
+            },
+            {
+              "relative_path": "2R/2r321.stp",
+              "sha256": "a85740aafe399814728044614735869396f35ccfbeab3da31093855a1f166dc9",
+              "size_bytes": 115331
+            },
+            {
+              "relative_path": "2R/2r322.stp",
+              "sha256": "2d9eaa3052476f726d3c2a740138685248f3ce9e610c959137b02f59009e1b53",
+              "size_bytes": 114987
+            },
+            {
+              "relative_path": "2R/2r323.stp",
+              "sha256": "784b95561c8de31bbd03f835f7d07d1037407b7e579c41e3df9ef65b4f83134f",
+              "size_bytes": 115202
+            },
+            {
+              "relative_path": "2R/2r331.stp",
+              "sha256": "10ed8c18100a42672d51304ed3daec947c8f2b682ac9bdd76f497dac124077f6",
+              "size_bytes": 114921
+            },
+            {
+              "relative_path": "2R/2r332.stp",
+              "sha256": "45d96a31d11c7966d5359270790d7385a0c4ecff6a7ca217711d0fe20ea22b57",
+              "size_bytes": 115130
+            },
+            {
+              "relative_path": "2R/2r333.stp",
+              "sha256": "213e23f27772be48416c560077959c83c998b1249f0c3b477b04fb5551b1d7ce",
+              "size_bytes": 114983
+            }
+          ],
+          "source_url": "https://steinlib.zib.de/download/2R.tgz"
+        },
+        {
+          "aggregate_members_sha256": "78defbd2435c16f903445f2b9f9fbb58b7d990be18e96669daf8aee31b9f29a1",
+          "archive_sha256": "7db5659835a46c429bbf4a38cd04515c9bbf5a046fc19a1fa354ad9f6e2bf700",
+          "archive_size_bytes": 835149,
+          "family": "DIW",
+          "instance_count": 21,
+          "members": [
+            {
+              "relative_path": "DIW/diw0234.stp",
+              "sha256": "000dd226d69e0e687fbbd7ce7de5b46a342d01e379f09bde9675a33e413215f2",
+              "size_bytes": 226801
+            },
+            {
+              "relative_path": "DIW/diw0250.stp",
+              "sha256": "96d150608f38467293bccec53f0a749421a4cf4805d187c4bde9eae792db2a6f",
+              "size_bytes": 12739
+            },
+            {
+              "relative_path": "DIW/diw0260.stp",
+              "sha256": "53bade4b91fcaa5c5397b69f2dba6a6dab2a3d4612b4f5111440a95dc0a59c3c",
+              "size_bytes": 20243
+            },
+            {
+              "relative_path": "DIW/diw0313.stp",
+              "sha256": "b2a2c3885ed16bff3aeebbc34b6c760ebde8bb9dc4c3846e28615ec93692727d",
+              "size_bytes": 17162
+            },
+            {
+              "relative_path": "DIW/diw0393.stp",
+              "sha256": "ab2072da3d95ed23744c4e040c061d4836ad13dfeca6483fb36c24336a7cddef",
+              "size_bytes": 7781
+            },
+            {
+              "relative_path": "DIW/diw0445.stp",
+              "sha256": "ba4557807b2d965c1ee33f929224b463ec2403ea819217d330aea039b2faa4d1",
+              "size_bytes": 72237
+            },
+            {
+              "relative_path": "DIW/diw0459.stp",
+              "sha256": "ecc86851e405b477122e2e27ecef331905b923c61d6b656c8742019124d052f9",
+              "size_bytes": 151876
+            },
+            {
+              "relative_path": "DIW/diw0460.stp",
+              "sha256": "a70347a256c82830809c2e312205d69f4776be456f10f277be8205217cc54644",
+              "size_bytes": 12181
+            },
+            {
+              "relative_path": "DIW/diw0473.stp",
+              "sha256": "7f0cf27dacc366ea9fd791b9387a55966d3103cbcbb67cb80d80dde6c2f175dd",
+              "size_bytes": 90332
+            },
+            {
+              "relative_path": "DIW/diw0487.stp",
+              "sha256": "7a69819d4cafc3f9bdf0d24973cf10b78a67b9e1c5ca5266548b3e43e7cff848",
+              "size_bytes": 97390
+            },
+            {
+              "relative_path": "DIW/diw0495.stp",
+              "sha256": "6dc602e6f960ef8974f1d27d14dc98d4cbf02b8cb2485a6bddf218d21899b19b",
+              "size_bytes": 34630
+            },
+            {
+              "relative_path": "DIW/diw0513.stp",
+              "sha256": "10cea56df85487f0f58aef4d4e346fe6d6e38f15e25daa1c2338a4a8aa73a5df",
+              "size_bytes": 34684
+            },
+            {
+              "relative_path": "DIW/diw0523.stp",
+              "sha256": "482e3100ded05c5ffe378d1374e388bc6762052629f752751906b086af71d447",
+              "size_bytes": 41605
+            },
+            {
+              "relative_path": "DIW/diw0540.stp",
+              "sha256": "a435cf5907497dd8040b5d9d14b7a50f4b79f9b077bc7a27c9ccedf2e4125549",
+              "size_bytes": 9973
+            },
+            {
+              "relative_path": "DIW/diw0559.stp",
+              "sha256": "913b2b77aef3946ae50db6b7aa1c7c6ecc7e75c1de3e72d827ede27c803b233a",
+              "size_bytes": 156473
+            },
+            {
+              "relative_path": "DIW/diw0778.stp",
+              "sha256": "1bccc7925f6ec6a0dbef1ae000216c372b0131569397cf0b044f0748875460e7",
+              "size_bytes": 308103
+            },
+            {
+              "relative_path": "DIW/diw0779.stp",
+              "sha256": "e31e3c3fe1219fad83c42849e4b785525fd87aebc1413687e43c1d6c6a3dd1fc",
+              "size_bytes": 516733
+            },
+            {
+              "relative_path": "DIW/diw0795.stp",
+              "sha256": "4a58810b020a11b769db7eee42b26b9d490dc97d9aa36a544f6d08407b22ce3c",
+              "size_bytes": 133011
+            },
+            {
+              "relative_path": "DIW/diw0801.stp",
+              "sha256": "6fd34e74a3c105e96e8298faf3a356bec146663551b1c96eb7219792581138a6",
+              "size_bytes": 124583
+            },
+            {
+              "relative_path": "DIW/diw0819.stp",
+              "sha256": "e7401564e63fc0a3bab10f9296e31e811986b65845e047e764cd5180ef2064ae",
+              "size_bytes": 456570
+            },
+            {
+              "relative_path": "DIW/diw0820.stp",
+              "sha256": "9632975c02e9875ad6fef3d41aacb7c300ff8de758bd1922da13062336734726",
+              "size_bytes": 513690
+            }
+          ],
+          "source_url": "https://steinlib.zib.de/download/DIW.tgz"
+        }
+      ],
+      "distribution_kind": "family_archives",
+      "instance_count": 188,
+      "source_revision": "website_last_update_2015_02_17",
+      "suite_id": "steinlib_spg_final_families"
+    },
+    {
+      "aggregate_members_sha256": "05b400cb216a05370e2b3165645e553f5f3bb58ddab67d49afe226e57f4ed8a9",
+      "archive_sha256": "bea9b2aa49bb233fc2a23c978803f64009f44b70b6728c5606432019911282a0",
+      "archive_size_bytes": 7839814,
+      "distribution_kind": "complete_archive",
+      "instance_count": 50,
+      "members": [
+        {
+          "relative_path": "SPG/2r211c.stp",
+          "sha256": "bce095143202760c4814cf7b4bff99237ff7cbac05e3804847b3ca225cbf0928",
+          "size_bytes": 86452
+        },
+        {
+          "relative_path": "SPG/G106ac.stp",
+          "sha256": "7656d1f12b7b1ba27650ca73b5f6e4b8ab2543e4fb671302ef20f3803bc43976",
+          "size_bytes": 1841035
+        },
+        {
+          "relative_path": "SPG/I064ac.stp",
+          "sha256": "c406f05693d02568c4d59bfadb0207d4dd5f54bc62297ed982066870298d0978",
+          "size_bytes": 850660
+        },
+        {
+          "relative_path": "SPG/alue7080.stp",
+          "sha256": "881a60934c61678e8d4c9c0131d29075c9e89ce5f682b57fc64f73232ba04f28",
+          "size_bytes": 1493506
+        },
+        {
+          "relative_path": "SPG/alut2625.stp",
+          "sha256": "50140c5e229424eac071b81f6f4f3cf85bbc4b812142bd742afc1bba4de04d77",
+          "size_bytes": 1726253
+        },
+        {
+          "relative_path": "SPG/bipa2p.stp",
+          "sha256": "5ae324bb4fe550c1fe4af0de1e65804cdbff4fd0440526e2f49023bc9052105f",
+          "size_bytes": 284828
+        },
+        {
+          "relative_path": "SPG/bipa2u.stp",
+          "sha256": "447dd8465d25291b90a6e016fd199808fbc8592f846f38f3feb5244063922b37",
+          "size_bytes": 248682
+        },
+        {
+          "relative_path": "SPG/c01.stp",
+          "sha256": "10ddae09187a02a8d41639ccd2c7c58bd03b4aa7218b4a07bd4ab4164b955442",
+          "size_bytes": 7597
+        },
+        {
+          "relative_path": "SPG/c02.stp",
+          "sha256": "0664a8759e13d3e396682b59e74c9f91be6ab863fb35807c9f1562a7c9bf851d",
+          "size_bytes": 7635
+        },
+        {
+          "relative_path": "SPG/c03.stp",
+          "sha256": "6095a12ee18d6ef3f90b07903d5a4fb6faaa71e4d671b9650881fcfb000ab36b",
+          "size_bytes": 8066
+        },
+        {
+          "relative_path": "SPG/c04.stp",
+          "sha256": "d9c8daee7f8197ad68f308e8fc11ab00eed0f6c36714bc6337982c12ed1a271c",
+          "size_bytes": 8282
+        },
+        {
+          "relative_path": "SPG/c05.stp",
+          "sha256": "c80c02c71d02c294745b845dcbaa93cd1c0a18d1b76f8599b35863b96dd5f1ed",
+          "size_bytes": 8997
+        },
+        {
+          "relative_path": "SPG/c06.stp",
+          "sha256": "7921ec1f5d90b45d78140c3fb2a92f5cb0e86b9b89fd2a2de26b54792f2180c5",
+          "size_bytes": 11965
+        },
+        {
+          "relative_path": "SPG/c07.stp",
+          "sha256": "dade0e84246c86b4134724aef19ef0b68a4b456637c3f927dbcfb8e8d7092973",
+          "size_bytes": 12008
+        },
+        {
+          "relative_path": "SPG/c08.stp",
+          "sha256": "f48e59bf499168a777ad33cfda2c3415710efbd4be1bcd476e6452fe2cbc907f",
+          "size_bytes": 12424
+        },
+        {
+          "relative_path": "SPG/c09.stp",
+          "sha256": "b2ab9e37a3a647c4b7e4894fd94d90e7f20e62b77a76b3a91d5e4d560bae5ea6",
+          "size_bytes": 12652
+        },
+        {
+          "relative_path": "SPG/c10.stp",
+          "sha256": "3298a73993d9e0c0ea2378c59144c382f8f85d8ba8a576c1d26c73e899db2cc9",
+          "size_bytes": 13393
+        },
+        {
+          "relative_path": "SPG/c11.stp",
+          "sha256": "b1ae45b6ac23124d5d46db8d2db0d90ca3c5daf390c10853b73c17de6ec9841b",
+          "size_bytes": 29498
+        },
+        {
+          "relative_path": "SPG/c12.stp",
+          "sha256": "824cf1b041010d8feefb580a93ef969eb6954389b01ee081541b73a675c6b23a",
+          "size_bytes": 29513
+        },
+        {
+          "relative_path": "SPG/c13.stp",
+          "sha256": "f8f614cf000a2eef2b2fd043e1a3bdd3e1bb115e9059591aad7c529a27b4466b",
+          "size_bytes": 29906
+        },
+        {
+          "relative_path": "SPG/c14.stp",
+          "sha256": "8adf962028aca636d7840778e9892edb1385be1d9f1bb403f0651f2370ae09a1",
+          "size_bytes": 30165
+        },
+        {
+          "relative_path": "SPG/c15.stp",
+          "sha256": "a3281c938f5d8dc9f2c9211b22dc008ece7d00f74888a94d1d68ff72ab8105c7",
+          "size_bytes": 30907
+        },
+        {
+          "relative_path": "SPG/c16.stp",
+          "sha256": "335661052062f9291f9382b881f3434fb70f5caa42f61cfd0a8c17c95596334e",
+          "size_bytes": 146098
+        },
+        {
+          "relative_path": "SPG/c17.stp",
+          "sha256": "2789be0437f06a2fe7c2f9311830292e8bc931d8e9c1efafdb1fa07b62afe397",
+          "size_bytes": 146101
+        },
+        {
+          "relative_path": "SPG/c18.stp",
+          "sha256": "ee3e9a547ab2da1e0892f81bcc558685b1f153f6e7edbcd233c654a30fa31718",
+          "size_bytes": 146589
+        },
+        {
+          "relative_path": "SPG/c19.stp",
+          "sha256": "f305ae1be47b547de47ade130cf06ae5ede18b4d964db0f3055e6c9b751f5e02",
+          "size_bytes": 146848
+        },
+        {
+          "relative_path": "SPG/c20.stp",
+          "sha256": "96609a735b3a684a1a948431765b75a156c6a479cc02734c1ac928f202af8ca7",
+          "size_bytes": 147481
+        },
+        {
+          "relative_path": "SPG/cc12-2n.stp",
+          "sha256": "b8956d15649f3a25c4fbe319c78d206761b312a0515760fdcae1362ef20d5950",
+          "size_bytes": 334164
+        },
+        {
+          "relative_path": "SPG/cc12-2p.stp",
+          "sha256": "65fdcd4a64c148226138a3b27bf31f424de9aca3c050ff5d0c6fecb9ef524d32",
+          "size_bytes": 383370
+        },
+        {
+          "relative_path": "SPG/cc12-2u.stp",
+          "sha256": "8facb9fb11d8b8b84bc0c419cd03f71f1e0ff260fff10de79f4b4a9f06cd5e4e",
+          "size_bytes": 334222
+        },
+        {
+          "relative_path": "SPG/cc3-12n.stp",
+          "sha256": "ef3dbc103231ab41e1b666241b31c204d1a8851ac68ad0615a510a0ae83ca970",
+          "size_bytes": 363339
+        },
+        {
+          "relative_path": "SPG/cc3-12p.stp",
+          "sha256": "1a545f2ba3fb9e283281b8f72ad7337e99a363b79208b9d9be1f0a4ae82ed033",
+          "size_bytes": 420421
+        },
+        {
+          "relative_path": "SPG/cc3-12u.stp",
+          "sha256": "76c3a64ffc652ee2b2c42794a7e1649cba05d48d08ece1bbd9eb78db68b5ab00",
+          "size_bytes": 363397
+        },
+        {
+          "relative_path": "SPG/d18.stp",
+          "sha256": "115b2d44a49b6f8c5f63709b70dba6224d7dd978f8e1718eb30eb0a24cabc3a1",
+          "size_bytes": 298458
+        },
+        {
+          "relative_path": "SPG/e18.stp",
+          "sha256": "fb9c91254c775ebb3b6b117f3d16fd727cd1b3c990b8eaa7a94301ac13128bec",
+          "size_bytes": 829109
+        },
+        {
+          "relative_path": "SPG/es10000fst01.stp",
+          "sha256": "32eda102fcfc684327a3a659f9f3c7e87aeb2d35ef4e44ea362c123494f36f11",
+          "size_bytes": 1483073
+        },
+        {
+          "relative_path": "SPG/fnl4461fst.stp",
+          "sha256": "8cbb6518c707d92d31fe5b0d49920cce0ce939f5fcbf981e49ff868877c75571",
+          "size_bytes": 767165
+        },
+        {
+          "relative_path": "SPG/hc12p.stp",
+          "sha256": "551d4be09de8f3671cd07abb00fcb8bbc407f660980f6255c13dcd6675e85edf",
+          "size_bytes": 393990
+        },
+        {
+          "relative_path": "SPG/hc12u.stp",
+          "sha256": "3dda69f87e86de0149e069046bfaf7131f68a34e10f432d9bd1081effc1c2ca8",
+          "size_bytes": 344838
+        },
+        {
+          "relative_path": "SPG/i640-211.stp",
+          "sha256": "ac7d2ec9f18f2edf0e274f41b5e903f3ee563014395f7ed4146e9a70589af6d0",
+          "size_bytes": 55202
+        },
+        {
+          "relative_path": "SPG/i640-314.stp",
+          "sha256": "7b0e53833869584a7761532468205b819942ad7fe52a3f6091cf78e55711d6f7",
+          "size_bytes": 56395
+        },
+        {
+          "relative_path": "SPG/i640-341.stp",
+          "sha256": "0a9525539c825c2eac0df9e87749bd2fdbf4d674f3f68d71347ae9e7c227d299",
+          "size_bytes": 548225
+        },
+        {
+          "relative_path": "SPG/lin36.stp",
+          "sha256": "3357195e15dd1b03f540baef9d5bd0631cb8ea44e5781bd6b66e3907a9e259f9",
+          "size_bytes": 1897364
+        },
+        {
+          "relative_path": "SPG/lin37.stp",
+          "sha256": "db7c48044804df3540d8d71cab89030e4658533fa8ff98dfee1705eb16dd7da9",
+          "size_bytes": 1902239
+        },
+        {
+          "relative_path": "SPG/rc09.stp",
+          "sha256": "418c6583b6b8dabe49c8e2f604e18e92ffc2161020fc6b3608e265b6c578ce2b",
+          "size_bytes": 332829
+        },
+        {
+          "relative_path": "SPG/rt05.stp",
+          "sha256": "c30851b9773e8d277d3a8ce8d20ca16ee56b54f23a7c3f1f2bdd1b3b14f683e4",
+          "size_bytes": 855049
+        },
+        {
+          "relative_path": "SPG/s5.stp",
+          "sha256": "8ed1890c62aa7717044e1dbb2f0a748b79e7cf448e8fd1d469f7f06428554454",
+          "size_bytes": 2282409
+        },
+        {
+          "relative_path": "SPG/w23c23.stp",
+          "sha256": "b3902d394f8530a62be6b3ac162b4cff5c9d75455a3865f76e7fa43094516726",
+          "size_bytes": 41445
+        },
+        {
+          "relative_path": "SPG/world666.stp",
+          "sha256": "3ed0978f750c261a454a5f52e9b834b5d53840ae03bc179e27645de3eb1935ae",
+          "size_bytes": 3317608
+        },
+        {
+          "relative_path": "SPG/wrp3-83.stp",
+          "sha256": "fa7a8001899790619284d69e35fdff479c89371bef6b10ef9ead8342f8eefe78",
+          "size_bytes": 147745
+        }
+      ],
+      "source_revision": "official_bundle_2014_11_24",
+      "source_url": "https://dimacs11.zib.de/contest/instances/SPG.tgz",
+      "suite_id": "dimacs11_official_spg_bundle"
+    }
+  ]
+}

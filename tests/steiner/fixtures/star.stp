@@ -1,0 +1,15 @@
+33D32945 STP File, STP Format Version 1.0
+SECTION Graph
+Nodes 4
+Edges 3
+E 4 1 1
+E 4 2 1
+E 4 3 1
+END
+SECTION Terminals
+Terminals 3
+T 1
+T 2
+T 3
+END
+EOF

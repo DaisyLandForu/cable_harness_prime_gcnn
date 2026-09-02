@@ -13,6 +13,13 @@ build/sb_native_probe
 build/model_runner_parity
 build/gcnn_model_runner_parity
 
+# Steiner large/generated artifacts (toy fixtures and aggregate manifests stay tracked)
+data/steiner/raw/
+data/steiner/generated/
+artifacts/steiner/
+checkpoints/steiner/
+results/steiner/raw/
+
 # Secrets
 .env
 *.pem
