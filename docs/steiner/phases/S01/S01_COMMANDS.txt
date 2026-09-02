@@ -1,0 +1,14 @@
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+sed -n '1,220p' docs/steiner/STATUS.md
+sed -n '1,260p' docs/steiner/phases/S00/S00_AUDIT_PACKET.md
+git switch -c research/steiner-s01-scaffold
+
+/home/duweiyue25/conda/envs/rl4scip/bin/python -m pytest -q tests/steiner/test_scaffold.py tests/steiner/test_s00_contract.py
+/home/duweiyue25/conda/envs/rl4scip/bin/python -m compileall -q python/steiner_branching tests/steiner/test_scaffold.py
+PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -c 'import steiner_branching; print(steiner_branching.__version__)'
+
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -m pytest -q tests/python
+git diff -- python/rl_branching src/rl CMakeLists.txt
+sha256sum python/steiner_branching/__init__.py python/steiner_branching/config.py python/steiner_branching/contracts.py python/steiner_branching/runtime.py configs/steiner/scaffold_smoke.yml tests/steiner/test_scaffold.py

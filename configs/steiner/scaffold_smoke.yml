@@ -1,0 +1,6 @@
+schema_version: 1
+stage: S01
+seed: 0
+artifact_root: artifacts/steiner
+run_id: s01-smoke
+log_level: INFO

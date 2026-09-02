@@ -4,12 +4,13 @@
 
 ## 当前状态
 
-- 当前阶段：S00 研究契约与环境冻结
-- 阶段状态：LOCAL_GATE_PASS（等待 GPT 只读审计；S01 仍未开始）
-- base SHA：`88ade1ac614fb12f882a10ba9b5d35b15c7b4d01`
-- 工作 branch：`research/steiner-s00-contract`
-- 远端状态：NOT_PUSHED；`git push -u origin research/steiner-s00-contract` 因当前环境缺少 GitHub HTTPS 凭证退出 128
-- 下一阶段：S01 未开始，只有 S00 本地 Gate 和 GPT 审计均通过后才可进入
+- 当前阶段：S01 独立研究栈骨架
+- 阶段状态：LOCAL_GATE_PASS（等待本地提交；S02 尚未开始）
+- base SHA：`a0bf0e3c1a702e1c85384f864defc86abbda29a5`
+- 工作 branch：`research/steiner-s01-scaffold`
+- S00 远端：`origin/research/steiner-s00-contract` 已核实指向 `a0bf0e3c1a702e1c85384f864defc86abbda29a5`
+- 治理偏差：S00 GPT 审计仍为 NOT_RUN；用户明确要求继续 S01--S02，未把缺失审计改写为 PASS
+- 下一阶段：只有 S01 本地 Gate/提交完成后才进入 S02
 - final test：`steiner-spg-final-test-v1` 已封存；learning runs = 0
 
 ## 阶段登记表
@@ -17,7 +18,7 @@
 | 阶段 | 目标 | 本地 Gate | GPT 审计 | branch | commit |
 |---|---|---|---|---|---|
 | S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `research/steiner-s00-contract` | `8b90375b6617a1ddcba34b872dbdbc11411cc042` |
-| S01 | 独立研究栈骨架 | NOT_STARTED | NOT_RUN | — | — |
+| S01 | 独立研究栈骨架 | PASS | NOT_RUN | `research/steiner-s01-scaffold` | pending content commit |
 | S02 | 数据解析与 MCF correctness | NOT_STARTED | NOT_RUN | — | — |
 | S03 | Branchability 与资源审计 | NOT_STARTED | NOT_RUN | — | — |
 | S04 | B0 二部图与动作映射 | NOT_STARTED | NOT_RUN | — | — |
@@ -46,4 +47,4 @@
 2. SCIP 8.0.4 prefix 的 `scip`/`soplex` 当前 mode 为 `0644`；Ecole/PySCIPOpt bare import 缺少 `libscip.so.8.0` 搜索路径。S00 只记录，不修改用户环境产物。
 3. 当前 shell 无 `nvidia-smi`，PyTorch 报告 CUDA unavailable；训练前必须重新探测。
 4. final suites 的下载 archive/per-file content hashes 将由 S02 在不运行 final learned policy 的前提下补充；selector membership 已在 S00 冻结。
-5. GitHub push 被凭证阻塞；恢复凭证后应执行 `git push -u origin research/steiner-s00-contract`，不得 force-push。
+5. 旧航空 regression 当前有 4 个既有失败（2 个 Prim 语义断言、2 个 build 可执行权限）；S01 未修改旧源码，详见 S01 test report。
