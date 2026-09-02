@@ -5,7 +5,7 @@
 ## 当前状态
 
 - 当前阶段：S02 数据解析与 MCF correctness
-- 阶段状态：LOCAL_GATE_PASS（等待本地提交；S03 未开始）
+- 阶段状态：LOCAL_GATE_PASS（内容提交完成；S03 未开始）
 - base SHA：`35a90ec5e52e2fad8301e3441ff6b286c7701d04`
 - 工作 branch：`research/steiner-s02-formulation`
 - S00 远端：`origin/research/steiner-s00-contract` 已核实指向 `a0bf0e3c1a702e1c85384f864defc86abbda29a5`
@@ -21,7 +21,7 @@
 |---|---|---|---|---|---|
 | S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `research/steiner-s00-contract` | `8b90375b6617a1ddcba34b872dbdbc11411cc042` |
 | S01 | 独立研究栈骨架 | PASS | NOT_RUN | `research/steiner-s01-scaffold` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` |
-| S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `research/steiner-s02-formulation` | pending |
+| S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `research/steiner-s02-formulation` | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` |
 | S03 | Branchability 与资源审计 | NOT_STARTED | NOT_RUN | — | — |
 | S04 | B0 二部图与动作映射 | NOT_STARTED | NOT_RUN | — | — |
 | S05 | Strong-branch teacher 与 IL | NOT_STARTED | NOT_RUN | — | — |

@@ -37,10 +37,10 @@ objective、独立 selected-edge connectivity/objective checker。
 | split/lineage | frozen seed ranges + crossing guard | 满足 |
 | final content 双层封存 | selector 106 entries；content 338 members；learning runs 0 | 满足 |
 | S00/S01 invariant | 同批 tests 全部通过 | 满足 |
-| 无旧栈/大产物污染 | boundary/staged path/size checks | 待提交前终检 |
+| 无旧栈/大产物污染 | boundary/staged path/size checks | 满足 |
 
-在最终 staged checks 通过的前提下，**本地 Gate S02：PASS**。若 staged checks
-发现范围或大文件污染，则必须改判 FAIL；不会开始 S03。
+最终 staged checks 已通过。**本地 Gate S02：PASS**。本次请求止于 S02，
+不会开始 S03。
 
 ## 不能推出的结论
 

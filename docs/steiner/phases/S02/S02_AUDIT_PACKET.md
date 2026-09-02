@@ -3,8 +3,8 @@
 ## 审计对象
 
 - base SHA：`35a90ec5e52e2fad8301e3441ff6b286c7701d04`
-- content head SHA：提交后回填
-- substantive range：提交后回填
+- content head SHA：`19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a`
+- substantive range：`35a90ec5e52e2fad8301e3441ff6b286c7701d04..19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a`
 - branch：`research/steiner-s02-formulation`
 - prior GPT audit：S00 NOT_RUN；S01 NOT_RUN
 - remote/PR：未执行远端写入；未创建 PR、未 merge
@@ -69,7 +69,11 @@ LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" \
   `9cb8117abb00859d5a2a0bb179f4fd03e824b731e3d5c17c9f09ef04b8f67236`。
 - final operation：`byte_hash_only_no_parse_no_solve`；learning runs 0。
 - 所有早期失败和 skip 均在 test report 保留。
-- staged diff/path/size/final test 将在 content commit 前执行。
+- staged diff/path/size/final test 已在 content commit 前 PASS；无 staged 文件
+  超过 1 MiB。
+
+本审计包之后只允许 metadata commit 更新 `STATUS.md`、本文件、结果分析和命令
+记录；审计者应把 content head 作为 substantive diff 终点。
 
 ## 给 GPT 审计者的问题
 
