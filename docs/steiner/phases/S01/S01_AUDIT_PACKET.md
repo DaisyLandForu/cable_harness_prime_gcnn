@@ -3,7 +3,8 @@
 ## 审计对象
 
 - base SHA：`a0bf0e3c1a702e1c85384f864defc86abbda29a5`
-- content head SHA：`PENDING_GATE_COMMIT`
+- content head SHA：`05b42791226347d31647547c344ef46c9dc4e87d`
+- substantive range：`a0bf0e3c1a702e1c85384f864defc86abbda29a5..05b42791226347d31647547c344ef46c9dc4e87d`
 - branch：`research/steiner-s01-scaffold`
 - S00 audit：NOT_RUN（用户明确要求继续）
 - remote/PR：未执行远端写入；未创建 PR、未 merge
@@ -37,7 +38,10 @@ docs/steiner/phases/S01/**
   tests/steiner/test_scaffold.py tests/steiner/test_s00_contract.py
 PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -c \
   'import steiner_branching; print(steiner_branching.__version__)'
+git diff --check a0bf0e3c1a702e1c85384f864defc86abbda29a5..05b42791226347d31647547c344ef46c9dc4e87d
 ```
+
+本审计包之后只允许 metadata commit 更新上述 SHA；审计者应同时确认 `05b42791226347d31647547c344ef46c9dc4e87d..research/steiner-s01-scaffold` 仅含 `STATUS.md`、本文件和命令记录。
 
 ## Gate 证据与风险
 

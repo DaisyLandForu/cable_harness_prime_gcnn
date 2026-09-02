@@ -12,3 +12,7 @@ PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -c 'import stei
 LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" PYTHONPATH=python /home/duweiyue25/conda/envs/rl4scip/bin/python -m pytest -q tests/python
 git diff -- python/rl_branching src/rl CMakeLists.txt
 sha256sum python/steiner_branching/__init__.py python/steiner_branching/config.py python/steiner_branching/contracts.py python/steiner_branching/runtime.py configs/steiner/scaffold_smoke.yml tests/steiner/test_scaffold.py
+git add -- python/steiner_branching configs/steiner/scaffold_smoke.yml scripts/steiner/README.md tests/steiner/conftest.py tests/steiner/test_scaffold.py docs/steiner/STATUS.md docs/steiner/phases/S01
+git diff --cached --check
+git commit -m "feat(steiner): add S01 independent scaffold"
+git rev-parse HEAD
