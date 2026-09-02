@@ -1,0 +1,61 @@
+schema_version: 1
+manifest_id: steiner-spg-final-test-v1
+sealed_at_utc: "2026-09-02T00:00:00Z"
+sealed: true
+first_allowed_stage: S12
+learning_runs_total: 0
+result_artifacts: []
+canonicalization: >-
+  Expand numeric sequences, emit the canonical IDs defined below, sort them
+  bytewise, join with LF, and append one final LF before SHA-256.
+canonical_entries_sha256: 8c0324c1a82485c2187825977fe2807e31512a6435e2f58f6a1d17babbfbddd1
+
+suites:
+  - suite_id: pace2018_track1_even
+    source_url: https://github.com/PACE-challenge/SteinerTree-PACE-2018-instances
+    source_revision: 4df73cea9c311faea7d03e6d6bffa8733c34a1aa
+    selector:
+      kind: numeric_sequence
+      path_template: Track1/instance{number:03d}.gr
+      start: 2
+      stop: 100
+      step: 2
+    status: sealed
+    tuning_allowed: false
+    learning_runs: 0
+  - suite_id: pace2018_track2_even
+    source_url: https://github.com/PACE-challenge/SteinerTree-PACE-2018-instances
+    source_revision: 4df73cea9c311faea7d03e6d6bffa8733c34a1aa
+    selector:
+      kind: numeric_sequence
+      path_template: Track2/instance{number:03d}.gr
+      start: 2
+      stop: 100
+      step: 2
+    status: sealed
+    tuning_allowed: false
+    learning_runs: 0
+  - suite_id: steinlib_spg_final_families
+    source_url: https://steinlib.zib.de/testset.php
+    source_revision: website_last_update_2015_02_17
+    selector:
+      kind: complete_families
+      families: [D, E, I320, 2R, DIW]
+    status: sealed
+    tuning_allowed: false
+    learning_runs: 0
+  - suite_id: dimacs11_official_spg_bundle
+    source_url: https://dimacs11.zib.de/contest/instances/SPG.tgz
+    source_revision: official_bundle_2014_11_24
+    selector:
+      kind: complete_archive
+      archive_id: SPG.tgz
+    status: sealed
+    tuning_allowed: false
+    learning_runs: 0
+
+content_lock_policy: >-
+  S02 must record archive and per-instance SHA-256 values before parsing or
+  solving. A source-content mismatch is a Gate failure; it is not permission to
+  substitute, remove, or reclassify an instance. The selector hash above freezes
+  membership identity and is deliberately distinct from future content hashes.

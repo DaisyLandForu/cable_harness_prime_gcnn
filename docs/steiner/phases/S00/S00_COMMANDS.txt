@@ -1,0 +1,65 @@
+# S00 commands executed from repository root; no secrets or private URLs.
+
+pwd
+rg --files -g 'AGENTS.md' -g '!build' -g '!data' -g '!checkpoints' || true
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+
+find docs/steiner -maxdepth 4 -type f -print 2>/dev/null | sort
+wc -l plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md docs/steiner/STATUS.md 2>/dev/null || true
+sed -n '1,320p' plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md
+sed -n '321,640p' plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md
+sed -n '641,960p' plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md
+sed -n '961,1277p' plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md
+
+git switch -c research/steiner-s00-contract
+git ls-files | rg '(^|/)(requirements[^/]*|environment[^/]*\.ya?ml|pyproject\.toml|setup\.py|CMakeLists\.txt|Dockerfile|\.gitignore|README[^/]*)$' | sort
+wc -l python/rl_branching/{observation.py,graph_features.py,gcnn_model.py,environment.py,scip_profile.py} src/rl/{scip_feature_extractor.cpp,scip_graph_feature_extractor.cpp,scip_profile.cpp} CMakeLists.txt
+rg -n 'NodeBipartite|19|25|14|Prim|DSU|variable.*type|constraint.*type|edge.*feature|SCIP|SoPlex|Ecole|PyTorch|profile|seed|time_limit|node_limit|memory' python/rl_branching src/rl CMakeLists.txt
+sed -n '1,240p' python/rl_branching/gcnn_model.py
+sed -n '1,380p' python/rl_branching/graph_features.py
+sed -n '1,150p' python/rl_branching/candidate_features.py
+sed -n '1,170p' python/rl_branching/prim_bias.py
+sed -n '1,145p' python/rl_branching/observation.py
+
+python3 -c 'import importlib.metadata as m, sys; print(sys.version); print({p: m.version(p) for p in ["numpy", "torch"]})'
+/home/duweiyue25/conda/envs/rl4scip/bin/python -c 'import importlib.metadata as m, sys; print(sys.version); print({p: m.version(p) for p in ["PyYAML", "numpy", "torch", "ecole", "PySCIPOpt"]})'
+command -v python3
+command -v scip
+command -v soplex
+/usr/bin/scip --version
+/usr/bin/soplex --version
+cc --version
+c++ --version
+cmake --version
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader
+lscpu
+free -h
+ulimit -a
+
+ls -l artifacts/environment/phase4/scip804_prefix/bin/{scip,soplex} artifacts/environment/phase4/scip804_prefix/lib/{libscip.so.8.0.4.0,libsoplexshared.so.6.0.4.0}
+ldd /home/duweiyue25/conda/envs/rl4scip/lib/python3.11/site-packages/ecole/core.cpython-311-x86_64-linux-gnu.so
+LD_LIBRARY_PATH="$PWD/artifacts/environment/phase4/scip804_prefix/lib" /home/duweiyue25/conda/envs/rl4scip/bin/python -c 'import ecole, pyscipopt'
+/lib64/ld-linux-x86-64.so.2 --library-path "$PWD/artifacts/environment/phase4/scip804_prefix/lib" "$PWD/artifacts/environment/phase4/scip804_prefix/bin/scip" --version
+sha256sum artifacts/environment/phase4/scip804_prefix/bin/{scip,soplex} artifacts/environment/phase4/scip804_prefix/lib/{libscip.so.8.0.4.0,libsoplexshared.so.6.0.4.0} configs/scip/project-production-v1.set
+stat -c '%n mode=%a size=%s' artifacts/environment/phase4/scip804_prefix/bin/{scip,soplex} artifacts/environment/phase4/scip804_prefix/lib/{libscip.so.8.0.4.0,libsoplexshared.so.6.0.4.0}
+
+git ls-remote https://github.com/PACE-challenge/SteinerTree-PACE-2018-instances.git refs/heads/master
+git remote -v
+git ls-remote --heads origin research/steiner-s00-contract
+
+# Read-only source-list lookups, no dataset download:
+# https://github.com/PACE-challenge/SteinerTree-PACE-2018-instances
+# https://steinlib.zib.de/testset.php
+# https://dimacs11.zib.de/competition.html
+
+/home/duweiyue25/conda/envs/rl4scip/bin/python -m unittest -v tests/steiner/test_s00_contract.py
+/home/duweiyue25/conda/envs/rl4scip/bin/python -m unittest discover -s tests/steiner -p 'test_*.py' -v
+sha256sum configs/steiner/environment.lock.yml configs/steiner/experiments/protocols_v1.yml configs/steiner/splits/split_policy_v1.yml configs/steiner/splits/final_test_v1.yml tests/steiner/test_s00_contract.py
+rg -n 'PENDING|PLACEHOLDER|IN_PROGRESS|待收尾' configs/steiner docs/steiner tests/steiner || true
+git add -- plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md configs/steiner docs/steiner tests/steiner/test_s00_contract.py
+git diff --cached --check
+git diff --cached --name-status
+git diff --cached --stat
+git status --short --branch

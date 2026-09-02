@@ -1,0 +1,62 @@
+schema_version: 1
+split_policy_id: steiner-split-policy-v1
+grouping_unit: base_graph_lineage
+state_level_split_allowed: false
+normalization_source: train_only
+deduplication_key: canonical_instance_content_sha256
+
+lineage_rule: >-
+  A base graph and every terminal-set, root, weight, relabeling, or formulation
+  derivative of that graph belong to exactly one split. Content duplicates are
+  assigned to the most restrictive split, with final_test taking precedence.
+
+synthetic_seed_ranges:
+  train:
+    start_inclusive: 100000
+    end_inclusive: 199999
+    tuning_allowed: true
+  validation_iid:
+    start_inclusive: 200000
+    end_inclusive: 209999
+    tuning_allowed: true
+  test_iid:
+    start_inclusive: 300000
+    end_inclusive: 309999
+    tuning_allowed: false
+  development_ood:
+    start_inclusive: 400000
+    end_inclusive: 409999
+    tuning_allowed: true
+  test_ood:
+    start_inclusive: 500000
+    end_inclusive: 509999
+    tuning_allowed: false
+
+synthetic_families_required_in_each_applicable_split:
+  - sparse_erdos_renyi_or_configuration
+  - random_geometric
+  - grid_and_grid_with_holes
+  - community_or_block
+  - bridge_bottleneck_multi_corridor
+
+public_data_assignment:
+  PACE_2018_Track1:
+    development_selector: odd_instance_number_001_through_099
+    final_selector: even_instance_number_002_through_100
+  PACE_2018_Track2:
+    development_selector: odd_instance_number_001_through_099
+    final_selector: even_instance_number_002_through_100
+  SteinLib_SPG:
+    development_families: [B, C, I080, I160, 1R, ALUE]
+    final_families: [D, E, I320, 2R, DIW]
+    excluded_until_separately_registered: [I640, PUC, SP, LIN, TSPFST]
+  DIMACS11:
+    development_suites: []
+    final_suites: [official_SPG_competition_bundle_2014_11_24]
+
+future_variant_rule: >-
+  RPCSTP/PCSTP or another non-SPG variant receives a new variant-specific split
+  and final-test manifest in S10 before any learned result for that variant.
+  S00 does not silently assign SPG splits to a different problem definition.
+
+final_test_manifest: configs/steiner/splits/final_test_v1.yml

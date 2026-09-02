@@ -1,0 +1,91 @@
+schema_version: 1
+lock_id: steiner-environment-v1
+frozen_at_utc: "2026-09-02T00:00:00Z"
+base_commit: 88ade1ac614fb12f882a10ba9b5d35b15c7b4d01
+
+decision:
+  stack_id: scip804-ecole081-pyscipopt430
+  status: selected_with_runtime_repair_required
+  rationale: >-
+    Retain the repository's validated SCIP 8 / Ecole 0.8 ABI for the first
+    Steiner stages.  A solver upgrade would change observations and search and
+    therefore requires a separately gated compatibility experiment.
+  upgrade_policy: no_in_place_upgrade
+  compatibility_gate_required: true
+
+python_environment:
+  executable: /home/duweiyue25/conda/envs/rl4scip/bin/python
+  version: 3.11.15
+  packages:
+    numpy: 1.26.4
+    pyyaml: 6.0.2
+    torch: 2.5.1+cu121
+    ecole: 0.8.1
+    pyscipopt: 4.3.0
+  import_requirements:
+    required_library_path: artifacts/environment/phase4/scip804_prefix/lib
+    bare_import_status: failed
+    bare_import_error: "libscip.so.8.0: cannot open shared object file"
+    import_with_required_library_path: passed
+
+solver_stack:
+  scip:
+    version: 8.0.4
+    git_hash: a8e51afd1e
+    executable: artifacts/environment/phase4/scip804_prefix/bin/scip
+    executable_sha256: fa5f8b84195cdb559e7810b9add0c006657fb185730e28945c77365422d9e45d
+    executable_mode_observed: "0644"
+    direct_execution_status: failed_permission_denied
+    dynamic_loader_probe_status: passed
+    shared_library: artifacts/environment/phase4/scip804_prefix/lib/libscip.so.8.0.4.0
+    shared_library_sha256: 5524e92770f25c1baa6c1469528a71fadcc25aeb0db585b0938030ec857281ee
+  soplex:
+    version: 6.0.4
+    git_hash: "950b1658"
+    executable: artifacts/environment/phase4/scip804_prefix/bin/soplex
+    executable_sha256: ab41cfa3c24560504e25a1b7e8b5377781b2877660f2098d6758b7c5caf8c6ab
+    executable_mode_observed: "0644"
+    direct_execution_status: failed_permission_denied
+    dynamic_loader_probe_status: passed
+    shared_library: artifacts/environment/phase4/scip804_prefix/lib/libsoplexshared.so.6.0.4.0
+    shared_library_sha256: e6a3fb20970982e3e5d9d123cce5da17a6474ad635a88829c5f7e66d0ae86db6
+  existing_scip_profile:
+    path: configs/scip/project-production-v1.set
+    sha256: 91bdea83a378aeef969d83fa566e6cbbecb5e0c0dabac1992a0eb082d4f5fc68
+    reuse_for_steiner: false
+    reason: aviation_production_profile_is_not_a_steiner_protocol
+
+host_observation:
+  os: Linux-5.15.0-187-generic-x86_64
+  architecture: x86_64
+  cpu_model: Intel(R) Xeon(R) Silver 4214 CPU @ 2.20GHz
+  logical_cpus: 48
+  sockets: 2
+  cores_per_socket: 12
+  threads_per_core: 2
+  visible_memory_gib: 64
+  visible_swap_gib: 0
+  c_compiler: gcc-11.4.0
+  cxx_compiler: g++-11.4.0
+  cmake: 3.22.1
+  gpu_runtime:
+    nvidia_smi_status: unavailable_in_current_shell
+    torch_cuda_build: "12.1"
+    torch_cuda_available: false
+    torch_cuda_device_count: 0
+    historical_unverified_note: >-
+      results/audit/environment.log recorded four Tesla V100-SXM2-32GB GPUs on
+      2026-08-03; that historical log is not treated as a current hardware probe.
+
+conflicting_default_stack:
+  scip_executable: /usr/bin/scip
+  scip_version: 9.2.2
+  soplex_version: 7.1.4
+  allowed_for_formal_runs: false
+  reason: ABI_and_search_version_mismatch
+
+formal_run_preconditions:
+  - restore_or_rebuild_an_executable_SCIP_8.0.4_prefix_without_editing_this_lock
+  - verify_Ecole_and_PySCIPOpt_import_against_the_locked_libscip
+  - record_effective_solver_parameter_hash
+  - require_gpu_probe_only_for_training_profiles_that_request_cuda
