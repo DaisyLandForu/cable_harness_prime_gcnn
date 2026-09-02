@@ -5,11 +5,17 @@
 ## 当前状态
 
 - 当前阶段：S02 数据解析与 MCF correctness
-- 阶段状态：LOCAL_GATE_PASS；正在完成 S02→S03 之间的 Git 治理迁移
+- 阶段状态：LOCAL_GATE_PASS；单分支治理本地完成，远端 push 因凭证阻塞
 - S02 base SHA：`35a90ec5e52e2fad8301e3441ff6b286c7701d04`
 - 唯一活动 branch：`research/steiner-migration`
 - 长期分支起点：S02 phase head
   `25be2e18c4020bed4cb8563618687b148d1f405f`
+- 治理 content commit：`9b0bd862178b03c388714599c13db21fc5e59dee`
+- 远端长期分支：NOT_PUSHED；本执行环境 `git push -u origin
+  research/steiner-migration` 失败，错误为 `could not read Username for
+  'https://github.com': No such device or address`
+- checkpoint tags：三个 `steiner-s00/s01/s02-local-gate-v1` 已在本地创建，
+  均未 push；GPT audit 状态均为 NOT_RUN
 - 治理策略：master plan v1.2；阶段审计使用不可变 SHA/range/tag，不再创建
   远端阶段分支
 - 研究契约：v1.1，仅更新 Git 治理；科学/实验契约未改变，治理修订待 GPT 审计
@@ -68,3 +74,12 @@
    S03 预注册 Gate 判断。
 7. S00--S02 GPT audit 均为 NOT_RUN；local-gate tag 不能当作 audited tag。
 8. master plan v1.2 / research contract v1.1 的单分支治理修订尚未做 GPT 审计。
+
+## 待用户在有 GitHub 凭证的终端执行
+
+```text
+git push -u origin research/steiner-migration
+git push origin steiner-s00-local-gate-v1 steiner-s01-local-gate-v1 steiner-s02-local-gate-v1
+```
+
+以上均为新建 ref 的普通 push；不得使用 `--force`。
