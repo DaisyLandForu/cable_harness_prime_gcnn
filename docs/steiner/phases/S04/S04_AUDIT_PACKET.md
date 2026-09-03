@@ -4,11 +4,11 @@
 
 - branch：`research/steiner-migration`
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`
-- S04 content head SHA：`TO_BE_RECORDED_AFTER_CONTENT_COMMIT`
+- S04 content head SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`
 - S04 phase head SHA：本 metadata commit 的 annotated local tag target；由最终
   handoff 和 `steiner-s04-local-gate-v1^{}` 固定
 - S04 substantive range：
-  `931c7ae05c299c54bbdf59ecd458b64c7ca42282..TO_BE_RECORDED_AFTER_CONTENT_COMMIT`
+  `931c7ae05c299c54bbdf59ecd458b64c7ca42282..d7a78a33151822f3a8a57fdc0224ede333583646`
 - planned local tag：`steiner-s04-local-gate-v1`
 - remote：只允许 local Gate PASS 后 fast-forward push 同名长期分支
 - PR：未创建；不 merge/rebase/amend/force-push，不 push local-gate tag

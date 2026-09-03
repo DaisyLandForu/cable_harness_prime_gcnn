@@ -37,3 +37,11 @@ sha256sum docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json "$s04_verify_dir/S04
 
 git diff --check
 git status --short
+
+git commit -m "steiner: complete S04 bipartite baseline gate"
+# Content head: d7a78a33151822f3a8a57fdc0224ede333583646
+git commit -m "docs(steiner): record S04 audit checkpoint"
+git tag -a steiner-s04-local-gate-v1 -m "S04 local Gate PASS; GPT audit NOT_RUN"
+git fetch origin research/steiner-migration
+git merge-base --is-ancestor origin/research/steiner-migration HEAD
+git push origin research/steiner-migration
