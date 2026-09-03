@@ -20,12 +20,14 @@ scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
 scripts/steiner/run_with_scip804.sh --python -m compileall -q \
   python/steiner_branching scripts/steiner tests/steiner
 bash -n scripts/steiner/run_s05_teacher_tmux.sh \
-  scripts/steiner/run_s05_train_tmux.sh
+  scripts/steiner/run_s05_train_tmux.sh \
+  scripts/steiner/run_s05_teacher_batch.sh \
+  scripts/steiner/run_s05_pilot_seed_batch.sh
 git diff --check
 ```
 
-- S05 targeted suite: 6 passed.
-- Complete Steiner suite: 84 passed, 1 expected PACE-development skip, 31.14 s.
+- S05 targeted suite after batch-sharding support: 8 passed, 3.49 s.
+- Complete Steiner suite: 86 passed, 1 expected PACE-development skip, 33.54 s.
 - Dry-run: 10/10 tasks expanded; five train and five validation-IID, all five
   families, only teacher seed 1001; no artifact directory was written.
 - Real frozen-SCIP test: one 48-node MCF state, all legal candidates mapped by
@@ -38,8 +40,10 @@ git diff --check
   input rejection by train-only normalization.
 - Checkpoint test: CPU training step succeeds; checkpoint and normalization
   checksums validate; all state-dict tensors reload bit-exactly.
-- Python and shell syntax checks: PASS. `git diff --check`: PASS except the
-  intentionally verbatim, already committed external GPT audit whitespace.
+- Parallel-report tests: registered seed subsets get disjoint paths; duplicate,
+  unknown and incomplete seed matrices fail closed; a complete two-job split
+  merges to exactly nine pilot runs.
+- Python and shell syntax checks: PASS. `git diff --check`: PASS.
 
 ## Preserved implementation failures
 
@@ -59,5 +63,6 @@ No Gate, data list, seed or threshold changed in response.
 ## Gate
 
 The implementation tests **PASS**, but S05 scientific Gate is **NOT_RUN**. It
-cannot be evaluated until S04 re-audit PASS, CPU teacher collection, GPU
-training, multi-seed validation metrics and manifest reload evidence exist.
+cannot be evaluated until CPU teacher collection, GPU training, multi-seed
+validation metrics and manifest reload evidence exist. The S04 re-audit
+prerequisite is already PASS.

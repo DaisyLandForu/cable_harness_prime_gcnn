@@ -29,6 +29,13 @@ Status: source complete for CPU verification; formal experiment NOT_RUN
 - Added a non-training CUDA allocation/preflight script for the replacement GPU
   host; it records visible devices, memory, CUDA/PyTorch versions and a finite
   tensor smoke checksum under the ignored raw artifact root.
+- Added foreground batch launchers for the platform's non-interactive jobs.
+  Pilot training can now select disjoint registered seeds, writes one report per
+  seed shard, and uses disjoint checkpoint directories.
+- Added a strict pilot report aggregator. It refuses missing/duplicate or
+  unregistered seeds, incomplete 3-by-3 run matrices, failed runs, and mismatched
+  Git/config/teacher/audited-tag identities. Formal seeds remain blocked until
+  the pilot learning curve fixes the formal data budget.
 
 ## Deliberate blockers and non-goals
 

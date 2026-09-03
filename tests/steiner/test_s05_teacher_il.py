@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import importlib.util
+import json
 from pathlib import Path
 
 import ecole
@@ -53,6 +55,14 @@ from steiner_branching.solver.strong_branching import (
 REPO = Path(__file__).resolve().parents[2]
 CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v1.yml"
 B0_CONFIG = REPO / "configs/steiner/models/b0_milp_gcnn_v1.yml"
+
+
+def _load_script_module(name: str, relative_path: str):
+    spec = importlib.util.spec_from_file_location(name, REPO / relative_path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def _state():
@@ -125,6 +135,108 @@ def test_s05_config_freezes_splits_seeds_and_learning_curve(monkeypatch):
 
         monkeypatch.setattr(teacher_data, "load_yaml_mapping", lambda _path: bad)
         teacher_data.load_s05_config("unused.yml")
+
+
+def test_pilot_training_seed_shards_are_registered_and_disjoint(tmp_path):
+    trainer = _load_script_module("s05_train_script", "scripts/steiner/train_s05_il.py")
+    expected = [101, 202, 303]
+    assert trainer.select_training_seeds(expected, None) == (101, 202, 303)
+    assert trainer.select_training_seeds(expected, [101, 303]) == (101, 303)
+    assert trainer.training_report_path(
+        tmp_path, (101, 303), (101, 202, 303)
+    ) == tmp_path / "pilot_training_shards" / "seeds-101-303.json"
+    assert trainer.training_report_path(
+        tmp_path, (101, 202, 303), (101, 202, 303)
+    ) == tmp_path / "pilot_training_report.json"
+    with pytest.raises(ValueError, match="duplicates"):
+        trainer.select_training_seeds(expected, [101, 101])
+    with pytest.raises(ValueError, match="not registered"):
+        trainer.select_training_seeds(expected, [404])
+
+
+def test_parallel_pilot_reports_merge_only_when_seed_matrix_is_complete(tmp_path):
+    aggregator = _load_script_module(
+        "s05_aggregate_script", "scripts/steiner/aggregate_s05_pilot_training.py"
+    )
+    config = load_s05_config(CONFIG)
+    raw_root = tmp_path / "raw"
+    raw_root.mkdir()
+    manifest_path = raw_root / "manifest.json"
+    manifest_path.write_text("{}\n", encoding="utf-8")
+    config["artifacts"]["raw_root"] = str(raw_root)
+    config["artifacts"]["report_root"] = str(tmp_path / "reports")
+    config_digest = s05_config_sha256(config)
+    manifest_digest = file_sha256(manifest_path)
+    git_commit = "a" * 40
+    audited_target = "b" * 40
+
+    def write_report(name: str, seeds: list[int]) -> Path:
+        path = tmp_path / name
+        report = {
+            "schema_version": 1,
+            "stage": "S05",
+            "experiment_id": config["experiment_id"],
+            "started_at_utc": "2026-09-03T00:00:00Z",
+            "finished_at_utc": "2026-09-03T00:01:00Z",
+            "git_commit": git_commit,
+            "s04_audited_tag_target": audited_target,
+            "config_sha256": config_digest,
+            "data_manifest": str(manifest_path),
+            "data_manifest_sha256": manifest_digest,
+            "train_valid_states": 64,
+            "validation_valid_states": 16,
+            "report_kind": "pilot_seed_shard",
+            "selected_training_seeds": seeds,
+            "expected_training_seeds": [101, 202, 303],
+            "offline_baselines": {"random": {"normalized_sb_regret": 0.5}},
+            "runs": [
+                {
+                    "training_seed": seed,
+                    "train_state_count": count,
+                    "status": "completed",
+                }
+                for count in (16, 32, 64)
+                for seed in seeds
+            ],
+            "formal_gate_evaluated": False,
+            "status": "completed",
+        }
+        path.write_text(json.dumps(report), encoding="utf-8")
+        return path
+
+    left = write_report("left.json", [101, 303])
+    right = write_report("right.json", [202])
+    output = tmp_path / "aggregate.json"
+    merged = aggregator.aggregate_reports(
+        config=config,
+        input_paths=[left, right],
+        output_path=output,
+        git_commit=git_commit,
+        audited_target=audited_target,
+    )
+    assert output.is_file()
+    assert merged["status"] == "completed"
+    assert merged["report_kind"] == "pilot_aggregate"
+    assert merged["selected_training_seeds"] == [101, 202, 303]
+    assert len(merged["runs"]) == 9
+
+    duplicate = write_report("duplicate.json", [101])
+    with pytest.raises(ValueError, match="multiple shards"):
+        aggregator.aggregate_reports(
+            config=config,
+            input_paths=[left, right, duplicate],
+            output_path=output,
+            git_commit=git_commit,
+            audited_target=audited_target,
+        )
+    with pytest.raises(ValueError, match="incomplete"):
+        aggregator.aggregate_reports(
+            config=config,
+            input_paths=[left],
+            output_path=output,
+            git_commit=git_commit,
+            audited_target=audited_target,
+        )
 
 
 def test_teacher_label_alignment_is_by_probindex_and_fails_closed():

@@ -62,7 +62,43 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=str(DEFAULT_CONFIG))
     parser.add_argument("--data-manifest")
+    parser.add_argument(
+        "--training-seed",
+        action="append",
+        type=int,
+        dest="training_seeds",
+        help=(
+            "run only this preregistered pilot seed; repeat to place multiple "
+            "disjoint seeds in one job"
+        ),
+    )
     return parser.parse_args()
+
+
+def select_training_seeds(
+    registered: list[int], requested: list[int] | None
+) -> tuple[int, ...]:
+    expected = tuple(int(seed) for seed in registered)
+    if requested is None:
+        return expected
+    selected = tuple(int(seed) for seed in requested)
+    if not selected:
+        raise ValueError("at least one training seed must be selected")
+    if len(set(selected)) != len(selected):
+        raise ValueError("training seed selection contains duplicates")
+    unknown = sorted(set(selected) - set(expected))
+    if unknown:
+        raise ValueError(f"training seeds are not registered for the pilot: {unknown}")
+    return selected
+
+
+def training_report_path(
+    report_root: Path, selected: tuple[int, ...], expected: tuple[int, ...]
+) -> Path:
+    if selected == expected:
+        return report_root / "pilot_training_report.json"
+    suffix = "-".join(str(seed) for seed in sorted(selected))
+    return report_root / "pilot_training_shards" / f"seeds-{suffix}.json"
 
 
 def require_current_git_identity(tag: str) -> tuple[str, str]:
@@ -136,6 +172,10 @@ def main() -> int:
     if not validation_samples:
         raise RuntimeError("S05 pilot has no valid validation teacher states")
     training = config["training"]
+    expected_training_seeds = tuple(int(seed) for seed in training["pilot_seeds"])
+    selected_training_seeds = select_training_seeds(
+        training["pilot_seeds"], args.training_seeds
+    )
     if training["device"] != "cuda" or not torch.cuda.is_available():
         raise RuntimeError("S05 training requires the configured CUDA environment")
     device = torch.device("cuda:0")
@@ -155,6 +195,13 @@ def main() -> int:
         "data_manifest_sha256": data_digest,
         "train_valid_states": len(train_samples),
         "validation_valid_states": len(validation_samples),
+        "report_kind": (
+            "pilot_complete"
+            if selected_training_seeds == expected_training_seeds
+            else "pilot_seed_shard"
+        ),
+        "selected_training_seeds": list(selected_training_seeds),
+        "expected_training_seeds": list(expected_training_seeds),
         "offline_baselines": {},
         "runs": [],
         "formal_gate_evaluated": False,
@@ -171,7 +218,7 @@ def main() -> int:
     for state_count in training["learning_curve_train_states"]:
         state_count = int(state_count)
         if len(train_samples) < state_count:
-            for seed in training["pilot_seeds"]:
+            for seed in selected_training_seeds:
                 report["runs"].append(
                     {
                         "training_seed": int(seed),
@@ -183,7 +230,7 @@ def main() -> int:
             continue
         selected_train = train_samples[:state_count]
         stats = fit_train_normalization(selected_train)
-        for seed in training["pilot_seeds"]:
+        for seed in selected_training_seeds:
             seed = int(seed)
             seed_everything(seed)
             model = MilpBipartiteGCNN(
@@ -279,7 +326,11 @@ def main() -> int:
                 failures += 1
     report["finished_at_utc"] = utc_now()
     report["status"] = "completed" if failures == 0 else "failed"
-    report_path = resolve_path(config["artifacts"]["report_root"]) / "pilot_training_report.json"
+    report_path = training_report_path(
+        resolve_path(config["artifacts"]["report_root"]),
+        selected_training_seeds,
+        expected_training_seeds,
+    )
     atomic_write_json(report_path, report)
     print(json.dumps({"status": report["status"], "runs": len(report["runs"]), "report": str(report_path)}, sort_keys=True))
     return 0 if failures == 0 else 2

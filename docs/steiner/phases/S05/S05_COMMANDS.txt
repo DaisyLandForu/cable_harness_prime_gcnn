@@ -26,3 +26,19 @@ git diff --check
 
 git commit -m "steiner: prepare S05 teacher and imitation pipeline"
 # Content head: 6bd9461578e712475a24a19ec31dfb7b80de748e
+
+# 2026-09-03 scheduler-safe seed sharding; tests only, no teacher/GPU run:
+bash -n scripts/steiner/run_s05_teacher_batch.sh \
+  scripts/steiner/run_s05_pilot_seed_batch.sh \
+  scripts/steiner/run_s05_teacher_tmux.sh \
+  scripts/steiner/run_s05_train_tmux.sh
+scripts/steiner/run_with_scip804.sh --python -m py_compile \
+  scripts/steiner/train_s05_il.py \
+  scripts/steiner/aggregate_s05_pilot_training.py
+scripts/steiner/run_with_scip804.sh --python -m pytest -q \
+  tests/steiner/test_s05_teacher_il.py
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
+git diff --check
+
+# Actual non-interactive jobs are documented in S05_BATCH_JOB_GUIDE.md. They
+# remain NOT_RUN in this checkpoint.

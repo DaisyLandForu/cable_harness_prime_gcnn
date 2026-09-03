@@ -49,7 +49,10 @@ imitation baseline without changing the S04 state/action contract.
    regret, with random/most-infeasible/pseudocost offline diagnostics;
 7. multi-seed training, checkpoint/normalization checksums and a reload manifest
    sufficient to reproduce logits;
-8. detached tmux launchers for CPU teacher collection and later CUDA training.
+8. detached tmux launchers for interactive hosts plus foreground launchers for
+   scheduler-managed CPU/GPU jobs;
+9. disjoint pilot-seed reports and fail-closed aggregation, so two one-GPU jobs
+   can run concurrently without overwriting checkpoints or reports.
 
 SCIP's Ecole `Pseudocosts` signal is recorded as the honest offline cheap-score
 diagnostic; it is not mislabeled as the full reliability-pseudocost branching
