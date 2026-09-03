@@ -27,13 +27,19 @@ HEADERS := src/rl/rl_branchrule.hpp src/rl/scip_feature_extractor.hpp \
 	src/rl/scip_profile.hpp src/rl/graph_size.hpp
 OBJECTS := $(patsubst %.cpp,build/%.o,$(SOURCES))
 
-.PHONY: all clean test-custom-branching model-runner-parity gcnn-model-runner-parity sb_native_probe graph_probe
+.PHONY: all clean test-custom-branching model-runner-parity gcnn-model-runner-parity sb_native_probe graph_probe steiner-s03-probe
 
 all: build/scip_tree
 
 sb_native_probe: build/sb_native_probe
 
 build/sb_native_probe: tools/sb_native_probe.cpp
+	mkdir -p build
+	$(CXX) $(CXXFLAGS) $< $(SCIP_INCLUDES) $(SCIP_LDFLAGS) -o $@
+
+steiner-s03-probe: build/steiner_s03_sb_probe
+
+build/steiner_s03_sb_probe: tools/steiner_s03_sb_probe.cpp
 	mkdir -p build
 	$(CXX) $(CXXFLAGS) $< $(SCIP_INCLUDES) $(SCIP_LDFLAGS) -o $@
 
@@ -55,7 +61,7 @@ build/%.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -Isrc $(SCIP_INCLUDES) $(TORCH_INCLUDES) -c $< -o $@
 
 clean:
-	rm -f build/scip_tree build/graph_probe $(OBJECTS)
+	rm -f build/scip_tree build/graph_probe build/steiner_s03_sb_probe $(OBJECTS)
 
 test-custom-branching: tests/test_custom_branchrule.cpp src/rl/rl_branchrule.cpp src/rl/scip_feature_extractor.cpp $(HEADERS)
 	mkdir -p build

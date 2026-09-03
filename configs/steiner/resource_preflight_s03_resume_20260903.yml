@@ -1,0 +1,50 @@
+schema_version: 1
+preflight_id: steiner-s03-resume-resource-preflight-20260903
+observed_at_utc: "2026-09-03T06:13:54Z"
+branch: research/steiner-migration
+head_sha: 91c30a48e6a06019d16d8b7529fe2d35bfa708fa
+scope: S03_remaining_24_formal_tasks
+
+host_visibility:
+  cpu_model: Intel(R) Xeon(R) Silver 4214 CPU @ 2.20GHz
+  logical_cpus_visible: 48
+  physical_cores_visible: 24
+  sockets_visible: 2
+  numa_nodes_visible: 2
+  gpu_count: 0
+
+cgroup_limits:
+  cpu_max_raw: "2401000 100000"
+  effective_cpu_cores: 24.01
+  cpuset_cpus_effective: "0-47"
+  memory_max_bytes: 137440002048
+  memory_max_mib: 131073
+  memory_current_bytes_observed: 2644746240
+  memory_swap_max_bytes: 0
+  memory_events_observed:
+    low: 0
+    high: 0
+    max: 0
+    oom: 0
+    oom_kill: 0
+
+assessment:
+  S03:
+    status: PASS_RESUME_SIX_WORKERS
+    gpu_required: false
+    rationale: >-
+      Six one-thread SCIP workers fit within the 24.01-core quota. The 128 GiB
+      memory limit exceeds the frozen 48 GiB aggregate worker ceiling plus the
+      16 GiB reserve, and all memory event counters were zero before resume.
+  cross_host_note: >-
+    S03 shards span the earlier Gold 6148 host and this Silver 4214 resume host.
+    S03 uses them for branchability and conservative resource thresholds, not
+    for a wall-time performance comparison between branching baselines.
+
+solver_stack_verification:
+  wrapper: scripts/steiner/run_with_scip804.sh
+  stack_id: scip804-ecole081-pyscipopt430
+  scip: 8.0.4
+  pyscipopt: 4.3.0
+  ecole: 0.8.1
+  result: PASS

@@ -13,6 +13,21 @@ S01 intentionally adds no solver or data command. S02 provides:
   final selectors. It never imports a parser or solver and must not produce a
   result artifact or change `learning_runs_total`.
 
+S03 provides:
+
+- `run_s03_branchability.py`: strict P1 task expansion, fresh-process
+  branchability/resource probes, atomic fingerprinted shards, resume, and Gate
+  aggregation.
+- `run_s03_tmux.sh`: detached 1 → 3 → 6 worker launcher. Re-running it with a
+  new session name skips only matching completed shards.
+
+Build the native SCIP 8.0.4 strong-branch signal probe before an S03 run:
+
+```text
+CONDA_PREFIX=/home/duweiyue25/conda/envs/rl4scip make steiner-s03-probe
+scripts/steiner/run_s03_tmux.sh steiner-s03 6
+```
+
 All Steiner PySCIPOpt and SCIP commands must use the canonical launcher; do not
 set `LD_LIBRARY_PATH` by hand:
 

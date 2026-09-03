@@ -9,6 +9,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 RESOURCE = REPO / "configs/steiner/resource_preflight_20260903.yml"
+RESOURCE_RESUME = REPO / "configs/steiner/resource_preflight_s03_resume_20260903.yml"
 PROTOCOLS = REPO / "configs/steiner/experiments/protocols_v1.yml"
 PROVENANCE = REPO / "configs/steiner/data_provenance_v1.yml"
 FINAL_CONTENT_SCRIPT = REPO / "scripts/steiner/lock_final_content.py"
@@ -26,8 +27,8 @@ def test_resource_assessment_preserves_frozen_limits_and_requires_ramp():
     demand = resource["frozen_protocol_demand"]
     planned = protocols["planned_parallelism"]
 
-    assert resource["cgroup_limits"]["effective_cpu_cores"] == 8.01
-    assert resource["cgroup_limits"]["memory_max_mib"] == 65537
+    assert resource["cgroup_limits"]["effective_cpu_cores"] == 24.01
+    assert resource["cgroup_limits"]["memory_max_mib"] == 131073
     assert resource["host_visibility"]["swap_bytes"] == 0
     assert demand["threads_per_solver"] == protocols["threads_per_solver"] == 1
     assert demand["planned_rollout_workers"] == planned["rollout_workers"] == 6
@@ -36,15 +37,32 @@ def test_resource_assessment_preserves_frozen_limits_and_requires_ramp():
     assert demand["reserved_host_headroom_mb"] == planned["reserved_host_headroom_mb"] == 16384
 
     s03 = resource["assessment"]["S03"]
-    assert s03["status"] == "CONDITIONAL_PASS"
+    assert s03["status"] == "PASS_WITH_REQUIRED_RAMP"
     assert s03["required_ramp_workers"] == [1, 3, 6]
     assert not s03["direct_six_worker_start_allowed"]
+    assert resource["gpu_visibility"]["count"] == 2
+    assert resource["gpu_visibility"]["model"] == "Tesla V100-SXM2-32GB"
     assert resource["assessment"]["S04"] == {
         "status": "PASS_CPU_ONLY",
         "gpu_required": False,
         "rationale": resource["assessment"]["S04"]["rationale"],
     }
     assert resource["repeat_before_formal_run"]["required"]
+
+
+def test_s03_resume_host_is_cpu_only_and_keeps_the_same_resource_gate():
+    resource = load_yaml(RESOURCE_RESUME)
+    protocols = load_yaml(PROTOCOLS)
+    assert resource["scope"] == "S03_remaining_24_formal_tasks"
+    assert resource["host_visibility"]["gpu_count"] == 0
+    assert resource["cgroup_limits"]["effective_cpu_cores"] == 24.01
+    assert resource["cgroup_limits"]["memory_max_mib"] == 131073
+    assert resource["cgroup_limits"]["memory_swap_max_bytes"] == 0
+    assert all(value == 0 for value in resource["cgroup_limits"]["memory_events_observed"].values())
+    assert protocols["planned_parallelism"]["rollout_workers"] == 6
+    assert resource["assessment"]["S03"]["status"] == "PASS_RESUME_SIX_WORKERS"
+    assert not resource["assessment"]["S03"]["gpu_required"]
+    assert resource["solver_stack_verification"]["result"] == "PASS"
 
 
 def test_public_data_policy_is_official_source_checksum_only_and_no_raw_release():

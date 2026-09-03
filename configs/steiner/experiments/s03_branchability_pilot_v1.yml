@@ -1,0 +1,83 @@
+schema_version: 1
+experiment_id: s03-branchability-pilot-v1
+stage: S03
+split: train
+split_policy: configs/steiner/splits/split_policy_v1.yml
+solver_stack_id: scip804-ecole081-pyscipopt430
+formulation_id: rooted_mcf_v1
+protocol_id: P1
+solver_seed: 0
+
+limits:
+  time_seconds: 600
+  nodes: 200000
+  memory_mb: 8192
+  threads: 1
+
+controls:
+  presolving_maxrounds: 0
+  separating_maxrounds: 0
+  separating_maxroundsroot: 0
+  heuristics: "off"
+  restart_limit: 0
+  node_selector: estimate
+  propagation: default
+
+baselines:
+  - scip_default
+  - relpscost
+  - mostinf
+primary_baseline: relpscost
+
+formal_matrix:
+  families:
+    - sparse_erdos_renyi
+    - random_geometric
+    - grid_with_holes
+    - community_block
+    - bridge_bottleneck
+  buckets:
+    - bucket_id: small-low
+      n_nodes: 48
+      n_terminals: 5
+    - bucket_id: medium-mid
+      n_nodes: 96
+      n_terminals: 19
+    - bucket_id: large-high
+      n_nodes: 160
+      n_terminals: 48
+  replicates: 2
+  seed_start: 100300
+
+worker_ramp:
+  workers: [1, 3, 6]
+  tasks_per_wave: [1, 3, 6]
+  n_nodes: 24
+  n_terminals: 5
+  seed_start: 100200
+  baseline: relpscost
+
+strong_branch:
+  baseline: relpscost
+  selected_bucket: small-low
+  include_all_families_and_replicates: true
+  max_states_per_task: 2
+  iteration_limit_per_candidate: 10000
+  candidate_limit: 0
+  idempotent: false
+  tie_relative_tolerance: 1.0e-9
+
+aggregation:
+  percentile_method: nearest_rank
+  missing_expected_strong_states_are_invalid: true
+
+gate:
+  min_instance_fraction_with_5_decisions: 0.60
+  min_nontrivial_median_decisions: 10
+  min_valid_strong_state_fraction: 0.60
+  max_all_tie_valid_state_fraction: 0.40
+  min_action_mapping_rate: 1.0
+  max_p95_worker_rss_mb: 8192
+  max_continuous_flow_variables: 1000000
+  max_p95_build_seconds: 60
+  max_projected_six_worker_rss_mb: 49152

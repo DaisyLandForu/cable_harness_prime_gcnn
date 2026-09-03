@@ -752,7 +752,7 @@ tests/steiner/test_{parsers,mcf,solution_checker,determinism}.py
 - 确定 MCF 可承受范围；必要时触发 SCF，而不是盲目缩小网络；
 - 输出用于正式训练的数据参数范围。
 - 进入 pilot 前重查 cgroup CPU/RAM；worker 必须按 1 → 3 → 6 放量，不能因
-  可见 48 个逻辑 CPU 而绕过实际约 8.01 核 quota；
+  可见逻辑 CPU 数量而绕过实际 cgroup quota；
 
 **推荐而非先验真理的 Gate**：
 
@@ -986,11 +986,13 @@ build 或旧运行脚本的修复。
 4. 根据 p95 worker RSS 决定 worker 数，而不是只看 CPU 核数；
 5. 只有 profile 证明单 GPU 是瓶颈，才使用多 GPU。
 
-2026-09-03 当前容器的实际 cgroup 配额约为 8.01 CPU cores / 65,537 MiB RAM，
-无 swap。6 个单线程 worker 在 CPU 上可行；但 49,152 MiB worker 预算加
-16,384 MiB 预留几乎正好触及内存上限，因此 S03 只能按 1 → 3 → 6 workers
-逐级放量。完整快照和放行条件见
-`configs/steiner/resource_preflight_20260903.yml`。
+2026-09-03 的 S03 正式运行前，cgroup 已重新验收为 24.01 CPU cores /
+131,073 MiB RAM、无 swap；中途换机后的恢复环境保持相同 quota/RAM，但 CPU
+型号和 GPU 可见性不同。S03/S04 均为 CPU-only。6 个单线程 worker 和
+49,152 MiB worker 预算加 16,384 MiB 预留均有足够余量，但已冻结的
+1 → 3 → 6 workers 放量规则不因换机而取消。两次快照见
+`configs/steiner/resource_preflight_20260903.yml` 和
+`configs/steiner/resource_preflight_s03_resume_20260903.yml`。
 
 ### 11.2 为什么多卡通常不是第一优化项
 

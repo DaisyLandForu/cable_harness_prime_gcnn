@@ -1,0 +1,96 @@
+{
+  "completion": {
+    "formal_shards": 90,
+    "missing_formal_tasks": [],
+    "missing_ramp_tasks": [],
+    "ramp_shards": 10,
+    "solver_status_counts": {
+      "optimal": 44,
+      "timelimit": 46
+    }
+  },
+  "config_sha256": "cab4d8d96b02f427b8fedba6698cb9ee68b7e8a27059f8eaf319a0ede96ac1f1",
+  "expected": {
+    "formal_tasks": 90,
+    "primary_instances": 30,
+    "ramp_tasks": 10,
+    "strong_states": 20
+  },
+  "experiment_id": "s03-branchability-pilot-v1",
+  "gate": {
+    "checks": {
+      "action_to_original_edge_mapping_rate": true,
+      "complete_formal_matrix": true,
+      "instance_fraction_with_at_least_5_legal_decisions": true,
+      "nontrivial_instance_legal_decisions_median": true,
+      "p95_worker_rss_mb": true,
+      "strong_branch_all_tie_state_fraction": true,
+      "strong_branch_valid_state_fraction": true,
+      "worker_ramp_completed": true
+    },
+    "overall_pass": true
+  },
+  "mcf_to_scf_triggers": {
+    "continuous_flow_variables": false,
+    "p95_build_seconds": false,
+    "p95_worker_rss_mb": false,
+    "projected_six_worker_rss_mb": false
+  },
+  "measurements": {
+    "action_mapping_rate": 1.0,
+    "callback_errors": 0,
+    "candidates_mapped": 2415538,
+    "candidates_observed": 2415538,
+    "instance_fraction_with_at_least_5_legal_decisions": 0.7,
+    "max_continuous_flow_variables": 288204,
+    "nontrivial_instance_count": 27,
+    "nontrivial_instance_legal_decisions_median": 127.0,
+    "p95_build_seconds": 21.005856166011654,
+    "p95_worker_rss_mb": 1505.08203125,
+    "primary_decisions": [
+      8,
+      21,
+      4688,
+      3006,
+      172,
+      127,
+      624,
+      26,
+      279,
+      427,
+      0,
+      0,
+      42,
+      1,
+      8333,
+      2227,
+      1010,
+      956,
+      0,
+      2,
+      919,
+      778,
+      3,
+      1,
+      1,
+      2,
+      7,
+      8,
+      475,
+      22
+    ],
+    "projected_six_worker_rss_mb": 9030.4921875,
+    "strong_all_tie_valid_state_fraction": 0.11764705882352941,
+    "strong_probe_failure_counts": {},
+    "strong_states_missing_or_failed": 3,
+    "strong_states_observed": 17,
+    "strong_states_valid": 17,
+    "strong_valid_state_fraction": 0.85,
+    "strong_valid_states_all_tie": 2
+  },
+  "protocol_id": "P1",
+  "schema_version": 1,
+  "solver_seed": 0,
+  "split": "train",
+  "stage": "S03"
+}
