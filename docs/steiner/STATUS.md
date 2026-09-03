@@ -11,9 +11,12 @@
 - 长期分支起点：S02 phase head
   `25be2e18c4020bed4cb8563618687b148d1f405f`
 - 治理 content commit：`9b0bd862178b03c388714599c13db21fc5e59dee`
+- S03 前置防护 content commit：
+  `8d980790e8e9f6af471c59a57f6634f37e5cdd9b`
 - 远端长期分支：已存在；2026-09-03 只读核实
   `origin/research/steiner-migration` 指向
-  `1dfb73e0abed9e6825fc2fc0f7720085ca2ed4ff`
+  `1dfb73e0abed9e6825fc2fc0f7720085ca2ed4ff`。本执行环境补推 content commit
+  失败，错误为 `could not read Username for 'https://github.com'`
 - checkpoint tags：三个 `steiner-s00/s01/s02-local-gate-v1` 已在本地创建，
   且远端均已存在；GPT audit 状态均为 NOT_RUN
 - 治理策略：master plan v1.3；阶段审计使用不可变 SHA/range/tag，不再创建
@@ -85,5 +88,10 @@
 7. S00--S02 GPT audit 均为 NOT_RUN；local-gate tag 不能当作 audited tag。
 8. master plan v1.3 / research contract v1.2 的治理与 S03 前置修订尚未做 GPT 审计。
 
-远端 branch/tag 已由用户完成首次发布；后续只允许在本地 Gate PASS 后对长期
-分支做 fast-forward `git push`，不得使用 `--force`。
+远端 branch/tag 已由用户完成首次发布。当前需在有 GitHub 凭证的终端执行：
+
+```text
+git push origin research/steiner-migration
+```
+
+这应是从 `1dfb73e` 到本地 HEAD 的 fast-forward；不得使用 `--force`。
