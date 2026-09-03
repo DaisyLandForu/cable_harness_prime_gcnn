@@ -85,6 +85,12 @@ def scip_variable_probindex(variable: Any) -> int:
     return int(function(ctypes.c_void_p(int(pointer))))
 
 
+def frozen_scip_library() -> Any:
+    """Return the already identity-checked repository-frozen SCIP library."""
+    library, _function = _probindex_symbol()
+    return library
+
+
 def variable_names_by_probindex(
     variables: Iterable[Any],
     row_count: int,

@@ -26,6 +26,32 @@ forward snapshot for the untrained 19/5/1 B0 model. It checks exact candidate
 closure parity and action-to-edge mapping; it does not collect a teacher or
 train a model.
 
+S05 implementation scaffolding provides:
+
+- `collect_s05_teacher.py`: audited-tag-gated, resumable CPU strong-branch
+  collection with per-child validity and checksum-addressed state shards;
+- `train_s05_il.py`: CUDA listwise B0 pilot with train-only normalization,
+  multi-seed learning curves, offline ranking diagnostics and reload manifests;
+- `run_s05_teacher_tmux.sh` / `run_s05_train_tmux.sh`: detached launchers whose
+  logs, raw shards and checkpoints stay in ignored paths.
+- `check_s05_gpu.py`: non-training CUDA visibility/allocation preflight to run
+  after moving to the GPU host.
+
+Before the S04 GPT re-audit passes, only the non-mutating S05 dry-run is legal:
+
+```text
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher.py --dry-run
+```
+
+After `steiner-s04-audited-v2` exists and the GPU host is verified, the intended
+order is teacher first, then training:
+
+```text
+scripts/steiner/run_s05_teacher_tmux.sh steiner-s05-teacher 6
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/check_s05_gpu.py
+scripts/steiner/run_s05_train_tmux.sh steiner-s05-train 0
+```
+
 Build the native SCIP 8.0.4 strong-branch signal probe before an S03 run:
 
 ```text

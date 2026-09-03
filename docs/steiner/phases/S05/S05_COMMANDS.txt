@@ -1,0 +1,25 @@
+# S05 implementation commands (UTC 2026-09-03)
+# No credential, secret, raw state, checkpoint, training or final-test command ran.
+
+git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+git status --short
+
+scripts/steiner/run_with_scip804.sh --python -m py_compile python/steiner_branching/learning/teacher_data.py python/steiner_branching/learning/imitation.py python/steiner_branching/solver/strong_branching.py scripts/steiner/collect_s05_teacher.py scripts/steiner/train_s05_il.py
+bash -n scripts/steiner/run_s05_teacher_tmux.sh scripts/steiner/run_s05_train_tmux.sh
+
+# First targeted run retained three implementation failures described in
+# S05_TEST_REPORT.md. Corrected current suite:
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner/test_s05_teacher_il.py
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
+
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher.py --dry-run
+scripts/steiner/run_with_scip804.sh --python -m compileall -q python/steiner_branching scripts/steiner tests/steiner
+git diff --check
+
+# Future commands only; do not run before S04 GPT PASS/audited tag.
+# CPU collection:
+# scripts/steiner/run_s05_teacher_tmux.sh steiner-s05-teacher 6
+# After collection and CUDA preflight:
+# scripts/steiner/run_with_scip804.sh --python scripts/steiner/check_s05_gpu.py
+# scripts/steiner/run_s05_train_tmux.sh steiner-s05-train 0
