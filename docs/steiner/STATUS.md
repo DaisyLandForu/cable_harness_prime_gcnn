@@ -7,7 +7,8 @@
 - 当前阶段：S03 Branchability 与 MCF 资源审计。
 - 阶段状态：**LOCAL_GATE_PASS**；GPT audit NOT_RUN；S04 未开始。
 - S03 base SHA：`91c30a48e6a06019d16d8b7529fe2d35bfa708fa`。
-- S03 content/phase SHA：本地 content commit 后由 metadata commit 回填。
+- S03 content SHA：`495d699cceefd243d4ab4c510be051f9df94833a`；phase SHA
+  由 metadata commit 的 annotated local tag target 与最终 handoff 固定。
 - 唯一活动 branch：`research/steiner-migration`。
 - 正式实验：90/90 formal、10/10 ramp；44 optimal、46 timelimit；
   config SHA-256
@@ -20,7 +21,7 @@
   无 GPU。S03 CPU-only，未申请或使用训练资源。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：先提交并 fast-forward push S03，再从
+- 下一步：fast-forward push S03，再从
   `docs/steiner/phases/S03/S03_AUDIT_PACKET.md` 做 GPT 只读审计。没有 GPT PASS
   或明确 waiver 前不开始 S04。
 
@@ -33,7 +34,7 @@
 | S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `8b90375b6617a1ddcba34b872dbdbc11411cc042` | `a0bf0e3c1a702e1c85384f864defc86abbda29a5` / `steiner-s00-local-gate-v1` |
 | S01 | 独立研究栈骨架 | PASS | NOT_RUN | `05b42791226347d31647547c344ef46c9dc4e87d` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` / `steiner-s01-local-gate-v1` |
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
-| S03 | Branchability 与资源审计 | PASS | NOT_RUN | pending commit | pending / `steiner-s03-local-gate-v1` |
+| S03 | Branchability 与资源审计 | PASS | NOT_RUN | `495d699cceefd243d4ab4c510be051f9df94833a` | annotated tag target / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | NOT_STARTED | NOT_RUN | — | — |
 | S05 | Strong-branch teacher 与 IL | NOT_STARTED | NOT_RUN | — | — |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |

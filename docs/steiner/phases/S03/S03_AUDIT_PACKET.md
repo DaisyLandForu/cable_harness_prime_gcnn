@@ -3,9 +3,9 @@
 ## 审计对象
 
 - base SHA：`91c30a48e6a06019d16d8b7529fe2d35bfa708fa`
-- content head SHA：`PENDING_CONTENT_COMMIT`
-- phase head SHA：content commit 后追加 metadata commit；以最终 handoff/tag 为准
-- substantive range：`91c30a48e6a06019d16d8b7529fe2d35bfa708fa..PENDING_CONTENT_COMMIT`
+- content head SHA：`495d699cceefd243d4ab4c510be051f9df94833a`
+- phase head SHA：本 metadata commit 的 annotated local tag target；精确 SHA 由最终 handoff 报告
+- substantive range：`91c30a48e6a06019d16d8b7529fe2d35bfa708fa..495d699cceefd243d4ab4c510be051f9df94833a`
 - branch：`research/steiner-migration`
 - planned local tag：`steiner-s03-local-gate-v1`
 - prior/current GPT audit：S00--S03 均为 NOT_RUN
