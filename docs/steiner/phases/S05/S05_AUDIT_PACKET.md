@@ -4,7 +4,7 @@
 
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
-- content SHA: filled by the metadata commit after implementation commit
+- content SHA: `6bd9461578e712475a24a19ec31dfb7b80de748e`
 - substantive range: base through the S05 implementation content commit
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PENDING
 - user waiver: source/config/tests/tmux only

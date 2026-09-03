@@ -23,3 +23,6 @@ git diff --check
 # After collection and CUDA preflight:
 # scripts/steiner/run_with_scip804.sh --python scripts/steiner/check_s05_gpu.py
 # scripts/steiner/run_s05_train_tmux.sh steiner-s05-train 0
+
+git commit -m "steiner: prepare S05 teacher and imitation pipeline"
+# Content head: 6bd9461578e712475a24a19ec31dfb7b80de748e
