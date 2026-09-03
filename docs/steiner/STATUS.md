@@ -27,14 +27,15 @@
   candidates 映射；2,943/2,943 variable rows 通过 canonical probindex identity；
   full/closure 最大 logit 误差 0、argmax 3/3 一致；remediation Gate 8/8 PASS。
 - S05 scaffold：10 个 preregistered pilot tasks、strong child-validity bridge、
-  checksum shards、listwise IL/metrics/checkpoint reload 与 CPU/GPU tmux launchers；
-  84 passed、1 expected skip。teacher/training/GPU runs 均为 0，S05 Gate NOT_RUN。
+  checksum shards、listwise IL/metrics/checkpoint reload、CPU/GPU foreground/tmux
+  launchers和严格 seed-shard 汇总；86 passed、1 expected skip。teacher/training/GPU
+  runs 均为 0，S05 Gate NOT_RUN。
 - 资源：正式运行和换机恢复环境都是 24.01-core cgroup/128 GiB RAM；恢复环境
   无 GPU。S03 CPU-only，未申请或使用训练资源。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：在作业环境完成 CUDA/resource preflight，串行运行 S05 teacher pilot
-  和 imitation pilot；保留所有失败、skipped、invalid-child 与 seed 结果。
+- 下一步：先运行 S05 CPU teacher pilot；成功后并行运行两个单 GPU imitation
+  pilot 作业并严格汇总；保留所有失败、skipped、invalid-child 与 seed 结果。
 
 ## 阶段登记表
 
@@ -47,7 +48,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | IMPLEMENTATION_PASS；scientific Gate NOT_RUN | NOT_RUN | `6bd9461578e712475a24a19ec31dfb7b80de748e` | implementation metadata commit |
+| S05 | Strong-branch teacher 与 IL | IMPLEMENTATION_PASS；scientific Gate NOT_RUN | NOT_RUN | `d9d3ed75606da73e850fdc2db8f81840d3873fb6` | implementation metadata commit |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |

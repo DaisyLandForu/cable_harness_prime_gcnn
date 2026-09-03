@@ -4,10 +4,10 @@
 
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
-- content SHA: `6bd9461578e712475a24a19ec31dfb7b80de748e`
-- substantive range: base through the S05 implementation content commit
+- content SHA: `d9d3ed75606da73e850fdc2db8f81840d3873fb6`
+- substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..d9d3ed75606da73e850fdc2db8f81840d3873fb6`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
-- user waiver: source/config/tests/tmux only
+- user authorization: S05 source/config/tests and scheduler-safe pilot job split
 - S05 Gate: NOT_RUN; no local-gate or audited tag is permitted
 
 This packet is an engineering review entry, not a request to approve S05
@@ -27,6 +27,7 @@ scientific results. S04 re-audit remains available at
 | listwise objective/metrics | same | gradient/regret/rank/top-k tests |
 | checkpoint reproduction | checksum manifest + strict reload | bit-exact state-dict reload |
 | interrupted long jobs | two tmux launchers | shell syntax and path review |
+| scheduler parallelism | seed-selecting foreground launcher + strict aggregator | disjoint/duplicate/missing matrix tests |
 | no premature run | required audited tag + CUDA checks | dry-run only; counters remain zero |
 
 ## Required future evidence
