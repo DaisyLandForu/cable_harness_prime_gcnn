@@ -28,6 +28,18 @@ it does not answer whether imitation learning works.
 - Nothing here supports progression to S06 or any claim that learned branching
   beats random, most-infeasible, pseudocost or relpscost.
 
+## Teacher attempt 1 (failed, retained)
+
+The first CPU run at Git head `93984e5` completed 5/10 tasks. It retained 65/160
+expected states, of which 56 were valid, with 0 all-tie valid states and exact
+1,540/1,540 action mapping. Five tasks failed closed on an implementation check,
+so the attempt is not eligible for teacher Gate evaluation.
+
+The failure was not an identity or solver-resource failure. Ecole returned legal
+LP candidates with `solution_frac=0.75`; the implementation incorrectly required
+that feature to be at most 0.5. A remediated run must use one new Git fingerprint
+and cannot combine the old attempt's successful shards with new-code shards.
+
 ## Current decision
 
 Implementation checkpoint: **PASS**. S05 Gate: **NOT_RUN / STOP**. The next

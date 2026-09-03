@@ -4,11 +4,13 @@
 
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
-- content SHA: `d9d3ed75606da73e850fdc2db8f81840d3873fb6`
-- substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..d9d3ed75606da73e850fdc2db8f81840d3873fb6`
+- content SHA: `75bba71401fc46fca62a5075c77931bfd77826cc`
+- substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..75bba71401fc46fca62a5075c77931bfd77826cc`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
 - S05 Gate: NOT_RUN; no local-gate or audited tag is permitted
+- teacher attempt 1: FAILED and retained; fraction-semantics remediation tested,
+  clean retry pending
 
 This packet is an engineering review entry, not a request to approve S05
 scientific results. S04 re-audit remains available at

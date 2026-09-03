@@ -48,3 +48,17 @@ Status: source complete for CPU verification; formal experiment NOT_RUN
   aviation source or legacy failure was changed.
 - Exact online relpscost comparison remains S06. S05 stores pre-teacher SCIP
   pseudocost scores only and names them accordingly.
+
+## Teacher attempt 1 remediation
+
+- The first authorized CPU pilot at Git head `93984e5` retained 65 observed
+  states but ended failed: five tasks completed and five reported
+  `SCIP action ... is not fractional`.
+- Diagnosis showed exact action/teacher probindex agreement (33/33 on the
+  reproduced state) and a legal Ecole `solution_frac` range of 0.25--0.75.
+  `solution_frac` is the fractional part in `(0, 1)`, while the validator had
+  incorrectly treated it as nearest-integer distance capped at 0.5.
+- The validator now accepts the documented fractional-part interval and still
+  rejects integer endpoints. Mapping, schema, thresholds, seeds and teacher
+  scores were not changed. Attempt 1 remains archived as failed evidence and
+  is not mixed with the remediated run.

@@ -44,6 +44,16 @@ git diff --check
   unknown and incomplete seed matrices fail closed; a complete two-job split
   merges to exactly nine pilot runs.
 - Python and shell syntax checks: PASS. `git diff --check`: PASS.
+- After teacher attempt 1 exposed legal fractional parts above 0.5, the action
+  validator regression fixture now includes 0.75 and rejects only 0/1 integer
+  endpoints. S04+S05 targeted tests: 18 passed in 94.17 s; complete Steiner
+  suite: 86 passed, 1 expected skip in 121.35 s.
+- A real previously failing community state produced 33/33 identical
+  action/teacher probindex sets with fraction range 0.25--0.75. After the fix it
+  traversed two consecutive strong-teacher branch states successfully.
+- The S04 deterministic snapshot remained byte-identical at
+  `ac2ce0c14b134245221af5140a3008f3ec6067f8867491e7cc0d0b50e2036f2c`,
+  and its 8/8 Gate checks remained true.
 
 ## Preserved implementation failures
 
@@ -59,6 +69,11 @@ git diff --check
 
 These are implementation-test failures, not hidden/skipped experiment samples.
 No Gate, data list, seed or threshold changed in response.
+
+4. First authorized teacher pilot: 5/10 tasks completed and 5/10 failed because
+   the local `solution_frac` validation incorrectly rejected legal values above
+   0.5. Counts (65 observed, 56 valid, 1,540/1,540 mapped) and every failed task
+   are retained. This was fixed before retry without weakening any S05 Gate.
 
 ## Gate
 
