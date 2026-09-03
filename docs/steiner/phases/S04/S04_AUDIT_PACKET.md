@@ -14,7 +14,11 @@
   actions、max error 0、argmax 3/3，snapshot 未变。
 - v2 content head：`4ab54ffa2b80f06ac8a9ecfe662a04df7899b072`；planned
   local tag：`steiner-s04-local-gate-v2`。v1 tag 保留，不改写历史。
-- GPT re-audit：**PENDING**；本地 PASS 不能写成最终审计 PASS。
+- GPT re-audit：**PASS**；B1 **CLOSED**。审计记录：
+  `docs/steiner/audits/S00_S04_GPT_REAUDIT.md`，commit
+  `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。
+- audited tag：`steiner-s04-audited-v2`，单独固定 S04 phase head
+  `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`；v1/local-v2 历史均保留。
 
 ## 不可变审计对象
 
@@ -28,8 +32,9 @@
 - planned local tag：`steiner-s04-local-gate-v1`
 - remote：只允许 local Gate PASS 后 fast-forward push 同名长期分支
 - PR：未创建；不 merge/rebase/amend/force-push，不 push local-gate tag
-- GPT audit：首次联合审计 **CONDITIONAL PASS**，remediation re-audit PENDING。
-  用户后续 waiver 只允许 S05 implementation scaffold；正式数据/训练/Gate 仍阻塞。
+- GPT audit：首次联合审计 **CONDITIONAL PASS**；remediation re-audit 最终
+  **PASS**。S05 的审计阻塞已解除，但 CUDA/resource preflight 与 teacher pilot
+  仍是正式训练前置条件。
 
 ## 联合审计历史锚点
 
@@ -118,6 +123,5 @@ cmp docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json /tmp/s04-snapshot.json
 
 ## 建议审计结论
 
-Codex 建议 S04 remediation 本地 **PASS**，请围绕 B1 做 GPT 复审。复审结论
-仍为 PENDING；只有 GPT 给出最终 PASS 并提交审计记录后，才能创建 audited tag、
-采集 S05 正式 teacher 或训练。用户对 S05 的临时 waiver 仅覆盖源码/脚本准备。
+S04 remediation 已获 GPT **PASS**，B1 已关闭。v2 audited tag 单独指向 S04
+phase head，不把随后通过 waiver 编写的 S05 draft 混入 S04 immutable anchor。

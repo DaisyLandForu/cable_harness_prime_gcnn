@@ -13,8 +13,8 @@ it does not answer whether imitation learning works.
   probindex-to-edge identity.
 - Train-only normalization, listwise optimization, ranking metrics, baseline
   diagnostics and checkpoint reload are executable on synthetic test fixtures.
-- Missing S04 audited tag and missing CUDA both stop the corresponding long-run
-  entry points before scientific claims can be produced.
+- The S04 audited tag prerequisite is now satisfied. Missing CUDA/data still
+  stops training before scientific claims can be produced.
 
 ## What is not established
 
@@ -31,5 +31,5 @@ it does not answer whether imitation learning works.
 ## Current decision
 
 Implementation checkpoint: **PASS**. S05 Gate: **NOT_RUN / STOP**. The next
-legal actions are S04 GPT re-audit and GPU-host preflight; only after the audited
-tag exists may the CPU teacher tmux job start, followed by CUDA training.
+legal actions are GPU-host preflight and the teacher pilot, followed by CUDA
+training only after a complete checksum-verified teacher manifest exists.

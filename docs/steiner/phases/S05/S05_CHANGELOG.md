@@ -32,8 +32,9 @@ Status: source complete for CPU verification; formal experiment NOT_RUN
 
 ## Deliberate blockers and non-goals
 
-- Actual collection requires the absent `steiner-s04-audited-v2` tag. Only
-  dry-run and tests were executed in this turn.
+- S04 re-audit subsequently passed and `steiner-s04-audited-v2` now anchors the
+  S04 phase head. Collection remains NOT_RUN pending the scheduled job/resource
+  preflight.
 - No formal teacher shard, learned update, GPU call, checkpoint or validation
   result was produced. `formal_gate_evaluated` remains false by construction.
 - No final-test selector/data was read, and no S03 task, 19/5/1 schema, Gate,

@@ -6,10 +6,9 @@
 
 - 当前阶段：S04 remediation 已推送；S05 implementation scaffold 已完成 CPU
   验证，正式实验尚未运行。
-- 阶段状态：S04 remediation **LOCAL_GATE_PASS**；首次 GPT 联合审计为
-  **CONDITIONAL PASS**，复审 PENDING。用户于 2026-09-03 明确授权在本地 Gate
-  PASS 并推送后先准备 S05 源码与脚本；这不是审计 PASS，不授权正式 teacher、
-  训练、validation/final 访问或 S05 Gate 判定。
+- 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
+  `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
+  teacher、训练和 Gate 尚未运行，仍禁止 final 访问。
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
 - S04 content SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`。
 - S04 remediation v2 content SHA：
@@ -34,9 +33,8 @@
   无 GPU。S03 CPU-only，未申请或使用训练资源。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：从 `docs/steiner/audits/S00_S04_GPT_REAUDIT_REQUEST.md` 做 S04 GPT
-  复审，并在新 GPU 环境做 CUDA preflight。复审未 PASS 前不跑正式 teacher
-  collection 或训练。
+- 下一步：在作业环境完成 CUDA/resource preflight，串行运行 S05 teacher pilot
+  和 imitation pilot；保留所有失败、skipped、invalid-child 与 seed 结果。
 
 ## 阶段登记表
 
@@ -48,7 +46,7 @@
 | S01 | 独立研究栈骨架 | PASS | NOT_RUN | `05b42791226347d31647547c344ef46c9dc4e87d` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` / `steiner-s01-local-gate-v1` |
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
-| S04 | B0 二部图与动作映射 | PASS（v2 remediation） | CONDITIONAL PASS；复审 PENDING | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | remediation metadata / `steiner-s04-local-gate-v2` |
+| S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
 | S05 | Strong-branch teacher 与 IL | IMPLEMENTATION_PASS；scientific Gate NOT_RUN | NOT_RUN | `6bd9461578e712475a24a19ec31dfb7b80de748e` | implementation metadata commit |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
@@ -90,7 +88,7 @@
    baseline 排名。固定资源 Gate 有很大安全余量。
 6. 恢复服务器没有 GPU；S04 未使用 GPU，S05 首次训练前必须重新验收 CUDA。
 7. SteinLib/DIMACS 未确认再分发许可；继续只提交官方 source/checksum，不提交 raw。
-8. 旧航空 4 个既有失败未在 S03/S04 混改；首次 S00--S04 GPT audit 为
-   CONDITIONAL PASS，S04 remediation 尚待复审。
+8. 旧航空 4 个既有失败未在 S03/S04 混改；首次 S00--S04 GPT audit 的
+   CONDITIONAL PASS 已通过 S04 remediation 复审升级为 PASS。
 9. S04 只在一个 synthetic-train 图的 3 个真实分支状态上验证工程 parity；它
    不能证明未训练模型有 branching 质量，也不能外推生产求解速度。

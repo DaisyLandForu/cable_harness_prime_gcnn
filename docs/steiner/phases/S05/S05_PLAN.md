@@ -1,6 +1,6 @@
 # S05 Plan — Strong-branch teacher and B0 imitation learning
 
-Status: IMPLEMENTATION_ONLY under explicit user waiver; formal runs NOT_RUN
+Status: S04 audit prerequisite PASS; implementation ready; formal runs NOT_RUN
 
 ## Frozen start
 
@@ -18,11 +18,11 @@ Status: IMPLEMENTATION_ONLY under explicit user waiver; formal runs NOT_RUN
   `[101,202,303,404,505]`
 - final-test access: prohibited; learning runs at start: 0
 
-S04 GPT re-audit is still pending after a first CONDITIONAL PASS. On 2026-09-03
-the user explicitly allowed S05 source/config/tmux preparation after the S04 v2
-local Gate and push. This waiver does not authorize formal teacher collection,
-training, checkpoint selection, validation solve evaluation, final-test access,
-or a S05 Gate decision.
+The first S04 audit returned CONDITIONAL PASS. The probindex remediation was
+subsequently re-audited as PASS with B1 closed, and
+`steiner-s04-audited-v2` anchors the S04 phase head. S05 collection/training is
+therefore audit-eligible, but it still requires resource/CUDA preflight and does
+not authorize final-test access or an S05 Gate claim before results exist.
 
 The starting worktree also contains unrelated artifact/build/aviation/user
 changes. They remain outside this stage and must not be staged.
