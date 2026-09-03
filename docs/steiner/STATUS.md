@@ -4,8 +4,10 @@
 
 ## 当前状态
 
-- 当前阶段：S03 Branchability 与 MCF 资源审计。
-- 阶段状态：**LOCAL_GATE_PASS**；GPT audit NOT_RUN；S04 未开始。
+- 当前阶段：S04 标准二部图、动作映射与模型基线。
+- 阶段状态：S03 **LOCAL_GATE_PASS**；GPT audit NOT_RUN。用户于
+  2026-09-03 明确授权将 S00--S04 合并审计并先行 S04；这是一项流程 waiver，
+  不是审计 PASS。S05 在联合审计 PASS 前不得开始。
 - S03 base SHA：`91c30a48e6a06019d16d8b7529fe2d35bfa708fa`。
 - S03 content SHA：`495d699cceefd243d4ab4c510be051f9df94833a`；phase SHA
   由 metadata commit 的 annotated local tag target 与最终 handoff 固定。
@@ -21,9 +23,9 @@
   无 GPU。S03 CPU-only，未申请或使用训练资源。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：fast-forward push S03，再从
-  `docs/steiner/phases/S03/S03_AUDIT_PACKET.md` 做 GPT 只读审计。没有 GPT PASS
-  或明确 waiver 前不开始 S04。
+- 下一步：只实现并验收 S04；S04 本地 Gate 完成后，从
+  `docs/steiner/phases/S04/S04_AUDIT_PACKET.md` 对 S00--S04 做联合 GPT
+  只读审计。联合审计未 PASS 前不开始 S05。
 
 ## 阶段登记表
 
@@ -34,7 +36,7 @@
 | S00 | 研究契约与环境冻结 | PASS | NOT_RUN | `8b90375b6617a1ddcba34b872dbdbc11411cc042` | `a0bf0e3c1a702e1c85384f864defc86abbda29a5` / `steiner-s00-local-gate-v1` |
 | S01 | 独立研究栈骨架 | PASS | NOT_RUN | `05b42791226347d31647547c344ef46c9dc4e87d` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` / `steiner-s01-local-gate-v1` |
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
-| S03 | Branchability 与资源审计 | PASS | NOT_RUN | `495d699cceefd243d4ab4c510be051f9df94833a` | annotated tag target / `steiner-s03-local-gate-v1` |
+| S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | NOT_STARTED | NOT_RUN | — | — |
 | S05 | Strong-branch teacher 与 IL | NOT_STARTED | NOT_RUN | — | — |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
@@ -75,4 +77,5 @@
    baseline 排名。固定资源 Gate 有很大安全余量。
 6. 恢复服务器没有 GPU；S04 不需要 GPU，S05 首次训练前必须重新验收 CUDA。
 7. SteinLib/DIMACS 未确认再分发许可；继续只提交官方 source/checksum，不提交 raw。
-8. 旧航空 4 个既有失败未在 S03 混改；S00--S03 GPT audits 均为 NOT_RUN。
+8. 旧航空 4 个既有失败未在 S03/S04 混改；S00--S03 GPT audits 均为
+   NOT_RUN。S04 的先行来自明确 waiver，联合审计可能要求回修早期阶段。
