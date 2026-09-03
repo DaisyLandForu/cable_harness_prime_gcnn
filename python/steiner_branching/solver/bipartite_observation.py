@@ -262,8 +262,13 @@ def with_legal_edge_actions(
         features = state.variable_features[index]
         if not np.isclose(features[1], 1.0) or not np.isclose(features[1:5].sum(), 1.0):
             raise ValueError(f"SCIP action {index} is not a binary variable")
+        # Ecole's `solution_frac` is the fractional part in [0, 1), not
+        # distance to the nearest integer.  A legal value such as 0.75 must
+        # therefore remain eligible; only values at either integer endpoint
+        # are inconsistent with SCIP's LP branching action set.
         fractionality = float(features[9])
-        if not float(fraction_tolerance) < fractionality <= 0.5 + float(fraction_tolerance):
+        tolerance = float(fraction_tolerance)
+        if not tolerance < fractionality < 1.0 - tolerance:
             raise ValueError(f"SCIP action {index} is not fractional")
         name = state.variable_names[index]
         edge_id = edge_id_from_scip_variable_name(name)

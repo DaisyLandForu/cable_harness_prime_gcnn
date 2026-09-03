@@ -81,7 +81,9 @@ def _full_state():
     variables[:, 1:5] = 0.0
     variables[:2, 1] = 1.0
     variables[2:, 4] = 1.0
-    variables[:2, 9] = (0.25, 0.4)
+    # Ecole solution_frac is the fractional part, so candidates legitimately
+    # occur on both sides of 0.5.
+    variables[:2, 9] = (0.25, 0.75)
     variables[2:, 9] = 0.0
     edge_indices = np.asarray(
         ((0, 0, 1, 1, 2, 2), (0, 1, 0, 2, 3, 4)), dtype=np.int64
@@ -225,6 +227,20 @@ def test_transformed_names_and_parallel_edges_map_one_to_one():
         with_legal_edge_actions(_full_state(), np.asarray((2,)), _metadata())
     with pytest.raises(ValueError, match="duplicate"):
         with_legal_edge_actions(_full_state(), np.asarray((0, 0)), _metadata())
+
+    for integer_fraction in (0.0, 1.0):
+        base = _full_state()
+        variables = np.array(base.variable_features, copy=True)
+        variables[0, 9] = integer_fraction
+        integer_state = make_bipartite_state(
+            constraint_features=base.constraint_features,
+            variable_features=variables,
+            edge_indices=base.edge_indices,
+            edge_features=base.edge_features,
+            variable_names=base.variable_names,
+        )
+        with pytest.raises(ValueError, match="not fractional"):
+            with_legal_edge_actions(integer_state, np.asarray((0,)), _metadata())
 
 
 def test_candidate_closure_has_stable_maps_and_exact_one_round_logits():
