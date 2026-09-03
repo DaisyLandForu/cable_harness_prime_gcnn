@@ -11,6 +11,8 @@
   训练、validation/final 访问或 S05 Gate 判定。
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
 - S04 content SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`。
+- S04 remediation v2 content SHA：
+  `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072`。
 - S03 content SHA：`495d699cceefd243d4ab4c510be051f9df94833a`；phase SHA
   由 metadata commit 的 annotated local tag target 与最终 handoff 固定。
 - 唯一活动 branch：`research/steiner-migration`。
@@ -42,7 +44,7 @@
 | S01 | 独立研究栈骨架 | PASS | NOT_RUN | `05b42791226347d31647547c344ef46c9dc4e87d` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` / `steiner-s01-local-gate-v1` |
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
-| S04 | B0 二部图与动作映射 | PASS（v2 remediation） | CONDITIONAL PASS；复审 PENDING | remediation content commit | remediation metadata / `steiner-s04-local-gate-v2` |
+| S04 | B0 二部图与动作映射 | PASS（v2 remediation） | CONDITIONAL PASS；复审 PENDING | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | remediation metadata / `steiner-s04-local-gate-v2` |
 | S05 | Strong-branch teacher 与 IL | IMPLEMENTATION_ONLY（waiver） | NOT_RUN | — | — |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |

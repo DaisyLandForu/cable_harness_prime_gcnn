@@ -12,8 +12,8 @@
   identity，每次 extraction 验证完整双射；非冻结 stack/prefix/checksum 均拒绝。
 - v2 local Gate：**PASS（8/8）**；3/3 states、2,943/2,943 rows、31/31
   actions、max error 0、argmax 3/3，snapshot 未变。
-- v2 content head：由紧随其后的 metadata commit 写入；planned local tag：
-  `steiner-s04-local-gate-v2`。v1 tag 保留，不改写历史。
+- v2 content head：`4ab54ffa2b80f06ac8a9ecfe662a04df7899b072`；planned
+  local tag：`steiner-s04-local-gate-v2`。v1 tag 保留，不改写历史。
 - GPT re-audit：**PENDING**；本地 PASS 不能写成最终审计 PASS。
 
 ## 不可变审计对象
