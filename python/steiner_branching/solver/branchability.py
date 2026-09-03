@@ -18,6 +18,7 @@ from ..contracts import content_sha256
 from ..data.generate import GeneratorConfig, SYNTHETIC_FAMILIES, generate_graph
 from ..data.split import split_for_synthetic_seed
 from ..milp.mcf import build_mcf
+from ..milp.naming import original_variable_name
 
 
 EXPECTED_STACK_ID = "scip804-ecole081-pyscipopt430"
@@ -250,13 +251,6 @@ def task_sha256(task: ProbeTask, config_digest: str) -> str:
     return content_sha256({"task": task.to_dict(), "config_sha256": config_digest})
 
 
-def _normalise_variable_name(name: str) -> str:
-    value = str(name)
-    while value.startswith("t_"):
-        value = value[2:]
-    return value
-
-
 class CandidateObserver:
     """State container mixed into a PySCIPOpt Branchrule at runtime."""
 
@@ -285,7 +279,7 @@ class CandidateObserver:
             self.branch_states += 1
         mapped = 0
         for variable in legal:
-            name = _normalise_variable_name(variable.name)
+            name = original_variable_name(variable.name)
             if name in self.known_names:
                 mapped += 1
             elif len(self.mapping_failures) < 20:
@@ -297,7 +291,7 @@ class CandidateObserver:
             self.root_fractional_edges = len(legal)
 
 
-def _configure_p1(model: Any, config: Mapping[str, Any], baseline: str) -> dict[str, Any]:
+def configure_p1(model: Any, config: Mapping[str, Any], baseline: str) -> dict[str, Any]:
     from pyscipopt import SCIP_PARAMSETTING
 
     limits = config["limits"]
@@ -466,7 +460,7 @@ def run_probe_task(
     build_started = time.monotonic()
     build = build_mcf(graph, configure_correctness_profile=False, hide_output=True)
     build_seconds = time.monotonic() - build_started
-    effective_parameters = _configure_p1(build.model, config, task.baseline)
+    effective_parameters = configure_p1(build.model, config, task.baseline)
     observer = Observer()
     observer.initialise(item.variable_name for item in build.metadata.edge_variables)
     build.model.includeBranchrule(

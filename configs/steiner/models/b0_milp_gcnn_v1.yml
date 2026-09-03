@@ -1,0 +1,38 @@
+schema_version: 1
+stage: S04
+model_id: b0_milp_gcnn_v1
+bipartite_schema_id: milp_bipartite_v1
+solver_stack_id: scip804-ecole081-pyscipopt430
+protocol_id: P1
+split: train
+split_policy: configs/steiner/splits/split_policy_v1.yml
+solver_seed: 0
+model_seed: 404
+device: cpu
+cpu_threads: 1
+
+architecture:
+  variable_features: 19
+  constraint_features: 5
+  edge_features: 1
+  embedding_dim: 64
+  hidden_dim: 64
+  message_passing_rounds: 1
+  aggregation: sum
+
+snapshot:
+  family: sparse_erdos_renyi
+  n_nodes: 48
+  n_terminals: 5
+  generator_seed: 100300
+  max_states: 3
+  action_policy: minimum_edge_id
+  warmup_iterations: 20
+  timed_iterations: 200
+
+gate:
+  max_full_closure_logit_error: 1.0e-5
+  required_argmax_agreement: 1.0
+  required_action_mapping_rate: 1.0
+  require_all_finite: true
+  min_snapshots: 3

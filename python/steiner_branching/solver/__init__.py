@@ -4,8 +4,15 @@
 from .branchability import (
     ProbeTask,
     aggregate_results,
+    configure_p1,
     expand_tasks,
     load_s03_config,
 )
 
-__all__ = ["ProbeTask", "aggregate_results", "expand_tasks", "load_s03_config"]
+__all__ = [
+    "ProbeTask",
+    "aggregate_results",
+    "configure_p1",
+    "expand_tasks",
+    "load_s03_config",
+]

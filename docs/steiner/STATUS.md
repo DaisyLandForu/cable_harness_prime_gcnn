@@ -4,11 +4,13 @@
 
 ## 当前状态
 
-- 当前阶段：S04 标准二部图、动作映射与模型基线。
-- 阶段状态：S03 **LOCAL_GATE_PASS**；GPT audit NOT_RUN。用户于
+- 当前阶段：S04 标准二部图、动作映射与模型基线已完成。
+- 阶段状态：S04 **LOCAL_GATE_PASS**；GPT audit NOT_RUN。用户于
   2026-09-03 明确授权将 S00--S04 合并审计并先行 S04；这是一项流程 waiver，
   不是审计 PASS。S05 在联合审计 PASS 前不得开始。
-- S03 base SHA：`91c30a48e6a06019d16d8b7529fe2d35bfa708fa`。
+- S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
+- S04 content SHA：由本阶段 substantive commit 固定，见
+  `docs/steiner/phases/S04/S04_AUDIT_PACKET.md`。
 - S03 content SHA：`495d699cceefd243d4ab4c510be051f9df94833a`；phase SHA
   由 metadata commit 的 annotated local tag target 与最终 handoff 固定。
 - 唯一活动 branch：`research/steiner-migration`。
@@ -19,13 +21,14 @@
   all-tie 11.76%；mapping 100%；RSS p95 1,505.08 MB；全部 PASS。
 - MCF/SCF：max flows 288,204、build p95 21.006 s、six-worker RSS projection
   9,030.49 MB；所有 SCF trigger 为 false。
+- S04 B0：19/5/1、68,161 parameters；3 个真实 SCIP branch states、31/31
+  candidates 映射；full/closure 最大 logit 误差 0、argmax 3/3 一致；Gate PASS。
 - 资源：正式运行和换机恢复环境都是 24.01-core cgroup/128 GiB RAM；恢复环境
   无 GPU。S03 CPU-only，未申请或使用训练资源。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：只实现并验收 S04；S04 本地 Gate 完成后，从
-  `docs/steiner/phases/S04/S04_AUDIT_PACKET.md` 对 S00--S04 做联合 GPT
-  只读审计。联合审计未 PASS 前不开始 S05。
+- 下一步：从 `docs/steiner/phases/S04/S04_AUDIT_PACKET.md` 对 S00--S04 做
+  联合 GPT 只读审计。联合审计未 PASS 前不开始 S05。
 
 ## 阶段登记表
 
@@ -37,7 +40,7 @@
 | S01 | 独立研究栈骨架 | PASS | NOT_RUN | `05b42791226347d31647547c344ef46c9dc4e87d` | `35a90ec5e52e2fad8301e3441ff6b286c7701d04` / `steiner-s01-local-gate-v1` |
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
-| S04 | B0 二部图与动作映射 | NOT_STARTED | NOT_RUN | — | — |
+| S04 | B0 二部图与动作映射 | PASS | NOT_RUN（等待联合审计） | 见 S04 audit packet | metadata commit / `steiner-s04-local-gate-v1` |
 | S05 | Strong-branch teacher 与 IL | NOT_STARTED | NOT_RUN | — | — |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
@@ -54,6 +57,7 @@
 - 主方案：`plans/STEINER_RL_BRANCHING_MIGRATION_MASTER_PLAN.md`
 - 协议/seed/指标：`configs/steiner/experiments/protocols_v1.yml`
 - S03 正式配置：`configs/steiner/experiments/s03_branchability_pilot_v1.yml`
+- S04 B0 配置：`configs/steiner/models/b0_milp_gcnn_v1.yml`
 - split：`configs/steiner/splits/split_policy_v1.yml`
 - final seal：`configs/steiner/splits/final_test_v1.yml`
 - SCIP 8.0.4 入口：`scripts/steiner/run_with_scip804.sh`
@@ -62,7 +66,7 @@
 - Git 治理：`configs/steiner/git_governance_v1.yml`
 - 公共数据政策：`configs/steiner/data_provenance_v1.yml`
 - 旧航空 backlog：`docs/steiner/AVIATION_REGRESSION_BACKLOG.md`
-- 当前审计入口：`docs/steiner/phases/S03/S03_AUDIT_PACKET.md`
+- 当前联合审计入口：`docs/steiner/phases/S04/S04_AUDIT_PACKET.md`
 
 ## 已知风险与边界
 
@@ -75,7 +79,9 @@
    quality 和 learning curve。
 5. 正式 shards 跨 Gold 6148 和 Silver 4214 两个 CPU host；不得做 wall-time
    baseline 排名。固定资源 Gate 有很大安全余量。
-6. 恢复服务器没有 GPU；S04 不需要 GPU，S05 首次训练前必须重新验收 CUDA。
+6. 恢复服务器没有 GPU；S04 未使用 GPU，S05 首次训练前必须重新验收 CUDA。
 7. SteinLib/DIMACS 未确认再分发许可；继续只提交官方 source/checksum，不提交 raw。
-8. 旧航空 4 个既有失败未在 S03/S04 混改；S00--S03 GPT audits 均为
+8. 旧航空 4 个既有失败未在 S03/S04 混改；S00--S04 GPT audits 均为
    NOT_RUN。S04 的先行来自明确 waiver，联合审计可能要求回修早期阶段。
+9. S04 只在一个 synthetic-train 图的 3 个真实分支状态上验证工程 parity；它
+   不能证明未训练模型有 branching 质量，也不能外推生产求解速度。

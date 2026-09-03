@@ -1,0 +1,39 @@
+# S04 commands (UTC 2026-09-03)
+# No credential, token, private URL, raw state log or final-test command is recorded.
+
+git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+git status --short
+
+# Diagnostic failure: inline interpreter omitted the canonical import path.
+# Result: ModuleNotFoundError: steiner_branching
+
+# Targeted implementation tests; first real run exposed only the two undefined
+# Ecole incumbent columns. Final sum-aggregation run: 7 passed in 26.04 s.
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner/test_s04_bipartite.py
+
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s04_b0_snapshot.py
+sha256sum docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json docs/steiner/phases/S04/S04_GATE_SUMMARY.json configs/steiner/models/b0_milp_gcnn_v1.yml
+
+# Diagnostic command typo; result: exit 127, no such file.
+scripts/steiner/scip804.sh python -m pytest -q tests/steiner
+
+# Correct complete regression.
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
+
+scripts/steiner/run_with_scip804.sh --verify-only
+bash -n scripts/steiner/run_with_scip804.sh
+scripts/steiner/run_with_scip804.sh --python -m compileall -q python/steiner_branching scripts/steiner/run_s04_b0_snapshot.py tests/steiner/test_s04_bipartite.py
+scripts/steiner/run_with_scip804.sh --python -m py_compile scripts/steiner/run_s04_b0_snapshot.py python/steiner_branching/models/milp_gcnn.py python/steiner_branching/solver/bipartite_observation.py python/steiner_branching/solver/graph_state.py
+
+# Diagnostic misuse: bash -n was initially applied to the Python runner and
+# correctly reported a shell syntax error; the shell/Python commands above are
+# the corrected checks.
+
+s04_verify_dir=$(mktemp -d /tmp/steiner-s04-verify.XXXXXX)
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s04_b0_snapshot.py --snapshot-output "$s04_verify_dir/S04_FORWARD_SNAPSHOT.json" --summary-output "$s04_verify_dir/S04_GATE_SUMMARY.json"
+cmp docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json "$s04_verify_dir/S04_FORWARD_SNAPSHOT.json"
+sha256sum docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json "$s04_verify_dir/S04_FORWARD_SNAPSHOT.json"
+
+git diff --check
+git status --short

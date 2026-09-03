@@ -1,0 +1,118 @@
+{
+  "config_sha256": "056ce49bce41c731138a83b3befbc97e006585311bcf8f5298532c2d86f830dc",
+  "environment": {
+    "cpu_model": "Intel(R) Xeon(R) Silver 4214 CPU @ 2.20GHz",
+    "cpu_threads": 1,
+    "device": "cpu",
+    "ecole_version": "0.8.1",
+    "solver_stack_id": "scip804-ecole081-pyscipopt430",
+    "torch_version": "2.5.1+cu121"
+  },
+  "gate": {
+    "checks": {
+      "action_to_edge_mapping_rate": true,
+      "all_features_and_logits_finite": true,
+      "cpu_inference_timing_recorded": true,
+      "full_closure_argmax_agreement": true,
+      "full_closure_logit_error": true,
+      "minimum_snapshot_count": true,
+      "parameter_count_recorded": true
+    },
+    "overall_pass": true
+  },
+  "inference": {
+    "closure": [
+      {
+        "iterations": 200,
+        "max_microseconds": 1857.331,
+        "p50_microseconds": 1565.16,
+        "p95_microseconds": 1579.16
+      },
+      {
+        "iterations": 200,
+        "max_microseconds": 1574.756,
+        "p50_microseconds": 1529.125,
+        "p95_microseconds": 1542.705
+      },
+      {
+        "iterations": 200,
+        "max_microseconds": 2211.317,
+        "p50_microseconds": 1530.979,
+        "p95_microseconds": 1549.142
+      }
+    ],
+    "full": [
+      {
+        "iterations": 200,
+        "max_microseconds": 19514.134,
+        "p50_microseconds": 13183.906,
+        "p95_microseconds": 13312.426
+      },
+      {
+        "iterations": 200,
+        "max_microseconds": 18348.38,
+        "p50_microseconds": 13190.971,
+        "p95_microseconds": 13354.896
+      },
+      {
+        "iterations": 200,
+        "max_microseconds": 17459.292,
+        "p50_microseconds": 13167.188,
+        "p95_microseconds": 13267.932
+      }
+    ],
+    "timed_iterations_per_state": 200,
+    "unit": "microseconds",
+    "warmup_iterations_per_state": 20
+  },
+  "model": {
+    "embedding_dim": 64,
+    "hidden_dim": 64,
+    "message_passing_rounds": 1,
+    "parameter_count": 68161,
+    "state_sha256": "42b63f31ccbb0b5416db53d38e9ca0072daedbfba3d84d30094a9d443ac3795c"
+  },
+  "model_id": "b0_milp_gcnn_v1",
+  "observation": {
+    "candidates_mapped": 31,
+    "candidates_seen": 31,
+    "constraint_features": 5,
+    "edge_features": 1,
+    "mapping_rate": 1.0,
+    "schema_id": "milp_bipartite_v1",
+    "schema_sha256": "f47a74b08a3ab88f07733f17b8932a2bf6878ed271321938c121845f44d037fc",
+    "snapshot_count": 3,
+    "variable_features": 19
+  },
+  "parity": {
+    "argmax_agreement": 1.0,
+    "argmax_matches": 3,
+    "argmax_total": 3,
+    "max_absolute_logit_error": 0.0
+  },
+  "schema_version": 1,
+  "snapshot_sha256": "d7ed96707bb625b64c4251840b348e78cae518d1ead1018c80e540ac04b3d536",
+  "solver": {
+    "effective_parameters": {
+      "branching/mostinf/priority": 100,
+      "branching/relpscost/priority": 900000,
+      "limits/memory": 8192.0,
+      "limits/nodes": 200000,
+      "limits/restarts": 0,
+      "limits/time": 600.0,
+      "lp/threads": 1,
+      "nodeselection/estimate/stdpriority": 1000000,
+      "parallel/maxnthreads": 1,
+      "parallel/minnthreads": 1,
+      "presolving/maxrounds": 0,
+      "randomization/lpseed": 0,
+      "randomization/permutationseed": 0,
+      "randomization/randomseedshift": 0,
+      "separating/maxrounds": 0,
+      "separating/maxroundsroot": 0
+    },
+    "finished_during_snapshot": false,
+    "protocol_id": "P1"
+  },
+  "stage": "S04"
+}

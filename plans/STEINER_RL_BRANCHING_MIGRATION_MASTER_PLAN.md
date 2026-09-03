@@ -4,7 +4,7 @@
 >
 > 日期：2026-09-03
 >
-> 状态：实施中（S00--S03 本地 Gate PASS；S04 资源前检完成但未开始）
+> 状态：实施中（S00--S04 本地 Gate PASS；S00--S04 联合 GPT 审计待执行）
 >
 > 适用仓库：`cable_harness_prim_gcnn`
 >

@@ -1,9 +1,11 @@
-# Steiner RL Branching 研究契约 v1
+# Steiner RL Branching 研究契约 v1.3
 
-状态：v1.2 冻结候选；v1.1 按 ADR 0005 把 Git 治理改为单一长期分支，v1.2
-固化 SCIP 8.0.4 wrapper、S03 资源放量规则和公开数据许可边界；研究问题、Gate、
-split、seed、指标和主张纪律未改变。只有修改本文件及对应 ADR/config、记录
-理由、提升版本并重新审计，才能改变本契约。
+状态：v1.3 冻结候选；v1.1 按 ADR 0005 把 Git 治理改为单一长期分支，v1.2
+固化 SCIP 8.0.4 wrapper、S03 资源放量规则和公开数据许可边界；v1.3 只把
+S00 仓库盘点和首次资源快照改写为明确的历史事实，并同步 S03 已提交的最新
+资源前检，没有改变研究问题、Gate、split、seed、指标或主张纪律。v1.3 随
+S00--S04 联合审计重新审查。只有修改本文件及对应 ADR/config、记录理由、提升
+版本并重新审计，才能改变本契约。
 
 ## 1. 研究边界
 
@@ -27,7 +29,11 @@ SCF 不是默认实现。当 S03 的 MCF pilot 出现任一条件时才触发受
 
 任何增强都使用新 schema/version 并作为单独实验因子。原始图 GNN 与 late dual-view fusion 是后续消融，不是 B0 完成条件。S10 前不假定所有 Steiner-family 动作都能映射到边；变体必须使用 typed candidate 和 topology-valid mask。
 
-当前仓库核实结果：尚无 `python/steiner_branching`；现有 `BipartiteGCNNQNetwork` 输入由 19 维 Ecole 变量特征、6 维航空 Prim 特征、6 类航空变量、14 维扩展 row、6 类航空约束、3 维 edge 和 14 维 global state 组成。现有 `prim_bias.py` 只解析 `z/m/y` 航空命名。因此旧栈不是已存在的 Steiner 接口，S01/S04 必须独立建立并重新测试。
+S00 基线盘点时仓库尚无 `python/steiner_branching`；当时已有的
+`BipartiteGCNNQNetwork` 输入由 19 维 Ecole 变量特征、6 维航空 Prim 特征、6 类
+航空变量、14 维扩展 row、6 类航空约束、3 维 edge 和 14 维 global state 组成，
+`prim_bias.py` 也只解析 `z/m/y` 航空命名。因此旧栈不能冒充 Steiner 接口；
+S01 已建立独立包，S04 仍须独立实现并测试 B0。
 
 ## 3. 学习路线
 
@@ -76,11 +82,13 @@ citation 和许可状态。checksum 不构成许可证，许可问题必须在�
 
 冻结环境选择 SCIP 8.0.4 / SoPlex 6.0.4 / Ecole 0.8.1 / PySCIPOpt 4.3.0 / PyTorch 2.5.1+cu121。所有 Steiner solver/Python 命令必须通过 `scripts/steiner/run_with_scip804.sh` 的 `--python`、`--scip` 或 `--verify-only` 模式进入；wrapper 在启动前核对 binary/library checksum 和 Python/CLI 实际版本，拒绝非空 `LD_PRELOAD`，并丢弃继承的 library path。默认 `/usr/bin/scip` 9.2.2 不允许混入正式矩阵；升级必须用新 stack/profile ID 做兼容性实验。
 
-2026-09-03 前检确认 cgroup 只有约 8.01 核、65,537 MiB RAM 且无 swap。S03 的
-6 个单线程 worker 在 CPU 配额内，但 49,152 MiB worker 总预算加 16,384 MiB
-预留几乎顶满内存，因此必须按 1 → 3 → 6 workers 放量并逐级检查 p95 RSS、
-`memory.current` 和 `memory.events`。S04 是 CPU-only 的未训练 B0/schema/mapping
-阶段，不要求 GPU；首次 CUDA 训练前另行探测 GPU。
+2026-09-03 较早环境曾观测到约 8.01 核、65,537 MiB RAM 且无 swap；换机后的
+S03 正式前检和恢复前检均确认 24.01 核、131,073 MiB RAM 且无 swap，机器可读
+证据分别是 `configs/steiner/resource_preflight_20260903.yml` 和
+`configs/steiner/resource_preflight_s03_resume_20260903.yml`。冻结的 1 → 3 → 6
+workers 放量规则没有因此取消；每级仍检查 p95 RSS、`memory.current` 和
+`memory.events`。S04 是 CPU-only 的未训练 B0/schema/mapping 阶段，不要求 GPU；
+首次 CUDA 训练前另行探测 GPU。
 
 ## 6. Baseline 和指标
 

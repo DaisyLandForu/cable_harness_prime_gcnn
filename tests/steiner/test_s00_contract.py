@@ -331,7 +331,9 @@ class S00ContractTest(unittest.TestCase):
         )
         self.assertIn("版本：v1.3", master_plan)
         self.assertIn("research/steiner-migration", master_plan)
-        self.assertIn("v1.2 冻结候选", research_contract)
+        self.assertIn("研究契约 v1.3", research_contract)
+        self.assertIn("v1.3 冻结候选", research_contract)
+        self.assertIn("24.01 核、131,073 MiB", research_contract)
         self.assertIn("research/steiner-migration", research_contract)
 
 

@@ -21,6 +21,11 @@ S03 provides:
 - `run_s03_tmux.sh`: detached 1 → 3 → 6 worker launcher. Re-running it with a
   new session name skips only matching completed shards.
 
+S04 provides `run_s04_b0_snapshot.py`: a CPU-only, deterministic real-SCIP
+forward snapshot for the untrained 19/5/1 B0 model. It checks exact candidate
+closure parity and action-to-edge mapping; it does not collect a teacher or
+train a model.
+
 Build the native SCIP 8.0.4 strong-branch signal probe before an S03 run:
 
 ```text
@@ -35,6 +40,7 @@ set `LD_LIBRARY_PATH` by hand:
 scripts/steiner/run_with_scip804.sh --verify-only
 scripts/steiner/run_with_scip804.sh --python scripts/steiner/check_solution.py INPUT.stp
 scripts/steiner/run_with_scip804.sh --scip --version
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s04_b0_snapshot.py
 ```
 
 The launcher verifies the pinned hashes and the effective SCIP 8.0.4 /
