@@ -45,3 +45,17 @@ git tag -a steiner-s04-local-gate-v1 -m "S04 local Gate PASS; GPT audit NOT_RUN"
 git fetch origin research/steiner-migration
 git merge-base --is-ancestor origin/research/steiner-migration HEAD
 git push origin research/steiner-migration
+
+# Remediation v2 after the first GPT CONDITIONAL PASS.
+sha256sum docs/steiner/audits/S00_S04_GPT_AUDIT.md docs/steiner/audits/S00_S04_GPT_AUDIT_REQUEST.md
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner/test_s04_bipartite.py
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s04_b0_snapshot.py
+
+s04_remediation_verify_dir=$(mktemp -d /tmp/steiner-s04-remediation.XXXXXX)
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s04_b0_snapshot.py --snapshot-output "$s04_remediation_verify_dir/S04_FORWARD_SNAPSHOT.json" --summary-output "$s04_remediation_verify_dir/S04_GATE_SUMMARY.json"
+cmp docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json "$s04_remediation_verify_dir/S04_FORWARD_SNAPSHOT.json"
+
+# Diagnostic wrapper misuse returned usage/64; corrected command follows.
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
+python -m compileall -q python/steiner_branching scripts/steiner tests/steiner
+git diff --check

@@ -59,3 +59,20 @@ missingness channel，因此 v1 对且仅对这两个字段使用显式 zero sen
 - 旧航空源码和其 4 个既有 regression 失败未修改，仍在独立 backlog。
 - SteinLib/DIMACS raw bytes、build、checkpoint、raw node logs 均未提交。
 - GPT 联合审计仍是 NOT_RUN；S05 在 S00--S04 联合审计 PASS 前保持阻塞。
+
+## Remediation v2：canonical probindex identity
+
+- 提交并原样保留首次联合 GPT 审计请求与返回；审计结论为
+  **CONDITIONAL PASS**，唯一 blocking finding 是 Ecole row 与 transformed
+  variable identity 的顺序假设未被显式验证。
+- 新增 `solver/scip_identity.py`：使用 SCIP 8.0.4 的公开
+  `SCIPvarGetProbindex()`，以 probindex 而不是 `getVars()` list position 组装
+  Ecole row names；每次 extraction 验证完整双射并 fail closed。
+- C bridge 绑定 repository-frozen 绝对 prefix 和 `libscip.so.8.0` checksum，同时
+  要求 wrapper 导出的 stack/version identity；拒绝系统 SCIP 和其他动态库。
+- 新增 permutation、missing/count mismatch、duplicate、out-of-range、错误 stack、
+  错误 prefix 负向测试；真实 frozen SCIP integration 额外覆盖 parallel edges。
+- 重新生成三个 frozen states：2,943/2,943 variable rows identity 完整，31/31
+  actions mapping，full/closure max error 0，argmax 3/3；snapshot bytes 未变化。
+- schema 仍为 19/5/1，没有增加 missingness bit；没有重跑 S03、修改航空、采集
+  teacher、训练、读取 validation/final 或降低 Gate。

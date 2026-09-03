@@ -62,3 +62,23 @@ contract 仅将这两列 NaN 变为 zero sentinel，并继续拒绝所有其他 
 - S04 没有验证 strong-branch teacher、loss、训练稳定性或 GPU；这些属于 S05。
 - S04 只覆盖 SPG edge actions，不能外推 vertex/arc/Steiner-family typed actions。
 - SteinLib/DIMACS 再分发许可和旧航空 4 个 regression 失败均未由本阶段解决。
+
+## Remediation v2 结论
+
+首次 GPT 审计的 blocking concern 是“结果很可能正确，但 correctness 依赖未验证
+的 list-order 假设”。v2 不再使用 list position：三个 frozen states 的所有
+2,943 个 variable rows 均显式完成 `row == probindex` 双射后才允许继续动作映射。
+
+| remediation 指标 | 结果 | Gate |
+|---|---:|---:|
+| probindex identity states | 3/3 | 全部 |
+| probindex identity rows | 2,943/2,943 | 100% |
+| legal actions mapped | 31/31 | 100% |
+| full/closure max error | 0.0 | ≤1e-5 |
+| full/closure argmax | 3/3 | 100% |
+| snapshot content change | 无 | 必须可复现 |
+
+因此 S04 remediation 本地 Gate 为 **PASS（8/8）**。这关闭了代码层面的 identity
+缺口，但 GPT 尚未复审，所以审计状态仍不是最终 PASS。用户只授权随后准备 S05
+代码和 tmux 命令；正式 teacher collection、训练与 S05 Gate 仍必须等待复审与
+GPU 环境验收。

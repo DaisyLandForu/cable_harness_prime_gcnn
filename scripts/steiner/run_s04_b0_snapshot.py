@@ -149,6 +149,8 @@ def run_snapshot(config_path: Path | str) -> tuple[dict[str, Any], dict[str, Any
     candidates_seen = 0
     candidates_mapped = 0
     finite_state_count = 0
+    probindex_identity_states = 0
+    probindex_identity_variables = 0
     max_error = 0.0
     argmax_matches = 0
     max_states = int(snapshot_config["max_states"])
@@ -160,6 +162,13 @@ def run_snapshot(config_path: Path | str) -> tuple[dict[str, Any], dict[str, Any
         full.validate()
         closure.validate()
         finite_state_count += 1
+        if not np.array_equal(
+            full.variable_global_ids,
+            np.arange(full.variable_features.shape[0], dtype=np.int64),
+        ):
+            raise RuntimeError("Ecole variable rows lost canonical SCIP probindex identity")
+        probindex_identity_states += 1
+        probindex_identity_variables += int(full.variable_features.shape[0])
         with torch.inference_mode():
             full_logits_tensor = score_state(model, full)
             closure_logits_tensor = score_state(model, closure)
@@ -234,6 +243,10 @@ def run_snapshot(config_path: Path | str) -> tuple[dict[str, Any], dict[str, Any
     gates = config["gate"]
     checks = {
         "minimum_snapshot_count": len(snapshots) >= int(gates["min_snapshots"]),
+        "probindex_identity_complete": probindex_identity_states == len(snapshots)
+        and probindex_identity_variables
+        == sum(int(state["full_shape"]["variables"]) for state in snapshots)
+        and probindex_identity_variables > 0,
         "all_features_and_logits_finite": finite_state_count == len(snapshots)
         and all(
             np.isfinite(value).all()
@@ -280,6 +293,8 @@ def run_snapshot(config_path: Path | str) -> tuple[dict[str, Any], dict[str, Any
             "candidates_seen": candidates_seen,
             "candidates_mapped": candidates_mapped,
             "mapping_rate": mapping_rate,
+            "probindex_identity_states": probindex_identity_states,
+            "probindex_identity_variables": probindex_identity_variables,
         },
         "parity": {
             "max_absolute_logit_error": max_error,

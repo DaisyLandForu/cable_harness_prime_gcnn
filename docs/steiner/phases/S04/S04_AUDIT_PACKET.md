@@ -1,5 +1,21 @@
 # S04 Audit Packet — S00--S04 联合审计入口
 
+## Remediation v2 当前结论
+
+- 首次审计请求：`docs/steiner/audits/S00_S04_GPT_AUDIT_REQUEST.md`，SHA-256
+  `004473911535ad994191f452d0acdd6c41ab1c05eb3dc2893b4c9ba7e3d93d8d`
+- GPT 返回原文：`docs/steiner/audits/S00_S04_GPT_AUDIT.md`，SHA-256
+  `abfc6f20f97092857edf8dbf606695800da6d483c27418c1e4232fed3edd277f`
+- 首次结论：**CONDITIONAL PASS**；blocking finding B1 是 Ecole row identity
+  依赖 PySCIPOpt list order。
+- 修复：`solver/scip_identity.py` 以 frozen SCIP 8.0.4 probindex 为 canonical row
+  identity，每次 extraction 验证完整双射；非冻结 stack/prefix/checksum 均拒绝。
+- v2 local Gate：**PASS（8/8）**；3/3 states、2,943/2,943 rows、31/31
+  actions、max error 0、argmax 3/3，snapshot 未变。
+- v2 content head：由紧随其后的 metadata commit 写入；planned local tag：
+  `steiner-s04-local-gate-v2`。v1 tag 保留，不改写历史。
+- GPT re-audit：**PENDING**；本地 PASS 不能写成最终审计 PASS。
+
 ## 不可变审计对象
 
 - branch：`research/steiner-migration`
@@ -12,8 +28,8 @@
 - planned local tag：`steiner-s04-local-gate-v1`
 - remote：只允许 local Gate PASS 后 fast-forward push 同名长期分支
 - PR：未创建；不 merge/rebase/amend/force-push，不 push local-gate tag
-- GPT audit：S00--S04 全部 NOT_RUN。用户 waiver 只允许 S04 先行，不等于 PASS；
-  S05 在本联合审计 PASS 前阻塞。
+- GPT audit：首次联合审计 **CONDITIONAL PASS**，remediation re-audit PENDING。
+  用户后续 waiver 只允许 S05 implementation scaffold；正式数据/训练/Gate 仍阻塞。
 
 ## 联合审计历史锚点
 
@@ -78,17 +94,19 @@ cmp docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json /tmp/s04-snapshot.json
 - model state：`42b63f31ccbb0b5416db53d38e9ca0072daedbfba3d84d30094a9d443ac3795c`
 - snapshot canonical：`d7ed96707bb625b64c4251840b348e78cae518d1ead1018c80e540ac04b3d536`
 - snapshot file：`ac2ce0c14b134245221af5140a3008f3ec6067f8867491e7cc0d0b50e2036f2c`
-- Gate summary file：`f687460a8e6bbae9b0159cc1a851bff97cc3814ef9f800e848dbc6d01d08c633`
-- tests：75 passed、1 expected skipped；real snapshot byte-identical
-- Gate：31/31 mapping、max error 0、argmax 3/3、finite、parameter/timing recorded；
-  local **PASS**
+- Gate summary v1 file：`f687460a8e6bbae9b0159cc1a851bff97cc3814ef9f800e848dbc6d01d08c633`
+- Gate summary remediation v2 file：
+  `ea94f25e3c42fed2b464f9c914af521ed8e8d1a6537505bbb2a164b65f7b937b`
+- tests：78 passed、1 expected skipped；real snapshot byte-identical
+- Gate：probindex identity 2,943/2,943、31/31 mapping、max error 0、argmax
+  3/3、finite、parameter/timing recorded；local **PASS（8/8）**
 
 ## 已知风险与联合审计重点
 
 1. `copy_node_bipartite` 对 Ecole 无 incumbent 的 features 13/14 使用 zero
    sentinel。请核对该选择是否需要 missingness bit/new schema，或对 S05 B0 可接受。
-2. 请核对 transformed PySCIPOpt variable order 与 Ecole NodeBipartite column order
-   的依赖是否有充分保障，real test 的 31 candidates 是否足以阻止错位。
+2. v2 已移除 transformed PySCIPOpt list-order 依赖。请复审 canonical probindex
+   bridge、fail-closed tests 与 `probindex_identity_complete` 是否充分关闭 B1。
 3. 请独立检查 one-round exact closure 的 receptive field：candidate→incident rows
    →rows 上全部 variables，是否对本 sum-message implementation 严格充分。
 4. S04 evidence 只有 1 train graph/3 states，适合 parity Gate，不支持模型质量结论。
@@ -100,6 +118,6 @@ cmp docs/steiner/phases/S04/S04_FORWARD_SNAPSHOT.json /tmp/s04-snapshot.json
 
 ## 建议审计结论
 
-Codex 建议 S04 本地 **PASS**，并将 S00--S04 作为一个连续历史做首次 GPT 只读
-审计。最终审计结论仍是 NOT_RUN；只有 GPT 给出 PASS 并提交审计记录后，才能
-创建 audited tag 和开始 S05。
+Codex 建议 S04 remediation 本地 **PASS**，请围绕 B1 做 GPT 复审。复审结论
+仍为 PENDING；只有 GPT 给出最终 PASS 并提交审计记录后，才能创建 audited tag、
+采集 S05 正式 teacher 或训练。用户对 S05 的临时 waiver 仅覆盖源码/脚本准备。

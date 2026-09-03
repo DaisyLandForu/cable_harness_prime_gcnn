@@ -11,6 +11,7 @@ import numpy as np
 
 from ..contracts import GraphSchema, ProblemMetadata
 from ..milp.naming import edge_id_from_scip_variable_name, original_variable_name
+from .scip_identity import transformed_variable_names_by_probindex
 
 
 VARIABLE_FEATURE_NAMES = (
@@ -284,7 +285,7 @@ def with_legal_edge_actions(
 
 
 class SteinerNodeBipartite(ecole.observation.NodeBipartite):
-    """Ecole extractor that copies standard features and transformed names."""
+    """Ecole extractor with SCIP probindex as the canonical variable identity."""
 
     def __init__(self) -> None:
         super().__init__(cache=False)
@@ -293,6 +294,7 @@ class SteinerNodeBipartite(ecole.observation.NodeBipartite):
         raw = super().extract(model, done)
         if raw is None:
             return None
-        variables = model.as_pyscipopt().getVars(transformed=True)
-        names = tuple(str(variable.name) for variable in variables)
+        names = transformed_variable_names_by_probindex(
+            model.as_pyscipopt(), int(raw.variable_features.shape[0])
+        )
         return copy_node_bipartite(raw, names)

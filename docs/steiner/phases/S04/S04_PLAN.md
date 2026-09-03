@@ -1,6 +1,6 @@
 # S04 Plan — Standard MILP Bipartite B0
 
-Status: local Gate PASS; combined GPT audit pending by explicit user waiver
+Status: remediation v2 local Gate PASS; GPT re-audit pending
 
 ## Frozen identity
 
@@ -83,3 +83,21 @@ amend, force-push, tag push, S05 work, or learned final-test run is authorized.
 After local S04 completion, S00--S04 are submitted together through
 `S04_AUDIT_PACKET.md`. The waiver permits S04 implementation only; S05 remains
 blocked until the combined GPT audit passes.
+
+## Remediation v2（2026-09-03）
+
+首次联合 GPT 审计结论为 **CONDITIONAL PASS**：现有 31/31 action mapping 没有被
+证明错误，但它依赖 PySCIPOpt `getVars(transformed=True)` 的 Python list position
+恰好等于 Ecole 使用的 SCIP probindex。v2 将 probindex 固化为唯一 row identity：
+
+`Ecole row i -> SCIP probindex i -> transformed SCIP_VAR -> name -> edge_id`
+
+每次 observation extraction 都必须证明 `0..n_vars-1` 完整双射；count mismatch、
+duplicate、missing/out-of-range、非法名称或非冻结 solver stack 均 fail closed。
+bridge 只从 repository-frozen SCIP 8.0.4 的绝对路径加载公开
+`SCIPvarGetProbindex()`，并核对 wrapper identity、prefix 与 lib checksum，绝不按
+soname 搜索系统 `libscip.so`。
+
+用户另行授权在 v2 本地 Gate PASS 并推送后先写 S05 源码/脚本。该 waiver 仅允许
+implementation scaffold；GPT 复审 PASS 前不采正式 teacher、不训练、不访问
+validation/final，也不判定 S05 Gate。

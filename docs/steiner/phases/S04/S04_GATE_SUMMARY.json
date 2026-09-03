@@ -16,7 +16,8 @@
       "full_closure_argmax_agreement": true,
       "full_closure_logit_error": true,
       "minimum_snapshot_count": true,
-      "parameter_count_recorded": true
+      "parameter_count_recorded": true,
+      "probindex_identity_complete": true
     },
     "overall_pass": true
   },
@@ -24,41 +25,41 @@
     "closure": [
       {
         "iterations": 200,
-        "max_microseconds": 1857.331,
-        "p50_microseconds": 1565.16,
-        "p95_microseconds": 1579.16
+        "max_microseconds": 1320.294,
+        "p50_microseconds": 1257.215,
+        "p95_microseconds": 1277.774
       },
       {
         "iterations": 200,
-        "max_microseconds": 1574.756,
-        "p50_microseconds": 1529.125,
-        "p95_microseconds": 1542.705
+        "max_microseconds": 1284.86,
+        "p50_microseconds": 1215.234,
+        "p95_microseconds": 1233.011
       },
       {
         "iterations": 200,
-        "max_microseconds": 2211.317,
-        "p50_microseconds": 1530.979,
-        "p95_microseconds": 1549.142
+        "max_microseconds": 1276.764,
+        "p50_microseconds": 1220.205,
+        "p95_microseconds": 1235.467
       }
     ],
     "full": [
       {
         "iterations": 200,
-        "max_microseconds": 19514.134,
-        "p50_microseconds": 13183.906,
-        "p95_microseconds": 13312.426
+        "max_microseconds": 17853.303,
+        "p50_microseconds": 12777.709,
+        "p95_microseconds": 13019.598
       },
       {
         "iterations": 200,
-        "max_microseconds": 18348.38,
-        "p50_microseconds": 13190.971,
-        "p95_microseconds": 13354.896
+        "max_microseconds": 17481.728,
+        "p50_microseconds": 12726.135,
+        "p95_microseconds": 12803.067
       },
       {
         "iterations": 200,
-        "max_microseconds": 17459.292,
-        "p50_microseconds": 13167.188,
-        "p95_microseconds": 13267.932
+        "max_microseconds": 17716.731,
+        "p50_microseconds": 12711.903,
+        "p95_microseconds": 12929.755
       }
     ],
     "timed_iterations_per_state": 200,
@@ -79,6 +80,8 @@
     "constraint_features": 5,
     "edge_features": 1,
     "mapping_rate": 1.0,
+    "probindex_identity_states": 3,
+    "probindex_identity_variables": 2943,
     "schema_id": "milp_bipartite_v1",
     "schema_sha256": "f47a74b08a3ab88f07733f17b8932a2bf6878ed271321938c121845f44d037fc",
     "snapshot_count": 3,

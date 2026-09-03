@@ -71,3 +71,38 @@ git diff --check
 
 Gate checks 7/7 true；本地 Gate **PASS**。旧航空全仓测试未运行，因为已登记的
 4 个失败属于独立 backlog，S04 没有修改旧航空路径。
+
+## Remediation v2 验证
+
+首次 GPT 审计指出 list-position/probindex identity 证据缺口后，使用同一 frozen
+config/split/seeds 重跑，没有修改 schema、阈值或 snapshot trajectory。
+
+```text
+scripts/steiner/run_with_scip804.sh --python -m pytest -q \
+  tests/steiner/test_s04_bipartite.py
+scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/run_s04_b0_snapshot.py
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
+python -m compileall -q python/steiner_branching scripts/steiner tests/steiner
+git diff --check
+```
+
+- final targeted S04 suite：10 passed，51.77 s。
+- final complete Steiner suite：78 passed、1 expected skipped，30.81 s。
+- fail-closed tests：permutation、count/missing、duplicate、out-of-range、错误 stack、
+  错误 prefix 均 PASS。
+- frozen integration：真实 MCF/P1/Ecole state 的完整 transformed variable identity、
+  legal candidates 和 parallel edge mapping 均 PASS。
+- 3 个正式 snapshot states：2,943/2,943 Ecole rows 通过 probindex 完整双射；
+  31/31 legal actions 映射，max error 0，argmax 3/3。
+- snapshot file SHA-256 仍为
+  `ac2ce0c14b134245221af5140a3008f3ec6067f8867491e7cc0d0b50e2036f2c`；
+  byte-for-byte verification PASS。
+- remediation Gate summary SHA-256：
+  `ea94f25e3c42fed2b464f9c914af521ed8e8d1a6537505bbb2a164b65f7b937b`。
+- Gate checks 8/8 true，包括 `probindex_identity_complete: true`；remediation
+  本地 Gate **PASS**，GPT re-audit 尚未运行。
+
+一次收尾命令误把 wrapper 当成 arbitrary-command launcher，按设计返回 usage/64；
+改用其公开 `--python` 入口后完整 suite 通过。这不是测试/Gate 失败，也没有造成
+仓库修改。
