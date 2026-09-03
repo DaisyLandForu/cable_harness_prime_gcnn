@@ -329,9 +329,9 @@ class S00ContractTest(unittest.TestCase):
         research_contract = (REPO / "docs/steiner/RESEARCH_CONTRACT.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("版本：v1.2", master_plan)
+        self.assertIn("版本：v1.3", master_plan)
         self.assertIn("research/steiner-migration", master_plan)
-        self.assertIn("v1.1 冻结候选", research_contract)
+        self.assertIn("v1.2 冻结候选", research_contract)
         self.assertIn("research/steiner-migration", research_contract)
 
 

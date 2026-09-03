@@ -1,0 +1,42 @@
+schema_version: 1
+policy_id: steiner-public-data-provenance-v1
+
+acquisition:
+  official_source_only: true
+  transport: HTTPS
+  checksum_algorithm: SHA-256
+  checksum_required_before_use: true
+  checksum_mismatch_action: hard_fail_no_substitution
+  source_or_membership_change_action: new_manifest_version_and_audit
+  raw_cache_location: data/steiner/raw
+  raw_cache_git_tracked: false
+
+publication:
+  raw_SteinLib_or_DIMACS_redistribution_allowed: false
+  condition_for_raw_redistribution: explicit_redistribution_permission_verified
+  license_resolution_deadline: before_any_public_release
+  publish_without_raw_data:
+    - official_source_URLs
+    - selectors_and_source_revisions
+    - archive_and_member_SHA256_manifests
+    - download_and_verification_scripts
+    - citations_and_known_license_status
+  checksum_is_not_a_license: true
+
+sources:
+  SteinLib:
+    official_entry: https://steinlib.zib.de/
+    official_download_template: https://steinlib.zib.de/download/{family}.tgz
+    current_license_status: no_explicit_redistribution_license_confirmed
+    raw_publish: prohibited_pending_permission
+  DIMACS11:
+    official_entry: https://dimacs11.zib.de/competition.html
+    official_spg_archive: https://dimacs11.zib.de/contest/instances/SPG.tgz
+    current_license_status: no_explicit_redistribution_license_confirmed
+    raw_publish: prohibited_pending_permission
+
+evidence:
+  selector_manifest: configs/steiner/splits/final_test_v1.yml
+  content_manifest: configs/steiner/splits/final_test_content_v1.json
+  content_lock_script: scripts/steiner/lock_final_content.py
+  raw_data_ignore_rule: data/steiner/raw/

@@ -1,11 +1,12 @@
-schema_version: 1
+schema_version: 2
 lock_id: steiner-environment-v1
 frozen_at_utc: "2026-09-02T00:00:00Z"
+last_verified_at_utc: "2026-09-03T02:01:14Z"
 base_commit: 88ade1ac614fb12f882a10ba9b5d35b15c7b4d01
 
 decision:
   stack_id: scip804-ecole081-pyscipopt430
-  status: selected_with_runtime_repair_required
+  status: selected_with_canonical_runtime_wrapper
   rationale: >-
     Retain the repository's validated SCIP 8 / Ecole 0.8 ABI for the first
     Steiner stages.  A solver upgrade would change observations and search and
@@ -84,8 +85,29 @@ conflicting_default_stack:
   allowed_for_formal_runs: false
   reason: ABI_and_search_version_mismatch
 
+runtime_wrapper:
+  path: scripts/steiner/run_with_scip804.sh
+  child_scip_shim: scripts/steiner/pinned-bin/scip
+  child_scip_shim_sha256: 09d1e4d1b10a512738790c8727282ad1b524b075ef5606d18ee62ff8ecb1caab
+  required_for_all_Steiner_solver_commands: true
+  verify_only_status: passed
+  modes: [--verify-only, --python, --scip]
+  arbitrary_command_mode_allowed: false
+  inherited_LD_LIBRARY_PATH_allowed: false
+  nonempty_LD_PRELOAD_allowed: false
+  verifies:
+    - scip_executable_sha256
+    - libscip_soname_sha256
+    - SCIP_CLI_version_8_0_4
+    - PySCIPOpt_version_4_3_0
+    - Ecole_version_0_8_1
+    - PySCIPOpt_runtime_SCIP_version_8_04
+    - child_process_SCIP_resolves_to_pinned_shim
+  resource_preflight: configs/steiner/resource_preflight_20260903.yml
+
 formal_run_preconditions:
-  - restore_or_rebuild_an_executable_SCIP_8.0.4_prefix_without_editing_this_lock
-  - verify_Ecole_and_PySCIPOpt_import_against_the_locked_libscip
+  - invoke_scripts/steiner/run_with_scip804.sh_in_a_pinned_mode
+  - wrapper_checksum_and_version_probe_must_pass
   - record_effective_solver_parameter_hash
+  - repeat_cgroup_resource_probe_before_each_formal_batch
   - require_gpu_probe_only_for_training_profiles_that_request_cuda

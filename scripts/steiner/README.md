@@ -13,6 +13,19 @@ S01 intentionally adds no solver or data command. S02 provides:
   final selectors. It never imports a parser or solver and must not produce a
   result artifact or change `learning_runs_total`.
 
-PySCIPOpt commands must run in the frozen environment with the SCIP 8.0.4
-library directory on `LD_LIBRARY_PATH`. Generated data, LP files, solver output,
-and downloaded corpora belong under ignored data/artifact directories.
+All Steiner PySCIPOpt and SCIP commands must use the canonical launcher; do not
+set `LD_LIBRARY_PATH` by hand:
+
+```text
+scripts/steiner/run_with_scip804.sh --verify-only
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/check_solution.py INPUT.stp
+scripts/steiner/run_with_scip804.sh --scip --version
+```
+
+The launcher verifies the pinned hashes and the effective SCIP 8.0.4 /
+PySCIPOpt 4.3.0 / Ecole 0.8.1 versions before execution. It deliberately
+rejects arbitrary-command mode and non-empty `LD_PRELOAD` and does not inherit
+the caller's library path. Its Python mode also prepends a checked-in `scip`
+shim, so child processes cannot silently resolve `/usr/bin/scip` 9.2.2.
+Generated data, LP files, solver output, and downloaded corpora belong under
+ignored data/artifact directories.

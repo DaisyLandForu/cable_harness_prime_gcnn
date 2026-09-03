@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Prevent child processes launched by the Steiner Python stack from resolving
+# the incompatible system SCIP 9.x executable.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+exec "${SCRIPT_DIR}/../run_with_scip804.sh" --scip "$@"

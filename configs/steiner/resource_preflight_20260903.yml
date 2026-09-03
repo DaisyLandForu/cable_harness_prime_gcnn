@@ -1,0 +1,82 @@
+schema_version: 1
+preflight_id: steiner-s03-s04-resource-preflight-20260903
+observed_at_utc: "2026-09-03T02:01:14Z"
+branch: research/steiner-migration
+head_sha: 1dfb73e0abed9e6825fc2fc0f7720085ca2ed4ff
+scope: pre_S03_entry_and_S04_CPU_only_development
+
+host_visibility:
+  cpu_model: Intel(R) Xeon(R) Silver 4214 CPU @ 2.20GHz
+  logical_cpus_visible: 48
+  physical_cores_visible: 24
+  numa_nodes_visible: 2
+  memory_visible_bytes: 68720525312
+  swap_bytes: 0
+  workspace_available_bytes_observed: 2612525719879680
+  tmp_available_bytes_observed: 324609925120
+
+cgroup_limits:
+  cpu_max_raw: "801000 100000"
+  effective_cpu_cores: 8.01
+  cpuset_cpus_effective: "0-47"
+  memory_max_bytes: 68720525312
+  memory_max_mib: 65537
+  memory_current_bytes_observed: 8993673216
+  memory_anon_bytes_observed: 621191168
+  memory_file_cache_bytes_observed: 8308031488
+  memory_events_observed:
+    low: 0
+    high: 0
+    max: 0
+    oom: 0
+    oom_kill: 0
+  memory_swap_max_bytes: 0
+  memory_swap_current_bytes: 0
+  note: >-
+    CPU scheduling is quota-limited to about 8 cores despite 48 visible logical
+    CPUs. memory.current includes reclaimable file cache and is only a point-in-time
+    observation; formal runs must measure worker RSS directly.
+
+frozen_protocol_demand:
+  threads_per_solver: 1
+  planned_rollout_workers: 6
+  maximum_p95_rss_per_worker_mb: 8192
+  aggregate_worker_budget_mb: 49152
+  reserved_host_headroom_mb: 16384
+  aggregate_plus_reserve_mb: 65536
+
+assessment:
+  S03:
+    status: CONDITIONAL_PASS
+    rationale: >-
+      Six single-threaded workers fit under the 8.01-core quota, but the frozen
+      48 GiB aggregate worker budget plus 16 GiB reserve reaches the 64 GiB
+      cgroup limit with only 1 MiB nominal slack and there is no swap.
+    required_ramp_workers: [1, 3, 6]
+    six_worker_release_conditions:
+      - measured_p95_worker_rss_mb_lte_8192
+      - projected_six_worker_rss_mb_lte_49152
+      - cgroup_memory_current_plus_projected_workers_and_reserve_lt_memory_max
+      - no_oom_or_memory_pressure_event_in_lower_concurrency_step
+    direct_six_worker_start_allowed: false
+  S04:
+    status: PASS_CPU_ONLY
+    gpu_required: false
+    rationale: >-
+      S04 implements schema, action mapping, an untrained B0 forward path, and
+      deterministic CPU snapshots. It performs no learned-model training.
+  training:
+    status: NOT_ASSESSED
+    gpu_required_later: true
+    note: GPU availability must be probed again before the first CUDA profile.
+
+repeat_before_formal_run:
+  required: true
+  checks:
+    - cpu.max
+    - memory.max
+    - memory.current
+    - memory.events
+    - swap
+    - filesystem_free_space
+    - current_load

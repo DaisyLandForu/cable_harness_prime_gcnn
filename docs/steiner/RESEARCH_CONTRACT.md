@@ -1,8 +1,9 @@
 # Steiner RL Branching 研究契约 v1
 
-状态：v1.1 冻结候选；S02 后仅按 ADR 0005 把 Git 治理改为单一长期分支，
-研究问题、Gate、数据、seed、指标和主张纪律未改变。只有修改本文件及对应
-ADR/config、记录理由、提升版本并重新审计，才能改变本契约。
+状态：v1.2 冻结候选；v1.1 按 ADR 0005 把 Git 治理改为单一长期分支，v1.2
+固化 SCIP 8.0.4 wrapper、S03 资源放量规则和公开数据许可边界；研究问题、Gate、
+split、seed、指标和主张纪律未改变。只有修改本文件及对应 ADR/config、记录
+理由、提升版本并重新审计，才能改变本契约。
 
 ## 1. 研究边界
 
@@ -55,6 +56,12 @@ SCF 不是默认实现。当 S03 的 MCF pilot 出现任一条件时才触发受
 
 封存入口为 `configs/steiner/splits/final_test_v1.yml`，包含 106 个 canonical suite/member entries，selector hash 为 `8c0324c1a82485c2187825977fe2807e31512a6435e2f58f6a1d17babbfbddd1`。S00 时 `learning_runs_total=0`。S02 下载前后必须增加 archive/per-file content hashes，但不得改变 selector membership。第一轮 learned final-test 只能在 S12 代码、checkpoint、normalization 和 profile 全部冻结后运行；额外运行均标记 post-hoc，不能继续调参后称为原 final test。
 
+SteinLib/DIMACS 仅从 `configs/steiner/data_provenance_v1.yml` 登记的官方源下载并
+验证 SHA-256。未确认显式再分发许可前，raw bytes 不得进入 Git、release、公开
+容器或论文附件；公开复现包只提供官方 URL、下载/验证脚本、checksum manifest、
+citation 和许可状态。checksum 不构成许可证，许可问题必须在公开发布前解决或
+以“不分发 raw data”的方式保持合规。
+
 ## 5. 协议、资源和 seed
 
 唯一机器可读入口为 `configs/steiner/experiments/protocols_v1.yml`：
@@ -67,7 +74,13 @@ SCF 不是默认实现。当 S03 的 MCF pilot 出现任一条件时才触发受
 
 所有 solver 单线程。pilot solver seed 为 `[0]`，formal solver seeds 为 `[0,1,2,3,4]`，formal training seeds 为 `[101,202,303,404,505]`，teacher collection seeds 为 `[1001,1002,1003]`，bootstrap seed 为 `20260902`。正式结果必须保留完整 instance × solver-seed 组合，并逐个报告所有 training seeds。
 
-冻结环境选择 SCIP 8.0.4 / SoPlex 6.0.4 / Ecole 0.8.1 / PySCIPOpt 4.3.0 / PyTorch 2.5.1+cu121。实际探测和当前运行阻塞记录在 `configs/steiner/environment.lock.yml`。默认 `/usr/bin/scip` 9.2.2 不允许混入正式矩阵；升级必须用新 stack/profile ID 做兼容性实验。
+冻结环境选择 SCIP 8.0.4 / SoPlex 6.0.4 / Ecole 0.8.1 / PySCIPOpt 4.3.0 / PyTorch 2.5.1+cu121。所有 Steiner solver/Python 命令必须通过 `scripts/steiner/run_with_scip804.sh` 的 `--python`、`--scip` 或 `--verify-only` 模式进入；wrapper 在启动前核对 binary/library checksum 和 Python/CLI 实际版本，拒绝非空 `LD_PRELOAD`，并丢弃继承的 library path。默认 `/usr/bin/scip` 9.2.2 不允许混入正式矩阵；升级必须用新 stack/profile ID 做兼容性实验。
+
+2026-09-03 前检确认 cgroup 只有约 8.01 核、65,537 MiB RAM 且无 swap。S03 的
+6 个单线程 worker 在 CPU 配额内，但 49,152 MiB worker 总预算加 16,384 MiB
+预留几乎顶满内存，因此必须按 1 → 3 → 6 workers 放量并逐级检查 p95 RSS、
+`memory.current` 和 `memory.events`。S04 是 CPU-only 的未训练 B0/schema/mapping
+阶段，不要求 GPU；首次 CUDA 训练前另行探测 GPU。
 
 ## 6. Baseline 和指标
 
@@ -103,3 +116,7 @@ S03 branchability 预注册阈值由 `protocols_v1.yml` 固定：至少 60% 实�
 停止，不进入下一阶段；外部 GPT 审计通过后才允许在
 `research/steiner-migration` 创建 audited tag 并进入下一阶段。阶段之间不再
 merge；只有 S13 完成并获得显式授权后才合并到仓库目标主线。
+
+旧航空 regression 的 4 个既有失败属于独立维护 backlog，不得在 S03 的源码、
+测试或审计 commit range 中修复；详见
+`docs/steiner/AVIATION_REGRESSION_BACKLOG.md`。

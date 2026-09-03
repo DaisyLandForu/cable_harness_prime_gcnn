@@ -1,10 +1,10 @@
 # Steiner 系列图优化问题的 MILP 强化学习分支迁移主实施方案
 
-> 版本：v1.2
+> 版本：v1.3
 >
-> 日期：2026-09-02
+> 日期：2026-09-03
 >
-> 状态：实施中（S00--S02 本地 Gate PASS）
+> 状态：实施中（S00--S02 本地 Gate PASS；S03/S04 资源前检完成）
 >
 > 适用仓库：`cable_harness_prim_gcnn`
 >
@@ -460,6 +460,18 @@ PACE 的 odd/even 划分沿用当年 public/hidden 的历史边界；虽然 hidd
 
 大型产物使用 GitHub Release、对象存储或后续引入 DVC；无论采用哪种方式，Git 中必须有 artifact manifest 和下载/校验命令。
 
+### 5.6 SteinLib/DIMACS 获取与发布许可边界
+
+SteinLib 和 DIMACS 只允许从机器可读 provenance 配置登记的官方 HTTPS 入口
+下载，并在使用前验证 archive/member SHA-256。hash 不一致必须 hard fail，不能
+换镜像、删样本或调整 selector 继续实验。raw cache 始终位于 Git ignored 路径。
+
+在公开发布前若仍无法确认显式再分发许可，release、容器和论文附件只能发布
+官方 URL、source revision、下载/验证脚本、checksum manifest、citation 和许可
+状态，不得携带 raw bytes。checksum 是身份凭据，不是许可证。机器可读政策见
+`configs/steiner/data_provenance_v1.yml`，解释见
+`docs/steiner/DATA_PROVENANCE_POLICY.md`。
+
 ---
 
 ## 6. 实验协议
@@ -739,6 +751,8 @@ tests/steiner/test_{parsers,mcf,solution_checker,determinism}.py
 - 采少量 strong-branch states，检查 score 方差、tie rate、valid rate；
 - 确定 MCF 可承受范围；必要时触发 SCF，而不是盲目缩小网络；
 - 输出用于正式训练的数据参数范围。
+- 进入 pilot 前重查 cgroup CPU/RAM；worker 必须按 1 → 3 → 6 放量，不能因
+  可见 48 个逻辑 CPU 而绕过实际约 8.01 核 quota；
 
 **推荐而非先验真理的 Gate**：
 
@@ -766,6 +780,8 @@ tests/steiner/test_{parsers,mcf,solution_checker,determinism}.py
 - 输出未训练模型的 deterministic forward snapshots；
 - 增加 NaN、empty action、transformed name、parallel edge 测试；
 - 如需 B1，单独定义 `milp_bipartite_v2`，不得悄悄改变 B0。
+- S04 只做未训练模型和 CPU inference 验证，不以 GPU 为进入条件，也不提前
+  开始 S05 的 teacher/IL 训练。
 
 **Gate S04**：full/closure 的候选 logits 最大误差不大于 `1e-5` 且 argmax 100% 一致；任何合法动作可回映射 edge ID；图中无非有限值；B0 参数量和 inference 时间有记录。
 
@@ -953,6 +969,11 @@ tests/steiner/test_{parsers,mcf,solution_checker,determinism}.py
 
 每个 bug 修复必须先添加能复现该 bug 的测试。随机实验的确定性测试检查 manifest/seed/实例，而不是强求所有 GPU kernel bitwise identical。
 
+旧航空 regression 的 4 个基线失败登记在
+`docs/steiner/AVIATION_REGRESSION_BACKLOG.md`。它们必须在 S03 checkpoint 之后
+作为独立维护 workstream 处理；S03 commit range 不得混入旧航空源码、测试、
+build 或旧运行脚本的修复。
+
 ---
 
 ## 11. 计算资源与并行策略
@@ -964,6 +985,12 @@ tests/steiner/test_{parsers,mcf,solution_checker,determinism}.py
 3. 一个 GPU learner 做图 batching；
 4. 根据 p95 worker RSS 决定 worker 数，而不是只看 CPU 核数；
 5. 只有 profile 证明单 GPU 是瓶颈，才使用多 GPU。
+
+2026-09-03 当前容器的实际 cgroup 配额约为 8.01 CPU cores / 65,537 MiB RAM，
+无 swap。6 个单线程 worker 在 CPU 上可行；但 49,152 MiB worker 预算加
+16,384 MiB 预留几乎正好触及内存上限，因此 S03 只能按 1 → 3 → 6 workers
+逐级放量。完整快照和放行条件见
+`configs/steiner/resource_preflight_20260903.yml`。
 
 ### 11.2 为什么多卡通常不是第一优化项
 
