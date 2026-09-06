@@ -1,7 +1,25 @@
 # S05 Changelog — implementation scaffold
 
 Status: pilot-v2 GPU attempt FAILED and retained; pilot-v3 pilot Gate PASS;
-formal experiment NOT_RUN
+formal protocol v1 frozen for pre-audit; formal experiment NOT_RUN
+
+## Formal protocol v1 preregistration
+
+- Froze a non-executable formal configuration with 60 train, 15
+  validation-select and 30 validation-gate base graphs. Three teacher seeds per
+  graph produce 315 registered tasks with no replacement on failure.
+- Froze 640 balanced train states, 160 lineage-disjoint checkpoint-selection
+  states and 320 lineage-disjoint Gate states. Deterministic quota selection
+  round-robins over base graph lineages.
+- Froze fresh training seeds 101/202/303/404/505, one process per V100 and at
+  most two concurrent jobs. Seed 202 is the a-priori representative handoff.
+- Froze a 10,000-replicate paired bootstrap over 30 base-graph lineages,
+  all-seed/all-family improvement requirements and seed-regret CV <= 0.15.
+- Kept the 60% valid, 40% tie, 100% mapping and exact reload 0.0 Gates. Test,
+  final, replacement instances, Gate relaxation and pseudocost label
+  substitution remain prohibited.
+- Added `S05_FORMAL_PROTOCOL_GPT_AUDIT_REQUEST.md`. No formal collection,
+  training, tag or S06 work was performed.
 
 ## Prepared components
 

@@ -17,6 +17,36 @@ scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher
 scripts/steiner/run_with_scip804.sh --python -m compileall -q python/steiner_branching scripts/steiner tests/steiner
 git diff --check
 
+# 2026-09-06 formal protocol v1 registration only. These validation commands
+# do not collect teacher states or train a model. Formal execution remains
+# blocked until the GPT pre-audit returns PASS.
+scripts/steiner/run_with_scip804.sh --python - <<'PY'
+from pathlib import Path
+import yaml
+
+path = Path("configs/steiner/experiments/s05_teacher_il_formal_v1.yml")
+cfg = yaml.safe_load(path.read_text())
+seeds = []
+role_graphs = {}
+for group in cfg["instance_groups"]:
+    role_graphs[group["role"]] = role_graphs.get(group["role"], 0) + len(group["generator_seeds"])
+    seeds.extend(group["generator_seeds"])
+assert role_graphs == {"train": 60, "validation_select": 15, "validation_gate": 30}
+assert len(seeds) == len(set(seeds)) == 105
+assert len(seeds) * len(cfg["teacher"]["collection_seeds"]) == 315
+assert cfg["state_selection"]["selected_state_counts"] == {
+    "train": 640, "validation_select": 160, "validation_gate": 320}
+assert cfg["execution_authorized"] is False
+print("S05 formal protocol static validation PASS")
+PY
+git diff --check
+
+# PROHIBITED before GPT protocol PASS:
+# - formal teacher collection
+# - formal CUDA training
+# - test/final access
+# - S05 Gate/audited tag or S06 work
+
 # Completed v3 run at head 7dd05e3fa0ff38688b3c571d5bc2f1b87369e19f:
 # teacher 12/12; seeds 101/202/303 each completed 16/32/64 with reload error 0.
 scripts/steiner/run_with_scip804.sh --python \

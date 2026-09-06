@@ -5,8 +5,9 @@
 ## 当前状态
 
 - 当前阶段：S05 pilot-v3 teacher 12/12、GPU runs 9/9 和严格聚合全部完成；
-  pilot Gate PASS。V2 确定性失败产物继续保留；正式状态预算/五 seed 训练
-  尚未预注册，完整 S05 Gate NOT_EVALUATED。
+  pilot Gate PASS。V2 确定性失败产物继续保留；formal protocol v1 已冻结但
+  `execution_authorized=false`，等待 GPT 运行前审计，完整 S05 Gate
+  NOT_EVALUATED。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
   `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
   teacher、训练和 Gate 尚未运行，仍禁止 final 访问。
@@ -38,8 +39,9 @@
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：只预注册正式 teacher 状态预算、五 seed 矩阵和 validation
-  significance 规则；获批后再运行。S06、final test 和 S05 tag 继续禁止。
+- 下一步：将 `docs/steiner/audits/S05_FORMAL_PROTOCOL_GPT_AUDIT_REQUEST.md`
+  交 GPT 只读审计。只有 PASS 后才能实现/运行正式 teacher 和五 seed 训练；
+  S06、final test 和 S05 tag 继续禁止。
 
 ## 阶段登记表
 
@@ -70,6 +72,8 @@
 - S03 正式配置：`configs/steiner/experiments/s03_branchability_pilot_v1.yml`
 - S04 B0 配置：`configs/steiner/models/b0_milp_gcnn_v1.yml`
 - S05 active pilot 配置：`configs/steiner/experiments/s05_teacher_il_pilot_v3.yml`
+- S05 formal pre-audit 配置：
+  `configs/steiner/experiments/s05_teacher_il_formal_v1.yml`
 - split：`configs/steiner/splits/split_policy_v1.yml`
 - final seal：`configs/steiner/splits/final_test_v1.yml`
 - SCIP 8.0.4 入口：`scripts/steiner/run_with_scip804.sh`

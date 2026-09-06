@@ -14,6 +14,24 @@
 - formal teacher runs: 0; pilot-v2 failed learning attempts: 9; pilot-v3
   completed learning runs: 9; final access: 0
 
+## Formal protocol v1 static verification
+
+- Frozen formal YAML SHA-256:
+  `c843f76d69c07b1c8a8093ab6f1426656084b2de2f4e9e0d777f1af32cd4c811`.
+- The pre-audit YAML parses under the frozen SCIP/Python wrapper and remains
+  non-executable: `execution_authorized=false`.
+- Exact expansion is 60 train, 15 validation-select and 30 validation-gate base
+  graphs, balanced 12/3/6 per family; 105 unique generator seeds and 315
+  graph-by-teacher tasks.
+- All train/validation seeds lie inside the registered split ranges, are
+  disjoint from each other and from the S05 pilot seeds, and no test/final seed
+  occurs.
+- State quotas sum to 640 train, 160 validation-select and 320 validation-gate;
+  maximum registered observations are 5,040.
+- Static config validation and `git diff --check`: PASS. The complete Steiner
+  suite remains 90 passed and 1 expected PACE-development skip in 63.65 s. No
+  formal collector, trainer, checkpoint or raw output was invoked or created.
+
 ## Verification
 
 ```text

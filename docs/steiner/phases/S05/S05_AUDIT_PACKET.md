@@ -16,11 +16,17 @@
 - pilot-v2: teacher capacity PASS; nine GPU runs failed exact reload parity;
   failed reports/checkpoints retained; pilot-v3 determinism remediation frozen
 - pilot-v3: teacher 12/12 and training 9/9 completed; exact reload max error 0;
-  aggregate primary regret improves through 64 states; formal run not frozen
+  aggregate primary regret improves through 64 states; formal protocol v1 is
+  frozen for pre-audit but not authorized to run
 
 This packet supports the pilot PASS only, not a request to approve the full S05
 scientific Gate. S04 re-audit remains available at
 `docs/steiner/audits/S00_S04_GPT_REAUDIT_REQUEST.md`.
+
+Formal protocol v1 has now been frozen for a separate pre-execution audit at
+`docs/steiner/audits/S05_FORMAL_PROTOCOL_GPT_AUDIT_REQUEST.md`. Its YAML keeps
+`execution_authorized: false`; registration is not evidence that any formal
+teacher or training task ran.
 
 ## Review map
 
@@ -41,8 +47,9 @@ scientific Gate. S04 re-audit remains available at
 
 ## Required future evidence
 
-Before S05 can be audited for full PASS, freeze and attach the formal teacher
-budget/config, five-seed formal report, preregistered validation significance,
+Before S05 can be audited for full PASS, obtain protocol pre-audit PASS, run and
+attach the frozen formal teacher budget/config, five-seed formal report,
+preregistered validation significance,
 exact raw/checkpoint hashes (not bytes), resource/timing evidence and final S05
 Gate JSON. Failed, root-solved, invalid, all-tie and skipped entries must remain
 in denominators/manifests.

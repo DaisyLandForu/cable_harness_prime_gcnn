@@ -1,7 +1,8 @@
 # S05 Plan — Strong-branch teacher and B0 imitation learning
 
 Status: S04 audit prerequisite PASS; pilot-v2 GPU attempt retained as FAILED;
-pilot-v3 deterministic pilot PASS; formal S05 protocol NOT_RUN
+pilot-v3 deterministic pilot PASS; formal protocol v1 FROZEN FOR PRE-AUDIT and
+NOT AUTHORIZED TO RUN
 
 ## Frozen start
 
@@ -114,9 +115,17 @@ invalid strong teacher.
 
 Pilot-v3 now satisfies the pilot checks for all three seeds and all curve sizes.
 Because the aggregate primary metric still improves at the largest tested size,
-the pilot does not establish saturation. A formal state budget and significance
-procedure must be preregistered before formal collection/training; S06 remains
-blocked until the full S05 Gate passes.
+the pilot does not establish saturation. Formal protocol v1 now preregisters
+640 train, 160 checkpoint-selection validation and 320 held-out Gate validation
+states; 105 base graphs / 315 teacher tasks; formal training seeds
+`[101,202,303,404,505]`; and a base-graph paired bootstrap Gate. See
+`S05_FORMAL_PROTOCOL.md` and
+`configs/steiner/experiments/s05_teacher_il_formal_v1.yml`.
+
+The protocol remains deliberately non-executable (`execution_authorized:
+false`) until external GPT pre-audit returns PASS. No formal data or model is
+created by this registration, and S06 remains blocked until the full S05 Gate
+passes.
 
 ## External effects
 

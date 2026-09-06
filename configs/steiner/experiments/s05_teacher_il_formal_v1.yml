@@ -1,0 +1,184 @@
+schema_version: 1
+stage: S05
+experiment_id: s05-teacher-il-formal-v1
+status: preregistered_protocol_pending_gpt_audit
+execution_authorized: false
+required_protocol_audit_outcome: PASS
+activation_method: separate_committed_gpt_pass_record_referencing_protocol_sha256
+protocol_document: docs/steiner/phases/S05/S05_FORMAL_PROTOCOL.md
+solver_stack_id: scip804-ecole081-pyscipopt430
+protocol_id: P1
+formulation_id: rooted_mcf_v1
+bipartite_schema_id: milp_bipartite_v1
+model_id: b0_milp_gcnn_v1
+model_config: configs/steiner/models/b0_milp_gcnn_v1.yml
+split_policy: configs/steiner/splits/split_policy_v1.yml
+required_s04_audited_tag: steiner-s04-audited-v2
+
+limits:
+  time_seconds: 600
+  nodes: 200000
+  memory_mb: 8192
+  threads: 1
+
+controls:
+  presolving_maxrounds: 0
+  separating_maxrounds: 0
+  separating_maxroundsroot: 0
+  heuristics: "off"
+  restart_limit: 0
+  node_selector: estimate
+  propagation: default
+
+teacher:
+  collection_seeds: [1001, 1002, 1003]
+  max_states_per_task: 16
+  iteration_limit_per_candidate: 10000
+  candidate_limit: 0
+  idempotent: false
+  infeasible_gain_cap: 1000000.0
+  tie_relative_tolerance: 1.0e-9
+  trajectory: strong_then_most_infeasible
+  workers: 6
+  required_cpu_cores: 24
+  required_ram_gib: 128
+
+# Every seed names a base-graph lineage. All three teacher seeds run on every
+# listed graph. Validation roles are fixed before collection and never swapped.
+instance_groups:
+  # train: 60 base graphs, 180 teacher tasks
+  - {role: train, split: train, family: sparse_erdos_renyi, bucket_id: small-low, n_nodes: 48, n_terminals: 5, generator_seeds: [101000, 101001, 101002]}
+  - {role: train, split: train, family: sparse_erdos_renyi, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [101003, 101004, 101005, 101006]}
+  - {role: train, split: train, family: sparse_erdos_renyi, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [101007, 101008, 101009, 101010, 101011]}
+  - {role: train, split: train, family: random_geometric, bucket_id: small-low, n_nodes: 48, n_terminals: 5, generator_seeds: [101012, 101013, 101014, 101015, 101016, 101017]}
+  - {role: train, split: train, family: random_geometric, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [101018, 101019, 101020, 101021, 101022, 101023]}
+  - {role: train, split: train, family: grid_with_holes, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [101024, 101025, 101026, 101027, 101028, 101029]}
+  - {role: train, split: train, family: grid_with_holes, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [101030, 101031, 101032, 101033, 101034, 101035]}
+  - {role: train, split: train, family: community_block, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [101036, 101037, 101038, 101039, 101040, 101041, 101042, 101043, 101044, 101045, 101046, 101047]}
+  - {role: train, split: train, family: bridge_bottleneck, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [101048, 101049, 101050, 101051, 101052, 101053]}
+  - {role: train, split: train, family: bridge_bottleneck, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [101054, 101055, 101056, 101057, 101058, 101059]}
+
+  # validation_select: 15 base graphs, 45 teacher tasks
+  - {role: validation_select, split: validation_iid, family: sparse_erdos_renyi, bucket_id: small-low, n_nodes: 48, n_terminals: 5, generator_seeds: [201000]}
+  - {role: validation_select, split: validation_iid, family: sparse_erdos_renyi, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201001]}
+  - {role: validation_select, split: validation_iid, family: sparse_erdos_renyi, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [201002]}
+  - {role: validation_select, split: validation_iid, family: random_geometric, bucket_id: small-low, n_nodes: 48, n_terminals: 5, generator_seeds: [201003, 201004]}
+  - {role: validation_select, split: validation_iid, family: random_geometric, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201005]}
+  - {role: validation_select, split: validation_iid, family: grid_with_holes, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201006, 201007]}
+  - {role: validation_select, split: validation_iid, family: grid_with_holes, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [201008]}
+  - {role: validation_select, split: validation_iid, family: community_block, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201009, 201010, 201011]}
+  - {role: validation_select, split: validation_iid, family: bridge_bottleneck, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201012, 201013]}
+  - {role: validation_select, split: validation_iid, family: bridge_bottleneck, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [201014]}
+
+  # validation_gate: 30 base graphs, 90 teacher tasks
+  - {role: validation_gate, split: validation_iid, family: sparse_erdos_renyi, bucket_id: small-low, n_nodes: 48, n_terminals: 5, generator_seeds: [201015, 201016]}
+  - {role: validation_gate, split: validation_iid, family: sparse_erdos_renyi, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201017, 201018]}
+  - {role: validation_gate, split: validation_iid, family: sparse_erdos_renyi, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [201019, 201020]}
+  - {role: validation_gate, split: validation_iid, family: random_geometric, bucket_id: small-low, n_nodes: 48, n_terminals: 5, generator_seeds: [201021, 201022, 201023]}
+  - {role: validation_gate, split: validation_iid, family: random_geometric, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201024, 201025, 201026]}
+  - {role: validation_gate, split: validation_iid, family: grid_with_holes, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201027, 201028, 201029]}
+  - {role: validation_gate, split: validation_iid, family: grid_with_holes, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [201030, 201031, 201032]}
+  - {role: validation_gate, split: validation_iid, family: community_block, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201033, 201034, 201035, 201036, 201037, 201038]}
+  - {role: validation_gate, split: validation_iid, family: bridge_bottleneck, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seeds: [201039, 201040, 201041]}
+  - {role: validation_gate, split: validation_iid, family: bridge_bottleneck, bucket_id: large-high, n_nodes: 160, n_terminals: 48, generator_seeds: [201042, 201043, 201044]}
+
+# Valid states are selected only after all tasks reach a terminal status. Within
+# each role/family/bucket, selection cycles over every (base graph, teacher seed)
+# trajectory at each state index. No failed task is replaced.
+state_selection:
+  method: lineage_teacher_round_robin_v1
+  ordering: [state_index, canonical_instance_content_sha256, teacher_seed, semantic_sha256]
+  lineage_key: canonical_instance_content_sha256
+  deduplication_key: semantic_sha256
+  deduplicate_before_quota: true
+  reject_cross_role_semantic_duplicates: true
+  train_quotas:
+    sparse_erdos_renyi: {small-low: 32, medium-mid: 48, large-high: 48}
+    random_geometric: {small-low: 64, medium-mid: 64}
+    grid_with_holes: {medium-mid: 64, large-high: 64}
+    community_block: {medium-mid: 128}
+    bridge_bottleneck: {medium-mid: 64, large-high: 64}
+  validation_select_quota_per_family: 32
+  validation_gate_quota_per_family: 64
+  selected_state_counts:
+    train: 640
+    validation_select: 160
+    validation_gate: 320
+
+training:
+  formal_seeds: [101, 202, 303, 404, 505]
+  train_states: 640
+  epochs: 40
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  gradient_clip_norm: 1.0
+  target_temperature: 1.0
+  device: cuda
+  gpu_model: Tesla V100-SXM2-32GB
+  cpu_cores_per_job: 8
+  ram_gib_per_job: 32
+  one_process_per_gpu: true
+  max_concurrent_training_jobs: 2
+  deterministic_algorithms: true
+  cublas_workspace_config: ":4096:8"
+  checkpoint_selection:
+    role: validation_select
+    metric: normalized_strong_branch_regret
+    direction: minimize
+    tie_break: earliest_epoch
+  gate_evaluation_role: validation_gate
+  representative_checkpoint_seed: 202
+
+statistics:
+  bootstrap_seed: 20260902
+  bootstrap_replicates: 10000
+  confidence_level: 0.95
+  resampling_unit: base_graph_lineage
+  state_aggregation_within_lineage: mean
+  seed_aggregation_within_lineage: mean
+  primary_effect: random_regret_minus_model_regret
+  random_baseline_seed: 20260902
+  random_baseline_method: per_state_sha256_seeded_uniform_candidate_scores_v1
+  confidence_interval_quantiles: [0.025, 0.975]
+  percentile_method: linear
+  coefficient_of_variation_definition: sample_std_ddof_1_divided_by_mean
+  coefficient_of_variation_zero_mean_rule: pass_only_if_all_five_regrets_are_zero
+  supplemental_test: wilcoxon_signed_rank_with_holm
+
+artifacts:
+  raw_root: results/steiner/raw/s05/s05-teacher-il-formal-v1
+  report_root: results/steiner/s05/s05-teacher-il-formal-v1
+  checkpoint_root: checkpoints/steiner/s05/s05-teacher-il-formal-v1
+
+gate:
+  expected_base_graphs: 105
+  expected_teacher_tasks: 315
+  expected_max_states: 5040
+  teacher_valid_fraction_denominator: expected_max_states
+  all_tie_fraction_denominator: valid_observed_states_before_deduplication
+  action_mapping_denominator: all_observed_candidate_rows
+  min_teacher_valid_state_fraction: 0.60
+  max_teacher_all_tie_valid_state_fraction: 0.40
+  required_action_mapping_rate: 1.0
+  require_all_tasks_terminal: true
+  require_zero_task_failures: true
+  require_all_state_quotas_met: true
+  require_zero_split_or_role_leakage: true
+  require_all_training_seeds_complete: true
+  require_every_seed_mean_improvement_over_random: true
+  require_every_family_aggregate_mean_improvement_over_random: true
+  require_primary_bootstrap_ci_lower_bound_above_zero: true
+  max_seed_regret_coefficient_of_variation: 0.15
+  require_checkpoint_reload_max_abs_error: 0.0
+  require_checkpoint_state_dict_bit_exact: true
+  require_manifest_checksum_reload: true
+  prohibit_test_and_final_access: true
+
+failure_policy:
+  retain_failed_and_skipped_tasks: true
+  retain_failed_training_seeds: true
+  allow_replacement_instances: false
+  allow_gate_relaxation: false
+  allow_pseudocost_label_substitution: false
+  allow_post_collection_protocol_change: false
+  on_failure: stop_before_S06_and_open_audited_protocol_revision
