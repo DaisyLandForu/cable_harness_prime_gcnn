@@ -4,8 +4,10 @@
 
 - S04 remediation audit: PASS; `steiner-s04-audited-v2` exists locally.
 - S05 pilot-v1 teacher: complete but only 53 valid train states.
-- S05 pilot-v2 teacher: preregistered / NOT_RUN.
-- S05 pilot training report: NOT_RUN / absent.
+- S05 pilot-v2 teacher: PASS capacity; all three v2 seed reports retained FAILED
+  on incomplete CUDA determinism.
+- S05 pilot-v3: same experiment with complete deterministic CUDA controls;
+  teacher/training NOT_RUN.
 - Formal teacher state count: not frozen; formal collection/training must not start
   until the pilot learning curve has been analyzed.
 
@@ -16,7 +18,7 @@ jobs.
 
 ## Job A: teacher pilot
 
-- job name: `s05-teacher-pilot-v2`
+- job name: `s05-teacher-pilot-v3`
 - CPU: 12 cores (24 is safe but does not increase the frozen 6-worker limit)
 - memory: 64 GiB (128 GiB is a conservative alternative)
 - GPU: 0
@@ -34,10 +36,10 @@ scripts/steiner/run_s05_teacher_batch.sh 6
 ```
 
 Do not submit GPU training until this job exits with code 0 and
-`results/steiner/raw/s05/s05-teacher-il-pilot-v2/manifest.json` reports
+`results/steiner/raw/s05/s05-teacher-il-pilot-v3/manifest.json` reports
 `status: completed`.
 
-## Jobs B1/B2: parallel pilot training on two GPUs
+## Jobs B101/B202/B303: seed-isolated pilot training
 
 Each job requests one scheduler-managed GPU. Do not override
 `CUDA_VISIBLE_DEVICES`; each container uses its assigned logical `cuda:0`.
@@ -49,15 +51,15 @@ Common resources:
 - GPU: 1 V100 32 GiB
 - image/shell/mount/working directory: same as Job A
 
-Job B1:
+Job B101:
 
 ```bash
 set -euo pipefail
 cd /home/duweiyue25/SCIP_Merge/cable_harness_prim_gcnn
-scripts/steiner/run_s05_pilot_seed_batch.sh 101 303
+scripts/steiner/run_s05_pilot_seed_batch.sh 101
 ```
 
-Job B2:
+Job B202:
 
 ```bash
 set -euo pipefail
@@ -65,8 +67,17 @@ cd /home/duweiyue25/SCIP_Merge/cable_harness_prim_gcnn
 scripts/steiner/run_s05_pilot_seed_batch.sh 202
 ```
 
-These jobs write disjoint checkpoints and reports. They may run concurrently
-after Job A succeeds.
+Job B303:
+
+```bash
+set -euo pipefail
+cd /home/duweiyue25/SCIP_Merge/cable_harness_prim_gcnn
+scripts/steiner/run_s05_pilot_seed_batch.sh 303
+```
+
+These jobs write disjoint checkpoints and reports. B101/B202 may run
+concurrently after Job A succeeds. With two GPUs, B303 waits for either one to
+finish or remains queued as a third scheduler job.
 
 ## Job C: strict pilot aggregation
 
@@ -75,7 +86,7 @@ after Job A succeeds.
 - memory: 4 GiB
 - GPU: 0
 - image/shell/mount/working directory: same as Job A
-- start only after B1 and B2 both exit with code 0
+- start only after B101, B202 and B303 all exit with code 0
 - startup command:
 
 ```bash
@@ -83,9 +94,10 @@ set -euo pipefail
 cd /home/duweiyue25/SCIP_Merge/cable_harness_prim_gcnn
 scripts/steiner/run_with_scip804.sh --python \
   scripts/steiner/aggregate_s05_pilot_training.py \
-  --config configs/steiner/experiments/s05_teacher_il_pilot_v2.yml \
-  --input results/steiner/s05/s05-teacher-il-pilot-v2/pilot_training_shards/seeds-101-303.json \
-  --input results/steiner/s05/s05-teacher-il-pilot-v2/pilot_training_shards/seeds-202.json
+  --config configs/steiner/experiments/s05_teacher_il_pilot_v3.yml \
+  --input results/steiner/s05/s05-teacher-il-pilot-v3/pilot_training_shards/seeds-101.json \
+  --input results/steiner/s05/s05-teacher-il-pilot-v3/pilot_training_shards/seeds-202.json \
+  --input results/steiner/s05/s05-teacher-il-pilot-v3/pilot_training_shards/seeds-303.json
 ```
 
 The aggregate fails if a registered seed or learning-curve run is missing,

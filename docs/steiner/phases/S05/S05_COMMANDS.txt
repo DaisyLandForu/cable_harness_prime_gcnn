@@ -17,6 +17,20 @@ scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher
 scripts/steiner/run_with_scip804.sh --python -m compileall -q python/steiner_branching scripts/steiner tests/steiner
 git diff --check
 
+# Pilot-v2 retained GPU failure: seeds 101/202/303 each completed 16/32/64 x 40
+# epochs, then failed exact checkpoint-logit reload parity (nonzero CUDA noise).
+# No failed report or checkpoint was deleted/relabelled.
+
+# Pilot-v3 deterministic remediation verification:
+CUBLAS_WORKSPACE_CONFIG=:4096:8 scripts/steiner/run_with_scip804.sh --python \
+  -m pytest -q tests/steiner/test_s05_teacher_il.py
+CUBLAS_WORKSPACE_CONFIG=:4096:8 scripts/steiner/run_with_scip804.sh --python \
+  -m pytest -q tests/steiner
+scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/collect_s05_teacher.py \
+  --config configs/steiner/experiments/s05_teacher_il_pilot_v3.yml --dry-run
+git diff --check
+
 # Future commands only; do not run before S04 GPT PASS/audited tag.
 # CPU collection:
 # scripts/steiner/run_s05_teacher_tmux.sh steiner-s05-teacher 6

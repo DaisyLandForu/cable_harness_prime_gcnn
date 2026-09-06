@@ -1,7 +1,7 @@
 # S05 Plan — Strong-branch teacher and B0 imitation learning
 
-Status: S04 audit prerequisite PASS; pilot-v1 teacher complete but train capacity
-insufficient; pilot-v2 preregistered and NOT_RUN
+Status: S04 audit prerequisite PASS; pilot-v2 GPU attempt retained as FAILED;
+pilot-v3 CUDA determinism remediation preregistered and NOT_RUN
 
 ## Frozen start
 
@@ -72,6 +72,13 @@ added train seeds 100303 (sparse) and 100315 (grid), chosen from S03's existing
 branchability evidence. V1 and v2 use separate experiment IDs, paths and hashes.
 See `S05_PILOT_V2_AMENDMENT.md`.
 
+Pilot-v2 subsequently collected 85 valid train and 64 valid validation states,
+but all nine GPU curve/seed runs failed the exact checkpoint-logit reload check
+because CUDA determinism was incomplete. Pilot-v3 keeps the exact Gate and all
+experimental choices, adds the complete cuBLAS/PyTorch determinism contract,
+and writes to independent paths. See
+`S05_PILOT_V3_DETERMINISM_REMEDIATION.md`.
+
 The learning curve remains nested train-state prefixes `[16, 32, 64]` and
 training seeds `[101,202,303]`. These are engineering/pilot runs, not formal
 results. A later formal state count may be frozen only after the pilot analysis;
@@ -88,6 +95,8 @@ it cannot be chosen with final-test evidence.
 - normalization sees train shards only;
 - listwise loss/metrics handle ties and reject invalid/non-finite labels;
 - checkpoint reload reproduces logits exactly on a fixed state;
+- real CUDA repeated inference and checkpoint reload are bit exact under the
+  registered cuBLAS/PyTorch determinism contract;
 - CPU-only unit/integration tests pass before any GPU command is handed off.
 
 ## Future Gate and stop conditions

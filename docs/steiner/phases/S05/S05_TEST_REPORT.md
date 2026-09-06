@@ -9,7 +9,9 @@
   `34ac665eef539fa2b0f9129fb1c2e8e250ce3252289cbd2d5676dfd13e16a0fd`
 - pilot-v2 config canonical SHA-256:
   `2146e7d67dadcef93746400a08d10441e051745075fc7a39348c5b6c80b6cacf`
-- formal teacher runs: 0; learning runs: 0; GPU calls: 0; final access: 0
+- pilot-v3 config canonical SHA-256:
+  `cccb611deba26726772680416f49b7404c281e3520ee813dde4b2b4a100f178f`
+- formal teacher runs: 0; pilot-v2 learning attempts: 9; final access: 0
 
 ## Verification
 
@@ -62,6 +64,11 @@ git diff --check
 - Post-v2 implementation suite: S05 targeted 9 passed; complete Steiner suite
   87 passed, 1 expected PACE-development skip in 29.98 s. Shell/Python syntax
   and `git diff --check` pass.
+- Pilot-v3 remediation suite: S05 targeted 12 passed in 6.30 s; complete Steiner
+  suite 90 passed, 1 expected PACE-development skip in 32.46 s. The added real
+  V100 test performs deterministic training, repeated inference and checkpoint
+  reload with strict array equality. Missing/changed cuBLAS configuration fails
+  closed. Python/shell syntax and `git diff --check` pass.
 
 ## Preserved implementation failures
 
@@ -82,10 +89,14 @@ No Gate, data list, seed or threshold changed in response.
    the local `solution_frac` validation incorrectly rejected legal values above
    0.5. Counts (65 observed, 56 valid, 1,540/1,540 mapped) and every failed task
    are retained. This was fixed before retry without weakening any S05 Gate.
+5. Pilot-v2 GPU attempt: all nine training runs completed 40 epochs and wrote
+   checkpoints, then failed exact reload parity because CUDA deterministic
+   algorithms and cuBLAS workspace policy were not fully enabled. The failure
+   reports and artifacts are retained; no threshold was relaxed.
 
 ## Gate
 
-The implementation tests **PASS**, but S05 scientific Gate is **NOT_RUN**. It
-cannot be evaluated until CPU teacher collection, GPU training, multi-seed
-validation metrics and manifest reload evidence exist. The S04 re-audit
-prerequisite is already PASS.
+The remediation implementation tests **PASS**, but the latest completed S05
+scientific attempt is **FAIL**. Pilot-v3 must recollect its commit-bound teacher
+manifest and produce three exact-reload seed reports before aggregation. The
+S04 re-audit prerequisite remains PASS.

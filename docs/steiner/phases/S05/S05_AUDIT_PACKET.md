@@ -4,14 +4,16 @@
 
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
-- content SHA: `e9722cf84a51433af06c98318a401b51ce2f15c2`
-- substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..e9722cf84a51433af06c98318a401b51ce2f15c2`
+- latest remediation content SHA: `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
+- substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
-- S05 Gate: NOT_RUN; no local-gate or audited tag is permitted
+- S05 Gate: pilot-v2 FAIL; pilot-v3 NOT_RUN; no local-gate/audited tag permitted
 - teacher attempt 1: FAILED and retained; fraction-semantics remediation tested
 - pilot-v1 retry: 10/10 completed, teacher-quality checks PASS, but only 53 valid
   train states; pilot-v2 capacity amendment preregistered before any GPU run
+- pilot-v2: teacher capacity PASS; nine GPU runs failed exact reload parity;
+  failed reports/checkpoints retained; pilot-v3 determinism remediation frozen
 
 This packet is an engineering review entry, not a request to approve S05
 scientific results. S04 re-audit remains available at
@@ -29,6 +31,7 @@ scientific results. S04 re-audit remains available at
 | train-only normalization | `learning/imitation.py` | validation rejection test |
 | listwise objective/metrics | same | gradient/regret/rank/top-k tests |
 | checkpoint reproduction | checksum manifest + strict reload | bit-exact state-dict reload |
+| CUDA determinism | fixed cuBLAS env + PyTorch deterministic algorithms | real V100 repeat/reload exact test |
 | interrupted long jobs | two tmux launchers | shell syntax and path review |
 | scheduler parallelism | seed-selecting foreground launcher + strict aggregator | disjoint/duplicate/missing matrix tests |
 | no premature run | required audited tag + CUDA checks | dry-run only; counters remain zero |
@@ -43,5 +46,5 @@ invalid, all-tie and skipped entries must remain in denominators/manifests.
 
 ## Suggested current conclusion
 
-Implementation-only **PASS**, scientific stage **NOT_RUN**. Do not create an S05
-Gate tag, start S06, or treat the absence of a run as a negative experiment.
+Remediation implementation **PASS**, latest scientific attempt **FAIL**. Do not
+create an S05 Gate tag or start S06. Only the registered v3 rerun is authorized.

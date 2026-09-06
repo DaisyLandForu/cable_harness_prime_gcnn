@@ -4,9 +4,9 @@
 
 ## 当前状态
 
-- 当前阶段：S04 remediation 已推送；S05 pilot-v1 teacher 修复后 10/10 完成，
-  teacher 质量通过但只有 53 个有效 train states。用户已批准、代码已预注册
-  pilot-v2 容量扩充，v2 teacher 尚未运行。
+- 当前阶段：S05 pilot-v2 teacher 12/12 完成并提供 85 个有效 train states；
+  三个 GPU seeds 的九次训练均完成，但因 CUDA 确定性控制不完整而在严格
+  checkpoint reload Gate 失败。失败产物保留，pilot-v3 remediation 已预注册。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
   `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
   teacher、训练和 Gate 尚未运行，仍禁止 final 访问。
@@ -27,18 +27,19 @@
 - S04 B0：19/5/1、68,161 parameters；3 个真实 SCIP branch states、31/31
   candidates 映射；2,943/2,943 variable rows 通过 canonical probindex identity；
   full/closure 最大 logit 误差 0、argmax 3/3 一致；remediation Gate 8/8 PASS。
-- S05 scaffold：10 个 preregistered pilot tasks、strong child-validity bridge、
+- S05 scaffold：12 个 preregistered pilot tasks、strong child-validity bridge、
   checksum shards、listwise IL/metrics/checkpoint reload、CPU/GPU foreground/tmux
   launchers和严格 seed-shard 汇总；87 passed、1 expected skip。training/GPU runs
-  均为 0。pilot-v1 retry 为 10 completed、126 observed、117 valid、
-  3,086/3,086 mapped，但 train valid 53 < 64；S05 Gate NOT_RUN。
-- 资源：正式运行和换机恢复环境都是 24.01-core cgroup/128 GiB RAM；恢复环境
-  无 GPU。S03 CPU-only，未申请或使用训练资源。
+  pilot-v2 teacher 为 12 completed、158 observed、149 valid、3,939/3,939
+  mapped、train valid 85。v2 GPU exact-reload Gate FAIL；v3 tests 为 90 passed、
+  1 expected skip；S05 Gate FAIL，禁止进入 S06。
+- 资源：当前 S05 host 可见 128 GiB RAM 和 2 张 Tesla V100-SXM2 32GB；
+  pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：先运行 S05 CPU teacher pilot-v2；成功且 train valid ≥64 后并行
-  运行单 GPU imitation pilot 作业并严格汇总；保留所有失败、skipped、
-  invalid-child 与 seed 结果。
+- 下一步：从 v3 metadata head 重采相同 12-task teacher manifest，并行重跑
+  GPU seeds 101/202；用户随后提交 seed 303，三者 exact reload 全部为 0 后才
+  严格汇总。保留所有 v2 失败、skipped、invalid-child 与 seed 结果。
 
 ## 阶段登记表
 
@@ -51,7 +52,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | v1 teacher quality PASS / capacity insufficient；v2 NOT_RUN | NOT_RUN | `e9722cf84a51433af06c98318a401b51ce2f15c2` | pilot-v2 preregistration metadata commit |
+| S05 | Strong-branch teacher 与 IL | v2 GPU FAIL；v3 remediation NOT_RUN | NOT_RUN | `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd` | pending v3 metadata commit |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |
@@ -68,7 +69,7 @@
 - 协议/seed/指标：`configs/steiner/experiments/protocols_v1.yml`
 - S03 正式配置：`configs/steiner/experiments/s03_branchability_pilot_v1.yml`
 - S04 B0 配置：`configs/steiner/models/b0_milp_gcnn_v1.yml`
-- S05 pilot 配置：`configs/steiner/experiments/s05_teacher_il_pilot_v1.yml`
+- S05 active pilot 配置：`configs/steiner/experiments/s05_teacher_il_pilot_v3.yml`
 - split：`configs/steiner/splits/split_policy_v1.yml`
 - final seal：`configs/steiner/splits/final_test_v1.yml`
 - SCIP 8.0.4 入口：`scripts/steiner/run_with_scip804.sh`
@@ -90,7 +91,8 @@
    quality 和 learning curve。
 5. 正式 shards 跨 Gold 6148 和 Silver 4214 两个 CPU host；不得做 wall-time
    baseline 排名。固定资源 Gate 有很大安全余量。
-6. 恢复服务器没有 GPU；S04 未使用 GPU，S05 首次训练前必须重新验收 CUDA。
+6. 当前两张 V100 的 CUDA preflight 均通过；pilot-v2 暴露的是确定性配置缺口，
+   不是显存或 CUDA 可见性问题。V3 每个作业仍必须独立执行 preflight。
 7. SteinLib/DIMACS 未确认再分发许可；继续只提交官方 source/checksum，不提交 raw。
 8. 旧航空 4 个既有失败未在 S03/S04 混改；首次 S00--S04 GPT audit 的
    CONDITIONAL PASS 已通过 S04 remediation 复审升级为 PASS。

@@ -1,6 +1,7 @@
 # S05 Changelog — implementation scaffold
 
-Status: source complete for CPU verification; formal experiment NOT_RUN
+Status: pilot-v2 GPU attempt FAILED and retained; pilot-v3 determinism
+remediation registered; formal experiment NOT_RUN
 
 ## Prepared components
 
@@ -39,11 +40,10 @@ Status: source complete for CPU verification; formal experiment NOT_RUN
 
 ## Deliberate blockers and non-goals
 
-- S04 re-audit subsequently passed and `steiner-s04-audited-v2` now anchors the
-  S04 phase head. Collection remains NOT_RUN pending the scheduled job/resource
-  preflight.
-- No formal teacher shard, learned update, GPU call, checkpoint or validation
-  result was produced. `formal_gate_evaluated` remains false by construction.
+- S04 re-audit passed and `steiner-s04-audited-v2` anchors the S04 phase head.
+- No formal teacher shard or formal training was produced.
+  `formal_gate_evaluated` remains false by construction; all completed GPU work
+  is explicitly classified as pilot.
 - No final-test selector/data was read, and no S03 task, 19/5/1 schema, Gate,
   aviation source or legacy failure was changed.
 - Exact online relpscost comparison remains S06. S05 stores pre-teacher SCIP
@@ -73,3 +73,17 @@ Status: source complete for CPU verification; formal experiment NOT_RUN
   S03-proven train tasks: sparse seed 100303 and grid seed 100315. It preserves
   all seeds, limits, curve sizes and Gates, and writes to independent v2 raw,
   report and checkpoint roots.
+
+## Pilot-v2 GPU failure and pilot-v3 remediation
+
+- Pilot-v2 teacher completed 12/12 with 85 valid train and 64 valid validation
+  states. All three seeds completed every 40-epoch curve run, but exact reload
+  parity failed on CUDA logit noise between `9.5367431640625e-07` and
+  `1.52587890625e-05`.
+- State dicts and normalization reloaded bit exactly; even repeated inference
+  without reload reproduced the noise. V2 reports/checkpoints remain failed.
+- Pilot-v3 freezes `CUBLAS_WORKSPACE_CONFIG=:4096:8` before process start and
+  enables PyTorch deterministic algorithms. Preflight/report/checkpoint
+  manifests record the controls and mismatches fail closed.
+- The zero-error reload Gate, tasks, data, seeds, model, optimizer, curve,
+  epochs and metrics were not changed.

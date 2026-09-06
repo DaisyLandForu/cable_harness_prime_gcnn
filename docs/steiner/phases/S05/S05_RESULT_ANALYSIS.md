@@ -1,4 +1,4 @@
-# S05 Result Analysis — no learned result yet
+# S05 Result Analysis — pilot-v2 failed; deterministic rerun pending
 
 This checkpoint answers only whether the planned S05 pipeline is ready to run;
 it does not answer whether imitation learning works.
@@ -13,8 +13,9 @@ it does not answer whether imitation learning works.
   probindex-to-edge identity.
 - Train-only normalization, listwise optimization, ranking metrics, baseline
   diagnostics and checkpoint reload are executable on synthetic test fixtures.
-- The S04 audited tag prerequisite is satisfied. Pilot-v2 data and CUDA
-  training remain pending, so no learned claim can be produced.
+- The S04 audited tag prerequisite is satisfied. Pilot-v2 data/training are
+  retained as failed evidence; pilot-v3 is pending, so no learned claim can be
+  produced.
 
 ## Pilot-v1 teacher result
 
@@ -30,14 +31,24 @@ quality. No GPU/model run was attempted.
 
 ## What is not established
 
-- No training seed has run; there is no learning curve, validation regret,
-  stability result, checkpoint, GPU utilization or runtime estimate yet.
+- No training seed has yet produced a Gate-eligible completed report; v2
+  histories/checkpoints are failure diagnostics rather than a learning claim.
 - The implementation test's one real state is ABI/correctness evidence, not a
   dataset-quality estimate.
 - Pseudocost is only an offline diagnostic. It is not the full relpscost solver
   behavior and must not be reported as such.
 - Nothing here supports progression to S06 or any claim that learned branching
   beats random, most-infeasible, pseudocost or relpscost.
+
+## Pilot-v2 GPU result
+
+The v2 data-capacity amendment succeeded, but its GPU run is not an eligible
+learned result. Seeds 101/202/303 each completed the 16/32/64-state, 40-epoch
+matrix and wrote checkpoints. Every run then failed the unchanged exact reload
+Gate due to non-deterministic CUDA logit differences. Checksums, state dicts and
+normalization were intact, and repeated inference of the same in-memory model
+showed the same noise. These metrics are diagnostic only and are not promoted
+to completed results.
 
 ## Teacher attempt 1 (failed, retained)
 
@@ -53,7 +64,7 @@ and cannot combine the old attempt's successful shards with new-code shards.
 
 ## Current decision
 
-Teacher-quality evidence from v1: **PASS**. Complete S05 scientific Gate:
-**NOT_RUN / STOP before GPU**. Pilot-v2 is preregistered solely to satisfy the
-unchanged 64-state train capacity and must pass the conditions in
-`S05_PILOT_V2_AMENDMENT.md` before training is released.
+Teacher-quality evidence: **PASS**. Latest complete GPU attempt: **FAIL**.
+Complete S05 scientific Gate: **FAIL / STOP before S06**. Pilot-v3 is the only
+authorized rerun and keeps the exact zero-error Gate; it must satisfy
+`S05_PILOT_V3_DETERMINISM_REMEDIATION.md` before aggregation.
