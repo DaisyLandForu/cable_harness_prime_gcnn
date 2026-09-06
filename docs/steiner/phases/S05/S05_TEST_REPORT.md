@@ -32,6 +32,23 @@
   suite remains 90 passed and 1 expected PACE-development skip in 63.65 s. No
   formal collector, trainer, checkpoint or raw output was invoked or created.
 
+## Formal implementation verification
+
+- The audited YAML and explanation SHA-256 values are checked at runtime; a
+  separate PASS activation record is mandatory and S06 remains false.
+- Formal dry-run expands exactly 315 tasks: 180 train, 45 validation-select and
+  90 validation-gate. Any byte change to the audited YAML fails closed.
+- Selection tests require 640/160/320 states, reject graph lineage role leakage
+  and retain quota shortages instead of substituting instances.
+- Statistical tests use 30 graph lineages, reproduce the paired bootstrap and
+  turn a negative model-minus-random direction into formal Gate FAIL.
+- Targeted S05 formal+pilot suite: 15 passed. Both V100 identities and the
+  deterministic CUDA preflight were verified; no training was performed by the
+  preflight.
+- Complete Steiner suite after formal implementation: 93 passed and 1 expected
+  PACE-development skip in 36.93 s. Python compilation, shell syntax and
+  `git diff --check` pass.
+
 ## Verification
 
 ```text

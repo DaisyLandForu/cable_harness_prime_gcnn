@@ -21,6 +21,21 @@ formal protocol v1 frozen for pre-audit; formal experiment NOT_RUN
 - Added `S05_FORMAL_PROTOCOL_GPT_AUDIT_REQUEST.md`. No formal collection,
   training, tag or S06 work was performed.
 
+## Formal implementation after protocol audit PASS
+
+- Recorded the user-supplied GPT PASS in a machine-readable activation record
+  bound to the immutable protocol content head and both file hashes.
+- Added a byte-exact formal loader and exact 105-graph/315-task expansion.
+- Added six-worker collection, terminal-status retention, teacher Gate
+  aggregation and deterministic 640/160/320 role selection with lineage checks.
+- Added fresh, one-V100-per-seed training with validation-select checkpointing,
+  held-out validation-gate evaluation, exact full-Gate reload comparison and
+  overwrite refusal.
+- Added five-seed aggregation using 30 graph-lineage bootstrap units, the frozen
+  all-seed/all-family/CV Gates and supplemental Wilcoxon/Holm diagnostics.
+- Added batch and tmux launchers plus a scheduler job guide. No DDP or training
+  semantic was introduced.
+
 ## Prepared components
 
 - Added a strict pilot config covering five train and five validation-IID

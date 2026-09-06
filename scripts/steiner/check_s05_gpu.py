@@ -19,6 +19,10 @@ if str(PYTHON_ROOT) not in sys.path:
 
 from steiner_branching.learning.imitation import atomic_write_json  # noqa: E402
 from steiner_branching.learning.imitation import enable_cuda_determinism  # noqa: E402
+from steiner_branching.learning.formal_protocol import (  # noqa: E402
+    FORMAL_CONFIG_PATH,
+    load_s05_formal_config,
+)
 from steiner_branching.learning.teacher_data import (  # noqa: E402
     EXPECTED_STACK_ID,
     load_s05_config,
@@ -38,7 +42,11 @@ def main() -> int:
     config_path = Path(args.config)
     if not config_path.is_absolute():
         config_path = REPO / config_path
-    config = load_s05_config(config_path)
+    config = (
+        load_s05_formal_config(config_path, require_activation=True)
+        if config_path.resolve() == FORMAL_CONFIG_PATH.resolve()
+        else load_s05_config(config_path)
+    )
     training = config["training"]
     if training.get("deterministic_algorithms") is not True:
         raise RuntimeError("S05 GPU preflight requires deterministic algorithms")

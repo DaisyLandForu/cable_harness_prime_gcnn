@@ -6,6 +6,8 @@
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
 - latest remediation content SHA: `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
 - formal protocol v1 content SHA: `d1717a7ecb6043efd71678175a92325ac9ff4208`
+- formal protocol pre-execution audit: user reports GPT PASS; activation record
+  `docs/steiner/audits/S05_FORMAL_PROTOCOL_AUDIT_RECORD.json`
 - substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
@@ -28,6 +30,11 @@ Formal protocol v1 has now been frozen for a separate pre-execution audit at
 `docs/steiner/audits/S05_FORMAL_PROTOCOL_GPT_AUDIT_REQUEST.md`. Its YAML keeps
 `execution_authorized: false`; registration is not evidence that any formal
 teacher or training task ran.
+
+The user subsequently reported a GPT `PASS` authorizing formal implementation
+and execution. The activation record binds that verdict to the frozen YAML and
+protocol hashes, keeps the complete S05 Gate unevaluated, and does not authorize
+S06. Formal code requires that record and the byte-exact audited YAML.
 
 ## Review map
 

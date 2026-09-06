@@ -47,6 +47,22 @@ git diff --check
 # - test/final access
 # - S05 Gate/audited tag or S06 work
 
+# User-reported GPT protocol audit PASS activation and formal implementation:
+scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/collect_s05_formal_teacher.py --dry-run
+CUBLAS_WORKSPACE_CONFIG=:4096:8 scripts/steiner/run_with_scip804.sh --python \
+  -m pytest -q tests/steiner/test_s05_formal.py tests/steiner/test_s05_teacher_il.py
+bash -n scripts/steiner/run_s05_formal_teacher_batch.sh \
+  scripts/steiner/run_s05_formal_teacher_tmux.sh \
+  scripts/steiner/run_s05_formal_seed_batch.sh \
+  scripts/steiner/run_s05_formal_seed_tmux.sh
+
+# Formal CPU collection must PASS before either training command:
+scripts/steiner/run_s05_formal_teacher_tmux.sh steiner-s05-formal-teacher 6
+# After teacher PASS, at most two concurrent one-V100 seed processes:
+scripts/steiner/run_s05_formal_seed_tmux.sh steiner-s05-formal-101 0 101
+scripts/steiner/run_s05_formal_seed_tmux.sh steiner-s05-formal-202 1 202
+
 # Completed v3 run at head 7dd05e3fa0ff38688b3c571d5bc2f1b87369e19f:
 # teacher 12/12; seeds 101/202/303 each completed 16/32/64 with reload error 0.
 scripts/steiner/run_with_scip804.sh --python \
