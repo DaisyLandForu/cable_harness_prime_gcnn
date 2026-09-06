@@ -1,0 +1,78 @@
+schema_version: 1
+stage: S05
+experiment_id: s05-teacher-il-pilot-v3
+solver_stack_id: scip804-ecole081-pyscipopt430
+protocol_id: P1
+formulation_id: rooted_mcf_v1
+bipartite_schema_id: milp_bipartite_v1
+model_id: b0_milp_gcnn_v1
+model_config: configs/steiner/models/b0_milp_gcnn_v1.yml
+split_policy: configs/steiner/splits/split_policy_v1.yml
+required_s04_audited_tag: steiner-s04-audited-v2
+
+limits:
+  time_seconds: 600
+  nodes: 200000
+  memory_mb: 8192
+  threads: 1
+
+controls:
+  presolving_maxrounds: 0
+  separating_maxrounds: 0
+  separating_maxroundsroot: 0
+  heuristics: "off"
+  restart_limit: 0
+  node_selector: estimate
+  propagation: default
+
+teacher:
+  collection_seeds_pilot: [1001]
+  collection_seeds_formal: [1001, 1002, 1003]
+  max_states_per_task: 16
+  iteration_limit_per_candidate: 10000
+  candidate_limit: 0
+  idempotent: false
+  infeasible_gain_cap: 1000000.0
+  tie_relative_tolerance: 1.0e-9
+  trajectory: strong_then_most_infeasible
+
+pilot_instances:
+  - {split: train, family: sparse_erdos_renyi, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 100302}
+  - {split: train, family: random_geometric, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 100308}
+  - {split: train, family: grid_with_holes, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 100314}
+  - {split: train, family: community_block, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 100320}
+  - {split: train, family: bridge_bottleneck, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 100326}
+  - {split: validation_iid, family: sparse_erdos_renyi, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 200000}
+  - {split: validation_iid, family: random_geometric, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 200001}
+  - {split: validation_iid, family: grid_with_holes, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 200002}
+  - {split: validation_iid, family: community_block, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 200003}
+  - {split: validation_iid, family: bridge_bottleneck, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 200004}
+  - {split: train, family: sparse_erdos_renyi, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 100303}
+  - {split: train, family: grid_with_holes, bucket_id: medium-mid, n_nodes: 96, n_terminals: 19, generator_seed: 100315}
+
+training:
+  pilot_seeds: [101, 202, 303]
+  formal_seeds: [101, 202, 303, 404, 505]
+  learning_curve_train_states: [16, 32, 64]
+  epochs: 40
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  gradient_clip_norm: 1.0
+  target_temperature: 1.0
+  device: cuda
+  deterministic_algorithms: true
+  cublas_workspace_config: ":4096:8"
+  checkpoint_root: checkpoints/steiner/s05/s05-teacher-il-pilot-v3
+
+artifacts:
+  raw_root: results/steiner/raw/s05/s05-teacher-il-pilot-v3
+  report_root: results/steiner/s05/s05-teacher-il-pilot-v3
+
+gate:
+  min_teacher_valid_state_fraction: 0.60
+  max_teacher_all_tie_valid_state_fraction: 0.40
+  required_action_mapping_rate: 1.0
+  require_validation_regret_better_than_random: true
+  require_all_pilot_training_seeds: true
+  require_zero_split_leakage: true
+  require_checkpoint_reload_parity: true

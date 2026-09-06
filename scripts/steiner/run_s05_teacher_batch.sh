@@ -9,7 +9,7 @@ REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd -P)"
 readonly REPO_ROOT
 
 workers="${1:-6}"
-config="${S05_CONFIG:-configs/steiner/experiments/s05_teacher_il_pilot_v2.yml}"
+config="${S05_CONFIG:-configs/steiner/experiments/s05_teacher_il_pilot_v3.yml}"
 [[ "$workers" =~ ^[1-6]$ ]] || {
     printf 'workers must be in 1..6\n' >&2
     exit 64

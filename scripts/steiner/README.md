@@ -48,7 +48,9 @@ order is teacher first, then training:
 
 ```text
 scripts/steiner/run_s05_teacher_tmux.sh steiner-s05-teacher 6
-scripts/steiner/run_with_scip804.sh --python scripts/steiner/check_s05_gpu.py
+CUBLAS_WORKSPACE_CONFIG=:4096:8 scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/check_s05_gpu.py \
+  --config configs/steiner/experiments/s05_teacher_il_pilot_v3.yml
 scripts/steiner/run_s05_train_tmux.sh steiner-s05-train 0
 ```
 

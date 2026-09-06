@@ -7,7 +7,9 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 readonly SCRIPT_DIR
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd -P)"
 readonly REPO_ROOT
-readonly CONFIG="${S05_CONFIG:-configs/steiner/experiments/s05_teacher_il_pilot_v2.yml}"
+readonly CONFIG="${S05_CONFIG:-configs/steiner/experiments/s05_teacher_il_pilot_v3.yml}"
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+readonly CUBLAS_WORKSPACE_CONFIG
 
 [[ $# -ge 1 ]] || {
     printf 'usage: %s SEED [SEED ...]\n' "$0" >&2
@@ -40,6 +42,6 @@ readonly config_slug
 readonly PREFLIGHT_PATH="${REPO_ROOT}/results/steiner/raw/s05/gpu_preflight-${config_slug}-seeds-${seed_slug}.json"
 cd "$REPO_ROOT"
 scripts/steiner/run_with_scip804.sh --python \
-    scripts/steiner/check_s05_gpu.py --output "$PREFLIGHT_PATH"
+    scripts/steiner/check_s05_gpu.py --config "$CONFIG" --output "$PREFLIGHT_PATH"
 scripts/steiner/run_with_scip804.sh --python \
     scripts/steiner/train_s05_il.py --config "$CONFIG" "${training_args[@]}"

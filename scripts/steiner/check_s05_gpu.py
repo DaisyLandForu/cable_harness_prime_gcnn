@@ -18,7 +18,11 @@ if str(PYTHON_ROOT) not in sys.path:
     sys.path.insert(0, str(PYTHON_ROOT))
 
 from steiner_branching.learning.imitation import atomic_write_json  # noqa: E402
-from steiner_branching.learning.teacher_data import EXPECTED_STACK_ID  # noqa: E402
+from steiner_branching.learning.imitation import enable_cuda_determinism  # noqa: E402
+from steiner_branching.learning.teacher_data import (  # noqa: E402
+    EXPECTED_STACK_ID,
+    load_s05_config,
+)
 
 
 DEFAULT_OUTPUT = REPO / "results/steiner/raw/s05/gpu_preflight.json"
@@ -26,10 +30,21 @@ DEFAULT_OUTPUT = REPO / "results/steiner/raw/s05/gpu_preflight.json"
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", required=True)
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     args = parser.parse_args()
     if os.environ.get("STEINER_SOLVER_STACK_ID") != EXPECTED_STACK_ID:
         raise SystemExit("run through scripts/steiner/run_with_scip804.sh --python")
+    config_path = Path(args.config)
+    if not config_path.is_absolute():
+        config_path = REPO / config_path
+    config = load_s05_config(config_path)
+    training = config["training"]
+    if training.get("deterministic_algorithms") is not True:
+        raise RuntimeError("S05 GPU preflight requires deterministic algorithms")
+    cuda_determinism = enable_cuda_determinism(
+        expected_workspace_config=str(training.get("cublas_workspace_config"))
+    )
     if not torch.cuda.is_available() or torch.cuda.device_count() < 1:
         raise RuntimeError("CUDA is not available to the frozen S05 Python stack")
     devices = []
@@ -54,6 +69,7 @@ def main() -> int:
         "solver_stack_id": EXPECTED_STACK_ID,
         "pytorch_version": torch.__version__,
         "pytorch_cuda_version": torch.version.cuda,
+        "cuda_determinism": cuda_determinism,
         "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
         "device_count": len(devices),
         "devices": devices,

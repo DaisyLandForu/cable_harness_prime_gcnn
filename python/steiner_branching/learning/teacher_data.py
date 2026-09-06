@@ -46,9 +46,11 @@ PILOT_V2_INSTANCES = PILOT_V1_INSTANCES + (
     ("train", "sparse_erdos_renyi", 100303),
     ("train", "grid_with_holes", 100315),
 )
+PILOT_V3_INSTANCES = PILOT_V2_INSTANCES
 PILOT_EXPERIMENTS = {
     "s05-teacher-il-pilot-v1": PILOT_V1_INSTANCES,
     "s05-teacher-il-pilot-v2": PILOT_V2_INSTANCES,
+    "s05-teacher-il-pilot-v3": PILOT_V3_INSTANCES,
 }
 
 
@@ -175,15 +177,14 @@ def load_s05_config(path: Path | str) -> dict[str, Any]:
         raise StrictConfigError("unknown S05 teacher trajectory")
 
     training = _mapping(raw["training"], "training")
-    _require_keys(
-        training,
-        {
-            "pilot_seeds", "formal_seeds", "learning_curve_train_states", "epochs",
-            "learning_rate", "weight_decay", "gradient_clip_norm", "target_temperature",
-            "device", "checkpoint_root",
-        },
-        "training",
-    )
+    training_fields = {
+        "pilot_seeds", "formal_seeds", "learning_curve_train_states", "epochs",
+        "learning_rate", "weight_decay", "gradient_clip_norm", "target_temperature",
+        "device", "checkpoint_root",
+    }
+    if experiment_id == "s05-teacher-il-pilot-v3":
+        training_fields.update({"deterministic_algorithms", "cublas_workspace_config"})
+    _require_keys(training, training_fields, "training")
     if tuple(training["pilot_seeds"]) != PILOT_TRAINING_SEEDS:
         raise StrictConfigError("S05 pilot training seeds changed")
     if tuple(training["formal_seeds"]) != FORMAL_TRAINING_SEEDS:
@@ -193,6 +194,11 @@ def load_s05_config(path: Path | str) -> dict[str, Any]:
         raise StrictConfigError("learning curve state counts must be positive and increasing")
     if training["device"] != "cuda":
         raise StrictConfigError("S05 long training device must be CUDA")
+    if experiment_id == "s05-teacher-il-pilot-v3" and (
+        training["deterministic_algorithms"] is not True
+        or training["cublas_workspace_config"] != ":4096:8"
+    ):
+        raise StrictConfigError("S05 pilot-v3 CUDA determinism controls changed")
     for key in (
         "epochs", "learning_rate", "weight_decay", "gradient_clip_norm",
         "target_temperature",

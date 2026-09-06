@@ -25,7 +25,7 @@ from steiner_branching.learning.teacher_data import (  # noqa: E402
 )
 
 
-DEFAULT_CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v2.yml"
+DEFAULT_CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v3.yml"
 
 
 def utc_now() -> str:
@@ -106,6 +106,7 @@ def aggregate_reports(
         "validation_valid_states",
         "expected_training_seeds",
         "offline_baselines",
+        "cuda_determinism",
         "formal_gate_evaluated",
     )
     reference = reports[0]

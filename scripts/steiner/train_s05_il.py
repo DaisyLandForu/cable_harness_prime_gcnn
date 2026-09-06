@@ -24,6 +24,7 @@ if str(PYTHON_ROOT) not in sys.path:
 
 from steiner_branching.learning.imitation import (  # noqa: E402
     atomic_write_json,
+    enable_cuda_determinism,
     fit_train_normalization,
     load_checkpoint_bundle,
     model_predictions,
@@ -46,7 +47,7 @@ from steiner_branching.models.milp_gcnn import (  # noqa: E402
 )
 
 
-DEFAULT_CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v2.yml"
+DEFAULT_CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v3.yml"
 
 
 def utc_now() -> str:
@@ -145,6 +146,12 @@ def main() -> int:
     config_path = resolve_path(args.config)
     config = load_s05_config(config_path)
     config_digest = s05_config_sha256(config)
+    training = config["training"]
+    if training.get("deterministic_algorithms") is not True:
+        raise RuntimeError("S05 training requires registered deterministic algorithms")
+    cuda_determinism = enable_cuda_determinism(
+        expected_workspace_config=str(training.get("cublas_workspace_config"))
+    )
     git_commit, audited_target = require_current_git_identity(
         str(config["required_s04_audited_tag"])
     )
@@ -171,7 +178,6 @@ def main() -> int:
     )
     if not validation_samples:
         raise RuntimeError("S05 pilot has no valid validation teacher states")
-    training = config["training"]
     expected_training_seeds = tuple(int(seed) for seed in training["pilot_seeds"])
     selected_training_seeds = select_training_seeds(
         training["pilot_seeds"], args.training_seeds
@@ -202,6 +208,7 @@ def main() -> int:
         ),
         "selected_training_seeds": list(selected_training_seeds),
         "expected_training_seeds": list(expected_training_seeds),
+        "cuda_determinism": cuda_determinism,
         "offline_baselines": {},
         "runs": [],
         "formal_gate_evaluated": False,
@@ -288,11 +295,17 @@ def main() -> int:
                         "bipartite_schema_id": config["bipartite_schema_id"],
                         "solver_stack_id": config["solver_stack_id"],
                         "pytorch_version": torch.__version__,
+                        "cuda_determinism": cuda_determinism,
                     },
                 )
                 reloaded, reloaded_stats, _reload_manifest = load_checkpoint_bundle(
                     checkpoint_manifest, model_config_path=b0_config_path, device=device
                 )
+                if reloaded_stats != stats or any(
+                    not torch.equal(value, reloaded.state_dict()[name])
+                    for name, value in model.state_dict().items()
+                ):
+                    raise RuntimeError("checkpoint state/normalization reload is not bit-exact")
                 original = model_predictions(model, validation_samples[:1], stats, device=device)[0]
                 restored = model_predictions(
                     reloaded, validation_samples[:1], reloaded_stats, device=device
@@ -310,6 +323,7 @@ def main() -> int:
                         "checkpoint_manifest": str(checkpoint_manifest),
                         "checkpoint_manifest_sha256": file_sha256(checkpoint_manifest),
                         "reload_max_absolute_error": reload_error,
+                        "reload_state_dict_bit_exact": True,
                         "history": history,
                     }
                 )

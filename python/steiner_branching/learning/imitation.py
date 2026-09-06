@@ -20,6 +20,9 @@ from ..solver.bipartite_observation import MilpBipartiteState, make_bipartite_st
 from .teacher_data import TeacherSample, file_sha256
 
 
+CUBLAS_WORKSPACE_CONFIG = ":4096:8"
+
+
 @dataclass(frozen=True)
 class NormalizationStats:
     constraint_mean: tuple[float, ...]
@@ -249,6 +252,30 @@ def seed_everything(seed: int) -> None:
         torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True)
+
+
+def enable_cuda_determinism(*, expected_workspace_config: str) -> dict[str, Any]:
+    """Enable and verify the frozen S05 CUDA determinism contract."""
+    if expected_workspace_config != CUBLAS_WORKSPACE_CONFIG:
+        raise RuntimeError("configured cuBLAS workspace policy is not registered")
+    observed = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+    if observed != expected_workspace_config:
+        raise RuntimeError(
+            "CUBLAS_WORKSPACE_CONFIG must be set to "
+            f"{expected_workspace_config!r} before the Python process starts; got {observed!r}"
+        )
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    if not torch.are_deterministic_algorithms_enabled():
+        raise RuntimeError("PyTorch deterministic algorithms did not remain enabled")
+    return {
+        "cublas_workspace_config": observed,
+        "deterministic_algorithms": True,
+        "cudnn_benchmark": False,
+        "cudnn_deterministic": True,
+    }
 
 
 def train_one_epoch(
@@ -332,7 +359,7 @@ def save_checkpoint_bundle(
     normalization = directory / "normalization.json"
     atomic_write_json(normalization, stats.to_dict())
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2 if "cuda_determinism" in manifest_fields else 1,
         "model_id": "b0_milp_gcnn_v1",
         "checkpoint": checkpoint.name,
         "checkpoint_sha256": file_sha256(checkpoint),
@@ -352,13 +379,19 @@ def load_checkpoint_bundle(
 ) -> tuple[MilpBipartiteGCNN, NormalizationStats, dict[str, Any]]:
     path = Path(manifest_path)
     manifest = json.loads(path.read_text(encoding="utf-8"))
-    required = {
+    required_v1 = {
         "schema_version", "model_id", "checkpoint", "checkpoint_sha256",
         "normalization", "normalization_sha256", "config_sha256", "data_manifest_sha256",
         "git_commit", "training_seed", "train_state_count", "validation_metrics",
         "model_config_sha256", "bipartite_schema_id", "solver_stack_id", "pytorch_version",
     }
-    if set(manifest) != required or manifest["schema_version"] != 1 or manifest["model_id"] != "b0_milp_gcnn_v1":
+    required_v2 = required_v1 | {"cuda_determinism"}
+    expected_fields = required_v2 if manifest.get("schema_version") == 2 else required_v1
+    if (
+        set(manifest) != expected_fields
+        or manifest.get("schema_version") not in {1, 2}
+        or manifest.get("model_id") != "b0_milp_gcnn_v1"
+    ):
         raise ValueError("checkpoint manifest fields/schema mismatch")
     checkpoint = path.parent / manifest["checkpoint"]
     normalization = path.parent / manifest["normalization"]
@@ -374,6 +407,15 @@ def load_checkpoint_bundle(
         raise ValueError("checkpoint solver stack mismatch")
     if manifest["pytorch_version"] != torch.__version__:
         raise ValueError("checkpoint PyTorch version mismatch")
+    if manifest["schema_version"] == 2:
+        expected_determinism = {
+            "cublas_workspace_config": CUBLAS_WORKSPACE_CONFIG,
+            "deterministic_algorithms": True,
+            "cudnn_benchmark": False,
+            "cudnn_deterministic": True,
+        }
+        if manifest["cuda_determinism"] != expected_determinism:
+            raise ValueError("checkpoint CUDA determinism contract mismatch")
     stats = NormalizationStats.from_dict(json.loads(normalization.read_text(encoding="utf-8")))
     config = load_b0_config(model_config_path)
     architecture = config["architecture"]

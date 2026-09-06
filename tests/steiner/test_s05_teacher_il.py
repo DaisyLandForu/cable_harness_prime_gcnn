@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
 from pathlib import Path
 
 import ecole
@@ -13,9 +14,12 @@ import torch
 from steiner_branching.config import StrictConfigError
 from steiner_branching.data.generate import GeneratorConfig, generate_graph
 from steiner_branching.learning.imitation import (
+    CUBLAS_WORKSPACE_CONFIG,
+    enable_cuda_determinism,
     fit_train_normalization,
     listwise_cross_entropy,
     load_checkpoint_bundle,
+    model_predictions,
     normalize_state,
     normalized_sb_regret,
     offline_baseline_predictions,
@@ -55,6 +59,7 @@ from steiner_branching.solver.strong_branching import (
 REPO = Path(__file__).resolve().parents[2]
 CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v1.yml"
 CONFIG_V2 = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v2.yml"
+CONFIG_V3 = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v3.yml"
 B0_CONFIG = REPO / "configs/steiner/models/b0_milp_gcnn_v1.yml"
 
 
@@ -167,6 +172,35 @@ def test_s05_pilot_v2_adds_only_two_s03_branchable_train_instances(monkeypatch):
         teacher_data.load_s05_config("unused.yml")
 
 
+def test_s05_pilot_v3_changes_only_registered_cuda_determinism_and_paths(monkeypatch):
+    v2 = load_s05_config(CONFIG_V2)
+    v3 = load_s05_config(CONFIG_V3)
+    assert v3["experiment_id"] == "s05-teacher-il-pilot-v3"
+    assert v3["pilot_instances"] == v2["pilot_instances"]
+    assert v3["teacher"] == v2["teacher"]
+    assert v3["gate"] == v2["gate"]
+    assert v3["training"]["deterministic_algorithms"] is True
+    assert v3["training"]["cublas_workspace_config"] == CUBLAS_WORKSPACE_CONFIG
+    assert v3["artifacts"] == {
+        "raw_root": "results/steiner/raw/s05/s05-teacher-il-pilot-v3",
+        "report_root": "results/steiner/s05/s05-teacher-il-pilot-v3",
+    }
+
+    changed = copy.deepcopy(v3)
+    changed["training"]["cublas_workspace_config"] = ":16:8"
+    from steiner_branching.learning import teacher_data
+
+    monkeypatch.setattr(teacher_data, "load_yaml_mapping", lambda _path: changed)
+    with pytest.raises(StrictConfigError, match="determinism controls changed"):
+        teacher_data.load_s05_config("unused.yml")
+
+
+def test_cuda_determinism_contract_fails_closed_without_registered_environment(monkeypatch):
+    monkeypatch.delenv("CUBLAS_WORKSPACE_CONFIG", raising=False)
+    with pytest.raises(RuntimeError, match="before the Python process starts"):
+        enable_cuda_determinism(expected_workspace_config=CUBLAS_WORKSPACE_CONFIG)
+
+
 def test_pilot_training_seed_shards_are_registered_and_disjoint(tmp_path):
     trainer = _load_script_module("s05_train_script", "scripts/steiner/train_s05_il.py")
     expected = [101, 202, 303]
@@ -219,6 +253,12 @@ def test_parallel_pilot_reports_merge_only_when_seed_matrix_is_complete(tmp_path
             "selected_training_seeds": seeds,
             "expected_training_seeds": [101, 202, 303],
             "offline_baselines": {"random": {"normalized_sb_regret": 0.5}},
+            "cuda_determinism": {
+                "cublas_workspace_config": CUBLAS_WORKSPACE_CONFIG,
+                "deterministic_algorithms": True,
+                "cudnn_benchmark": False,
+                "cudnn_deterministic": True,
+            },
             "runs": [
                 {
                     "training_seed": seed,
@@ -373,6 +413,12 @@ def test_cpu_training_and_checkpoint_reload_reproduce_logits(tmp_path):
             "bipartite_schema_id": "milp_bipartite_v1",
             "solver_stack_id": "scip804-ecole081-pyscipopt430",
             "pytorch_version": torch.__version__,
+            "cuda_determinism": {
+                "cublas_workspace_config": CUBLAS_WORKSPACE_CONFIG,
+                "deterministic_algorithms": True,
+                "cudnn_benchmark": False,
+                "cudnn_deterministic": True,
+            },
         },
     )
     restored, restored_stats, restored_manifest = load_checkpoint_bundle(
@@ -382,6 +428,60 @@ def test_cpu_training_and_checkpoint_reload_reproduce_logits(tmp_path):
     assert restored_stats == stats
     for name, value in model.state_dict().items():
         torch.testing.assert_close(value, restored.state_dict()[name], rtol=0.0, atol=0.0)
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="requires a CUDA device")
+def test_cuda_repeated_inference_and_checkpoint_reload_are_bit_exact(tmp_path):
+    if os.environ.get("CUBLAS_WORKSPACE_CONFIG") != CUBLAS_WORKSPACE_CONFIG:
+        pytest.skip("requires CUBLAS_WORKSPACE_CONFIG before pytest starts")
+    contract = enable_cuda_determinism(
+        expected_workspace_config=CUBLAS_WORKSPACE_CONFIG
+    )
+    sample = _sample()
+    stats = fit_train_normalization((sample,))
+    device = torch.device("cuda:0")
+    torch.manual_seed(101)
+    model = MilpBipartiteGCNN(embedding_dim=64, hidden_dim=64).to(device)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1.0e-3)
+    loss = train_one_epoch(
+        model,
+        (sample,),
+        stats,
+        optimizer,
+        device=device,
+        temperature=1.0,
+        gradient_clip_norm=1.0,
+    )
+    assert np.isfinite(loss)
+    first = model_predictions(model, (sample,), stats, device=device)[0]
+    second = model_predictions(model, (sample,), stats, device=device)[0]
+    np.testing.assert_array_equal(first, second)
+    manifest = save_checkpoint_bundle(
+        output_dir=tmp_path / "cuda-checkpoint",
+        model=model,
+        stats=stats,
+        manifest_fields={
+            "config_sha256": "1" * 64,
+            "data_manifest_sha256": "2" * 64,
+            "git_commit": "3" * 40,
+            "training_seed": 101,
+            "train_state_count": 1,
+            "validation_metrics": {"normalized_sb_regret": 0.0},
+            "model_config_sha256": file_sha256(B0_CONFIG),
+            "bipartite_schema_id": "milp_bipartite_v1",
+            "solver_stack_id": "scip804-ecole081-pyscipopt430",
+            "pytorch_version": torch.__version__,
+            "cuda_determinism": contract,
+        },
+    )
+    restored, restored_stats, _ = load_checkpoint_bundle(
+        manifest, model_config_path=B0_CONFIG, device=device
+    )
+    assert restored_stats == stats
+    for name, value in model.state_dict().items():
+        torch.testing.assert_close(value, restored.state_dict()[name], rtol=0.0, atol=0.0)
+    reloaded = model_predictions(restored, (sample,), restored_stats, device=device)[0]
+    np.testing.assert_array_equal(first, reloaded)
 
 
 def test_real_frozen_scip_teacher_records_child_validity_and_probindex_identity():
