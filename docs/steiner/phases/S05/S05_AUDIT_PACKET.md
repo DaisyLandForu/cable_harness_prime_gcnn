@@ -5,6 +5,7 @@
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
 - latest remediation content SHA: `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
+- formal protocol v1 content SHA: `d1717a7ecb6043efd71678175a92325ac9ff4208`
 - substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
