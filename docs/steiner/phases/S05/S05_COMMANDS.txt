@@ -58,3 +58,19 @@ scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
 # S04 regression verification after the fraction-semantics correction used a
 # temporary output directory: committed snapshot cmp PASS, SHA unchanged, and
 # regenerated Gate 8/8 true.
+
+# Pilot-v1 remediated teacher completed 10/10 at head c26a326:
+# elapsed 627 s; 126 observed / 117 valid; train valid 53, validation valid 64;
+# all-tie 0; mapping 3086/3086; leakage 0. No GPU/model run followed.
+
+# User-approved pilot-v2 preregistration and verification:
+scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/collect_s05_teacher.py \
+  --config configs/steiner/experiments/s05_teacher_il_pilot_v2.yml --dry-run
+bash -n scripts/steiner/run_s05_teacher_batch.sh \
+  scripts/steiner/run_s05_pilot_seed_batch.sh \
+  scripts/steiner/run_s05_teacher_tmux.sh scripts/steiner/run_s05_train_tmux.sh
+scripts/steiner/run_with_scip804.sh --python -m pytest -q \
+  tests/steiner/test_s05_teacher_il.py
+scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
+git diff --check

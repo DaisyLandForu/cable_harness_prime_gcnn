@@ -1,6 +1,7 @@
 # S05 Plan — Strong-branch teacher and B0 imitation learning
 
-Status: S04 audit prerequisite PASS; implementation ready; formal runs NOT_RUN
+Status: S04 audit prerequisite PASS; pilot-v1 teacher complete but train capacity
+insufficient; pilot-v2 preregistered and NOT_RUN
 
 ## Frozen start
 
@@ -60,12 +61,18 @@ rule. The real `relpscost` solver comparison remains an online S06 evaluation.
 
 ## Preregistered pilot shape
 
-The pilot covers all five synthetic families, with one S03-recommended
+Pilot-v1 covered all five synthetic families, with one S03-recommended
 medium-mid graph per family in each of train and validation-IID. It follows a
 teacher trajectory, collects at most 16 states per task, and retains root-solved,
 missing, invalid-child, all-tie, timeout and failed tasks in the manifest.
 
-The first learning curve uses nested train-state prefixes `[16, 32, 64]` and
+Pilot-v1 completed with teacher-quality diagnostics passing but only 53 valid
+train states. Before any GPU/model run, the approved pilot-v2 capacity amendment
+added train seeds 100303 (sparse) and 100315 (grid), chosen from S03's existing
+branchability evidence. V1 and v2 use separate experiment IDs, paths and hashes.
+See `S05_PILOT_V2_AMENDMENT.md`.
+
+The learning curve remains nested train-state prefixes `[16, 32, 64]` and
 training seeds `[101,202,303]`. These are engineering/pilot runs, not formal
 results. A later formal state count may be frozen only after the pilot analysis;
 it cannot be chosen with final-test evidence.

@@ -1,12 +1,12 @@
 # Steiner RL Branching 迁移状态
 
-更新时间：2026-09-03 UTC
+更新时间：2026-09-06 UTC
 
 ## 当前状态
 
-- 当前阶段：S04 remediation 已推送；S05 implementation scaffold 已完成 CPU
-  验证。teacher attempt 1 因 `solution_frac` 范围误判失败并完整保留；修复已通过
-  回归，clean retry 待运行。
+- 当前阶段：S04 remediation 已推送；S05 pilot-v1 teacher 修复后 10/10 完成，
+  teacher 质量通过但只有 53 个有效 train states。用户已批准、代码已预注册
+  pilot-v2 容量扩充，v2 teacher 尚未运行。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
   `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
   teacher、训练和 Gate 尚未运行，仍禁止 final 访问。
@@ -29,15 +29,16 @@
   full/closure 最大 logit 误差 0、argmax 3/3 一致；remediation Gate 8/8 PASS。
 - S05 scaffold：10 个 preregistered pilot tasks、strong child-validity bridge、
   checksum shards、listwise IL/metrics/checkpoint reload、CPU/GPU foreground/tmux
-  launchers和严格 seed-shard 汇总；86 passed、1 expected skip。training/GPU runs
-  均为 0。teacher attempt 1 为 5 completed / 5 failed、65 observed、
-  56 valid、1,540/1,540 mapped，不能评 Gate；S05 Gate NOT_RUN。
+  launchers和严格 seed-shard 汇总；87 passed、1 expected skip。training/GPU runs
+  均为 0。pilot-v1 retry 为 10 completed、126 observed、117 valid、
+  3,086/3,086 mapped，但 train valid 53 < 64；S05 Gate NOT_RUN。
 - 资源：正式运行和换机恢复环境都是 24.01-core cgroup/128 GiB RAM；恢复环境
   无 GPU。S03 CPU-only，未申请或使用训练资源。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：先运行 S05 CPU teacher pilot；成功后并行运行两个单 GPU imitation
-  pilot 作业并严格汇总；保留所有失败、skipped、invalid-child 与 seed 结果。
+- 下一步：先运行 S05 CPU teacher pilot-v2；成功且 train valid ≥64 后并行
+  运行单 GPU imitation pilot 作业并严格汇总；保留所有失败、skipped、
+  invalid-child 与 seed 结果。
 
 ## 阶段登记表
 
@@ -50,7 +51,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | IMPLEMENTATION_PASS；attempt 1 FAILED；scientific Gate NOT_RUN | NOT_RUN | `75bba71401fc46fca62a5075c77931bfd77826cc` | implementation metadata commit |
+| S05 | Strong-branch teacher 与 IL | v1 teacher quality PASS / capacity insufficient；v2 NOT_RUN | NOT_RUN | `e9722cf84a51433af06c98318a401b51ce2f15c2` | pilot-v2 preregistration metadata commit |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |

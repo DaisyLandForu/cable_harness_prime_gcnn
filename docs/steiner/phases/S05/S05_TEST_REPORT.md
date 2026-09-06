@@ -5,8 +5,10 @@
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
 - solver stack: SCIP 8.0.4 / PySCIPOpt 4.3.0 / Ecole 0.8.1
-- config canonical SHA-256:
+- pilot-v1 config canonical SHA-256:
   `34ac665eef539fa2b0f9129fb1c2e8e250ce3252289cbd2d5676dfd13e16a0fd`
+- pilot-v2 config canonical SHA-256:
+  `2146e7d67dadcef93746400a08d10441e051745075fc7a39348c5b6c80b6cacf`
 - formal teacher runs: 0; learning runs: 0; GPU calls: 0; final access: 0
 
 ## Verification
@@ -54,6 +56,12 @@ git diff --check
 - The S04 deterministic snapshot remained byte-identical at
   `ac2ce0c14b134245221af5140a3008f3ec6067f8867491e7cc0d0b50e2036f2c`,
   and its 8/8 Gate checks remained true.
+- Pilot-v2 dry-run: 12/12 exact tasks, with only train sparse seed 100303 and
+  train grid seed 100315 added. Unknown experiment IDs, task substitutions,
+  reordering, path drift and unregistered seeds fail closed.
+- Post-v2 implementation suite: S05 targeted 9 passed; complete Steiner suite
+  87 passed, 1 expected PACE-development skip in 29.98 s. Shell/Python syntax
+  and `git diff --check` pass.
 
 ## Preserved implementation failures
 

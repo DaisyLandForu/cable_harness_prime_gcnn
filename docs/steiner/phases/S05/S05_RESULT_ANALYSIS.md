@@ -5,20 +5,31 @@ it does not answer whether imitation learning works.
 
 ## What is established
 
-- The registered pilot expands deterministically to ten instance-level tasks
-  without touching test/final ranges.
+- Pilot-v1 expands deterministically to ten tasks and the separately
+  preregistered pilot-v2 to twelve, without touching test/final ranges.
 - A real frozen SCIP branch state supplies candidate-aligned, finite strong
   scores plus explicit child validity/cost evidence.
 - Feature/label shards survive checksum-verified reload and preserve complete
   probindex-to-edge identity.
 - Train-only normalization, listwise optimization, ranking metrics, baseline
   diagnostics and checkpoint reload are executable on synthetic test fixtures.
-- The S04 audited tag prerequisite is now satisfied. Missing CUDA/data still
-  stops training before scientific claims can be produced.
+- The S04 audited tag prerequisite is satisfied. Pilot-v2 data and CUDA
+  training remain pending, so no learned claim can be produced.
+
+## Pilot-v1 teacher result
+
+The corrected pilot-v1 teacher collection completed all 10 tasks in 627 seconds.
+It produced 117/160 valid states (73.125%), no all-tie valid state, exact
+3,086/3,086 action mapping and zero split leakage. These teacher-quality checks
+pass their registered thresholds.
+
+Only 53 valid states belonged to train; validation had 64. Validation data cannot
+be moved into train, and the 64-state curve cannot be lowered silently. Thus v1
+is capacity-insufficient for the complete learning curve despite sound teacher
+quality. No GPU/model run was attempted.
 
 ## What is not established
 
-- No teacher-valid fraction or all-tie rate has been measured for the S05 pilot.
 - No training seed has run; there is no learning curve, validation regret,
   stability result, checkpoint, GPU utilization or runtime estimate yet.
 - The implementation test's one real state is ABI/correctness evidence, not a
@@ -42,6 +53,7 @@ and cannot combine the old attempt's successful shards with new-code shards.
 
 ## Current decision
 
-Implementation checkpoint: **PASS**. S05 Gate: **NOT_RUN / STOP**. The next
-legal actions are GPU-host preflight and the teacher pilot, followed by CUDA
-training only after a complete checksum-verified teacher manifest exists.
+Teacher-quality evidence from v1: **PASS**. Complete S05 scientific Gate:
+**NOT_RUN / STOP before GPU**. Pilot-v2 is preregistered solely to satisfy the
+unchanged 64-state train capacity and must pass the conditions in
+`S05_PILOT_V2_AMENDMENT.md` before training is released.

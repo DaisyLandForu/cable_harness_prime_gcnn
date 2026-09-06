@@ -62,3 +62,14 @@ Status: source complete for CPU verification; formal experiment NOT_RUN
   rejects integer endpoints. Mapping, schema, thresholds, seeds and teacher
   scores were not changed. Attempt 1 remains archived as failed evidence and
   is not mixed with the remediated run.
+
+## Pilot-v1 capacity result and pilot-v2 preregistration
+
+- The remediated pilot-v1 run completed 10/10 tasks in 627 seconds: 126 observed,
+  117 valid, 0 all-tie, 3,086/3,086 mapped and zero split leakage.
+- Its split counts were train 58 observed / 53 valid and validation 68 observed /
+  64 valid. Therefore the registered 64-train-state curve could not run.
+- Before any GPU/model run, the user approved a separate pilot-v2 with two
+  S03-proven train tasks: sparse seed 100303 and grid seed 100315. It preserves
+  all seeds, limits, curve sizes and Gates, and writes to independent v2 raw,
+  report and checkpoint roots.
