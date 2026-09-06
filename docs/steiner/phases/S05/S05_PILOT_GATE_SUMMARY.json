@@ -1,0 +1,94 @@
+{
+  "artifacts": {
+    "aggregate_report_sha256": "73aa463a25d10cfd28a1e17e2396ad76eda4b945d0e2f04e7d775571bcded390",
+    "config_file_sha256": "ce5b076493640863ed6f02049bd7a05df5accdad51603645cca373984b102c9e",
+    "config_sha256": "cccb611deba26726772680416f49b7404c281e3520ee813dde4b2b4a100f178f",
+    "seed_report_sha256": {
+      "101": "da7d1569b94c147ed37ad3588be9625d3262e3edbfacb396370ffc5ef4b51ce3",
+      "202": "e957c36ee472e3a1c6e21f2db8d483109464617dcb4b329d8f64515a9d06d898",
+      "303": "6c4ad8a47675cd48d73dab809a51d925f88876b2e2113a758be02ff8d1dc3c30"
+    },
+    "teacher_manifest_sha256": "9ba08c0f30f1014396c7a3825b6bb3247fe4d6e0d2dab04c180ae26cb307d36f"
+  },
+  "cuda_determinism": {
+    "cublas_workspace_config": ":4096:8",
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "deterministic_algorithms": true
+  },
+  "experiment_id": "s05-teacher-il-pilot-v3",
+  "gate": {
+    "checks": {
+      "action_mapping_rate": true,
+      "all_pilot_seeds_and_curves_complete": true,
+      "all_reported_regrets_better_than_random": true,
+      "checkpoint_reload_logits_exact": true,
+      "checkpoint_state_dicts_exact": true,
+      "primary_curve_mean_improves_16_to_32_to_64": true,
+      "split_leakage_zero": true,
+      "teacher_all_tie_fraction": true,
+      "teacher_valid_state_fraction": true
+    },
+    "pilot_overall_pass": true,
+    "s05_scientific_gate_status": "NOT_EVALUATED",
+    "statistical_significance_evaluated": false
+  },
+  "learning_curve": {
+    "16": {
+      "mean_normalized_sb_regret": 0.5961156189067758,
+      "mean_relative_improvement_vs_random": 0.1309972108886337,
+      "sample_std_normalized_sb_regret": 0.07292689109493378,
+      "seed_values": [
+        0.6459552482860222,
+        0.6299779439559954,
+        0.5124136644783097
+      ]
+    },
+    "32": {
+      "mean_normalized_sb_regret": 0.4969564069719663,
+      "mean_relative_improvement_vs_random": 0.2755490880822931,
+      "sample_std_normalized_sb_regret": 0.02760356507857404,
+      "seed_values": [
+        0.5245576241046427,
+        0.496961102264769,
+        0.4693504945464872
+      ]
+    },
+    "64": {
+      "mean_normalized_sb_regret": 0.4478680203613922,
+      "mean_relative_improvement_vs_random": 0.34710893909877355,
+      "sample_std_normalized_sb_regret": 0.02233307033463968,
+      "seed_values": [
+        0.4432521513691672,
+        0.4282035552239435,
+        0.47214835449106607
+      ]
+    },
+    "random_normalized_sb_regret": 0.6859766463078418,
+    "selection_metric": "validation_normalized_sb_regret"
+  },
+  "run_git_commit": "7dd05e3fa0ff38688b3c571d5bc2f1b87369e19f",
+  "schema_version": 1,
+  "scope": "pilot_only",
+  "stage": "S05",
+  "teacher": {
+    "action_mapping_rate": 1.0,
+    "all_tie_valid_states": 0,
+    "expected_states": 192,
+    "observed_states": 158,
+    "split_leakage_count": 0,
+    "tasks_completed": 12,
+    "tasks_expected": 12,
+    "train_valid_states": 85,
+    "valid_state_fraction": 0.7760416666666666,
+    "valid_states": 149,
+    "validation_valid_states": 64
+  },
+  "training": {
+    "curve_state_counts": [16, 32, 64],
+    "max_reload_absolute_error": 0.0,
+    "runs_completed": 9,
+    "runs_expected": 9,
+    "seeds": [101, 202, 303]
+  }
+}

@@ -1,7 +1,7 @@
 # S05 Changelog — implementation scaffold
 
-Status: pilot-v2 GPU attempt FAILED and retained; pilot-v3 determinism
-remediation registered; formal experiment NOT_RUN
+Status: pilot-v2 GPU attempt FAILED and retained; pilot-v3 pilot Gate PASS;
+formal experiment NOT_RUN
 
 ## Prepared components
 
@@ -87,3 +87,9 @@ remediation registered; formal experiment NOT_RUN
   manifests record the controls and mismatches fail closed.
 - The zero-error reload Gate, tasks, data, seeds, model, optimizer, curve,
   epochs and metrics were not changed.
+- V3 recollected the exact registered 12-task teacher set at run head `7dd05e3`,
+  then completed seeds 101/202/303 and all 9 curve runs with zero reload error.
+- Strict aggregation passed. Mean regret improved 0.596116 -> 0.496956 ->
+  0.447868 as states increased 16 -> 32 -> 64; random was 0.685977.
+- Added `S05_PILOT_GATE_SUMMARY.json`. It explicitly classifies the result as a
+  pilot PASS and leaves full S05 significance/formal Gate NOT_EVALUATED.

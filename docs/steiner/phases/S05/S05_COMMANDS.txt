@@ -17,6 +17,16 @@ scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher
 scripts/steiner/run_with_scip804.sh --python -m compileall -q python/steiner_branching scripts/steiner tests/steiner
 git diff --check
 
+# Completed v3 run at head 7dd05e3fa0ff38688b3c571d5bc2f1b87369e19f:
+# teacher 12/12; seeds 101/202/303 each completed 16/32/64 with reload error 0.
+scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/aggregate_s05_pilot_training.py \
+  --config configs/steiner/experiments/s05_teacher_il_pilot_v3.yml \
+  --input results/steiner/s05/s05-teacher-il-pilot-v3/pilot_training_shards/seeds-101.json \
+  --input results/steiner/s05/s05-teacher-il-pilot-v3/pilot_training_shards/seeds-202.json \
+  --input results/steiner/s05/s05-teacher-il-pilot-v3/pilot_training_shards/seeds-303.json
+# aggregate SHA-256: 73aa463a25d10cfd28a1e17e2396ad76eda4b945d0e2f04e7d775571bcded390
+
 # Pilot-v2 retained GPU failure: seeds 101/202/303 each completed 16/32/64 x 40
 # epochs, then failed exact checkpoint-logit reload parity (nonzero CUDA noise).
 # No failed report or checkpoint was deleted/relabelled.

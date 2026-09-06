@@ -11,7 +11,8 @@
   `2146e7d67dadcef93746400a08d10441e051745075fc7a39348c5b6c80b6cacf`
 - pilot-v3 config canonical SHA-256:
   `cccb611deba26726772680416f49b7404c281e3520ee813dde4b2b4a100f178f`
-- formal teacher runs: 0; pilot-v2 learning attempts: 9; final access: 0
+- formal teacher runs: 0; pilot-v2 failed learning attempts: 9; pilot-v3
+  completed learning runs: 9; final access: 0
 
 ## Verification
 
@@ -69,6 +70,12 @@ git diff --check
   V100 test performs deterministic training, repeated inference and checkpoint
   reload with strict array equality. Missing/changed cuBLAS configuration fails
   closed. Python/shell syntax and `git diff --check` pass.
+- Pilot-v3 teacher manifest SHA-256:
+  `9ba08c0f30f1014396c7a3825b6bb3247fe4d6e0d2dab04c180ae26cb307d36f`;
+  strict aggregate SHA-256:
+  `73aa463a25d10cfd28a1e17e2396ad76eda4b945d0e2f04e7d775571bcded390`.
+  All 9 runs completed, all state dicts reloaded exactly, and maximum reload
+  logit error was 0.
 
 ## Preserved implementation failures
 
@@ -96,7 +103,8 @@ No Gate, data list, seed or threshold changed in response.
 
 ## Gate
 
-The remediation implementation tests **PASS**, but the latest completed S05
-scientific attempt is **FAIL**. Pilot-v3 must recollect its commit-bound teacher
-manifest and produce three exact-reload seed reports before aggregation. The
-S04 re-audit prerequisite remains PASS.
+The remediation implementation tests **PASS**. Pilot-v3 teacher collection,
+three seed reports and strict 9-run aggregation also **PASS**, with max reload
+error 0. Full S05 scientific Gate remains **NOT_EVALUATED** until the formal
+state budget and five-seed protocol are frozen and executed. S06 remains
+blocked; the S04 re-audit prerequisite remains PASS.

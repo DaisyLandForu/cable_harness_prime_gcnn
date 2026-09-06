@@ -1,7 +1,7 @@
-# S05 Result Analysis — pilot-v2 failed; deterministic rerun pending
+# S05 Result Analysis — deterministic pilot-v3 complete
 
-This checkpoint answers only whether the planned S05 pipeline is ready to run;
-it does not answer whether imitation learning works.
+This checkpoint shows that the pilot model learns teacher-ranking signal; it
+does not yet establish formal statistical significance or online SCIP benefit.
 
 ## What is established
 
@@ -14,8 +14,7 @@ it does not answer whether imitation learning works.
 - Train-only normalization, listwise optimization, ranking metrics, baseline
   diagnostics and checkpoint reload are executable on synthetic test fixtures.
 - The S04 audited tag prerequisite is satisfied. Pilot-v2 data/training are
-  retained as failed evidence; pilot-v3 is pending, so no learned claim can be
-  produced.
+  retained as failed evidence; pilot-v3 provides the eligible pilot result.
 
 ## Pilot-v1 teacher result
 
@@ -31,14 +30,14 @@ quality. No GPU/model run was attempted.
 
 ## What is not established
 
-- No training seed has yet produced a Gate-eligible completed report; v2
-  histories/checkpoints are failure diagnostics rather than a learning claim.
+- Formal five-seed stability and preregistered statistical significance have
+  not been evaluated.
 - The implementation test's one real state is ABI/correctness evidence, not a
   dataset-quality estimate.
 - Pseudocost is only an offline diagnostic. It is not the full relpscost solver
   behavior and must not be reported as such.
-- Nothing here supports progression to S06 or any claim that learned branching
-  beats random, most-infeasible, pseudocost or relpscost.
+- Nothing here supports progression to S06 or a claim about online solve time,
+  nodes, production relpscost, or final-test performance.
 
 ## Pilot-v2 GPU result
 
@@ -62,9 +61,22 @@ LP candidates with `solution_frac=0.75`; the implementation incorrectly required
 that feature to be at most 0.5. A remediated run must use one new Git fingerprint
 and cannot combine the old attempt's successful shards with new-code shards.
 
-## Current decision
+## Pilot-v3 learning curve
 
-Teacher-quality evidence: **PASS**. Latest complete GPU attempt: **FAIL**.
-Complete S05 scientific Gate: **FAIL / STOP before S06**. Pilot-v3 is the only
-authorized rerun and keeps the exact zero-error Gate; it must satisfy
-`S05_PILOT_V3_DETERMINISM_REMEDIATION.md` before aggregation.
+Pilot-v3 completed the strict three-seed aggregate. Mean normalized SB regret
+fell from 0.596116 at 16 states to 0.496956 at 32 and 0.447868 at 64, compared
+with random 0.685977. This is a 13.10%, 27.55% and 34.71% mean relative
+improvement. Across-seed sample standard deviation also fell from 0.072927 to
+0.027604 and 0.022333.
+
+All nine seed/curve runs beat random and reload exactly. Two of three seeds have
+their best pilot regret at 64; seed 303 is marginally better at 32 (0.469350 vs
+0.472148). Aggregate regret favors 64, but top-3 and rank correlation do not
+improve monotonically from 32 to 64. The curve therefore supports expanding to
+a preregistered formal collection; it does not demonstrate saturation or
+justify selecting a final policy from this pilot alone.
+
+Teacher-quality Gate: **PASS**. Deterministic pilot Gate: **PASS**. Complete S05
+scientific Gate: **NOT_EVALUATED / STOP before S06**, pending a separately
+frozen formal state budget, five formal training seeds, and significance
+analysis. No final-test data was accessed.

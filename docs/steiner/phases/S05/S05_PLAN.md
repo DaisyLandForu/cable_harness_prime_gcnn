@@ -1,7 +1,7 @@
 # S05 Plan — Strong-branch teacher and B0 imitation learning
 
 Status: S04 audit prerequisite PASS; pilot-v2 GPU attempt retained as FAILED;
-pilot-v3 CUDA determinism remediation preregistered and NOT_RUN
+pilot-v3 deterministic pilot PASS; formal S05 protocol NOT_RUN
 
 ## Frozen start
 
@@ -111,6 +111,12 @@ Any identity ambiguity, unexpected solver stack, corrupt/missing shard, NaN,
 invalid action, leakage, or failed seed remains recorded and stops Gate
 aggregation. The pipeline must not add weak pseudocost labels to disguise an
 invalid strong teacher.
+
+Pilot-v3 now satisfies the pilot checks for all three seeds and all curve sizes.
+Because the aggregate primary metric still improves at the largest tested size,
+the pilot does not establish saturation. A formal state budget and significance
+procedure must be preregistered before formal collection/training; S06 remains
+blocked until the full S05 Gate passes.
 
 ## External effects
 

@@ -6,8 +6,7 @@
 - S05 pilot-v1 teacher: complete but only 53 valid train states.
 - S05 pilot-v2 teacher: PASS capacity; all three v2 seed reports retained FAILED
   on incomplete CUDA determinism.
-- S05 pilot-v3: same experiment with complete deterministic CUDA controls;
-  teacher/training NOT_RUN.
+- S05 pilot-v3: teacher 12/12, seeds 101/202/303 and strict aggregation PASS.
 - Formal teacher state count: not frozen; formal collection/training must not start
   until the pilot learning curve has been analyzed.
 
@@ -15,6 +14,11 @@ All jobs below must use the same repository checkout and Git HEAD. The teacher
 manifest records the HEAD and training fails closed if the checkout changes.
 The repository mount must therefore be persistent and shared by the CPU and GPU
 jobs.
+
+## Completed pilot jobs
+
+Jobs A, B101, B202, B303 and C below are retained as exact reproduction
+commands. Do not rerun them to tune or overwrite the completed pilot.
 
 ## Job A: teacher pilot
 

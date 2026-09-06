@@ -1,6 +1,6 @@
 # S05 pilot-v3 CUDA determinism remediation
 
-Status: preregistered after pilot-v2 failure; v3 teacher/training NOT_RUN
+Status: v3 teacher and three-seed pilot training COMPLETE; pilot Gate PASS
 
 ## Retained pilot-v2 failure
 
@@ -67,6 +67,25 @@ under a new code identity is forbidden.
 - A separate real V100 smoke run under the registered controls completed a
   deterministic training step and returned repeated/reloaded max error 0.
 
-Pilot-v3 may proceed only from the final metadata commit following the content
-commit above. S05 remains FAIL/STOP until all three v3 seed reports complete and
-the strict aggregate passes.
+## Completed v3 evidence
+
+The commit-bound teacher rerun completed 12/12 tasks with the same aggregate
+counts as v2: 149/192 valid, 85 train-valid, 64 validation-valid, zero all-tie,
+3,939/3,939 mapped and zero leakage. Its manifest SHA-256 is
+`9ba08c0f30f1014396c7a3825b6bb3247fe4d6e0d2dab04c180ae26cb307d36f`.
+
+Seeds 101/202/303 completed all 9 curve runs. Every checkpoint reloaded with
+bit-exact state/normalization and `reload_max_absolute_error=0.0`. The strict
+aggregate report SHA-256 is
+`73aa463a25d10cfd28a1e17e2396ad76eda4b945d0e2f04e7d775571bcded390`.
+
+Mean validation normalized SB regret was 0.596116 / 0.496956 / 0.447868 for
+16/32/64 states, versus random 0.685977. The primary curve improves as data
+grows and its across-seed sample standard deviation falls to 0.022333 at 64.
+All nine individual runs beat random. Seed 303 is slightly better at 32 than 64
+on its own, and top-3/correlation are not monotone, so this is pilot evidence,
+not a saturation or online-solver claim.
+
+Pilot Gate: **PASS**. Full S05 scientific Gate: **NOT_EVALUATED** because the
+formal teacher state count, formal five-seed run and preregistered significance
+analysis have not been frozen/executed. S06 remains blocked.

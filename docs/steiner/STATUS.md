@@ -4,9 +4,9 @@
 
 ## 当前状态
 
-- 当前阶段：S05 pilot-v2 teacher 12/12 完成并提供 85 个有效 train states；
-  三个 GPU seeds 的九次训练均完成，但因 CUDA 确定性控制不完整而在严格
-  checkpoint reload Gate 失败。失败产物保留，pilot-v3 remediation 已预注册。
+- 当前阶段：S05 pilot-v3 teacher 12/12、GPU runs 9/9 和严格聚合全部完成；
+  pilot Gate PASS。V2 确定性失败产物继续保留；正式状态预算/五 seed 训练
+  尚未预注册，完整 S05 Gate NOT_EVALUATED。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
   `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
   teacher、训练和 Gate 尚未运行，仍禁止 final 访问。
@@ -32,14 +32,14 @@
   launchers和严格 seed-shard 汇总；87 passed、1 expected skip。training/GPU runs
   pilot-v2 teacher 为 12 completed、158 observed、149 valid、3,939/3,939
   mapped、train valid 85。v2 GPU exact-reload Gate FAIL；v3 tests 为 90 passed、
-  1 expected skip；S05 Gate FAIL，禁止进入 S06。
+  1 expected skip；v3 mean regret 为 0.596116/0.496956/0.447868，全部 9 个
+  runs 优于 random 0.685977 且 reload error 0。完整 S05 Gate 尚未评估。
 - 资源：当前 S05 host 可见 128 GiB RAM 和 2 张 Tesla V100-SXM2 32GB；
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：从 v3 metadata head 重采相同 12-task teacher manifest，并行重跑
-  GPU seeds 101/202；用户随后提交 seed 303，三者 exact reload 全部为 0 后才
-  严格汇总。保留所有 v2 失败、skipped、invalid-child 与 seed 结果。
+- 下一步：只预注册正式 teacher 状态预算、五 seed 矩阵和 validation
+  significance 规则；获批后再运行。S06、final test 和 S05 tag 继续禁止。
 
 ## 阶段登记表
 
@@ -52,7 +52,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | v2 GPU FAIL；v3 remediation NOT_RUN | NOT_RUN | `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd` | pending v3 metadata commit |
+| S05 | Strong-branch teacher 与 IL | v3 pilot PASS；full Gate NOT_EVALUATED | NOT_RUN | `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd` | v3 run head `7dd05e3fa0ff38688b3c571d5bc2f1b87369e19f` |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |
