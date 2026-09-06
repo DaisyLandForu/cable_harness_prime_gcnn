@@ -54,6 +54,7 @@ from steiner_branching.solver.strong_branching import (
 
 REPO = Path(__file__).resolve().parents[2]
 CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v1.yml"
+CONFIG_V2 = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v2.yml"
 B0_CONFIG = REPO / "configs/steiner/models/b0_milp_gcnn_v1.yml"
 
 
@@ -134,6 +135,35 @@ def test_s05_config_freezes_splits_seeds_and_learning_curve(monkeypatch):
         from steiner_branching.learning import teacher_data
 
         monkeypatch.setattr(teacher_data, "load_yaml_mapping", lambda _path: bad)
+        teacher_data.load_s05_config("unused.yml")
+
+
+def test_s05_pilot_v2_adds_only_two_s03_branchable_train_instances(monkeypatch):
+    config = load_s05_config(CONFIG_V2)
+    tasks = expand_pilot_tasks(config)
+    assert len(tasks) == 12
+    assert config["experiment_id"] == "s05-teacher-il-pilot-v2"
+    assert config["artifacts"] == {
+        "raw_root": "results/steiner/raw/s05/s05-teacher-il-pilot-v2",
+        "report_root": "results/steiner/s05/s05-teacher-il-pilot-v2",
+    }
+    added = {
+        (task.split, task.family, task.generator_seed)
+        for task in tasks
+        if task.generator_seed in {100303, 100315}
+    }
+    assert added == {
+        ("train", "sparse_erdos_renyi", 100303),
+        ("train", "grid_with_holes", 100315),
+    }
+    assert {task.teacher_seed for task in tasks} == {1001}
+
+    changed = copy.deepcopy(config)
+    changed["pilot_instances"][-1]["generator_seed"] = 100317
+    from steiner_branching.learning import teacher_data
+
+    monkeypatch.setattr(teacher_data, "load_yaml_mapping", lambda _path: changed)
+    with pytest.raises(StrictConfigError, match="identities/order changed"):
         teacher_data.load_s05_config("unused.yml")
 
 

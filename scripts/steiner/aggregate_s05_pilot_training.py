@@ -25,7 +25,7 @@ from steiner_branching.learning.teacher_data import (  # noqa: E402
 )
 
 
-DEFAULT_CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v1.yml"
+DEFAULT_CONFIG = REPO / "configs/steiner/experiments/s05_teacher_il_pilot_v2.yml"
 
 
 def utc_now() -> str:

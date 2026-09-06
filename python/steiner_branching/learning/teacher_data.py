@@ -30,6 +30,26 @@ PILOT_TEACHER_SEEDS = (1001,)
 FORMAL_TEACHER_SEEDS = (1001, 1002, 1003)
 PILOT_TRAINING_SEEDS = (101, 202, 303)
 FORMAL_TRAINING_SEEDS = (101, 202, 303, 404, 505)
+PILOT_V1_INSTANCES = (
+    ("train", "sparse_erdos_renyi", 100302),
+    ("train", "random_geometric", 100308),
+    ("train", "grid_with_holes", 100314),
+    ("train", "community_block", 100320),
+    ("train", "bridge_bottleneck", 100326),
+    ("validation_iid", "sparse_erdos_renyi", 200000),
+    ("validation_iid", "random_geometric", 200001),
+    ("validation_iid", "grid_with_holes", 200002),
+    ("validation_iid", "community_block", 200003),
+    ("validation_iid", "bridge_bottleneck", 200004),
+)
+PILOT_V2_INSTANCES = PILOT_V1_INSTANCES + (
+    ("train", "sparse_erdos_renyi", 100303),
+    ("train", "grid_with_holes", 100315),
+)
+PILOT_EXPERIMENTS = {
+    "s05-teacher-il-pilot-v1": PILOT_V1_INSTANCES,
+    "s05-teacher-il-pilot-v2": PILOT_V2_INSTANCES,
+}
 
 
 def _require_keys(raw: Mapping[str, Any], expected: set[str], label: str) -> None:
@@ -76,8 +96,10 @@ def load_s05_config(path: Path | str) -> dict[str, Any]:
     )
     if raw["schema_version"] != 1 or raw["stage"] != "S05":
         raise StrictConfigError("S05 config schema_version/stage mismatch")
-    if raw["experiment_id"] != "s05-teacher-il-pilot-v1":
-        raise StrictConfigError("S05 experiment_id changed")
+    experiment_id = str(raw["experiment_id"])
+    expected_instances = PILOT_EXPERIMENTS.get(experiment_id)
+    if expected_instances is None:
+        raise StrictConfigError("S05 experiment_id is not a registered pilot")
     expected_identity = {
         "solver_stack_id": EXPECTED_STACK_ID,
         "protocol_id": "P1",
@@ -177,14 +199,18 @@ def load_s05_config(path: Path | str) -> dict[str, Any]:
     ):
         if not math.isfinite(float(training[key])) or float(training[key]) <= 0.0:
             raise StrictConfigError(f"training.{key} must be finite and positive")
-    if training["checkpoint_root"] != "checkpoints/steiner/s05/s05-teacher-il-pilot-v1":
+    if training["checkpoint_root"] != f"checkpoints/steiner/s05/{experiment_id}":
         raise StrictConfigError("S05 checkpoint root changed")
 
     instances = raw["pilot_instances"]
-    if not isinstance(instances, list) or len(instances) != 10:
-        raise StrictConfigError("S05 pilot must contain exactly ten preregistered instances")
+    if not isinstance(instances, list) or len(instances) != len(expected_instances):
+        raise StrictConfigError(
+            f"S05 {experiment_id} must contain exactly {len(expected_instances)} "
+            "preregistered instances"
+        )
     seen: set[tuple[str, int]] = set()
     by_split: dict[str, set[str]] = {"train": set(), "validation_iid": set()}
+    observed_instances: list[tuple[str, str, int]] = []
     for index, value in enumerate(instances):
         item = _mapping(value, f"pilot_instances[{index}]")
         _require_keys(
@@ -208,6 +234,9 @@ def load_s05_config(path: Path | str) -> dict[str, Any]:
             raise StrictConfigError("duplicate S05 pilot instance seed")
         seen.add((split, seed))
         by_split[split].add(family)
+        observed_instances.append((split, family, seed))
+    if tuple(observed_instances) != expected_instances:
+        raise StrictConfigError(f"S05 {experiment_id} instance identities/order changed")
     expected_families = set(SYNTHETIC_FAMILIES)
     if any(families != expected_families for families in by_split.values()):
         raise StrictConfigError("each S05 pilot split must cover all five families")
@@ -239,8 +268,8 @@ def load_s05_config(path: Path | str) -> dict[str, Any]:
     artifacts = _mapping(raw["artifacts"], "artifacts")
     _require_keys(artifacts, {"raw_root", "report_root"}, "artifacts")
     if artifacts != {
-        "raw_root": "results/steiner/raw/s05/s05-teacher-il-pilot-v1",
-        "report_root": "results/steiner/s05/s05-teacher-il-pilot-v1",
+        "raw_root": f"results/steiner/raw/s05/{experiment_id}",
+        "report_root": f"results/steiner/s05/{experiment_id}",
     }:
         raise StrictConfigError("S05 artifact roots changed")
     return raw

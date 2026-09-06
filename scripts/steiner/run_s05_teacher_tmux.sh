@@ -28,10 +28,10 @@ if tmux has-session -t "$session" 2>/dev/null; then
     exit 0
 fi
 
-readonly RUN_DIR="${REPO_ROOT}/results/steiner/raw/s05/s05-teacher-il-pilot-v1"
+readonly RUN_DIR="${REPO_ROOT}/results/steiner/raw/s05/s05-teacher-il-pilot-v2"
 readonly LOG_PATH="${RUN_DIR}/tmux.log"
 mkdir -p -- "$RUN_DIR"
-readonly RUN_COMMAND="set -o pipefail; cd '${REPO_ROOT}' && scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher.py --max-workers '${workers}' 2>&1 | tee -a '${LOG_PATH}'; code=\$?; printf 'S05_TEACHER_EXIT_CODE=%s\n' \"\$code\"; exec \${SHELL:-/bin/bash}"
+readonly RUN_COMMAND="set -o pipefail; cd '${REPO_ROOT}' && scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher.py --config configs/steiner/experiments/s05_teacher_il_pilot_v2.yml --max-workers '${workers}' 2>&1 | tee -a '${LOG_PATH}'; code=\$?; printf 'S05_TEACHER_EXIT_CODE=%s\n' \"\$code\"; exec \${SHELL:-/bin/bash}"
 
 tmux new-session -d -s "$session" -c "$REPO_ROOT" "$RUN_COMMAND"
 printf 'Started S05 teacher pilot: %s\n' "$session"
