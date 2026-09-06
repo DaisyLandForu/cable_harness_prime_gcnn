@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from steiner_branching.config import StrictConfigError
+from steiner_branching.config import StrictConfigError, load_yaml_mapping
 from steiner_branching.learning.formal_protocol import (
     FORMAL_CONFIG_FILE_SHA256,
     FORMAL_CONFIG_PATH,
@@ -20,6 +20,13 @@ from steiner_branching.learning.teacher_data import file_sha256
 
 
 REPO = Path(__file__).resolve().parents[2]
+CONCURRENCY_AMENDMENT_PATH = (
+    REPO
+    / "configs/steiner/experiments/s05_teacher_il_formal_v1_concurrency_a1.yml"
+)
+CONCURRENCY_AMENDMENT_SHA256 = (
+    "8ae53206bb55c30e052f489687200a0ca5cea787da7bcf8c0d49f9f9ce49451a"
+)
 
 
 def _load_script(name: str, relative: str):
@@ -57,6 +64,54 @@ def test_formal_protocol_activation_hash_and_exact_task_matrix(tmp_path):
     changed.write_bytes(FORMAL_CONFIG_PATH.read_bytes().replace(b"epochs: 40", b"epochs: 41"))
     with pytest.raises(StrictConfigError, match="byte-exact"):
         load_s05_formal_config(changed, require_activation=False)
+
+
+def test_formal_concurrency_amendment_changes_only_the_global_job_limit():
+    assert file_sha256(CONCURRENCY_AMENDMENT_PATH) == CONCURRENCY_AMENDMENT_SHA256
+    amendment = load_yaml_mapping(CONCURRENCY_AMENDMENT_PATH)
+    base = load_s05_formal_config(require_activation=False)
+
+    assert amendment["status"] == "preregistered_amendment_pending_gpt_audit"
+    assert amendment["execution_authorized"] is False
+    assert amendment["base_protocol"] == {
+        "experiment_id": "s05-teacher-il-formal-v1",
+        "content_head": "d1717a7ecb6043efd71678175a92325ac9ff4208",
+        "yaml_path": "configs/steiner/experiments/s05_teacher_il_formal_v1.yml",
+        "yaml_sha256": FORMAL_CONFIG_FILE_SHA256,
+        "explanation_path": "docs/steiner/phases/S05/S05_FORMAL_PROTOCOL.md",
+        "explanation_sha256": (
+            "6b121bb215ad9ad5444ce2c8328dc7049b3abdfd0a7bf191fec888441ec572c9"
+        ),
+        "audit_record": "docs/steiner/audits/S05_FORMAL_PROTOCOL_AUDIT_RECORD.json",
+        "audit_verdict": "PASS",
+    }
+    assert amendment["scope"] == "execution_scheduling_only"
+    assert amendment["allowed_overrides"] == [{
+        "path": "training.max_concurrent_training_jobs",
+        "before": 2,
+        "after": 5,
+    }]
+    assert base["training"]["max_concurrent_training_jobs"] == 2
+
+    unchanged = amendment["unchanged_contract"]
+    assert unchanged["training_seeds"] == base["training"]["formal_seeds"]
+    for key in (
+        "train_states", "epochs", "learning_rate", "weight_decay",
+        "gradient_clip_norm", "target_temperature", "deterministic_algorithms",
+        "cublas_workspace_config", "representative_checkpoint_seed",
+    ):
+        assert unchanged[key] == base["training"][key]
+    requirements = amendment["execution_requirements"]
+    assert requirements["gpu_model_per_job"] == base["training"]["gpu_model"]
+    assert requirements["cpu_cores_per_job"] == base["training"]["cpu_cores_per_job"]
+    assert requirements["ram_gib_per_job"] == base["training"]["ram_gib_per_job"]
+    assert requirements["gpu_count_per_job"] == 1
+    assert requirements["processes_per_gpu"] == 1
+    assert requirements["distributed_training"] is False
+    assert requirements["shared_optimizer_or_model_state"] is False
+    assert amendment["failure_policy"]["on_missing_amendment_pass"] == (
+        "keep_base_limit_of_two"
+    )
 
 
 def _records_for_frozen_quotas(config):

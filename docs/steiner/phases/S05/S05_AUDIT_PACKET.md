@@ -8,6 +8,9 @@
 - formal protocol v1 content SHA: `d1717a7ecb6043efd71678175a92325ac9ff4208`
 - formal protocol pre-execution audit: user reports GPT PASS; activation record
   `docs/steiner/audits/S05_FORMAL_PROTOCOL_AUDIT_RECORD.json`
+- execution-only concurrency amendment A1: frozen and pending GPT audit; only
+  `training.max_concurrent_training_jobs` changes from 2 to 5, and the base
+  limit remains binding until a separate PASS activation record exists
 - substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
@@ -35,6 +38,13 @@ The user subsequently reported a GPT `PASS` authorizing formal implementation
 and execution. The activation record binds that verdict to the frozen YAML and
 protocol hashes, keeps the complete S05 Gate unevaluated, and does not authorize
 S06. Formal code requires that record and the byte-exact audited YAML.
+
+The scheduler was later clarified to allocate independent GPUs to independent
+custom jobs rather than limiting the experiment to the current two-GPU host.
+`S05_FORMAL_CONCURRENCY_AMENDMENT_A1.md` preregisters the sole scheduling
+override from two to five concurrent one-V100 seed jobs. It changes no teacher,
+training, validation, statistics or Gate semantics and is not active before an
+external GPT PASS is separately recorded.
 
 ## Review map
 

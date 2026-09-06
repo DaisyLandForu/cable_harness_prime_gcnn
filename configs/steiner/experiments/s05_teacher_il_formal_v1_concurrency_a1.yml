@@ -1,0 +1,64 @@
+schema_version: 1
+stage: S05
+amendment_id: s05-formal-v1-concurrency-a1
+status: preregistered_amendment_pending_gpt_audit
+execution_authorized: false
+required_audit_outcome: PASS
+activation_method: separate_committed_gpt_pass_record_referencing_amendment_sha256
+
+base_protocol:
+  experiment_id: s05-teacher-il-formal-v1
+  content_head: d1717a7ecb6043efd71678175a92325ac9ff4208
+  yaml_path: configs/steiner/experiments/s05_teacher_il_formal_v1.yml
+  yaml_sha256: c843f76d69c07b1c8a8093ab6f1426656084b2de2f4e9e0d777f1af32cd4c811
+  explanation_path: docs/steiner/phases/S05/S05_FORMAL_PROTOCOL.md
+  explanation_sha256: 6b121bb215ad9ad5444ce2c8328dc7049b3abdfd0a7bf191fec888441ec572c9
+  audit_record: docs/steiner/audits/S05_FORMAL_PROTOCOL_AUDIT_RECORD.json
+  audit_verdict: PASS
+
+scope: execution_scheduling_only
+allowed_overrides:
+  - path: training.max_concurrent_training_jobs
+    before: 2
+    after: 5
+
+execution_requirements:
+  scheduler_allocation: five_independent_jobs
+  gpu_model_per_job: Tesla V100-SXM2-32GB
+  gpu_count_per_job: 1
+  cpu_cores_per_job: 8
+  ram_gib_per_job: 32
+  processes_per_gpu: 1
+  shared_optimizer_or_model_state: false
+  distributed_training: false
+  require_disjoint_seed_artifacts: true
+  require_same_teacher_manifest: true
+  require_same_formal_run_head: true
+
+unchanged_contract:
+  training_seeds: [101, 202, 303, 404, 505]
+  train_states: 640
+  epochs: 40
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  gradient_clip_norm: 1.0
+  target_temperature: 1.0
+  deterministic_algorithms: true
+  cublas_workspace_config: ":4096:8"
+  checkpoint_selection_role: validation_select
+  gate_evaluation_role: validation_gate
+  representative_checkpoint_seed: 202
+  teacher_protocol_unchanged: true
+  instance_groups_unchanged: true
+  state_selection_and_quotas_unchanged: true
+  statistics_unchanged: true
+  gate_thresholds_unchanged: true
+  failure_policy_unchanged: true
+  test_and_final_access_prohibited: true
+
+failure_policy:
+  retain_failed_training_seeds: true
+  allow_seed_replacement: false
+  allow_seed_rerun_for_selection: false
+  allow_gate_relaxation: false
+  on_missing_amendment_pass: keep_base_limit_of_two

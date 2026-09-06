@@ -36,6 +36,19 @@ formal protocol v1 frozen for pre-audit; formal experiment NOT_RUN
 - Added batch and tmux launchers plus a scheduler job guide. No DDP or training
   semantic was introduced.
 
+## Formal execution concurrency amendment A1
+
+- Preserved the byte-exact audited v1 YAML and registered a separate,
+  non-executable amendment after learning that the scheduler can allocate five
+  independent V100 jobs rather than sharing one two-GPU host.
+- The only permitted override is
+  `training.max_concurrent_training_jobs: 2 -> 5`. Every seed, data item,
+  hyperparameter, deterministic setting, validation role, statistic, Gate and
+  failure rule remains unchanged.
+- The formal teacher run is unaffected. The base limit of two remains binding
+  until an external GPT PASS is recorded for A1; S05 full Gate and S06 remain
+  NOT_EVALUATED/unauthorized.
+
 ## Prepared components
 
 - Added a strict pilot config covering five train and five validation-IID
