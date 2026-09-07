@@ -1,0 +1,33 @@
+{
+  "candidate_manifest_sha256": "e65fc9a03fd683277570befe13b11f4b15ea981ee427568d56aeeccdd3847b56",
+  "checkpoint_loaded": false,
+  "experiment_id": "s05-teacher-il-formal-v3-confirmatory",
+  "family_lineage_counts": {
+    "bridge_bottleneck": 6,
+    "community_block": 6,
+    "grid_with_holes": 6,
+    "random_geometric": 6,
+    "sparse_erdos_renyi": 6
+  },
+  "family_state_counts": {
+    "bridge_bottleneck": 64,
+    "community_block": 64,
+    "grid_with_holes": 64,
+    "random_geometric": 64,
+    "sparse_erdos_renyi": 64
+  },
+  "formal_gate_evaluated": false,
+  "implementation_run_head": "42faf09560ecbfb782df7c89fa068e9f575c7e4b",
+  "pre_model_access_gate": "PASS",
+  "protocol_yaml_sha256": "99e75a4d4fa69f805232c637d4fc0ae750fcfccb57e9979b561f422591006242",
+  "s06_authorized": false,
+  "schema_version": 1,
+  "selected_lineages": 30,
+  "selected_manifest_path": "results/steiner/raw/s05/s05-teacher-il-formal-v3-confirmatory/selected_manifest.json",
+  "selected_manifest_sha256": "0a95f47337338ab58891056f773a99467da2b327b714d1a2cd4ee5e96c3b6981",
+  "selected_states": 320,
+  "stage": "S05",
+  "teacher_manifest_path": "results/steiner/raw/s05/s05-teacher-il-formal-v3-confirmatory/teacher_manifest.json",
+  "teacher_manifest_sha256": "0dfc4b3cc6fc28192c7477b9f209aab6b6a0c7bc373dba2e491e6c677df8755e",
+  "test_and_final_accessed": false
+}
