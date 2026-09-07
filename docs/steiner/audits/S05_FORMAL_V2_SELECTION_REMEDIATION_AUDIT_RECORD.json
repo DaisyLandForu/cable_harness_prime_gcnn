@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "stage": "S05",
+  "audit_kind": "formal_v2_selection_remediation_pre_execution",
+  "verdict": "CONDITIONAL_PASS",
+  "execution_authorized": false,
+  "verdict_source": "user_supplied_external_gpt_audit",
+  "recorded_at_utc": "2026-09-07T01:47:40Z",
+  "audited_content_head": "6404c047e49b505a2384bd30aae16de8b621f09e",
+  "audited_yaml_sha256": "91e157a8d7853133e3c4fe5865e863763874e41622febc87b94a39e54f6b7913",
+  "audited_explanation_sha256": "97bdc9b83b0f5eaa89951230b601258b92038297c1c5b94e8050f5e49a3cfb1a",
+  "source_text_sha256": "d9c57246eb16a0659882d2e8cebc54045b08ce1bc226d7673e34cb9c2fc108df",
+  "methodology_accepted": true,
+  "training_and_statistics_contract_accepted": true,
+  "five_independent_v100_jobs_accepted": true,
+  "blocking_findings": [
+    {
+      "id": "B1",
+      "status": "OPEN_AT_AUDITED_HEAD",
+      "summary": "YAML ordering names canonical_instance_content_sha256 but the sealed manifest schema exposes graph_sha256",
+      "minimum_fix": "use graph_sha256 literally in primary_order and fallback_order, align explanation, and add schema/permutation tests"
+    }
+  ],
+  "formal_v1_result": "FAIL_RETAINED",
+  "formal_training": "NOT_RUN",
+  "full_s05_gate_evaluated": false,
+  "s06_authorized": false
+}
