@@ -8,6 +8,8 @@
   S05 remains FAIL and S06 remains blocked
 - formal-v3 status: protocol/candidate identities frozen locally for GPT
   pre-execution audit; `execution_authorized=false`; no v3 run
+- formal-v3 preregistration content head:
+  `8d7accd2a948935174d3113f8787e58dae7936b3`
 - formal-v3 YAML:
   `configs/steiner/experiments/s05_teacher_il_formal_v3_confirmatory_gate.yml`
   (`99e75a4d4fa69f805232c637d4fc0ae750fcfccb57e9979b561f422591006242`)
