@@ -1,7 +1,25 @@
-# S05 Changelog — formal-v3 activated implementation
+# S05 Changelog — formal-v3 local Gate PASS
 
-Status: formal-v1/v2 FAIL retained; formal-v3 pre-execution audit PASS and
-implementation verified; teacher/Gate not yet run; S06 blocked
+Status: formal-v1/v2 FAIL retained; formal-v3 local Gate PASS; external result
+audit pending; S06 blocked
+
+## Formal-v3 execution result
+
+- Collected all 240 registered teacher tasks in about 96.5 minutes: 237
+  completed, three root-solved and zero failed. Teacher validity, tie, mapping,
+  eligibility and role checks all passed.
+- Selected and sealed exactly 30 fresh graph lineages and 320 states before any
+  checkpoint load. All pre-model-access checks passed.
+- Evaluated all five frozen v2 checkpoints without retraining. Every repeated
+  inference and checkpoint reload error was exactly 0.0.
+- The 30-lineage bootstrap mean random-minus-model effect is 0.112697 with 95%
+  CI `[0.057810, 0.167888]`; seed-regret CV is 0.016793. Every seed and every
+  family aggregate direction is positive. Formal-v3 local Gate is **PASS**.
+- Preserved the narrower teacher-evaluable scale claim. Eight individual graph
+  effects are negative and remain reported; family supplemental tests are
+  diagnostic rather than Gate criteria.
+- Did not access test/final, create an S05 tag or start S06. Result audit is the
+  next required step.
 
 ## Formal-v3 activation and executable pipeline
 

@@ -1,4 +1,41 @@
-# S05 Test Report — formal-v3 activated implementation checkpoint
+# S05 Test Report — formal-v3 local Gate PASS
+
+## Formal-v3 execution verification
+
+- Teacher: 240/240 terminal (`237 completed`, `3 root_solved`), zero failures;
+  3,383/3,840 valid states, 13/3,383 all-tie valid states and exact
+  69,709/69,709 action mapping. Teacher Gate: **PASS**.
+- Teacher resource identity: 80 visible CPUs, 128.00098 GiB RAM, six workers,
+  one SCIP thread per task, frozen SCIP 8.0.4 wrapper.
+- Pre-model barrier: exact 30 lineages, six per family, exact 320 selected
+  states, 64 per family, every lineage represented, unique semantics and zero
+  prior/cross-role/test-final lineage. All 13 checks: **PASS**.
+- Selection seal was committed at `fab9b720e513da66294e95dba0511a5bfa32b9a3`
+  before any model load.
+- Frozen-model evaluation: seeds 101/202/303/404/505 all completed on independent
+  one-V100 processes. Repeat inference error and checkpoint reload error are
+  `0.0` for all five; all state dicts reload bit-exactly.
+- Aggregate: all nine scientific checks **PASS**; 30-lineage bootstrap 95% CI
+  `[0.0578104443, 0.1678878191]`, CV `0.0167927294`, every seed/family direction
+  positive. Local Gate: **PASS**.
+- Post-result targeted formal suite: **13 passed** in 19.22 s. Post-result
+  complete frozen-stack suite: **103 passed, 1 expected PACE skip** in 79.14 s.
+  The committed selection seal reloaded successfully against the raw selected
+  manifest SHA-256.
+- Teacher, selected, seal and aggregate hashes are listed in
+  `S05_AUDIT_PACKET.md`; the byte-exact committed aggregate is
+  `S05_FORMAL_V3_GATE_SUMMARY.json`.
+- The automated pipeline watcher stopped safely on a stale Git proxy before GPU
+  execution; the seal was then pushed with proxy variables removed. A separate
+  aggregate watcher observed seed 505's running report and stopped before
+  aggregation; aggregation was invoked once manually after all five reports
+  were completed. Neither scheduling interruption changed experiment inputs or
+  artifacts.
+- The first standalone seal-loader verification omitted `PYTHONPATH=python` and
+  failed before import with `ModuleNotFoundError`; the corrected wrapper command
+  passed. This was a command-environment mistake, not an experiment or Gate
+  failure.
+- No model was retrained and no test/final or S06 command ran.
 
 ## Formal-v3 implementation verification
 
@@ -216,6 +253,7 @@ No Gate, data list, seed or threshold changed in response.
 ## Gate
 
 The remediation implementation tests **PASS** and pilot-v3 remains **PASS**.
-Formal-v2 execution completed, but its preregistered 30-lineage statistical
-matrix is incomplete at 25/30; therefore full S05 Gate is **FAIL** and S06
-remains blocked. The S04 re-audit prerequisite remains PASS.
+Formal-v1 and formal-v2 remain retained FAIL results. Formal-v3 completed its
+fresh exact 30-lineage matrix and the local S05 Gate is **PASS**. External
+result audit is pending; S06 remains blocked. The S04 prerequisite remains
+PASS.

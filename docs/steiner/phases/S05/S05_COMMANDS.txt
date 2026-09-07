@@ -1,5 +1,28 @@
 # S05 implementation commands (updated UTC 2026-09-07)
-# No credential, secret, raw state, checkpoint, training or final-test command ran.
+# No credential, secret, model-training, final-test or S06 command ran in v3.
+# Frozen checkpoint evaluation ran only after the committed pre-model seal.
+
+# Completed formal-v3 execution:
+scripts/steiner/run_s05_formal_v3_teacher_tmux.sh \
+  steiner-s05-formal-v3-teacher 6
+scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/select_s05_formal_v3_gate.py
+git add -- docs/steiner/phases/S05/S05_FORMAL_V3_SELECTION_SEAL.json
+git commit --only -m "docs: seal S05 formal v3 validation set" -- \
+  docs/steiner/phases/S05/S05_FORMAL_V3_SELECTION_SEAL.json
+# The configured localhost proxy was unavailable; only this push ignored it:
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
+  git push origin research/steiner-migration
+
+# Two independent V100 queues; each command sees exactly one CUDA device.
+CUDA_VISIBLE_DEVICES=0 scripts/steiner/run_s05_formal_v3_eval_batch.sh 101
+CUDA_VISIBLE_DEVICES=1 scripts/steiner/run_s05_formal_v3_eval_batch.sh 202
+CUDA_VISIBLE_DEVICES=0 scripts/steiner/run_s05_formal_v3_eval_batch.sh 303
+CUDA_VISIBLE_DEVICES=1 scripts/steiner/run_s05_formal_v3_eval_batch.sh 404
+CUDA_VISIBLE_DEVICES=0 scripts/steiner/run_s05_formal_v3_eval_batch.sh 505
+scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/aggregate_s05_formal_v3.py
+# Aggregate status: PASS. No command from S06/test/final followed.
 
 # Formal-v3 external GPT PASS is recorded. Implementation verification:
 sha256sum \

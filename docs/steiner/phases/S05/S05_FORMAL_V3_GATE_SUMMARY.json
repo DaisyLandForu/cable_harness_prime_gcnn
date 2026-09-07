@@ -1,0 +1,122 @@
+{
+  "created_at_utc": "2026-09-07T12:32:25Z",
+  "evaluation_git_head": "fab9b720e513da66294e95dba0511a5bfa32b9a3",
+  "experiment_id": "s05-teacher-il-formal-v3-confirmatory",
+  "formal_gate_evaluated": true,
+  "gate": {
+    "bootstrap_lineages": 30,
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260902,
+    "bootstrap_unit": "base_graph_lineage",
+    "checks": {
+      "all_five_training_seeds_complete": true,
+      "checkpoint_reload_exact": true,
+      "every_family_aggregate_mean_improvement_over_random": true,
+      "every_seed_mean_improvement_over_random": true,
+      "manifest_checksum_reload": true,
+      "primary_bootstrap_ci_lower_bound_above_zero": true,
+      "seed_regret_coefficient_of_variation": true,
+      "teacher_gate_pass": true,
+      "zero_split_or_role_leakage": true
+    },
+    "family_mean_effects": {
+      "bridge_bottleneck": 0.09722210273917513,
+      "community_block": 0.1657914718362868,
+      "grid_with_holes": 0.10881409676316861,
+      "random_geometric": 0.0826802536482414,
+      "sparse_erdos_renyi": 0.10897777170292632
+    },
+    "graph_mean_effects": {
+      "124dc904fe0cad706fc88c37aabcd85009e1e95fcedd9094bf8decdca4c4f4bc": -0.04615234948526295,
+      "15f4d1f9485abe0b8766a48b2809b9a66b058690424630374b26badb77ca9bf9": 0.0012072952719873597,
+      "182282c95f831e5f0ada91eb6579777b5aa5552c7dfd00710311481852f53338": 0.11218956043956045,
+      "182a5d236444ba4154151bcea97fd30e71a71aea6c1af4cceda9de49a82ec466": 0.11540740289932523,
+      "2858ffbec0879a6ea8a172629cea19f69852f78bd68fab33a6566cd0d6abe6bc": -0.09145401791534487,
+      "2c362749fa995b622694312cb895ae1c42a3939326d495a6b0d68ee93c99aaf9": -0.08993319224892524,
+      "35a7361fa634b443744773efc4c9420dfc23f6bb6a61dc83a4851cc4ee00efb3": 0.09461113923237158,
+      "3886b583320478496e23af2d5ab93f465b804c2e445e17fcc9a031433b5c3847": 0.20261620431753044,
+      "532df37b8402b03461f490f16a5d166bb3d0b980d49b818ffd7538c053532f71": 0.10575459093538002,
+      "53404375339a45d2f1d13461b54dcd4f127df39f950597427b840d12ef34dfa0": 0.2847402639968629,
+      "5b0cbb35504ad937557e0e0b68b3c75c7a42d17c12566c187b662af443521d2a": 0.2106248309313315,
+      "64179568959cd005085c175732119c9ded665e4a21630ef133e4e83005a68c93": 0.24197732861662063,
+      "64e53ac2de19dc2a03105097217f74252c5f07ea67dccdbaa74859cbc9c7766d": 0.406628331691688,
+      "6bbc242175fcb28d443f9a5528ed753f3930d74379bb10385afd3f3a74c4215f": 0.06190619082833691,
+      "6ecb00da5ccee53be71c7b4a289db45591db4317ff84fad1a2e522e44bf5efb9": -0.12788815768051773,
+      "793308d027ef4455dd38bb55b2f23083f95079a3763646dacce76a250c8567a3": -0.029474795670377675,
+      "861dcf8ac7220c7dc4b16ad67cd1c0c30568b0d970581eee13fdc1a0bbb334ea": 0.24365498643924827,
+      "9594b2b2e6163c6aa6dcbc2f8829fe1d41174f0cfce172aa8f323a25bb41b4f3": 0.3748034791092144,
+      "9b98681a0d4f43f9e819489c43d0745d78b50b0b3e7b8d8384637b1ca191bb46": 0.1662658352882723,
+      "9d2edd39924b7d2eadb87fceb2801bbd3dbb72d7e4fad538da5d7900adf1e3dc": 0.07640612191071382,
+      "b71b6e3b98a00ffb8914ea6c5bc42a65d97908f6fa0614cdda623b890708c90e": 0.3054048314579399,
+      "bafc6230c20fb4d740336ad7ae5f496bf6c6cc523948f7609cd4543e9b6f2c8c": 0.15895979442904085,
+      "beb03ac15cb6a9f42b89b71b92910904c767aa4116d1961637d03e0a74410f23": -0.0750422746813785,
+      "bf64002efc239fbcfa388ec7becf1d49bcf5b3686595feed109a4ee1b3ce6fdd": 0.37775219166969254,
+      "ca76cc43c62f17ab1d622ec17c008e9064add940da4e322482aba718299fd524": 0.08877913831273203,
+      "db55bdf25d7e58180fb9bccd11738064766a1723da081a41a584923ecee64ef1": -0.17327442116705524,
+      "dcd3aeb0227872c15478787766474193db2bd4681260fd44738f759aa57b6b70": 0.04967173787400478,
+      "e50c88c02c7fd89c58f06be1a7afb90c38c82e88a6e3c454b49cb7a9a2378cb5": 0.22545695110156042,
+      "fcd6ef427ba8a0373013ca67809a41cfd42fb9cff7b64c9a417af0ada61350b5": -0.00555365305962424,
+      "fdbac7243d0d76dc50561a381c44c5f441e98dd005f7be3a0d34692d7884a9a6": 0.11486883529386145
+    },
+    "primary_bootstrap_95_ci": [
+      0.05781044428556909,
+      0.16788781910680703
+    ],
+    "primary_effect": "random_regret_minus_model_regret",
+    "primary_mean_effect": 0.11269713933795965,
+    "seed_mean_effects": {
+      "101": 0.112070019831098,
+      "202": 0.10620582624222667,
+      "303": 0.11166737751025198,
+      "404": 0.12889527357515373,
+      "505": 0.10464719953106782
+    },
+    "seed_mean_regrets": {
+      "101": 0.5739537725513874,
+      "202": 0.5798179661402588,
+      "303": 0.5743564148722334,
+      "404": 0.5571285188073316,
+      "505": 0.5813765928514176
+    },
+    "seed_regret_coefficient_of_variation": 0.016792729371067443,
+    "seed_regret_mean": 0.5733266530445258,
+    "seed_regret_sample_std": 0.009627719325796601,
+    "status": "PASS",
+    "supplemental_wilcoxon_holm": {
+      "alternative": "random_regret_minus_model_regret_greater_than_zero",
+      "gate_relevant": false,
+      "holm_adjusted_pvalues": {
+        "family:bridge_bottleneck": 0.3125,
+        "family:community_block": 0.3125,
+        "family:grid_with_holes": 0.3125,
+        "family:random_geometric": 0.3125,
+        "family:sparse_erdos_renyi": 0.15625,
+        "overall": 0.001999659463763237
+      },
+      "raw_pvalues": {
+        "family:bridge_bottleneck": 0.078125,
+        "family:community_block": 0.078125,
+        "family:grid_with_holes": 0.078125,
+        "family:random_geometric": 0.21875,
+        "family:sparse_erdos_renyi": 0.03125,
+        "overall": 0.00033327657729387283
+      }
+    }
+  },
+  "implementation_run_head": "42faf09560ecbfb782df7c89fa068e9f575c7e4b",
+  "protocol_yaml_sha256": "99e75a4d4fa69f805232c637d4fc0ae750fcfccb57e9979b561f422591006242",
+  "s05_audited_tag_authorized": false,
+  "s05_local_gate_status": "PASS",
+  "s06_authorized": false,
+  "schema_version": 1,
+  "seed_report_sha256": {
+    "101": "c21595ffdd70b406c076e4172b9b23491310d13ec7206f31dd936e027c117826",
+    "202": "c52d8a26a2c6deaf07f21b1dd292117973d1ea5b5b2b57dc35759de336cb80f7",
+    "303": "a49e1cdd494b0d84d743be25f40d3f05e6620ba40605fb9e1c5206f2eaf46c71",
+    "404": "7f6cfb3bb5c1bd4eb76c8c0fedd88eaf6682ede296dc5ed7d8fb8478eba8392f",
+    "505": "d361a974c920ae307a27d92dd3a0fe0af23f75a0bf5731a7012ae3cfc1b3ea2e"
+  },
+  "selected_manifest_sha256": "0a95f47337338ab58891056f773a99467da2b327b714d1a2cd4ee5e96c3b6981",
+  "stage": "S05",
+  "test_and_final_accessed": false
+}

@@ -6,14 +6,13 @@
 
 - 当前阶段：S05 formal-v2 五个 GPU seeds 均完成 40 epochs 且 reload error 0，
   但冻结的 validation Gate 只覆盖 25/30 个注册 base-graph lineages，完整 S05
-  Gate **FAIL**。Formal-v3 已获外部 GPT 运行前 PASS，activation 与生产实现/测试
-  完成；下一步为 80 图、240 task 的 fresh teacher collection，尚未加载模型。
+  Gate **FAIL**。Formal-v3 已完成 fresh 240-task teacher、30-lineage barrier 和
+  五冻结模型评估，local scientific Gate **PASS**；等待外部结果审计。
 - formal-v1 仍因 train bucket quota 527/640 为 FAIL；formal-v2 的 640-state
   same-family selection 经 GPT `PASS / B1=CLOSED` 后执行。未重跑 teacher、未换
   graph/seed、未降低 Gate、未访问 test/final。
-- 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；S05 **FAIL / STOP**；
-  formal-v2 失败审计 PASS（仅认可 FAIL），formal-v3 为
-  `PRE-EXECUTION PASS / TEACHER NOT RUN`。
+- 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；formal-v1/v2 FAIL retained；
+  S05 formal-v3 **LOCAL PASS / RESULT AUDIT PENDING**，S06 仍 blocked。
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
 - S04 content SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`。
 - S04 remediation v2 content SHA：
@@ -38,13 +37,17 @@
   mapped、train valid 85。v2 GPU exact-reload Gate FAIL；v3 tests 为 90 passed、
   1 expected skip；v3 mean regret 为 0.596116/0.496956/0.447868，全部 9 个
   runs 优于 random 0.685977 且 reload error 0。formal-v2 完整 Gate 为 FAIL。
+- S05 formal-v3：240/240 teacher tasks terminal、3,383/3,840 valid、
+  69,709/69,709 mapped；pre-model barrier 30 lineages/320 states PASS；五个冻结
+  checkpoints 全部 reload error 0；primary effect 0.112697、95% CI
+  `[0.057810, 0.167888]`、CV 0.016793，local Gate PASS。
 - 资源：当前 S05 host 可见 128 GiB RAM 和 2 张 Tesla V100-SXM2 32GB；
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：以 6 workers 执行 formal-v3 的 240 个 CPU teacher tasks；teacher PASS
-  后选择并提交 30-lineage/320-state seal。只有该 pre-model barrier PASS 后才允许
-  评估五个冻结模型；S06、final test 和 S05 tag 继续禁止。
+- 下一步：只读审计 formal-v3 的 committed Gate summary、selection seal、实现和
+  结果分析。只有结果审计 PASS 后才可创建 S05 audited tag 并放行 S06；final test
+  仍按后续阶段协议禁止访问。
 
 ## 阶段登记表
 
@@ -57,7 +60,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | formal-v2 FAIL（25/30 Gate lineages）；v3 teacher NOT_RUN | v2 failure-result audit PASS；v3 pre-execution PASS | `8d7accd2a948935174d3113f8787e58dae7936b3` | activation `9122b123a2b036cc83a7b83e45a4ffbd1883842c`；no tag |
+| S05 | Strong-branch teacher 与 IL | formal-v3 local PASS；v1/v2 FAIL retained | v3 pre-execution PASS；result audit pending | result content head pending commit | selection seal `fab9b720e513da66294e95dba0511a5bfa32b9a3`；no tag |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |

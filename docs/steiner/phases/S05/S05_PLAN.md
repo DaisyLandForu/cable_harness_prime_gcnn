@@ -1,8 +1,7 @@
 # S05 Plan — Strong-branch teacher and B0 imitation learning
 
-Status: S04 audit prerequisite PASS; pilot-v2 GPU attempt retained as FAILED;
-pilot-v3 deterministic pilot PASS; formal protocol v1 FROZEN FOR PRE-AUDIT and
-NOT AUTHORIZED TO RUN
+Status: S04 audit prerequisite PASS; pilot-v3 PASS; formal-v1/v2 FAIL retained;
+formal-v3 local Gate PASS and external result audit pending; S06 blocked
 
 ## Frozen start
 
@@ -133,3 +132,13 @@ This turn may commit/push source, small configs, tests and process documents onl
 after CPU verification. Raw shards, solver logs, checkpoints, normalization
 artifacts and tmux logs stay under ignored directories and are not committed.
 No tag, PR, merge, rebase, amend, force push or formal experiment is authorized.
+
+## Execution addendum
+
+The subsequently audited formal-v3 confirmatory protocol completed without
+model retraining. Its fresh teacher and exact 30-lineage validation barrier
+passed, all five frozen checkpoints reloaded exactly, and the local scientific
+Gate passed. See `S05_FORMAL_V3_GATE_SUMMARY.json` and
+`S05_RESULT_ANALYSIS.md`. This addendum records the outcome without changing the
+historical preregistration text above. External result audit remains mandatory
+before an S05 audited tag or S06 handoff.

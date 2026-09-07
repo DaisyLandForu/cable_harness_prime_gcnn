@@ -1,13 +1,14 @@
-# S05 Audit Packet — formal-v3 activated implementation checkpoint
+# S05 Audit Packet — formal-v3 local Gate PASS
 
 ## Identity and status
 
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
-- current immutable result: formal-v2 **FAIL**, accepted by external GPT audit;
-  S05 remains FAIL and S06 remains blocked
-- formal-v3 status: external GPT pre-execution **PASS** recorded in a separate
-  activation; production implementation/tests complete; teacher not yet run
+- immutable history: formal-v1 and formal-v2 **FAIL**, both retained
+- current result: formal-v3 local scientific Gate **PASS**; external result
+  audit pending; S06 remains blocked
+- formal-v3 status: external GPT pre-execution **PASS**; teacher, pre-model
+  barrier and five-checkpoint confirmatory evaluation completed locally
 - formal-v3 preregistration content head:
   `8d7accd2a948935174d3113f8787e58dae7936b3`
 - formal-v3 YAML:
@@ -33,8 +34,8 @@
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
 - S05 Gate: pilot-v3 pilot Gate PASS; formal-v1 teacher Gate FAIL; formal-v2
-  full scientific Gate FAIL at 25/30 validation lineages; no S05
-  local-gate/audited tag permitted
+  full scientific Gate FAIL at 25/30 validation lineages; formal-v3 local Gate
+  PASS; no audited tag or S06 permission before result audit
 - teacher attempt 1: FAILED and retained; fraction-semantics remediation tested
 - pilot-v1 retry: 10/10 completed, teacher-quality checks PASS, but only 53 valid
   train states; pilot-v2 capacity amendment preregistered before any GPU run
@@ -64,8 +65,8 @@ teacher or training task ran.
 
 The user subsequently reported a GPT `PASS` authorizing formal implementation
 and execution. The activation record binds that verdict to the frozen YAML and
-protocol hashes, keeps the complete S05 Gate unevaluated, and does not authorize
-S06. Formal code requires that record and the byte-exact audited YAML.
+protocol hashes and does not authorize S06. Formal code requires that record
+and the byte-exact audited YAML.
 
 The scheduler was later clarified to allocate independent GPUs to independent
 custom jobs rather than limiting the experiment to the current two-GPU host.
@@ -105,6 +106,10 @@ remains unauthorized pending focused re-audit.
 | interrupted long jobs | two tmux launchers | shell syntax and path review |
 | scheduler parallelism | seed-selecting foreground launcher + strict aggregator | disjoint/duplicate/missing matrix tests |
 | no premature formal run | required audited tag + CUDA checks | pilot artifacts say `formal_gate_evaluated=false` |
+| v3 teacher-only lineage choice | `select_s05_formal_v3_gate.py` | permutation-stable first-six and shortage tests |
+| no premature model access | committed selection-seal barrier | failed barrier causes zero checkpoint-loader calls |
+| frozen five-model evaluation | `evaluate_s05_formal_v3.py` | five reports, repeat/reload error 0.0 |
+| exact confirmatory denominator | `aggregate_s05_formal_v3.py` | committed 30-lineage Gate summary |
 
 ## Formal-v2 evidence
 
@@ -118,19 +123,40 @@ remains unauthorized pending focused re-audit.
 - test/final accessed: no
 - Gate: **FAIL**; S06 authorized: no
 
+## Formal-v3 evidence
+
+- implementation run head: `42faf09560ecbfb782df7c89fa068e9f575c7e4b`
+- selection-seal commit: `fab9b720e513da66294e95dba0511a5bfa32b9a3`
+- teacher manifest SHA-256:
+  `0dfc4b3cc6fc28192c7477b9f209aab6b6a0c7bc373dba2e491e6c677df8755e`
+- selected manifest SHA-256:
+  `0a95f47337338ab58891056f773a99467da2b327b714d1a2cd4ee5e96c3b6981`
+- selection seal SHA-256:
+  `10283ee44681a547ffb61373f30325f51888e9bd17ff98980abb4265f862f56d`
+- aggregate/Gate summary SHA-256:
+  `4aa035ad7538219da72fa4a8028223cf340181d5d1495539a051acf7601f742d`
+- teacher: 240/240 terminal, zero failures, 3,383/3,840 valid, 13 all-tie,
+  69,709/69,709 mapped, at least 14 eligible lineages in every family
+- pre-model barrier: 30/30 lineages, 6/family, 320/320 states, 64/family,
+  all checks PASS before checkpoint loading
+- frozen model evaluation: 5/5 completed; repeat and reload error 0.0 for all
+- primary mean effect: 0.112697; 30-lineage bootstrap 95% CI
+  `[0.057810, 0.167888]`; seed-regret CV 0.016793 <= 0.15
+- every seed and every family aggregate direction: positive
+- test/final accessed: no; model retrained: no
+- machine summary: `S05_FORMAL_V3_GATE_SUMMARY.json`
+- local Gate: **PASS**; audited tag/S06 authorization: no, pending result audit
+
 ## Required future evidence
 
-Before S05 can be audited for full PASS, run the frozen 240-task teacher
-candidate budget, seal exactly 30 lineages and
-320 states, then evaluate the five frozen checkpoints. Attach exact raw,
-selection, report and checkpoint hashes, resource/timing evidence and final S05
-Gate JSON. Failed, root-solved, invalid, all-tie and skipped entries must remain
-in denominators/manifests.
+Obtain an independent result audit of the committed protocol, implementation,
+selection seal, Gate summary and phase analysis. Only audit PASS may authorize
+the S05 tag and S06 handoff. Raw task/state/checkpoint artifacts remain outside
+Git and are bound by the hashes above.
 
 ## Suggested current conclusion
 
-Pilot-v3 pilot Gate **PASS**; formal-v2 full S05 Gate **FAIL**. Formal-v3
-pre-execution audit and implementation tests **PASS**, but its teacher,
-pre-model barrier and scientific Gate are not yet evaluated. The next permitted
-action is the frozen 240-task teacher run. Do not create an S05 tag or start
-S06.
+Formal-v1 and formal-v2 remain **FAIL**. Formal-v3 completed with local Gate
+**PASS**, closing the missing-denominator issue using a new audited validation
+set without retraining. Result audit is pending. Do not create an S05 audited
+tag, start S06, or access test/final until that audit returns PASS.

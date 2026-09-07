@@ -1,26 +1,63 @@
-# S05 Result Analysis — formal-v2 FAIL and formal-v3 preregistration
+# S05 Result Analysis — formal-v3 local Gate PASS
 
-## Formal-v3 scope
+## Formal-v3 confirmatory result
 
-GPT accepted the formal-v2 failure record and allowed a new protocol to be
-preregistered, but did not turn S05 into PASS or authorize execution. V3 is a
-minimal confirmatory-validation remediation: all five successfully trained v2
-models are frozen and no model is retrained. The only expensive repeated work
-is teacher labeling on completely new validation graphs.
+Formal-v3 completed the audited confirmatory protocol without retraining or
+changing any of the five formal-v2 models. Its local scientific Gate is
+**PASS**. Formal-v1 and formal-v2 remain immutable FAIL results; v3 supplies a
+new, lineage-complete validation test rather than rewriting either failure.
 
-To avoid repeating the 25/30 lineage failure after GPU work, v3 registers 80
-fresh candidates (16 per family) and deterministically selects the first six
-teacher-evaluable lineages per family. Eligibility requires at least 12 unique
-valid states and cannot use model outputs or regret. Before loading a model, a
-new hard barrier requires exactly 30 lineages, six per family and 320 states,
-with every lineage represented and no prior/test/final overlap.
+The CPU teacher run completed all 240 registered tasks: 237 `completed` and
+three `root_solved`, with zero task failure. It produced 3,383 valid states out
+of the frozen 3,840-slot denominator (88.098958%), 13 all-tie valid states
+(0.384274%), and 69,709/69,709 mapped candidate rows (100%). Eligible lineage
+counts were sparse 14, geometric 16, grid 16, community 16 and bridge 15, all
+well above the required six. Teacher collection took 5,791 seconds wall time
+(about 96.5 minutes) with six one-thread workers.
 
-This improves execution reliability without weakening the scientific Gate.
-The cost is a narrower conclusion: any successful result applies only to the
-registered teacher-evaluable small/medium scale envelope, not to every scale.
-Random-geometric small graphs remain in the new pool, so the adverse v2 signal
-is tested rather than designed away. V3 remains NOT RUN pending independent
-GPT pre-execution PASS.
+The pre-model barrier then selected exactly 30 fresh lineages, six per family,
+and exactly 320 semantic-unique states, 64 per family. Every lineage contributes
+at least one state. All candidate, shard and selected-manifest checksums passed;
+there was no prior-S05, old-v2-Gate, cross-role, test or final lineage. The
+selected manifest was sealed and committed before any checkpoint was loaded.
+
+All five frozen checkpoints completed the identical Gate evaluation. Repeated
+CUDA inference and checkpoint reload error were exactly 0.0 for every seed.
+Lineage-weighted mean regrets were 0.573954, 0.579818, 0.574356, 0.557129 and
+0.581377 for seeds 101/202/303/404/505. Every seed improved over the fixed
+random baseline; seed effects ranged from 0.104647 to 0.128895.
+
+The primary random-minus-model mean effect is 0.112697, with the preregistered
+30-lineage, 10,000-replicate bootstrap 95% CI `[0.057810, 0.167888]`. Its lower
+bound is above zero. Mean model regret is 0.573327 versus a lineage-weighted
+random regret of 0.686024, a 16.43% relative reduction. Seed-regret CV is
+0.016793, far below the 0.15 limit.
+
+Every family aggregate direction is positive: sparse 0.108978, geometric
+0.082680, grid 0.108814, community 0.165791 and bridge 0.097222. The earlier
+adverse random-geometric diagnostic therefore did not repeat on the fresh
+registered geometric-small Gate. However, eight of 30 individual graph effects
+are negative. The protocol requires positive family aggregates and an overall
+positive CI, not improvement on every single graph, so this does not fail the
+Gate and should remain visible as heterogeneity.
+
+The supplemental family-wise Wilcoxon/Holm values are not Gate-relevant and are
+not individually significant after correction with only six lineages per
+family. The primary preregistered bootstrap, all-seed direction, all-family
+direction, CV, mapping and reload checks all pass.
+
+## Claim boundary and next authorization
+
+This result establishes offline imitation ranking improvement over the fixed
+random baseline on the registered teacher-evaluable small/medium envelope. It
+does not establish online SCIP node count, solve time, production relpscost
+superiority, every-scale generalization, or final-test performance. Those
+claims remain outside S05.
+
+S05 is now **local Gate PASS / external result audit pending**. No S05 audited
+tag may be created and S06/test/final remain prohibited until an independent
+result audit accepts the evidence. The machine-readable committed summary is
+`S05_FORMAL_V3_GATE_SUMMARY.json`.
 
 ## Formal-v2 outcome
 
