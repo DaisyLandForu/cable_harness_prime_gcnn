@@ -44,8 +44,8 @@ teacher_evidence_reuse:
 state_selection:
   method: lineage_teacher_round_robin_within_family_fallback_v2
   eligibility_unchanged: state_valid_and_semantic_unique_and_role_isolated
-  primary_order: [state_index, canonical_instance_content_sha256, teacher_seed, semantic_sha256]
-  fallback_order: [state_index, bucket_order, canonical_instance_content_sha256, teacher_seed, semantic_sha256]
+  primary_order: [state_index, graph_sha256, teacher_seed, semantic_sha256]
+  fallback_order: [state_index, bucket_order, graph_sha256, teacher_seed, semantic_sha256]
   bucket_order: [small-low, medium-mid, large-high]
   initial_bucket_targets:
     sparse_erdos_renyi: {small-low: 32, medium-mid: 48, large-high: 48}

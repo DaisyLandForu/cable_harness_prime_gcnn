@@ -11,7 +11,9 @@
   formal-v1 teacher 已完成 315/315 tasks，但因 train bucket quotas 仅达到
   527/640 而 Gate FAIL；所有其他 teacher checks PASS，正式训练未启动。
   concurrency A1 在激活前由 formal-v2 selection remediation 取代；v2 保持
-  640 states/5×128 family budget，待 GPT 审计，当前禁止 reselection/training。
+  640 states/5×128 family budget。首次 v2 审计为 CONDITIONAL PASS，唯一 B1
+  ordering-key 歧义已按 sealed schema 改为 `graph_sha256`，待 GPT 复审；当前
+  仍禁止 reselection/training。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
   `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
   teacher、训练和 Gate 尚未运行，仍禁止 final 访问。

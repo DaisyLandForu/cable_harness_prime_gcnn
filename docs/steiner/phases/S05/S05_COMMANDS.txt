@@ -8,6 +8,11 @@ sha256sum results/steiner/raw/s05/s05-teacher-il-formal-v1/manifest.json
 # Formal-v2 is preregistration-only. Do not reselect/train before GPT PASS:
 sha256sum configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml
 
+# Conditional-audit B1 ordering-key remediation; still no execution:
+CUBLAS_WORKSPACE_CONFIG=:4096:8 scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner/test_s05_formal.py
+CUBLAS_WORKSPACE_CONFIG=:4096:8 scripts/steiner/run_with_scip804.sh --python -m pytest -q -rs tests/steiner
+sha256sum configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml docs/steiner/phases/S05/S05_FORMAL_V2_SELECTION_REMEDIATION.md
+
 git rev-parse --abbrev-ref HEAD
 git rev-parse HEAD
 git status --short

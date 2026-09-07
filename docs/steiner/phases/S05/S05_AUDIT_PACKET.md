@@ -55,6 +55,13 @@ within-family fallback against the sealed failed manifest while preserving
 in five independent one-V100 jobs. No v2 selection or training is authorized
 before its own GPT PASS.
 
+The first v2 audit returned `CONDITIONAL PASS` with one blocker: the YAML named
+an ordering key `canonical_instance_content_sha256` although the sealed record
+schema uses `graph_sha256`. The B1 remediation changes only that literal key in
+primary/fallback order, documents the no-alias rule, and adds schema,
+permutation, exact-composition and unknown-key fail-closed tests. Execution
+remains unauthorized pending focused re-audit.
+
 ## Review map
 
 | Concern | Implementation | Evidence |

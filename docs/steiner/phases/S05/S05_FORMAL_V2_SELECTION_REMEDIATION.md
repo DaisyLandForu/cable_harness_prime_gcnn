@@ -33,6 +33,11 @@ the same family using the frozen ordering:
 state_index, bucket_order, graph_sha256, teacher_seed, semantic_sha256
 ```
 
+`graph_sha256` is the literal lineage field stored in every sealed formal-v1
+manifest record and in `TeacherSample`; no alternate field name or alias is
+permitted. Primary within-bucket ordering omits only `bucket_order` and uses
+`state_index, graph_sha256, teacher_seed, semantic_sha256`.
+
 No teacher score, model result or validation result participates in fallback.
 Applied to the sealed v1 manifest, the deterministic train composition is:
 

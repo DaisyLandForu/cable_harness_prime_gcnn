@@ -10,6 +10,12 @@
   instances, v1 status retained as FAIL, and no execution before GPT PASS.
 - Frozen-stack complete Steiner suite: **95 passed, 1 expected PACE skip**.
 
+The subsequent B1 ordering remediation adds a synthetic sealed-availability
+fixture. It verifies literal manifest schema keys, permutation-invariant
+semantic identities, exact frozen bucket composition, and failure on an
+unknown key. Targeted `test_s05_formal.py`: **6 passed**; complete frozen-stack
+Steiner suite after remediation: **96 passed, 1 expected PACE skip**.
+
 ## Frozen environment
 
 - branch: `research/steiner-migration`

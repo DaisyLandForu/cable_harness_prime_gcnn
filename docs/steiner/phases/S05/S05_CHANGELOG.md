@@ -62,6 +62,17 @@ formal protocol v1 frozen for pre-audit; formal experiment NOT_RUN
 - A1 is superseded before activation and its five-independent-job scheduling is
   incorporated into v2. Reselection and training remain blocked on v2 GPT PASS.
 
+## Formal-v2 audit B1 remediation
+
+- Recorded the first v2 verdict as CONDITIONAL PASS: methodology accepted, but
+  canonical ordering named a field absent from the sealed manifest schema.
+- Replaced only `canonical_instance_content_sha256` with literal
+  `graph_sha256` in primary/fallback ordering and documented that aliases are
+  forbidden.
+- Added static schema, arbitrary-permutation, exact frozen bucket composition
+  and missing-key fail-closed tests. No reselection, training or Gate change was
+  performed.
+
 ## Prepared components
 
 - Added a strict pilot config covering five train and five validation-IID

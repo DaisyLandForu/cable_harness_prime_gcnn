@@ -32,7 +32,7 @@ SELECTION_REMEDIATION_PATH = (
     / "configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml"
 )
 SELECTION_REMEDIATION_SHA256 = (
-    "91e157a8d7853133e3c4fe5865e863763874e41622febc87b94a39e54f6b7913"
+    "f101c038610d391b76c589fc81d08298160bac4883ed169f71953c7159137cbf"
 )
 
 
@@ -195,6 +195,96 @@ def _record(counter: int, role: str, family: str, bucket: str, index: int):
         "all_tie": False,
         "candidate_count": 2,
     }
+
+
+def _reference_v2_train_selection(records, revision):
+    policy = revision["state_selection"]
+    bucket_rank = {name: index for index, name in enumerate(policy["bucket_order"])}
+
+    def key(record, fields):
+        values = []
+        for field in fields:
+            if field == "bucket_order":
+                values.append(bucket_rank[record["bucket_id"]])
+            else:
+                values.append(record[field])
+        return tuple(values)
+
+    seen = set()
+    grouped = {}
+    for record in records:
+        if record["role"] != "train" or not record["state_valid"]:
+            continue
+        semantic = record["semantic_sha256"]
+        if semantic in seen:
+            raise ValueError("duplicate semantic_sha256")
+        seen.add(semantic)
+        grouped.setdefault((record["family"], record["bucket_id"]), []).append(record)
+
+    selected = []
+    for family, targets in policy["initial_bucket_targets"].items():
+        family_selected = []
+        remaining = []
+        for bucket, target in targets.items():
+            eligible = sorted(
+                grouped.get((family, bucket), []),
+                key=lambda record: key(record, policy["primary_order"]),
+            )
+            family_selected.extend(eligible[:target])
+            remaining.extend(eligible[target:])
+        shortage = policy["train_quota_per_family"] - len(family_selected)
+        remaining.sort(key=lambda record: key(record, policy["fallback_order"]))
+        family_selected.extend(remaining[:shortage])
+        if len(family_selected) != policy["train_quota_per_family"]:
+            raise ValueError("family has fewer than 128 eligible states")
+        selected.extend(family_selected)
+    return selected
+
+
+def test_formal_v2_order_keys_match_manifest_schema_and_ignore_input_permutation():
+    revision = load_yaml_mapping(SELECTION_REMEDIATION_PATH)
+    policy = revision["state_selection"]
+    manifest_record_schema = set(_record(1, "train", "community_block", "medium-mid", 0))
+    for field in policy["primary_order"]:
+        assert field in manifest_record_schema
+    for field in policy["fallback_order"]:
+        assert field == "bucket_order" or field in manifest_record_schema
+    assert "bucket_id" in manifest_record_schema
+
+    available = {
+        "sparse_erdos_renyi": {"small-low": 126, "medium-mid": 192, "large-high": 0},
+        "random_geometric": {"small-low": 288, "medium-mid": 3},
+        "grid_with_holes": {"medium-mid": 288, "large-high": 92},
+        "community_block": {"medium-mid": 506},
+        "bridge_bottleneck": {"medium-mid": 60, "large-high": 288},
+    }
+    records = []
+    counter = 0
+    for family, buckets in available.items():
+        for bucket, count in buckets.items():
+            for index in range(count):
+                counter += 1
+                records.append(_record(counter, "train", family, bucket, index % 16))
+    expected = _reference_v2_train_selection(records, revision)
+    permutation = np.random.default_rng(20260907).permutation(len(records))
+    permuted = _reference_v2_train_selection([records[index] for index in permutation], revision)
+    assert [row["semantic_sha256"] for row in expected] == [
+        row["semantic_sha256"] for row in permuted
+    ]
+    actual_counts = {}
+    for family in available:
+        actual_counts[family] = {
+            bucket: sum(
+                row["family"] == family and row["bucket_id"] == bucket for row in expected
+            )
+            for bucket in available[family]
+        }
+    assert actual_counts == policy["expected_train_bucket_counts_from_sealed_manifest"]
+
+    broken = copy.deepcopy(revision)
+    broken["state_selection"]["primary_order"][1] = "missing_manifest_field"
+    with pytest.raises(KeyError, match="missing_manifest_field"):
+        _reference_v2_train_selection(records, broken)
 
 
 def test_formal_selection_meets_exact_quotas_and_fails_role_leakage():
