@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "stage": "S05",
+  "audit_kind": "formal_v2_b1_focused_reaudit_activation",
+  "verdict": "PASS",
+  "b1_status": "CLOSED",
+  "execution_authorized": true,
+  "authorization": "v2_reselection_and_five_independent_one_v100_seed_jobs",
+  "verdict_source": "user_supplied_external_gpt_reaudit",
+  "recorded_at_utc": "2026-09-07T02:06:16Z",
+  "audited_remediation_content_head": "05ffd02a7d491dcbc75dc4700c6fc0e5bd4a925b",
+  "focused_remediation_base": "0a6b5ffc06ab49f97e38680ac493bcd7f1577f19",
+  "revision_yaml_sha256": "f101c038610d391b76c589fc81d08298160bac4883ed169f71953c7159137cbf",
+  "revision_explanation_sha256": "626568f03e0c622d05616af009b8507cdb832135953c52f06181de908633fff8",
+  "b1_remediation_explanation_sha256": "0746b0d08cfe10e98980d6764636db9e0259fec1a5d4b5d0a1d7f695ca32289e",
+  "blocking_findings": [],
+  "formal_v1_result": "FAIL_RETAINED",
+  "teacher_tasks_rerun_authorized": false,
+  "formal_training": "NOT_RUN_AT_ACTIVATION",
+  "full_s05_gate_evaluated": false,
+  "s06_authorized": false,
+  "test_and_final_access_authorized": false
+}
