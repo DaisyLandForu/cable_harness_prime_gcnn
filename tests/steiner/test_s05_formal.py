@@ -12,9 +12,13 @@ from steiner_branching.learning.formal_protocol import (
     FORMAL_CONFIG_FILE_SHA256,
     FORMAL_CONFIG_PATH,
     FORMAL_TRAINING_SEEDS,
+    FORMAL_V2_CONFIG_FILE_SHA256,
+    FORMAL_V2_CONFIG_PATH,
     expand_formal_tasks,
     load_formal_audit_record,
+    load_formal_v2_activation,
     load_s05_formal_config,
+    load_s05_formal_v2_config,
 )
 from steiner_branching.learning.teacher_data import file_sha256
 
@@ -162,6 +166,30 @@ def test_formal_v2_selection_remediation_preserves_family_and_total_budgets():
     )
 
 
+def test_formal_v2_pass_activation_and_effective_config_are_fail_closed(tmp_path):
+    assert FORMAL_V2_CONFIG_PATH == SELECTION_REMEDIATION_PATH
+    assert FORMAL_V2_CONFIG_FILE_SHA256 == SELECTION_REMEDIATION_SHA256
+    activation = load_formal_v2_activation()
+    assert activation["verdict"] == "PASS"
+    assert activation["b1_status"] == "CLOSED"
+    assert activation["teacher_tasks_rerun_authorized"] is False
+    config = load_s05_formal_v2_config(require_activation=True)
+    assert config["experiment_id"] == "s05-teacher-il-formal-v2"
+    assert config["training"]["formal_seeds"] == [101, 202, 303, 404, 505]
+    assert config["training"]["max_concurrent_training_jobs"] == 5
+    assert config["training"]["epochs"] == 40
+    assert config["training"]["checkpoint_root"].endswith("formal-v2")
+    assert config["artifacts"]["report_root"].endswith("formal-v2")
+
+    changed = tmp_path / "activation.json"
+    bad = copy.deepcopy(activation)
+    bad["b1_status"] = "OPEN"
+    import json
+    changed.write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(StrictConfigError, match="b1_status"):
+        load_formal_v2_activation(changed)
+
+
 def _records_for_frozen_quotas(config):
     records = []
     counter = 0
@@ -285,6 +313,18 @@ def test_formal_v2_order_keys_match_manifest_schema_and_ignore_input_permutation
     broken["state_selection"]["primary_order"][1] = "missing_manifest_field"
     with pytest.raises(KeyError, match="missing_manifest_field"):
         _reference_v2_train_selection(records, broken)
+
+    reselector = _load_script(
+        "s05_formal_v2_reselector_test", "scripts/steiner/reselect_s05_formal_v2.py"
+    )
+    actual = reselector.select_v2_train_records(records, revision)
+    assert [row["semantic_sha256"] for row in actual] == [
+        row["semantic_sha256"] for row in expected
+    ]
+    duplicate = copy.deepcopy(records)
+    duplicate.append(copy.deepcopy(records[0]))
+    with pytest.raises(ValueError, match="duplicate semantic_sha256"):
+        reselector.select_v2_train_records(duplicate, revision)
 
 
 def test_formal_selection_meets_exact_quotas_and_fails_role_leakage():

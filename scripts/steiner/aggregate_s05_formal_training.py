@@ -24,8 +24,12 @@ if str(PYTHON_ROOT) not in sys.path:
 from steiner_branching.learning.formal_protocol import (  # noqa: E402
     FORMAL_CONFIG_PATH,
     FORMAL_TRAINING_SEEDS,
+    FORMAL_V2_MANIFEST,
+    FORMAL_V2_SOURCE_MANIFEST_SHA256,
     formal_config_sha256,
+    load_formal_v2_selection_seal,
     load_s05_formal_config,
+    load_s05_formal_v2_config,
 )
 from steiner_branching.learning.imitation import atomic_write_json  # noqa: E402
 from steiner_branching.learning.teacher_data import file_sha256  # noqa: E402
@@ -45,6 +49,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", default=str(FORMAL_CONFIG_PATH))
     parser.add_argument("--data-manifest")
     parser.add_argument("--input", action="append", dest="inputs")
+    parser.add_argument("--formal-v2", action="store_true")
     return parser.parse_args()
 
 
@@ -204,7 +209,11 @@ def evaluate_formal_gate(
 def main() -> int:
     args = parse_args()
     config_path = resolve_path(args.config)
-    config = load_s05_formal_config(config_path, require_activation=True)
+    config = (
+        load_s05_formal_v2_config(require_activation=True)
+        if args.formal_v2
+        else load_s05_formal_config(config_path, require_activation=True)
+    )
     report_root = resolve_path(config["artifacts"]["report_root"])
     input_paths = (
         [resolve_path(value) for value in args.inputs]
@@ -215,7 +224,7 @@ def main() -> int:
     data_manifest_path = (
         resolve_path(args.data_manifest)
         if args.data_manifest
-        else resolve_path(config["artifacts"]["raw_root"]) / "manifest.json"
+        else (FORMAL_V2_MANIFEST if args.formal_v2 else resolve_path(config["artifacts"]["raw_root"]) / "manifest.json")
     )
     teacher_manifest = json.loads(data_manifest_path.read_text(encoding="utf-8"))
     head = subprocess.run(
@@ -223,7 +232,20 @@ def main() -> int:
     ).stdout.strip()
     config_digest = formal_config_sha256(config)
     data_digest = file_sha256(data_manifest_path)
-    if (
+    if args.formal_v2:
+        seal = load_formal_v2_selection_seal()
+        if (
+            teacher_manifest.get("schema_version") != 1
+            or teacher_manifest.get("experiment_id") != config["experiment_id"]
+            or teacher_manifest.get("status") != "completed"
+            or teacher_manifest.get("effective_config_sha256") != config_digest
+            or teacher_manifest.get("implementation_run_head") != head
+            or teacher_manifest.get("source_manifest_sha256") != FORMAL_V2_SOURCE_MANIFEST_SHA256
+            or teacher_manifest.get("formal_gate_evaluated") is not False
+            or seal.get("implementation_run_head") != head
+        ):
+            raise ValueError("formal-v2 selection manifest identity/Gate changed")
+    elif (
         teacher_manifest.get("schema_version") != 2
         or teacher_manifest.get("experiment_id") != config["experiment_id"]
         or teacher_manifest.get("status") != "completed"
@@ -258,7 +280,7 @@ def main() -> int:
         },
         "gate": gate,
         "formal_gate_evaluated": True,
-        "s06_authorized": gate["status"] == "PASS",
+        "s06_authorized": False if args.formal_v2 else gate["status"] == "PASS",
     }
     output = report_root / "formal_training_report.json"
     atomic_write_json(output, aggregate)

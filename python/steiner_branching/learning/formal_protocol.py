@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import copy
 import json
 from pathlib import Path
 import subprocess
@@ -26,6 +27,22 @@ FORMAL_TRAINING_SEEDS = (101, 202, 303, 404, 505)
 FORMAL_TEACHER_SEEDS = (1001, 1002, 1003)
 FORMAL_ROLES = ("train", "validation_select", "validation_gate")
 
+FORMAL_V2_CONFIG_PATH = (
+    REPO / "configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml"
+)
+FORMAL_V2_PROTOCOL_PATH = REPO / "docs/steiner/phases/S05/S05_FORMAL_V2_SELECTION_REMEDIATION.md"
+FORMAL_V2_B1_PATH = REPO / "docs/steiner/phases/S05/S05_FORMAL_V2_B1_ORDERING_REMEDIATION.md"
+FORMAL_V2_ACTIVATION_PATH = REPO / "docs/steiner/audits/S05_FORMAL_V2_ACTIVATION_RECORD.json"
+FORMAL_V2_CONFIG_FILE_SHA256 = "f101c038610d391b76c589fc81d08298160bac4883ed169f71953c7159137cbf"
+FORMAL_V2_PROTOCOL_FILE_SHA256 = "626568f03e0c622d05616af009b8507cdb832135953c52f06181de908633fff8"
+FORMAL_V2_B1_FILE_SHA256 = "0746b0d08cfe10e98980d6764636db9e0259fec1a5d4b5d0a1d7f695ca32289e"
+FORMAL_V2_CONTENT_HEAD = "05ffd02a7d491dcbc75dc4700c6fc0e5bd4a925b"
+FORMAL_V2_EXPERIMENT_ID = "s05-teacher-il-formal-v2"
+FORMAL_V2_SOURCE_MANIFEST = REPO / "results/steiner/raw/s05/s05-teacher-il-formal-v1/manifest.json"
+FORMAL_V2_SOURCE_MANIFEST_SHA256 = "2bb3b4875d173571df5e4fb7e9c1e1d3f4615708308e891f4e4ccdbaac4c149c"
+FORMAL_V2_MANIFEST = REPO / "results/steiner/raw/s05/s05-teacher-il-formal-v2/manifest.json"
+FORMAL_V2_SELECTION_SEAL = REPO / "docs/steiner/phases/S05/S05_FORMAL_V2_SELECTION_SEAL.json"
+
 
 def _require_keys(raw: Mapping[str, Any], expected: set[str], label: str) -> None:
     missing = sorted(expected - set(raw))
@@ -40,6 +57,139 @@ def _mapping(value: Any, label: str) -> dict[str, Any]:
     if not isinstance(value, Mapping) or not all(isinstance(key, str) for key in value):
         raise StrictConfigError(f"{label} must be a string-keyed mapping")
     return dict(value)
+
+
+def load_formal_v2_activation(
+    path: Path | str = FORMAL_V2_ACTIVATION_PATH,
+) -> dict[str, Any]:
+    record_path = Path(path)
+    try:
+        raw = json.loads(record_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise StrictConfigError(f"S05 formal-v2 activation is unreadable: {error}") from error
+    if not isinstance(raw, dict):
+        raise StrictConfigError("S05 formal-v2 activation must be a mapping")
+    _require_keys(
+        raw,
+        {
+            "schema_version", "stage", "audit_kind", "verdict", "b1_status",
+            "execution_authorized", "authorization", "verdict_source",
+            "recorded_at_utc", "audited_remediation_content_head",
+            "focused_remediation_base", "revision_yaml_sha256",
+            "revision_explanation_sha256", "b1_remediation_explanation_sha256",
+            "blocking_findings", "formal_v1_result", "teacher_tasks_rerun_authorized",
+            "formal_training", "full_s05_gate_evaluated", "s06_authorized",
+            "test_and_final_access_authorized",
+        },
+        "S05 formal-v2 activation",
+    )
+    expected = {
+        "schema_version": 1,
+        "stage": "S05",
+        "audit_kind": "formal_v2_b1_focused_reaudit_activation",
+        "verdict": "PASS",
+        "b1_status": "CLOSED",
+        "execution_authorized": True,
+        "authorization": "v2_reselection_and_five_independent_one_v100_seed_jobs",
+        "verdict_source": "user_supplied_external_gpt_reaudit",
+        "audited_remediation_content_head": FORMAL_V2_CONTENT_HEAD,
+        "focused_remediation_base": "0a6b5ffc06ab49f97e38680ac493bcd7f1577f19",
+        "revision_yaml_sha256": FORMAL_V2_CONFIG_FILE_SHA256,
+        "revision_explanation_sha256": FORMAL_V2_PROTOCOL_FILE_SHA256,
+        "b1_remediation_explanation_sha256": FORMAL_V2_B1_FILE_SHA256,
+        "blocking_findings": [],
+        "formal_v1_result": "FAIL_RETAINED",
+        "teacher_tasks_rerun_authorized": False,
+        "formal_training": "NOT_RUN_AT_ACTIVATION",
+        "full_s05_gate_evaluated": False,
+        "s06_authorized": False,
+        "test_and_final_access_authorized": False,
+    }
+    for key, value in expected.items():
+        if raw.get(key) != value:
+            raise StrictConfigError(f"S05 formal-v2 activation {key} is not authorized")
+    for candidate, digest, label in (
+        (FORMAL_V2_CONFIG_PATH, FORMAL_V2_CONFIG_FILE_SHA256, "YAML"),
+        (FORMAL_V2_PROTOCOL_PATH, FORMAL_V2_PROTOCOL_FILE_SHA256, "explanation"),
+        (FORMAL_V2_B1_PATH, FORMAL_V2_B1_FILE_SHA256, "B1 explanation"),
+    ):
+        if file_sha256(candidate) != digest:
+            raise StrictConfigError(f"frozen S05 formal-v2 {label} checksum changed")
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", FORMAL_V2_CONTENT_HEAD, "HEAD"],
+        cwd=REPO, check=False,
+    ).returncode != 0:
+        raise StrictConfigError("S05 formal-v2 audited head is outside current history")
+    return raw
+
+
+def load_s05_formal_v2_config(*, require_activation: bool = True) -> dict[str, Any]:
+    """Return the audited base protocol with only the accepted v2 overrides applied."""
+    if file_sha256(FORMAL_V2_CONFIG_PATH) != FORMAL_V2_CONFIG_FILE_SHA256:
+        raise StrictConfigError("S05 formal-v2 config is not the audited byte-exact YAML")
+    revision = load_yaml_mapping(FORMAL_V2_CONFIG_PATH)
+    if revision.get("revision_id") != "s05-formal-v2-selection-remediation":
+        raise StrictConfigError("S05 formal-v2 revision identity changed")
+    if revision.get("execution_authorized") is not False:
+        raise StrictConfigError("audited S05 formal-v2 YAML must remain immutable/unactivated")
+    if revision.get("state_selection", {}).get("selected_state_counts") != {
+        "train": 640, "validation_select": 160, "validation_gate": 320
+    }:
+        raise StrictConfigError("S05 formal-v2 selected-state counts changed")
+    execution = _mapping(revision.get("training_execution"), "formal-v2 training execution")
+    if tuple(execution.get("formal_seeds", ())) != FORMAL_TRAINING_SEEDS:
+        raise StrictConfigError("S05 formal-v2 training seeds changed")
+    if any((
+        execution.get("max_concurrent_training_jobs") != 5,
+        execution.get("gpu_count_per_job") != 1,
+        execution.get("distributed_training") is not False,
+        execution.get("shared_optimizer_or_model_state") is not False,
+    )):
+        raise StrictConfigError("S05 formal-v2 independent-job semantics changed")
+    unchanged = _mapping(revision.get("unchanged_contract"), "formal-v2 unchanged contract")
+    if unchanged.get("test_and_final_access_prohibited") is not True:
+        raise StrictConfigError("S05 formal-v2 test/final prohibition changed")
+    if require_activation:
+        load_formal_v2_activation()
+    base = copy.deepcopy(load_s05_formal_config(require_activation=True))
+    base["experiment_id"] = FORMAL_V2_EXPERIMENT_ID
+    base["training"]["max_concurrent_training_jobs"] = 5
+    base["training"]["checkpoint_root"] = execution["checkpoint_root"]
+    base["artifacts"]["raw_root"] = str(FORMAL_V2_MANIFEST.parent.relative_to(REPO))
+    base["artifacts"]["report_root"] = execution["report_root"]
+    base["artifacts"]["checkpoint_root"] = execution["checkpoint_root"]
+    return base
+
+
+def load_formal_v2_selection_seal(
+    path: Path | str = FORMAL_V2_SELECTION_SEAL,
+) -> dict[str, Any]:
+    try:
+        raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise StrictConfigError(f"S05 formal-v2 selection seal is unreadable: {error}") from error
+    expected = {
+        "schema_version": 1,
+        "stage": "S05",
+        "experiment_id": FORMAL_V2_EXPERIMENT_ID,
+        "source_manifest_sha256": FORMAL_V2_SOURCE_MANIFEST_SHA256,
+        "selected_states": 640,
+        "family_counts": {
+            "sparse_erdos_renyi": 128, "random_geometric": 128,
+            "grid_with_holes": 128, "community_block": 128,
+            "bridge_bottleneck": 128,
+        },
+        "full_s05_gate_evaluated": False,
+        "s06_authorized": False,
+    }
+    if not isinstance(raw, dict):
+        raise StrictConfigError("S05 formal-v2 selection seal must be a mapping")
+    for key, value in expected.items():
+        if raw.get(key) != value:
+            raise StrictConfigError(f"S05 formal-v2 selection seal {key} changed")
+    if file_sha256(FORMAL_V2_MANIFEST) != raw.get("selection_manifest_sha256"):
+        raise StrictConfigError("S05 formal-v2 selection manifest checksum changed")
+    return raw
 
 
 def load_formal_audit_record(path: Path | str = FORMAL_AUDIT_RECORD_PATH) -> dict[str, Any]:

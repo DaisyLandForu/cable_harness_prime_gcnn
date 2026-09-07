@@ -26,8 +26,13 @@ if str(PYTHON_ROOT) not in sys.path:
 from steiner_branching.learning.formal_protocol import (  # noqa: E402
     FORMAL_CONFIG_PATH,
     FORMAL_TRAINING_SEEDS,
+    FORMAL_V2_CONFIG_PATH,
+    FORMAL_V2_MANIFEST,
+    FORMAL_V2_SOURCE_MANIFEST_SHA256,
     formal_config_sha256,
+    load_formal_v2_selection_seal,
     load_s05_formal_config,
+    load_s05_formal_v2_config,
 )
 from steiner_branching.learning.imitation import (  # noqa: E402
     atomic_write_json,
@@ -60,6 +65,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", default=str(FORMAL_CONFIG_PATH))
     parser.add_argument("--data-manifest")
     parser.add_argument("--training-seed", required=True, type=int)
+    parser.add_argument("--formal-v2", action="store_true")
     return parser.parse_args()
 
 
@@ -102,9 +108,13 @@ def _load_selected(
         raise ValueError(f"formal manifest has no {role} selection")
     samples = []
     records = []
+    source_root_value = manifest.get("source_root")
+    source_root = (
+        resolve_path(source_root_value) if source_root_value is not None else manifest_path.parent
+    )
     for item in raw_records:
         sample = load_teacher_sample(
-            manifest_path.parent / item["path"], expected_file_sha256=item["file_sha256"]
+            source_root / item["path"], expected_file_sha256=item["file_sha256"]
         )
         if (
             sample.semantic_sha256 != item["semantic_sha256"]
@@ -147,8 +157,12 @@ def _state_gate_records(
 
 def main() -> int:
     args = parse_args()
-    config_path = resolve_path(args.config)
-    config = load_s05_formal_config(config_path, require_activation=True)
+    config_path = FORMAL_V2_CONFIG_PATH if args.formal_v2 else resolve_path(args.config)
+    config = (
+        load_s05_formal_v2_config(require_activation=True)
+        if args.formal_v2
+        else load_s05_formal_config(config_path, require_activation=True)
+    )
     seed = int(args.training_seed)
     if seed not in FORMAL_TRAINING_SEEDS:
         raise SystemExit(f"formal training seed must be one of {FORMAL_TRAINING_SEEDS}")
@@ -168,21 +182,36 @@ def main() -> int:
     manifest_path = (
         resolve_path(args.data_manifest)
         if args.data_manifest
-        else resolve_path(config["artifacts"]["raw_root"]) / "manifest.json"
+        else (FORMAL_V2_MANIFEST if args.formal_v2 else resolve_path(config["artifacts"]["raw_root"]) / "manifest.json")
     )
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     config_digest = formal_config_sha256(config)
-    if (
-        manifest.get("schema_version") != 2
-        or manifest.get("experiment_id") != config["experiment_id"]
-        or manifest.get("status") != "completed"
-        or manifest.get("teacher_gate", {}).get("status") != "PASS"
-        or manifest.get("formal_gate_evaluated") is not False
-        or manifest.get("config_sha256") != config_digest
-        or manifest.get("git_commit") != git_commit
-        or manifest.get("s04_audited_tag_target") != audited_target
-    ):
-        raise ValueError("formal teacher manifest identity/Gate is not eligible")
+    if args.formal_v2:
+        seal = load_formal_v2_selection_seal()
+        if (
+            manifest.get("schema_version") != 1
+            or manifest.get("experiment_id") != config["experiment_id"]
+            or manifest.get("status") != "completed"
+            or manifest.get("teacher_gate", {}).get("status") != "PASS"
+            or manifest.get("formal_gate_evaluated") is not False
+            or manifest.get("effective_config_sha256") != config_digest
+            or manifest.get("implementation_run_head") != git_commit
+            or manifest.get("source_manifest_sha256") != FORMAL_V2_SOURCE_MANIFEST_SHA256
+            or seal.get("implementation_run_head") != git_commit
+        ):
+            raise ValueError("formal-v2 selection manifest identity/Gate is not eligible")
+    else:
+        if (
+            manifest.get("schema_version") != 2
+            or manifest.get("experiment_id") != config["experiment_id"]
+            or manifest.get("status") != "completed"
+            or manifest.get("teacher_gate", {}).get("status") != "PASS"
+            or manifest.get("formal_gate_evaluated") is not False
+            or manifest.get("config_sha256") != config_digest
+            or manifest.get("git_commit") != git_commit
+            or manifest.get("s04_audited_tag_target") != audited_target
+        ):
+            raise ValueError("formal teacher manifest identity/Gate is not eligible")
     train_samples, train_records = _load_selected(manifest_path, manifest, "train")
     select_samples, select_records = _load_selected(manifest_path, manifest, "validation_select")
     gate_samples, gate_records = _load_selected(manifest_path, manifest, "validation_gate")
@@ -229,6 +258,7 @@ def main() -> int:
         "started_at_utc": utc_now(),
         "git_commit": git_commit,
         "config_sha256": config_digest,
+        "protocol_revision": "formal-v2-selection-remediation" if args.formal_v2 else "formal-v1",
         "data_manifest": str(manifest_path),
         "data_manifest_sha256": file_sha256(manifest_path),
         "s04_audited_tag_target": audited_target,
