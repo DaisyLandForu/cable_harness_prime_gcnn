@@ -1,5 +1,15 @@
 # S05 Test Report — implementation-only checkpoint
 
+## Formal-v1 failure and v2 preregistration checks
+
+- Failed manifest SHA-256 and all reported counts were read from the retained
+  formal-v1 artifact; 315/315 task envelopes are terminal and failure list is
+  empty.
+- Static v2 checks require the original bucket targets, exactly 128 selected
+  states per family/640 total, unchanged base training settings, no replacement
+  instances, v1 status retained as FAIL, and no execution before GPT PASS.
+- Frozen-stack complete Steiner suite: **95 passed, 1 expected PACE skip**.
+
 ## Frozen environment
 
 - branch: `research/steiner-migration`

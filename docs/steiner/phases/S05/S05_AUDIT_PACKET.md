@@ -8,9 +8,10 @@
 - formal protocol v1 content SHA: `d1717a7ecb6043efd71678175a92325ac9ff4208`
 - formal protocol pre-execution audit: user reports GPT PASS; activation record
   `docs/steiner/audits/S05_FORMAL_PROTOCOL_AUDIT_RECORD.json`
-- execution-only concurrency amendment A1: frozen and pending GPT audit; only
-  `training.max_concurrent_training_jobs` changes from 2 to 5, and the base
-  limit remains binding until a separate PASS activation record exists
+- formal-v1 teacher: 315/315 tasks completed, no task failures, but Gate FAIL
+  because train bucket quotas reached only 527/640; no formal training started
+- execution-only concurrency amendment A1: superseded before activation by the
+  formal-v2 selection remediation, which incorporates five-job concurrency
 - substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
@@ -45,6 +46,14 @@ custom jobs rather than limiting the experiment to the current two-GPU host.
 override from two to five concurrent one-V100 seed jobs. It changes no teacher,
 training, validation, statistics or Gate semantics and is not active before an
 external GPT PASS is separately recorded.
+
+Formal-v1 subsequently completed with every quality/identity check passing but
+`all_state_quotas_met=false`. The immutable failure record is
+`S05_FORMAL_V1_TEACHER_FAILURE.md`. Formal-v2 preregisters deterministic
+within-family fallback against the sealed failed manifest while preserving
+640 train states and 128 per family. A1 is not activated separately; v2 folds
+in five independent one-V100 jobs. No v2 selection or training is authorized
+before its own GPT PASS.
 
 ## Review map
 

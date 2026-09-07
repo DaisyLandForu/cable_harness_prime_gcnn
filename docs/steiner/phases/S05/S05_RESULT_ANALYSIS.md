@@ -1,5 +1,19 @@
 # S05 Result Analysis — deterministic pilot-v3 complete
 
+## Formal-v1 teacher result
+
+The first formal-v1 collection completed all 315 tasks but its teacher Gate is
+**FAIL**. It passed task completion, 63.630952% valid-state yield, 0.436545%
+all-tie rate, 100% mapping and zero role/split leakage. It failed only exact
+bucket quota feasibility: train selected 527/640, while both validation roles
+met 160/160 and 320/320.
+
+The shortfalls are sparse-large 0/48, geometric-medium 3/64 and bridge-medium
+60/64. This is not repaired by repeating identical deterministic tasks or by
+lowering 640. Formal-v1 remains failed and no formal model seed ran. A separate
+formal-v2 protocol proposes sealed-manifest reuse plus deterministic same-family
+fallback, retains 128 states per family, and requires GPT PASS before use.
+
 This checkpoint shows that the pilot model learns teacher-ranking signal; it
 does not yet establish formal statistical significance or online SCIP benefit.
 

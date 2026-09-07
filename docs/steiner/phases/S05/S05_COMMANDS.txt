@@ -1,6 +1,13 @@
 # S05 implementation commands (UTC 2026-09-03)
 # No credential, secret, raw state, checkpoint, training or final-test command ran.
 
+# Formal-v1 teacher later completed with Gate FAIL (527/640 train quota):
+sha256sum results/steiner/raw/s05/s05-teacher-il-formal-v1/manifest.json
+# 2bb3b4875d173571df5e4fb7e9c1e1d3f4615708308e891f4e4ccdbaac4c149c
+
+# Formal-v2 is preregistration-only. Do not reselect/train before GPT PASS:
+sha256sum configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml
+
 git rev-parse --abbrev-ref HEAD
 git rev-parse HEAD
 git status --short

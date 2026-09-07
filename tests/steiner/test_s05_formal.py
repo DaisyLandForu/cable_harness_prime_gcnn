@@ -27,6 +27,13 @@ CONCURRENCY_AMENDMENT_PATH = (
 CONCURRENCY_AMENDMENT_SHA256 = (
     "8ae53206bb55c30e052f489687200a0ca5cea787da7bcf8c0d49f9f9ce49451a"
 )
+SELECTION_REMEDIATION_PATH = (
+    REPO
+    / "configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml"
+)
+SELECTION_REMEDIATION_SHA256 = (
+    "91e157a8d7853133e3c4fe5865e863763874e41622febc87b94a39e54f6b7913"
+)
 
 
 def _load_script(name: str, relative: str):
@@ -111,6 +118,47 @@ def test_formal_concurrency_amendment_changes_only_the_global_job_limit():
     assert requirements["shared_optimizer_or_model_state"] is False
     assert amendment["failure_policy"]["on_missing_amendment_pass"] == (
         "keep_base_limit_of_two"
+    )
+
+
+def test_formal_v2_selection_remediation_preserves_family_and_total_budgets():
+    assert file_sha256(SELECTION_REMEDIATION_PATH) == SELECTION_REMEDIATION_SHA256
+    revision = load_yaml_mapping(SELECTION_REMEDIATION_PATH)
+    base = load_s05_formal_config(require_activation=False)
+
+    assert revision["status"] == "preregistered_revision_pending_gpt_audit"
+    assert revision["execution_authorized"] is False
+    assert revision["failed_v1_evidence"]["manifest_sha256"] == (
+        "2bb3b4875d173571df5e4fb7e9c1e1d3f4615708308e891f4e4ccdbaac4c149c"
+    )
+    selection = revision["state_selection"]
+    assert selection["initial_bucket_targets"] == base["state_selection"]["train_quotas"]
+    assert selection["train_quota_per_family"] == 128
+    expected = selection["expected_train_bucket_counts_from_sealed_manifest"]
+    assert set(expected) == set(base["state_selection"]["train_quotas"])
+    assert all(sum(buckets.values()) == 128 for buckets in expected.values())
+    assert sum(sum(buckets.values()) for buckets in expected.values()) == 640
+    assert selection["selected_state_counts"] == base["state_selection"][
+        "selected_state_counts"
+    ]
+
+    unchanged = revision["unchanged_contract"]
+    assert unchanged["train_states"] == base["training"]["train_states"]
+    for key in (
+        "epochs", "learning_rate", "weight_decay", "gradient_clip_norm",
+        "target_temperature", "deterministic_algorithms", "cublas_workspace_config",
+        "representative_checkpoint_seed",
+    ):
+        assert unchanged[key] == base["training"][key]
+    assert revision["training_execution"]["formal_seeds"] == base["training"][
+        "formal_seeds"
+    ]
+    assert revision["training_execution"]["max_concurrent_training_jobs"] == 5
+    assert revision["teacher_evidence_reuse"]["rerun_teacher_tasks"] is False
+    assert revision["teacher_evidence_reuse"]["allow_replacement_instances"] is False
+    assert revision["failure_policy"]["v1_result_remains_fail"] is True
+    assert revision["failure_policy"]["on_missing_revision_pass"] == (
+        "stop_without_reselection_or_training"
     )
 
 

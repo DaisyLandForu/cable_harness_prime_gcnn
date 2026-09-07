@@ -49,6 +49,19 @@ formal protocol v1 frozen for pre-audit; formal experiment NOT_RUN
   until an external GPT PASS is recorded for A1; S05 full Gate and S06 remain
   NOT_EVALUATED/unauthorized.
 
+## Formal-v1 teacher FAIL and v2 preregistration
+
+- Retained the byte-exact failed v1 manifest: 315/315 tasks, 3,207/5,040 valid
+  state slots and 88,549/88,549 mapped candidates passed quality checks, while
+  exact train bucket quotas selected only 527/640 states.
+- Recorded shortages of 48 sparse-large, 61 geometric-medium and four
+  bridge-medium states. No task failed and no seed-101/202 training started.
+- Preregistered v2 deterministic same-family fallback over the sealed manifest.
+  Total train budget remains 640 and every family remains exactly 128; model,
+  optimizer, validation, statistics, reload and quality Gates are unchanged.
+- A1 is superseded before activation and its five-independent-job scheduling is
+  incorporated into v2. Reselection and training remain blocked on v2 GPT PASS.
+
 ## Prepared components
 
 - Added a strict pilot config covering five train and five validation-IID

@@ -1,0 +1,113 @@
+schema_version: 1
+stage: S05
+revision_id: s05-formal-v2-selection-remediation
+status: preregistered_revision_pending_gpt_audit
+execution_authorized: false
+required_audit_outcome: PASS
+activation_method: separate_committed_gpt_pass_record_referencing_revision_sha256
+
+base_protocol:
+  experiment_id: s05-teacher-il-formal-v1
+  content_head: d1717a7ecb6043efd71678175a92325ac9ff4208
+  yaml_path: configs/steiner/experiments/s05_teacher_il_formal_v1.yml
+  yaml_sha256: c843f76d69c07b1c8a8093ab6f1426656084b2de2f4e9e0d777f1af32cd4c811
+  audit_record: docs/steiner/audits/S05_FORMAL_PROTOCOL_AUDIT_RECORD.json
+  audit_verdict: PASS
+
+failed_v1_evidence:
+  run_head: 13a8a83761f660c96cb238471de2e2c0a2d54a8b
+  manifest_path: results/steiner/raw/s05/s05-teacher-il-formal-v1/manifest.json
+  manifest_sha256: 2bb3b4875d173571df5e4fb7e9c1e1d3f4615708308e891f4e4ccdbaac4c149c
+  tasks_completed: 315
+  task_failures: 0
+  observed_states: 3431
+  valid_states: 3207
+  candidates_observed: 88549
+  candidates_mapped: 88549
+  teacher_gate_status: FAIL
+  only_failed_check: all_state_quotas_met
+  selected_train_states: 527
+  required_train_states: 640
+  shortages:
+    sparse_erdos_renyi.large-high: {eligible: 0, target: 48, shortage: 48}
+    random_geometric.medium-mid: {eligible: 3, target: 64, shortage: 61}
+    bridge_bottleneck.medium-mid: {eligible: 60, target: 64, shortage: 4}
+
+teacher_evidence_reuse:
+  rerun_teacher_tasks: false
+  require_byte_exact_source_manifest: true
+  verify_every_referenced_shard_sha256: true
+  retain_all_v1_tasks_and_shards: true
+  allow_replacement_instances: false
+  reason: deterministic_same_task_rerun_cannot_repair_quota_feasibility
+
+state_selection:
+  method: lineage_teacher_round_robin_within_family_fallback_v2
+  eligibility_unchanged: state_valid_and_semantic_unique_and_role_isolated
+  primary_order: [state_index, canonical_instance_content_sha256, teacher_seed, semantic_sha256]
+  fallback_order: [state_index, bucket_order, canonical_instance_content_sha256, teacher_seed, semantic_sha256]
+  bucket_order: [small-low, medium-mid, large-high]
+  initial_bucket_targets:
+    sparse_erdos_renyi: {small-low: 32, medium-mid: 48, large-high: 48}
+    random_geometric: {small-low: 64, medium-mid: 64}
+    grid_with_holes: {medium-mid: 64, large-high: 64}
+    community_block: {medium-mid: 128}
+    bridge_bottleneck: {medium-mid: 64, large-high: 64}
+  fallback_rule:
+    - select_up_to_each_initial_bucket_target
+    - compute_shortage_against_family_quota
+    - fill_only_from_remaining_eligible_states_of_same_family
+    - apply_fallback_order_without_model_or_score_based_choice
+  train_quota_per_family: 128
+  selected_state_counts: {train: 640, validation_select: 160, validation_gate: 320}
+  validation_selection_unchanged: true
+  expected_train_bucket_counts_from_sealed_manifest:
+    sparse_erdos_renyi: {small-low: 56, medium-mid: 72, large-high: 0}
+    random_geometric: {small-low: 125, medium-mid: 3}
+    grid_with_holes: {medium-mid: 64, large-high: 64}
+    community_block: {medium-mid: 128}
+    bridge_bottleneck: {medium-mid: 60, large-high: 68}
+
+training_execution:
+  formal_seeds: [101, 202, 303, 404, 505]
+  max_concurrent_training_jobs: 5
+  one_process_per_gpu: true
+  gpu_model_per_job: Tesla V100-SXM2-32GB
+  gpu_count_per_job: 1
+  cpu_cores_per_job: 8
+  ram_gib_per_job: 32
+  distributed_training: false
+  shared_optimizer_or_model_state: false
+  require_disjoint_seed_artifacts: true
+  report_root: results/steiner/s05/s05-teacher-il-formal-v2
+  checkpoint_root: checkpoints/steiner/s05/s05-teacher-il-formal-v2
+
+unchanged_contract:
+  teacher_quality_thresholds: {min_valid_fraction: 0.60, max_all_tie_fraction: 0.40, mapping_rate: 1.0}
+  train_states: 640
+  epochs: 40
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  gradient_clip_norm: 1.0
+  target_temperature: 1.0
+  deterministic_algorithms: true
+  cublas_workspace_config: ":4096:8"
+  checkpoint_selection_role: validation_select
+  gate_evaluation_role: validation_gate
+  representative_checkpoint_seed: 202
+  statistics_unchanged: true
+  model_and_schema_unchanged: true
+  split_and_role_lineage_unchanged: true
+  gate_thresholds_other_than_bucket_feasibility_unchanged: true
+  failure_retention_unchanged: true
+  test_and_final_access_prohibited: true
+  s06_authorized: false
+
+failure_policy:
+  v1_result_remains_fail: true
+  retain_failed_v1_manifest: true
+  retain_failed_training_seeds: true
+  allow_seed_replacement: false
+  allow_result_based_rerun: false
+  allow_gate_relaxation_after_v2_execution: false
+  on_missing_revision_pass: stop_without_reselection_or_training

@@ -8,8 +8,10 @@
   pilot Gate PASS。V2 确定性失败产物继续保留；formal protocol v1 已冻结但
   用户报告 formal protocol GPT 运行前审计 PASS；激活记录与 immutable hashes
   已绑定，formal implementation 已准备，完整 S05 Gate 仍 NOT_EVALUATED。
-  formal teacher 正按 v1 运行；execution-only concurrency amendment A1 已冻结
-  待 GPT 审计，在 PASS 前全局训练并发上限仍为 2，PASS 后才可升至 5。
+  formal-v1 teacher 已完成 315/315 tasks，但因 train bucket quotas 仅达到
+  527/640 而 Gate FAIL；所有其他 teacher checks PASS，正式训练未启动。
+  concurrency A1 在激活前由 formal-v2 selection remediation 取代；v2 保持
+  640 states/5×128 family budget，待 GPT 审计，当前禁止 reselection/training。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
   `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
   teacher、训练和 Gate 尚未运行，仍禁止 final 访问。
@@ -41,10 +43,9 @@
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：先完成 315-task formal teacher collection 并检查 teacher Gate；101、
-  202 可在现有 v1 授权下并发启动。只有 concurrency amendment A1 获 GPT PASS
-  并登记后，303、404、505 才可使全局并发升至 5。S06、final test 和 S05 tag
-  继续禁止。
+- 下一步：只读审计 formal-v2 selection remediation。只有 GPT PASS 并登记后，
+  才能从 sealed v1 shards 生成独立 v2 selection manifest，并运行五个独立 V100
+  seed jobs。S06、final test 和 S05 tag 继续禁止。
 
 ## 阶段登记表
 
@@ -79,6 +80,8 @@
   `configs/steiner/experiments/s05_teacher_il_formal_v1.yml`
 - S05 formal concurrency amendment A1：
   `configs/steiner/experiments/s05_teacher_il_formal_v1_concurrency_a1.yml`
+- S05 formal-v2 selection remediation：
+  `configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml`
 - split：`configs/steiner/splits/split_policy_v1.yml`
 - final seal：`configs/steiner/splits/final_test_v1.yml`
 - SCIP 8.0.4 入口：`scripts/steiner/run_with_scip804.sh`
@@ -107,3 +110,5 @@
    CONDITIONAL PASS 已通过 S04 remediation 复审升级为 PASS。
 9. S04 只在一个 synthetic-train 图的 3 个真实分支状态上验证工程 parity；它
    不能证明未训练模型有 branching 质量，也不能外推生产求解速度。
+10. S05 formal-v1 的 sparse-large 与 geometric-medium strong labels 在冻结预算下
+    严重不足；v2 即使通过也只能证明 family-balanced IL，不证明这些桶的规模泛化。
