@@ -1,4 +1,4 @@
-# S05 Audit Packet — formal-v3 pre-execution preregistration
+# S05 Audit Packet — formal-v3 activated implementation checkpoint
 
 ## Identity and status
 
@@ -6,8 +6,8 @@
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
 - current immutable result: formal-v2 **FAIL**, accepted by external GPT audit;
   S05 remains FAIL and S06 remains blocked
-- formal-v3 status: protocol/candidate identities frozen locally for GPT
-  pre-execution audit; `execution_authorized=false`; no v3 run
+- formal-v3 status: external GPT pre-execution **PASS** recorded in a separate
+  activation; production implementation/tests complete; teacher not yet run
 - formal-v3 preregistration content head:
   `8d7accd2a948935174d3113f8787e58dae7936b3`
 - formal-v3 YAML:
@@ -54,7 +54,8 @@ preregistration. The separate machine record is
 existing five model payloads, an 80-graph fresh candidate pool, a
 teacher-validity-only first-six-per-family policy and an exact 30-lineage
 pre-model-access barrier. The old 25 lineages cannot be reused. Independent GPT
-pre-execution PASS is still required before implementation or collection.
+pre-execution PASS was supplied by the user and is bound to the frozen hashes by
+`S05_FORMAL_V3_ACTIVATION_RECORD.json`.
 
 Formal protocol v1 has now been frozen for a separate pre-execution audit at
 `docs/steiner/audits/S05_FORMAL_PROTOCOL_GPT_AUDIT_REQUEST.md`. Its YAML keeps
@@ -119,9 +120,8 @@ remains unauthorized pending focused re-audit.
 
 ## Required future evidence
 
-Before S05 can be audited for full PASS, obtain v3 protocol pre-execution PASS,
-record a separate activation, implement and test the collector/selector/barrier,
-run the frozen 240-task teacher candidate budget, seal exactly 30 lineages and
+Before S05 can be audited for full PASS, run the frozen 240-task teacher
+candidate budget, seal exactly 30 lineages and
 320 states, then evaluate the five frozen checkpoints. Attach exact raw,
 selection, report and checkpoint hashes, resource/timing evidence and final S05
 Gate JSON. Failed, root-solved, invalid, all-tie and skipped entries must remain
@@ -129,6 +129,8 @@ in denominators/manifests.
 
 ## Suggested current conclusion
 
-Pilot-v3 pilot Gate **PASS**; formal-v2 full S05 Gate **FAIL**. Formal-v3 is
-preregistered but not executable. Do not create an S05 tag or start S06. The
-only permitted next action is the independent v3 pre-execution audit.
+Pilot-v3 pilot Gate **PASS**; formal-v2 full S05 Gate **FAIL**. Formal-v3
+pre-execution audit and implementation tests **PASS**, but its teacher,
+pre-model barrier and scientific Gate are not yet evaluated. The next permitted
+action is the frozen 240-task teacher run. Do not create an S05 tag or start
+S06.

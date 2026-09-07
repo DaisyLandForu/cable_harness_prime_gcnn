@@ -4,6 +4,7 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -22,6 +23,13 @@ from steiner_branching.learning.formal_protocol import (
     load_formal_v2_activation,
     load_s05_formal_config,
     load_s05_formal_v2_config,
+)
+from steiner_branching.learning.formal_v3 import (
+    V3_MODEL_SEEDS,
+    expand_v3_tasks,
+    load_v3_activation,
+    load_v3_candidates,
+    load_v3_protocol,
 )
 from steiner_branching.learning.teacher_data import file_sha256
 
@@ -617,3 +625,110 @@ def test_formal_v3_selection_and_pre_model_barrier_fail_closed():
     assert sum(counts[rank] for rank in select_ranks(counts)) >= 72
     with pytest.raises(ValueError, match="fewer than six"):
         select_ranks({rank: (12 if rank < 5 else 11) for rank in range(16)})
+
+
+def _v3_selector_records(candidates):
+    records = []
+    counter = 0
+    for candidate in candidates:
+        valid = int(candidate["candidate_rank"]) < 8
+        for state_index in range(12):
+            counter += 1
+            records.append({
+                "path": f"states/{counter}.npz",
+                "file_sha256": f"{counter:064x}",
+                "semantic_sha256": f"{counter + 100000:064x}",
+                "task_id": f"{candidate['instance_id']}--teacher1001",
+                "role": "validation_gate_candidate",
+                "split": "validation_iid",
+                "family": candidate["family"],
+                "bucket_id": candidate["bucket_id"],
+                "candidate_rank": candidate["candidate_rank"],
+                "generator_seed": candidate["generator_seed"],
+                "graph_sha256": candidate["graph_sha256"],
+                "teacher_seed": 1001 + state_index % 3,
+                "state_index": state_index,
+                "state_valid": valid,
+                "all_tie": False,
+                "candidate_count": 2,
+            })
+    return records
+
+
+def test_formal_v3_production_loader_activation_and_exact_task_matrix():
+    activation = load_v3_activation()
+    assert activation["verdict"] == "PASS"
+    assert activation["execution_authorized"] is True
+    assert activation["model_retraining_authorized"] is False
+    assert activation["s06_authorized"] is False
+    config = load_v3_protocol(require_activation=True)
+    candidates = load_v3_candidates()
+    plans = expand_v3_tasks(config)
+    assert len(candidates) == 80
+    assert len(plans) == 240
+    assert {plan.task.teacher_seed for plan in plans} == {1001, 1002, 1003}
+    assert len({plan.task.task_id for plan in plans}) == 240
+    assert all(plan.task.split == "validation_iid" for plan in plans)
+    assert tuple(config["frozen_models"]["seeds"]) == V3_MODEL_SEEDS
+
+
+def test_formal_v3_production_selector_is_permutation_stable_and_fail_closed():
+    selector = _load_script(
+        "s05_formal_v3_selector_test", "scripts/steiner/select_s05_formal_v3_gate.py"
+    )
+    config = load_v3_protocol(require_activation=False)
+    candidates = load_v3_candidates()
+    records = _v3_selector_records(candidates)
+    lineages, states = selector.select_v3_gate_records(config, candidates, records)
+    permutation = np.random.default_rng(20260907).permutation(len(records))
+    permuted_lineages, permuted_states = selector.select_v3_gate_records(
+        config, tuple(reversed(candidates)), [records[index] for index in permutation]
+    )
+    assert [row["graph_sha256"] for row in lineages] == [
+        row["graph_sha256"] for row in permuted_lineages
+    ]
+    assert [row["semantic_sha256"] for row in states] == [
+        row["semantic_sha256"] for row in permuted_states
+    ]
+    assert len(lineages) == 30 and len(states) == 320
+    assert {
+        family: sum(row["family"] == family for row in lineages)
+        for family in SYNTHETIC_FAMILIES
+    } == {family: 6 for family in SYNTHETIC_FAMILIES}
+    assert {
+        family: sum(row["family"] == family for row in states)
+        for family in SYNTHETIC_FAMILIES
+    } == {family: 64 for family in SYNTHETIC_FAMILIES}
+
+    broken = copy.deepcopy(records)
+    target = SYNTHETIC_FAMILIES[0]
+    disabled = {
+        candidate["graph_sha256"] for candidate in candidates
+        if candidate["family"] == target and candidate["candidate_rank"] in {5, 6, 7}
+    }
+    for row in broken:
+        if row["graph_sha256"] in disabled:
+            row["state_valid"] = False
+    with pytest.raises(ValueError, match="fewer than six eligible"):
+        selector.select_v3_gate_records(config, candidates, broken)
+
+
+def test_formal_v3_evaluator_cannot_load_checkpoint_when_barrier_fails(monkeypatch):
+    evaluator = _load_script(
+        "s05_formal_v3_evaluator_test", "scripts/steiner/evaluate_s05_formal_v3.py"
+    )
+    checkpoint_calls = []
+
+    def fail_barrier():
+        raise StrictConfigError("selection seal missing")
+
+    monkeypatch.setattr(evaluator, "parse_args", lambda: SimpleNamespace(model_seed=101))
+    monkeypatch.setattr(evaluator, "load_v3_selection_seal", fail_barrier)
+    monkeypatch.setattr(
+        evaluator,
+        "load_checkpoint_bundle",
+        lambda *args, **kwargs: checkpoint_calls.append((args, kwargs)),
+    )
+    with pytest.raises(StrictConfigError, match="selection seal missing"):
+        evaluator.main()
+    assert checkpoint_calls == []

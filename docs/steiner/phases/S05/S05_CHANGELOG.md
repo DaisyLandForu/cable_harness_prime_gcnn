@@ -1,7 +1,25 @@
-# S05 Changelog — formal-v3 confirmatory Gate preregistration
+# S05 Changelog — formal-v3 activated implementation
 
-Status: formal-v1/v2 FAIL retained; formal-v3 protocol frozen for external
-pre-execution audit; no v3 execution; S06 blocked
+Status: formal-v1/v2 FAIL retained; formal-v3 pre-execution audit PASS and
+implementation verified; teacher/Gate not yet run; S06 blocked
+
+## Formal-v3 activation and executable pipeline
+
+- Recorded the user-supplied GPT `PASS` in a separate activation record without
+  changing the audited YAML.
+- Added byte-exact activation/protocol/candidate loaders and exact 80-graph,
+  240-task expansion.
+- Added the six-worker collector with retained failures, envelope-derived
+  mapping counts and teacher-only lineage eligibility.
+- Added deterministic first-six-per-family selection, exact 30-lineage/320-
+  state checks, prior-role isolation, checkpoint checksum preflight and a
+  selection seal that must be committed before model access.
+- Added five independent frozen-checkpoint evaluators. They do no training and
+  require CUDA repeat/reload error 0.0 before producing a completed report.
+- Added one-shot 30-lineage aggregation and CPU/GPU batch/tmux launchers.
+- Added production permutation, shortage and barrier-order regression tests.
+  No teacher task, checkpoint load, test/final access or S06 action occurred at
+  this implementation checkpoint.
 
 ## Formal-v3 preregistration
 

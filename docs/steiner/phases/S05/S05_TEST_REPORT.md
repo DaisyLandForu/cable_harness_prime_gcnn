@@ -1,4 +1,24 @@
-# S05 Test Report — formal-v3 preregistration checkpoint
+# S05 Test Report — formal-v3 activated implementation checkpoint
+
+## Formal-v3 implementation verification
+
+- External pre-execution verdict: **PASS**, recorded separately; audited YAML
+  remains `execution_authorized=false` and is activated only by that record.
+- Dry-run: exactly 240 unique tasks (80 candidates x three teacher seeds), with
+  no artifact or model access.
+- Production selector: arbitrary candidate/sample permutations reproduce the
+  same ordered 30 lineages and 320 semantic identities; a family with fewer
+  than six eligible lineages fails closed.
+- Production evaluator: a failed/missing committed selection seal results in
+  zero calls to the checkpoint loader. The seal loader also requires its bytes
+  to exist at Git `HEAD`.
+- Targeted formal suite: **13 passed** in 18.40 s.
+- Complete frozen-stack suite with the registered cuBLAS environment:
+  **103 passed, 1 expected PACE skip** in 46.85 s.
+- Python compilation, shell syntax, SCIP 8.0.4 identity and `git diff --check`:
+  **PASS**. Ruff is not installed in the locked environment and is not claimed.
+- No v3 teacher task, selection, checkpoint load, GPU evaluation, test/final
+  access or S06 operation occurred during these tests.
 
 ## Formal-v3 pre-execution static verification
 
