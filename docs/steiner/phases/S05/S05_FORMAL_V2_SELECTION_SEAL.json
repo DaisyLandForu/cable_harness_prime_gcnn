@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "stage": "S05",
+  "experiment_id": "s05-teacher-il-formal-v2",
+  "sealed_at_utc": "2026-09-07T02:24:17Z",
+  "implementation_run_head": "223710ae53cbca81b9e48336eb76e92b7f99aae1",
+  "activation_record_sha256": "92f6a559c21ae48a9a8729651a74f127d2699ffcd778f3d3a0fc126450aa1fec",
+  "source_manifest": "results/steiner/raw/s05/s05-teacher-il-formal-v1/manifest.json",
+  "source_manifest_sha256": "2bb3b4875d173571df5e4fb7e9c1e1d3f4615708308e891f4e4ccdbaac4c149c",
+  "selection_manifest": "results/steiner/raw/s05/s05-teacher-il-formal-v2/manifest.json",
+  "selection_manifest_sha256": "35221abeeaae507623d0175d895b5ff807d0b7e5400fce494e615fbefe8cd10e",
+  "selected_states": 640,
+  "family_counts": {
+    "sparse_erdos_renyi": 128,
+    "random_geometric": 128,
+    "grid_with_holes": 128,
+    "community_block": 128,
+    "bridge_bottleneck": 128
+  },
+  "bucket_counts": {
+    "sparse_erdos_renyi": {"small-low": 56, "medium-mid": 72, "large-high": 0},
+    "random_geometric": {"small-low": 125, "medium-mid": 3},
+    "grid_with_holes": {"medium-mid": 64, "large-high": 64},
+    "community_block": {"medium-mid": 128},
+    "bridge_bottleneck": {"medium-mid": 60, "large-high": 68}
+  },
+  "validation_selection_unchanged": true,
+  "teacher_tasks_rerun": false,
+  "formal_v1_result": "FAIL_RETAINED",
+  "formal_training": "NOT_RUN_AT_SEAL",
+  "full_s05_gate_evaluated": false,
+  "s06_authorized": false
+}
