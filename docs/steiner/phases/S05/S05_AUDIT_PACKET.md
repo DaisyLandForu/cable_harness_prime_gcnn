@@ -4,7 +4,8 @@
 
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
-- latest remediation content SHA: `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
+- formal-v2 failure-evidence content SHA:
+  `5626517c3689a1e885a69ac7f111f587864f9924`
 - formal protocol v1 content SHA: `d1717a7ecb6043efd71678175a92325ac9ff4208`
 - formal protocol pre-execution audit: user reports GPT PASS; activation record
   `docs/steiner/audits/S05_FORMAL_PROTOCOL_AUDIT_RECORD.json`
@@ -12,7 +13,8 @@
   because train bucket quotas reached only 527/640; no formal training started
 - execution-only concurrency amendment A1: superseded before activation by the
   formal-v2 selection remediation, which incorporates five-job concurrency
-- substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
+- substantive range:
+  `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..5626517c3689a1e885a69ac7f111f587864f9924`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
 - S05 Gate: pilot-v3 pilot Gate PASS; formal-v1 teacher Gate FAIL; formal-v2

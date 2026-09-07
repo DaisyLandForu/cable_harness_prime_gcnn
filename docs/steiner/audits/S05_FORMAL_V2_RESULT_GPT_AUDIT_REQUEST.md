@@ -7,6 +7,9 @@
 
 - branch：`research/steiner-migration`
 - execution/seal head：`da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7`
+- failure-evidence content head：`5626517c3689a1e885a69ac7f111f587864f9924`
+- result evidence range：
+  `da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7..5626517c3689a1e885a69ac7f111f587864f9924`
 - v2 selection manifest SHA-256：
   `35221abeeaae507623d0175d895b5ff807d0b7e5400fce494e615fbefe8cd10e`
 - v2 Gate summary：

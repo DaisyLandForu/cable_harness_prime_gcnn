@@ -36,14 +36,14 @@
   pilot-v2 teacher 为 12 completed、158 observed、149 valid、3,939/3,939
   mapped、train valid 85。v2 GPU exact-reload Gate FAIL；v3 tests 为 90 passed、
   1 expected skip；v3 mean regret 为 0.596116/0.496956/0.447868，全部 9 个
-  runs 优于 random 0.685977 且 reload error 0。完整 S05 Gate 尚未评估。
+  runs 优于 random 0.685977 且 reload error 0。formal-v2 完整 Gate 为 FAIL。
 - 资源：当前 S05 host 可见 128 GiB RAM 和 2 张 Tesla V100-SXM2 32GB；
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：只读审计 formal-v2 selection remediation。只有 GPT PASS 并登记后，
-  才能从 sealed v1 shards 生成独立 v2 selection manifest，并运行五个独立 V100
-  seed jobs。S06、final test 和 S05 tag 继续禁止。
+- 下一步：只读审计 formal-v2 的 `FAIL / STOP` 结果。只有 GPT 明确允许并先冻结
+  新协议，才可准备独立 confirmatory validation；S06、final test 和 S05 tag
+  继续禁止。
 
 ## 阶段登记表
 
@@ -56,7 +56,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | v3 pilot PASS；full Gate NOT_EVALUATED | protocol pre-audit PASS；result audit NOT_RUN | `7fa85ff7b0d37f14d4223d396a49fb96138eb8cd` | v3 run head `7dd05e3fa0ff38688b3c571d5bc2f1b87369e19f` |
+| S05 | Strong-branch teacher 与 IL | formal-v2 FAIL（25/30 Gate lineages） | protocol/revision pre-audits PASS；failure-result audit pending | `5626517c3689a1e885a69ac7f111f587864f9924` | execution head `da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7`；no tag |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |
