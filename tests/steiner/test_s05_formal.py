@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 from pathlib import Path
 
 import numpy as np
 import pytest
 
 from steiner_branching.config import StrictConfigError, load_yaml_mapping
+from steiner_branching.data.generate import GeneratorConfig, SYNTHETIC_FAMILIES, generate_graph
+from steiner_branching.data.split import split_for_synthetic_seed
 from steiner_branching.learning.formal_protocol import (
     FORMAL_CONFIG_FILE_SHA256,
     FORMAL_CONFIG_PATH,
@@ -37,6 +40,25 @@ SELECTION_REMEDIATION_PATH = (
 )
 SELECTION_REMEDIATION_SHA256 = (
     "f101c038610d391b76c589fc81d08298160bac4883ed169f71953c7159137cbf"
+)
+FORMAL_V3_CONFIG_PATH = (
+    REPO
+    / "configs/steiner/experiments/s05_teacher_il_formal_v3_confirmatory_gate.yml"
+)
+FORMAL_V3_CONFIG_SHA256 = (
+    "99e75a4d4fa69f805232c637d4fc0ae750fcfccb57e9979b561f422591006242"
+)
+FORMAL_V3_CANDIDATES_PATH = (
+    REPO / "configs/steiner/experiments/s05_formal_v3_candidate_graphs.json"
+)
+FORMAL_V3_CANDIDATES_SHA256 = (
+    "e65fc9a03fd683277570befe13b11f4b15ea981ee427568d56aeeccdd3847b56"
+)
+FORMAL_V2_RESULT_AUDIT_PATH = (
+    REPO / "docs/steiner/audits/S05_FORMAL_V2_RESULT_AUDIT_RECORD.json"
+)
+FORMAL_V2_RESULT_AUDIT_SHA256 = (
+    "a7cd6af30e9b1e98f46efb1b40f5876bb3f08cf75a45da59b09e319de33ec48a"
 )
 
 
@@ -397,3 +419,201 @@ def test_formal_gate_bootstraps_graph_lineages_and_requires_positive_effect():
     failed = aggregator.evaluate_formal_gate(config, teacher, _formal_reports(effect=-0.01))
     assert failed["status"] == "FAIL"
     assert not failed["checks"]["primary_bootstrap_ci_lower_bound_above_zero"]
+
+
+def test_formal_v3_is_nonexecuting_and_freezes_the_five_v2_models():
+    assert file_sha256(FORMAL_V3_CONFIG_PATH) == FORMAL_V3_CONFIG_SHA256
+    assert file_sha256(FORMAL_V2_RESULT_AUDIT_PATH) == FORMAL_V2_RESULT_AUDIT_SHA256
+    config = load_yaml_mapping(FORMAL_V3_CONFIG_PATH)
+    audit = json.loads(FORMAL_V2_RESULT_AUDIT_PATH.read_text(encoding="utf-8"))
+
+    assert config["revision_id"] == "s05-formal-v3-confirmatory-gate"
+    assert config["status"] == "preregistered_protocol_pending_gpt_preexecution_audit"
+    assert config["execution_authorized"] is False
+    assert config["purpose"] == "fresh_confirmatory_validation_only"
+    assert audit["verdict"] == "PASS"
+    assert audit["verdict_meaning"] == "formal_v2_fail_and_stop_before_s06_accepted"
+    assert audit["formal_v2_result"] == "FAIL_RETAINED"
+    assert audit["s05_gate"] == "FAIL"
+    assert audit["s06_authorized"] is False
+    assert audit["formal_v3_preregistration_authorized"] is True
+    assert audit["formal_v3_execution_authorized"] is False
+
+    models = config["frozen_models"]
+    assert models["retrain_models"] is False
+    assert models["training_data_changed"] is False
+    assert models["loss_or_hyperparameters_changed"] is False
+    assert models["seeds"] == [101, 202, 303, 404, 505]
+    assert models["source_selection_manifest_sha256"] == (
+        "35221abeeaae507623d0175d895b5ff807d0b7e5400fce494e615fbefe8cd10e"
+    )
+    expected_models = {
+        101: (
+            "66585c122d8ccd2279e559490d7abd2ed9456a7478ec657c507170911c33e7c3",
+            "e5dd22a24615599c19d9e956131ed0cc7c5206440f6f908e2d6d57c2a06d1a31",
+        ),
+        202: (
+            "b7f271c36243499e1510a5db19156afb3f607c13abf059c4f8349d49d0efb48c",
+            "1b78d2b35a86829eb6afca801b86955a9e006ff678f224cb79fc400d1b42884f",
+        ),
+        303: (
+            "5895e92f283e3cadf119177077dd872d236fd91e0f13efe57a93c3b3865f2db1",
+            "3e93fa2654dd39baa6454a5acfb057c31c8a889acdf1567de8b9461d0acdb0ce",
+        ),
+        404: (
+            "fa29b03c2e12b8f6d1960405224e26d34f0658f2d718b93a355d8b32f894b6fc",
+            "55c38818b37e519ef43cec598737d82db8334857fc0b35073801fb423eeb4624",
+        ),
+        505: (
+            "f33d145a8651e04e502039409d460d67dda4aca1415fcbc83554f6572546d76c",
+            "559406c7c7b4656f8d0c3a80d8eb1d7aea6bdd065087187bf483e7bc2a015900",
+        ),
+    }
+    for seed, (manifest_sha256, model_sha256) in expected_models.items():
+        frozen = models["checkpoints"][seed]
+        assert frozen == {
+            "manifest_sha256": manifest_sha256,
+            "model_sha256": model_sha256,
+        }
+        checkpoint = REPO / f"checkpoints/steiner/s05/s05-teacher-il-formal-v2/seed-{seed}"
+        if checkpoint.exists():
+            assert file_sha256(checkpoint / "manifest.json") == manifest_sha256
+            assert file_sha256(checkpoint / "model.pt") == model_sha256
+
+
+def test_formal_v3_candidate_pool_is_fresh_deterministic_and_scale_limited():
+    assert file_sha256(FORMAL_V3_CANDIDATES_PATH) == FORMAL_V3_CANDIDATES_SHA256
+    config = load_yaml_mapping(FORMAL_V3_CONFIG_PATH)
+    manifest = json.loads(FORMAL_V3_CANDIDATES_PATH.read_text(encoding="utf-8"))
+    assert config["fresh_candidate_pool"]["manifest_sha256"] == (
+        FORMAL_V3_CANDIDATES_SHA256
+    )
+    assert manifest["candidate_pool_id"] == (
+        "s05-formal-v3-confirmatory-gate-candidates-v1"
+    )
+    assert manifest["selection_may_use_model_outputs"] is False
+    assert manifest["test_and_final_accessed"] is False
+
+    records = manifest["candidate_graphs"]
+    assert len(records) == 80
+    assert len({row["generator_seed"] for row in records}) == 80
+    assert len({row["graph_sha256"] for row in records}) == 80
+    assert len({row["instance_id"] for row in records}) == 80
+    assert {row["family"] for row in records} == set(SYNTHETIC_FAMILIES)
+
+    prior = load_s05_formal_config(require_activation=False)
+    prior_seeds = {
+        int(seed)
+        for group in prior["instance_groups"]
+        for seed in group["generator_seeds"]
+    }
+    prior_graph_hashes = {
+        generate_graph(
+            GeneratorConfig(
+                family=group["family"],
+                n_nodes=int(group["n_nodes"]),
+                n_terminals=int(group["n_terminals"]),
+                seed=int(seed),
+            )
+        ).graph_sha256
+        for group in prior["instance_groups"]
+        for seed in group["generator_seeds"]
+    }
+    for pilot_name in (
+        "s05_teacher_il_pilot_v1.yml",
+        "s05_teacher_il_pilot_v2.yml",
+        "s05_teacher_il_pilot_v3.yml",
+    ):
+        pilot = load_yaml_mapping(REPO / "configs/steiner/experiments" / pilot_name)
+        prior_seeds.update(
+            int(item["generator_seed"]) for item in pilot["pilot_instances"]
+        )
+        prior_graph_hashes.update(
+            generate_graph(
+                GeneratorConfig(
+                    family=item["family"],
+                    n_nodes=int(item["n_nodes"]),
+                    n_terminals=int(item["n_terminals"]),
+                    seed=int(item["generator_seed"]),
+                )
+            ).graph_sha256
+            for item in pilot["pilot_instances"]
+        )
+    assert not ({row["generator_seed"] for row in records} & prior_seeds)
+    assert not ({row["graph_sha256"] for row in records} & prior_graph_hashes)
+
+    expected_buckets = {
+        "sparse_erdos_renyi": ["small-low", "medium-mid"] * 8,
+        "random_geometric": ["small-low"] * 16,
+        "grid_with_holes": ["medium-mid"] * 16,
+        "community_block": ["medium-mid"] * 16,
+        "bridge_bottleneck": ["medium-mid"] * 16,
+    }
+    for family in SYNTHETIC_FAMILIES:
+        family_rows = [row for row in records if row["family"] == family]
+        assert [row["candidate_rank"] for row in family_rows] == list(range(16))
+        assert [row["bucket_id"] for row in family_rows] == expected_buckets[family]
+        for row in family_rows:
+            assert split_for_synthetic_seed(row["generator_seed"]) == "validation_iid"
+            regenerated = generate_graph(
+                GeneratorConfig(
+                    family=row["family"],
+                    n_nodes=row["n_nodes"],
+                    n_terminals=row["n_terminals"],
+                    seed=row["generator_seed"],
+                )
+            )
+            assert regenerated.graph_sha256 == row["graph_sha256"]
+
+
+def test_formal_v3_selection_and_pre_model_barrier_fail_closed():
+    config = load_yaml_mapping(FORMAL_V3_CONFIG_PATH)
+    pool = config["fresh_candidate_pool"]
+    lineage = config["lineage_selection"]
+    states = config["state_selection"]
+    barrier = config["pre_model_access_gate"]
+    statistics = config["statistics"]
+
+    assert pool["total_candidate_graphs"] == 80
+    assert pool["candidates_per_family"] == 16
+    assert pool["total_teacher_tasks"] == 240
+    assert pool["expected_max_states"] == 3840
+    assert lineage["eligibility_uses_model_outputs"] is False
+    assert lineage["eligibility_rule"][
+        "minimum_semantic_unique_valid_states_across_three_teacher_tasks"
+    ] == 12
+    assert lineage["selected_lineages_per_family"] == 6
+    assert lineage["selected_lineages_total"] == 30
+    assert states["selected_states_per_family"] == 64
+    assert states["selected_states_total"] == 320
+    assert barrier["unique_gate_lineages"] == 30
+    assert set(barrier["family_lineage_counts"].values()) == {6}
+    assert set(barrier["selected_state_counts"].values()) == {64}
+    assert barrier["every_lineage_minimum_selected_states"] == 1
+    assert barrier["require_zero_cross_role_lineage"] is True
+    assert barrier["require_zero_prior_s05_lineage"] is True
+    assert barrier["require_zero_old_v2_gate_lineage"] is True
+    assert barrier["on_any_failed_check"] == "stop_without_loading_any_checkpoint"
+    assert statistics["exact_bootstrap_lineages"] == 30
+    assert statistics["exact_lineages_per_family"] == 6
+    assert config["failure_policy"]["allow_model_or_regret_based_lineage_selection"] is False
+    assert config["failure_policy"]["allow_gate_threshold_relaxation"] is False
+    assert config["failure_policy"]["allow_model_retraining_or_checkpoint_reselection"] is False
+    assert config["failure_policy"]["test_and_final_access_prohibited"] is True
+    assert config["failure_policy"]["s06_authorized"] is False
+
+    def select_ranks(valid_unique_by_rank):
+        eligible = sorted(
+            rank for rank, count in valid_unique_by_rank.items() if count >= 12
+        )
+        if len(eligible) < 6:
+            raise ValueError("fewer than six eligible lineages")
+        return eligible[:6]
+
+    counts = {rank: (11 if rank in {0, 3} else 12 + rank) for rank in range(16)}
+    assert select_ranks(counts) == [1, 2, 4, 5, 6, 7]
+    permuted = dict(reversed(list(counts.items())))
+    assert select_ranks(permuted) == [1, 2, 4, 5, 6, 7]
+    assert sum(counts[rank] for rank in select_ranks(counts)) >= 72
+    with pytest.raises(ValueError, match="fewer than six"):
+        select_ranks({rank: (12 if rank < 5 else 11) for rank in range(16)})

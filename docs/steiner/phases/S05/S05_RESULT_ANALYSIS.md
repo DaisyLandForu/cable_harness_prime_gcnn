@@ -1,4 +1,26 @@
-# S05 Result Analysis — formal-v2 five-seed execution FAIL
+# S05 Result Analysis — formal-v2 FAIL and formal-v3 preregistration
+
+## Formal-v3 scope
+
+GPT accepted the formal-v2 failure record and allowed a new protocol to be
+preregistered, but did not turn S05 into PASS or authorize execution. V3 is a
+minimal confirmatory-validation remediation: all five successfully trained v2
+models are frozen and no model is retrained. The only expensive repeated work
+is teacher labeling on completely new validation graphs.
+
+To avoid repeating the 25/30 lineage failure after GPU work, v3 registers 80
+fresh candidates (16 per family) and deterministically selects the first six
+teacher-evaluable lineages per family. Eligibility requires at least 12 unique
+valid states and cannot use model outputs or regret. Before loading a model, a
+new hard barrier requires exactly 30 lineages, six per family and 320 states,
+with every lineage represented and no prior/test/final overlap.
+
+This improves execution reliability without weakening the scientific Gate.
+The cost is a narrower conclusion: any successful result applies only to the
+registered teacher-evaluable small/medium scale envelope, not to every scale.
+Random-geometric small graphs remain in the new pool, so the adverse v2 signal
+is tested rather than designed away. V3 remains NOT RUN pending independent
+GPT pre-execution PASS.
 
 ## Formal-v2 outcome
 

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "stage": "S05",
+  "audit_kind": "formal_v2_failure_result_review",
+  "verdict": "PASS",
+  "verdict_meaning": "formal_v2_fail_and_stop_before_s06_accepted",
+  "verdict_source": "user_supplied_external_gpt_audit",
+  "recorded_at_utc": "2026-09-07T06:25:49Z",
+  "audited_execution_head": "da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7",
+  "audited_failure_evidence_head": "5626517c3689a1e885a69ac7f111f587864f9924",
+  "audited_result_range": "da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7..5626517c3689a1e885a69ac7f111f587864f9924",
+  "audit_request_head": "55833c54d02f3e5bcbc4bd2e19d95f6f3f019293",
+  "source_text_sha256": "ce1eb687abbae501c88af9106d2118d65d329560065f3ae43fff2acef3492d8d",
+  "formal_v2_result": "FAIL_RETAINED",
+  "failure_class": "PREREGISTERED_BOOTSTRAP_UNIT_DENOMINATOR_UNSATISFIED",
+  "available_25_lineage_statistics": "DIAGNOSTIC_ONLY",
+  "random_geometric_negative_effect": "ADVERSE_DIAGNOSTIC_RETAINED",
+  "s05_gate": "FAIL",
+  "s06_authorized": false,
+  "formal_v3_preregistration_authorized": true,
+  "formal_v3_execution_authorized": false,
+  "required_v3_boundary": {
+    "freeze_existing_five_v2_checkpoints": true,
+    "retrain_models": false,
+    "fresh_confirmatory_validation_lineages": true,
+    "old_v2_gate_lineages_reusable_for_formal_gate": false,
+    "missing_lineage_policy_frozen_before_collection": true,
+    "lineage_preflight_before_gpu": true,
+    "test_and_final_access_authorized": false
+  },
+  "blocking_findings": []
+}

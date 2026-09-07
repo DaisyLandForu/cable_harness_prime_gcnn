@@ -1,4 +1,26 @@
-# S05 Test Report — formal-v2 execution checkpoint
+# S05 Test Report — formal-v3 preregistration checkpoint
+
+## Formal-v3 pre-execution static verification
+
+- V3 YAML SHA-256:
+  `99e75a4d4fa69f805232c637d4fc0ae750fcfccb57e9979b561f422591006242`.
+- Candidate graph manifest SHA-256:
+  `e65fc9a03fd683277570befe13b11f4b15ea981ee427568d56aeeccdd3847b56`.
+- Protocol explanation SHA-256:
+  `c61b58d23f4de6bb2709aa9c40ccab11d6db4507a6bd1c9d2e544eb68595d873`.
+- V2 result-audit record SHA-256:
+  `a7cd6af30e9b1e98f46efb1b40f5876bb3f08cf75a45da59b09e319de33ec48a`.
+- Targeted formal tests: **10 passed**. They regenerate all 80 graphs and check
+  exact hashes, 80 unique seeds/hashes, validation-IID assignment, no prior S05
+  seed collision, the frozen family-scale envelope, all five local checkpoint
+  manifest/model hashes, deterministic first-six eligibility selection, the
+  exact 30/6/320/64 pre-model barrier, and failure with fewer than six eligible
+  lineages.
+- `execution_authorized=false`; no v3 collection, selection, model load, GPU
+  evaluation, test/final access or S06 work occurred.
+- Complete frozen-stack Steiner suite: **100 passed, 1 expected PACE skip** in
+  43.64 s. The skip is unchanged and occurs because the optional odd-numbered
+  PACE development-data path is not configured.
 
 ## Formal-v2 final execution verification
 

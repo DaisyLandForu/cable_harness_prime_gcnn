@@ -1,0 +1,212 @@
+schema_version: 1
+stage: S05
+revision_id: s05-formal-v3-confirmatory-gate
+status: preregistered_protocol_pending_gpt_preexecution_audit
+execution_authorized: false
+required_audit_outcome: PASS
+activation_method: separate_committed_gpt_pass_record_referencing_all_v3_hashes
+
+purpose: fresh_confirmatory_validation_only
+formal_v2_result:
+  status: FAIL_RETAINED
+  failure_evidence_head: 5626517c3689a1e885a69ac7f111f587864f9924
+  gate_summary: docs/steiner/phases/S05/S05_FORMAL_V2_GATE_SUMMARY.json
+  result_audit_record: docs/steiner/audits/S05_FORMAL_V2_RESULT_AUDIT_RECORD.json
+  result_audit_record_sha256: a7cd6af30e9b1e98f46efb1b40f5876bb3f08cf75a45da59b09e319de33ec48a
+  available_25_lineage_statistics: diagnostic_only
+  old_validation_gate_lineages_reusable: false
+
+frozen_models:
+  retrain_models: false
+  training_data_changed: false
+  loss_or_hyperparameters_changed: false
+  source_experiment_id: s05-teacher-il-formal-v2
+  source_execution_head: da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7
+  source_selection_manifest_sha256: 35221abeeaae507623d0175d895b5ff807d0b7e5400fce494e615fbefe8cd10e
+  seeds: [101, 202, 303, 404, 505]
+  checkpoints:
+    101: {manifest_sha256: 66585c122d8ccd2279e559490d7abd2ed9456a7478ec657c507170911c33e7c3, model_sha256: e5dd22a24615599c19d9e956131ed0cc7c5206440f6f908e2d6d57c2a06d1a31}
+    202: {manifest_sha256: b7f271c36243499e1510a5db19156afb3f607c13abf059c4f8349d49d0efb48c, model_sha256: 1b78d2b35a86829eb6afca801b86955a9e006ff678f224cb79fc400d1b42884f}
+    303: {manifest_sha256: 5895e92f283e3cadf119177077dd872d236fd91e0f13efe57a93c3b3865f2db1, model_sha256: 3e93fa2654dd39baa6454a5acfb057c31c8a889acdf1567de8b9461d0acdb0ce}
+    404: {manifest_sha256: fa29b03c2e12b8f6d1960405224e26d34f0658f2d718b93a355d8b32f894b6fc, model_sha256: 55c38818b37e519ef43cec598737d82db8334857fc0b35073801fb423eeb4624}
+    505: {manifest_sha256: f33d145a8651e04e502039409d460d67dda4aca1415fcbc83554f6572546d76c, model_sha256: 559406c7c7b4656f8d0c3a80d8eb1d7aea6bdd065087187bf483e7bc2a015900}
+  require_manifest_and_payload_checksums: true
+  require_checkpoint_reload_max_abs_error: 0.0
+  require_checkpoint_state_dict_bit_exact: true
+
+solver_and_teacher:
+  solver_stack_id: scip804-ecole081-pyscipopt430
+  protocol_id: P1
+  formulation_id: rooted_mcf_v1
+  bipartite_schema_id: milp_bipartite_v1
+  model_id: b0_milp_gcnn_v1
+  split_policy: configs/steiner/splits/split_policy_v1.yml
+  limits: {time_seconds: 600, nodes: 200000, memory_mb: 8192, threads: 1}
+  controls:
+    presolving_maxrounds: 0
+    separating_maxrounds: 0
+    separating_maxroundsroot: 0
+    heuristics: "off"
+    restart_limit: 0
+    node_selector: estimate
+    propagation: default
+  collection_seeds: [1001, 1002, 1003]
+  max_states_per_task: 16
+  iteration_limit_per_candidate: 10000
+  candidate_limit: 0
+  infeasible_gain_cap: 1000000.0
+  tie_relative_tolerance: 1.0e-9
+  trajectory: strong_then_most_infeasible
+  workers: 6
+  required_cpu_cores: 24
+  required_ram_gib: 128
+
+fresh_candidate_pool:
+  manifest_path: configs/steiner/experiments/s05_formal_v3_candidate_graphs.json
+  manifest_sha256: e65fc9a03fd683277570befe13b11f4b15ea981ee427568d56aeeccdd3847b56
+  split: validation_iid
+  role: validation_gate_candidate
+  graph_lineage_key: graph_sha256
+  candidates_per_family: 16
+  total_candidate_graphs: 80
+  teacher_tasks_per_graph: 3
+  total_teacher_tasks: 240
+  expected_max_states: 3840
+  candidate_rank: explicit_zero_based_rank_within_family
+  family_scale_envelope:
+    sparse_erdos_renyi: [small-low, medium-mid]
+    random_geometric: [small-low]
+    grid_with_holes: [medium-mid]
+    community_block: [medium-mid]
+    bridge_bottleneck: [medium-mid]
+  scale_claim: teacher_evaluable_registered_scale_envelope_only
+  design_basis: formal_v1_teacher_validity_only_not_formal_v2_model_performance
+  adverse_diagnostic_safeguard: random_geometric_small_remains_in_scope
+  require_unique_generator_seeds: true
+  require_unique_graph_sha256: true
+  require_generated_graph_matches_manifest_hash: true
+  require_disjoint_from_all_prior_s05_roles_and_pilot: true
+  require_disjoint_from_test_and_final: true
+
+lineage_selection:
+  selected_lineages_per_family: 6
+  selected_lineages_total: 30
+  eligibility_uses_model_outputs: false
+  eligibility_rule:
+    task_statuses_terminal: true
+    task_failures_allowed: 0
+    minimum_semantic_unique_valid_states_across_three_teacher_tasks: 12
+    required_action_mapping_rate: 1.0
+  ordering: [candidate_rank, graph_sha256]
+  rule: take_first_six_eligible_lineages_per_family
+  if_fewer_than_six_eligible_in_any_family: fail_v3_before_model_loading
+  allow_unregistered_replacement_candidates: false
+  allow_teacher_retry_until_success: false
+
+state_selection:
+  selected_states_per_family: 64
+  selected_states_total: 320
+  method: lineage_round_robin_v3
+  within_lineage_order: [state_index, teacher_seed, semantic_sha256]
+  lineage_cycle_order: [candidate_rank, graph_sha256]
+  require_each_selected_lineage_at_least_one_state: true
+  deduplication_key: semantic_sha256
+  reject_duplicate_semantic_sha256: true
+  reject_cross_role_or_split_lineage: true
+  if_any_family_has_fewer_than_64_unique_valid_states: fail_v3_before_model_loading
+
+teacher_quality_gate:
+  valid_fraction_denominator: expected_max_states
+  all_tie_fraction_denominator: valid_observed_states_before_deduplication
+  action_mapping_denominator: all_observed_candidate_rows
+  min_teacher_valid_state_fraction: 0.60
+  max_teacher_all_tie_valid_state_fraction: 0.40
+  required_action_mapping_rate: 1.0
+  require_all_240_tasks_terminal: true
+  require_zero_task_failures: true
+  retain_invalid_all_tie_failed_and_skipped_evidence: true
+
+pre_model_access_gate:
+  require_candidate_manifest_checksum: true
+  require_every_teacher_shard_checksum: true
+  require_teacher_quality_gate_pass: true
+  require_selected_manifest_sealed_before_model_loading: true
+  unique_gate_lineages: 30
+  family_lineage_counts:
+    sparse_erdos_renyi: 6
+    random_geometric: 6
+    grid_with_holes: 6
+    community_block: 6
+    bridge_bottleneck: 6
+  every_lineage_minimum_selected_states: 1
+  selected_state_counts:
+    sparse_erdos_renyi: 64
+    random_geometric: 64
+    grid_with_holes: 64
+    community_block: 64
+    bridge_bottleneck: 64
+  require_zero_cross_role_lineage: true
+  require_zero_prior_s05_lineage: true
+  require_zero_old_v2_gate_lineage: true
+  require_zero_test_or_final_access: true
+  on_any_failed_check: stop_without_loading_any_checkpoint
+
+confirmatory_evaluation:
+  models: frozen_models_only
+  independent_seed_jobs: 5
+  gpu_count_per_job: 1
+  distributed_evaluation: false
+  shared_mutable_state: false
+  random_baseline_seed: 20260902
+  random_baseline_method: per_state_sha256_seeded_uniform_candidate_scores_v1
+  report_root: results/steiner/s05/s05-teacher-il-formal-v3-confirmatory
+  raw_root: results/steiner/raw/s05/s05-teacher-il-formal-v3-confirmatory
+  selected_manifest_path: results/steiner/raw/s05/s05-teacher-il-formal-v3-confirmatory/selected_manifest.json
+
+statistics:
+  bootstrap_seed: 20260902
+  bootstrap_replicates: 10000
+  confidence_level: 0.95
+  exact_bootstrap_lineages: 30
+  exact_lineages_per_family: 6
+  resampling_unit: base_graph_lineage
+  state_aggregation_within_lineage: mean
+  seed_aggregation_within_lineage: mean
+  primary_effect: random_regret_minus_model_regret
+  confidence_interval_quantiles: [0.025, 0.975]
+  percentile_method: linear
+  coefficient_of_variation_definition: sample_std_ddof_1_divided_by_mean
+  coefficient_of_variation_zero_mean_rule: pass_only_if_all_five_regrets_are_zero
+  supplemental_test: wilcoxon_signed_rank_with_holm
+
+scientific_gate:
+  require_all_five_frozen_models_evaluated: true
+  require_every_seed_mean_improvement_over_random: true
+  require_every_family_aggregate_mean_improvement_over_random: true
+  require_primary_bootstrap_ci_lower_bound_above_zero: true
+  max_seed_regret_coefficient_of_variation: 0.15
+  require_checkpoint_reload_max_abs_error: 0.0
+  require_checkpoint_state_dict_bit_exact: true
+  require_exact_30_lineage_matrix: true
+  prohibit_test_and_final_access: true
+
+execution_order:
+  - external_gpt_preexecution_pass_recorded
+  - implementation_and_tests_complete
+  - collect_all_240_teacher_tasks
+  - teacher_quality_and_candidate_eligibility_evaluated
+  - select_and_seal_exact_30_lineages_and_320_states
+  - pre_model_access_gate_pass
+  - evaluate_five_frozen_models
+  - aggregate_once_against_frozen_scientific_gate
+
+failure_policy:
+  formal_v1_and_v2_failures_remain_immutable: true
+  retain_every_v3_candidate_and_task_result: true
+  allow_model_or_regret_based_lineage_selection: false
+  allow_seed_graph_or_lineage_replacement_after_collection: false
+  allow_gate_threshold_relaxation: false
+  allow_model_retraining_or_checkpoint_reselection: false
+  test_and_final_access_prohibited: true
+  s06_authorized: false
+  on_v3_failure: retain_and_stop_before_s06

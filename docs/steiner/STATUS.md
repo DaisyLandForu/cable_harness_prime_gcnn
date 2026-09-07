@@ -5,14 +5,15 @@
 ## 当前状态
 
 - 当前阶段：S05 formal-v2 五个 GPU seeds 均完成 40 epochs 且 reload error 0，
-  但冻结的 validation Gate 只覆盖 25/30 个注册 base-graph lineages，聚合器
-  fail-closed；完整 S05 Gate **FAIL**，S06 禁止。pilot-v3 PASS 和所有既有失败
-  产物继续保留。
+  但冻结的 validation Gate 只覆盖 25/30 个注册 base-graph lineages，完整 S05
+  Gate **FAIL**。GPT 已认可该 FAIL/STOP 记录并允许预注册 formal-v3；v3 已冻结
+  现有五模型和 80 个全新 validation 候选图，等待独立运行前审计，尚未授权执行。
 - formal-v1 仍因 train bucket quota 527/640 为 FAIL；formal-v2 的 640-state
   same-family selection 经 GPT `PASS / B1=CLOSED` 后执行。未重跑 teacher、未换
   graph/seed、未降低 Gate、未访问 test/final。
-- 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；S05 **FAIL / STOP**，
-  等待 `S05_FORMAL_V2_RESULT_GPT_AUDIT_REQUEST.md` 的只读失败审计。
+- 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；S05 **FAIL / STOP**；
+  formal-v2 失败审计 PASS（仅认可 FAIL），formal-v3 为
+  `PREREGISTERED / EXECUTION NOT AUTHORIZED`。
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
 - S04 content SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`。
 - S04 remediation v2 content SHA：
@@ -41,9 +42,9 @@
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：只读审计 formal-v2 的 `FAIL / STOP` 结果。只有 GPT 明确允许并先冻结
-  新协议，才可准备独立 confirmatory validation；S06、final test 和 S05 tag
-  继续禁止。
+- 下一步：只读审计 formal-v3 协议、候选图身份、teacher-only eligibility 和
+  pre-model-access Gate。只有 GPT 明确 PASS 并登记独立 activation 后，才允许
+  实现与执行 fresh confirmatory validation；S06、final test 和 S05 tag 继续禁止。
 
 ## 阶段登记表
 
@@ -56,7 +57,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | formal-v2 FAIL（25/30 Gate lineages） | protocol/revision pre-audits PASS；failure-result audit pending | `5626517c3689a1e885a69ac7f111f587864f9924` | execution head `da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7`；no tag |
+| S05 | Strong-branch teacher 与 IL | formal-v2 FAIL（25/30 Gate lineages）；v3 NOT_RUN | v2 failure-result audit PASS；v3 pre-execution audit pending | v3 prereg content pending commit | execution head `da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7`；no tag |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |
@@ -80,6 +81,10 @@
   `configs/steiner/experiments/s05_teacher_il_formal_v1_concurrency_a1.yml`
 - S05 formal-v2 selection remediation：
   `configs/steiner/experiments/s05_teacher_il_formal_v2_selection_remediation.yml`
+- S05 formal-v3 confirmatory Gate（未授权执行）：
+  `configs/steiner/experiments/s05_teacher_il_formal_v3_confirmatory_gate.yml`
+- S05 formal-v3 frozen candidates：
+  `configs/steiner/experiments/s05_formal_v3_candidate_graphs.json`
 - split：`configs/steiner/splits/split_policy_v1.yml`
 - final seal：`configs/steiner/splits/final_test_v1.yml`
 - SCIP 8.0.4 入口：`scripts/steiner/run_with_scip804.sh`

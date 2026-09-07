@@ -1,5 +1,24 @@
-# S05 implementation commands (UTC 2026-09-03)
+# S05 implementation commands (updated UTC 2026-09-07)
 # No credential, secret, raw state, checkpoint, training or final-test command ran.
+
+# Formal-v3 preregistration-only verification. Do not collect/evaluate before
+# the external GPT pre-execution audit returns PASS and activation is committed.
+sha256sum \
+  configs/steiner/experiments/s05_teacher_il_formal_v3_confirmatory_gate.yml \
+  configs/steiner/experiments/s05_formal_v3_candidate_graphs.json \
+  docs/steiner/phases/S05/S05_FORMAL_V3_CONFIRMATORY_GATE.md \
+  docs/steiner/audits/S05_FORMAL_V2_RESULT_AUDIT_RECORD.json
+PYTHONPATH=python scripts/steiner/run_with_scip804.sh --python -m pytest -q \
+  tests/steiner/test_s05_formal.py
+PYTHONPATH=python scripts/steiner/run_with_scip804.sh --python -m pytest -q -rs \
+  tests/steiner
+git diff --check
+
+# PROHIBITED until v3 GPT PASS activation:
+# - fresh 240-task teacher collection
+# - selecting/sealing the 30 v3 Gate lineages
+# - loading/evaluating any frozen checkpoint on v3 data
+# - test/final access, S05 tag, or S06 work
 
 # Formal-v1 teacher later completed with Gate FAIL (527/640 train quota):
 sha256sum results/steiner/raw/s05/s05-teacher-il-formal-v1/manifest.json

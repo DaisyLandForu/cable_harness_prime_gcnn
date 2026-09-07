@@ -1,7 +1,32 @@
-# S05 Changelog — formal-v2 execution and fail-closed result
+# S05 Changelog — formal-v3 confirmatory Gate preregistration
 
-Status: pilot-v3 pilot Gate PASS; formal-v1 teacher FAIL retained; formal-v2
-five-seed training complete; full S05 Gate FAIL; S06 blocked
+Status: formal-v1/v2 FAIL retained; formal-v3 protocol frozen for external
+pre-execution audit; no v3 execution; S06 blocked
+
+## Formal-v3 preregistration
+
+- Recorded GPT's acceptance of the formal-v2 `FAIL / STOP before S06`; its PASS
+  does not mean S05 passed and does not authorize v3 execution.
+- Froze all five completed v2 checkpoint manifest and model hashes. V3 changes
+  no model, training data, loss, hyperparameter, epoch, training seed or
+  checkpoint-selection result and performs no retraining.
+- Froze 80 fresh validation-IID candidate graph identities, 16 per family,
+  with no seed or generated graph-hash collision against local prior S05
+  evidence. The pool contains no test/final seed.
+- Froze a teacher-validity-only rule: all 240 tasks must terminate without
+  failure; a lineage needs at least 12 semantic-unique valid states; the first
+  six eligible lineages per family are selected by precommitted rank/hash.
+  Model outputs, regret and teacher score magnitude cannot influence selection.
+- Froze a pre-model-access barrier requiring exactly 30 fresh lineages, six per
+  family, at least one selected state per lineage, exactly 64 states per family
+  and 320 total, complete checksums, and zero role/prior/test/final leakage.
+- Fixed the v3 denominator unambiguously at 30 lineages everywhere; the frozen
+  v1 prose typo saying 20 remains historical and is not edited or inherited.
+- Limited claims to the registered teacher-evaluable scale envelope and kept
+  random-geometric small graphs in scope despite their adverse v2 diagnostic.
+- Added static hash, checkpoint, graph regeneration, split/freshness,
+  deterministic selection and fail-closed barrier tests. No teacher, model,
+  GPU, test/final or S06 action was run.
 
 ## Formal-v2 execution result
 
