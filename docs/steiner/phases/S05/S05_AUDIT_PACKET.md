@@ -11,6 +11,8 @@
   barrier and five-checkpoint confirmatory evaluation completed locally
 - formal-v3 preregistration content head:
   `8d7accd2a948935174d3113f8787e58dae7936b3`
+- formal-v3 result content head:
+  `6cf7acab57525a744233ed3fdfd463f00fcd470c`
 - formal-v3 YAML:
   `configs/steiner/experiments/s05_teacher_il_formal_v3_confirmatory_gate.yml`
   (`99e75a4d4fa69f805232c637d4fc0ae750fcfccb57e9979b561f422591006242`)

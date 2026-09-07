@@ -60,7 +60,7 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | formal-v3 local PASS；v1/v2 FAIL retained | v3 pre-execution PASS；result audit pending | result content head pending commit | selection seal `fab9b720e513da66294e95dba0511a5bfa32b9a3`；no tag |
+| S05 | Strong-branch teacher 与 IL | formal-v3 local PASS；v1/v2 FAIL retained | v3 pre-execution PASS；result audit pending | `6cf7acab57525a744233ed3fdfd463f00fcd470c` | selection seal `fab9b720e513da66294e95dba0511a5bfa32b9a3`；no tag |
 | S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |
