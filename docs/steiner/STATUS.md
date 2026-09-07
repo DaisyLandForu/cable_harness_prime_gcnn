@@ -1,22 +1,18 @@
 # Steiner RL Branching 迁移状态
 
-更新时间：2026-09-06 UTC
+更新时间：2026-09-07 UTC
 
 ## 当前状态
 
-- 当前阶段：S05 pilot-v3 teacher 12/12、GPU runs 9/9 和严格聚合全部完成；
-  pilot Gate PASS。V2 确定性失败产物继续保留；formal protocol v1 已冻结但
-  用户报告 formal protocol GPT 运行前审计 PASS；激活记录与 immutable hashes
-  已绑定，formal implementation 已准备，完整 S05 Gate 仍 NOT_EVALUATED。
-  formal-v1 teacher 已完成 315/315 tasks，但因 train bucket quotas 仅达到
-  527/640 而 Gate FAIL；所有其他 teacher checks PASS，正式训练未启动。
-  concurrency A1 在激活前由 formal-v2 selection remediation 取代；v2 保持
-  640 states/5×128 family budget。首次 v2 审计为 CONDITIONAL PASS，唯一 B1
-  ordering-key 歧义已按 sealed schema 改为 `graph_sha256`，待 GPT 复审；当前
-  仍禁止 reselection/training。
-- 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；审计记录 commit
-  `c7ce36e2bbb8cf7392fcf2044fa3593797346798`。S05 审计阻塞解除，但正式
-  teacher、训练和 Gate 尚未运行，仍禁止 final 访问。
+- 当前阶段：S05 formal-v2 五个 GPU seeds 均完成 40 epochs 且 reload error 0，
+  但冻结的 validation Gate 只覆盖 25/30 个注册 base-graph lineages，聚合器
+  fail-closed；完整 S05 Gate **FAIL**，S06 禁止。pilot-v3 PASS 和所有既有失败
+  产物继续保留。
+- formal-v1 仍因 train bucket quota 527/640 为 FAIL；formal-v2 的 640-state
+  same-family selection 经 GPT `PASS / B1=CLOSED` 后执行。未重跑 teacher、未换
+  graph/seed、未降低 Gate、未访问 test/final。
+- 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；S05 **FAIL / STOP**，
+  等待 `S05_FORMAL_V2_RESULT_GPT_AUDIT_REQUEST.md` 的只读失败审计。
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
 - S04 content SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`。
 - S04 remediation v2 content SHA：

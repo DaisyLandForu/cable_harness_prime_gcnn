@@ -1,4 +1,30 @@
-# S05 Result Analysis — deterministic pilot-v3 complete
+# S05 Result Analysis — formal-v2 five-seed execution FAIL
+
+## Formal-v2 outcome
+
+All five registered seeds completed 40 epochs and reloaded exactly. Their
+state-level validation-gate regrets were 0.583436, 0.678485, 0.673100,
+0.651227 and 0.619285; the fixed random state-level regret was 0.747095.
+This is encouraging model evidence, but it is not sufficient for the frozen
+scientific Gate.
+
+The 320 selected Gate states cover only 25 of 30 registered base-graph
+lineages. The absent lineages are sparse seeds 201019/201020 and geometric
+seeds 201024/201025/201026. Their 45 observed teacher states are all invalid
+because at least one strong-branch child validity condition fails; some also
+have a strong-call shortfall. Consequently no paired effect exists for those
+five registered bootstrap units.
+
+The aggregator correctly stopped rather than silently resampling 25 units.
+For diagnosis only, the available-25 bootstrap CI is
+`[0.056274, 0.191707]` and seed-regret CV is 0.068635, while the available
+random-geometric family effect is negative at -0.041805. These are explicitly
+non-Gate statistics because the preregistered 30-lineage matrix does not exist.
+
+Formal-v1 remains FAIL for train bucket feasibility. Formal-v2 is also **FAIL**
+for validation lineage completeness. Neither failure invalidates the retained
+teacher or model artifacts, but neither may be rewritten as a PASS. A future
+formal-v3 requires a new audited protocol; S06 and test/final remain prohibited.
 
 ## Formal-v1 teacher result
 
@@ -90,7 +116,7 @@ improve monotonically from 32 to 64. The curve therefore supports expanding to
 a preregistered formal collection; it does not demonstrate saturation or
 justify selecting a final policy from this pilot alone.
 
-Teacher-quality Gate: **PASS**. Deterministic pilot Gate: **PASS**. Complete S05
-scientific Gate: **NOT_EVALUATED / STOP before S06**, pending a separately
-frozen formal state budget, five formal training seeds, and significance
-analysis. No final-test data was accessed.
+Teacher-quality checks: **PASS**. Deterministic pilot Gate: **PASS**. Formal-v1
+teacher quota Gate: **FAIL**. Formal-v2 complete S05 scientific Gate: **FAIL /
+STOP before S06** because only 25/30 registered validation lineages contain a
+valid paired effect. No final-test data was accessed.

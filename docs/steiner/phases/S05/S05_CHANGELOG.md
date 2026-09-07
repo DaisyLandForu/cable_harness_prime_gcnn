@@ -1,7 +1,24 @@
-# S05 Changelog — implementation scaffold
+# S05 Changelog — formal-v2 execution and fail-closed result
 
-Status: pilot-v2 GPU attempt FAILED and retained; pilot-v3 pilot Gate PASS;
-formal protocol v1 frozen for pre-audit; formal experiment NOT_RUN
+Status: pilot-v3 pilot Gate PASS; formal-v1 teacher FAIL retained; formal-v2
+five-seed training complete; full S05 Gate FAIL; S06 blocked
+
+## Formal-v2 execution result
+
+- Recorded the external re-audit `PASS / B1=CLOSED` in a separate activation
+  record without changing the frozen v2 YAML.
+- Verified all 3,431 sealed formal-v1 shard checksums and deterministically
+  selected 640 train states, exactly 128 per family. The actual selection
+  manifest SHA-256 is
+  `35221abeeaae507623d0175d895b5ff807d0b7e5400fce494e615fbefe8cd10e`.
+- Trained seeds 101/202/303/404/505 independently for 40 epochs on one V100
+  each. All five completed and all checkpoint reload errors equal 0.0.
+- Formal aggregation stopped before bootstrap because the frozen Gate matrix
+  contains valid states from 25 rather than all 30 registered base graphs.
+  Five registered validation graphs produced zero valid teacher state.
+- Recorded S05 Gate **FAIL** without lowering the denominator, substituting
+  graphs, imputing effects, rerunning teacher to success, or accessing
+  test/final. S06 remains unauthorized.
 
 ## Formal protocol v1 preregistration
 

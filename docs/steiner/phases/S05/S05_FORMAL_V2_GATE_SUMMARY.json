@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "stage": "S05",
+  "experiment_id": "s05-teacher-il-formal-v2",
+  "created_at_utc": "2026-09-07T04:26:49Z",
+  "run_head": "da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7",
+  "status": "FAIL",
+  "failure_class": "PREREGISTERED_BOOTSTRAP_UNIT_DENOMINATOR_UNSATISFIED",
+  "failure_message": "formal Gate must contain exactly 30 base graph lineages; the frozen validation_gate selection contains valid states from only 25",
+  "protocol_document_inconsistency": "S05_FORMAL_PROTOCOL.md first specifies 30 Gate lineages but later says the percentile bootstrap resamples 20 base graphs; the audited request, registered instance matrix, and executable aggregator require 30, so execution used 30 and did not reinterpret the typo after results",
+  "selection_manifest_sha256": "35221abeeaae507623d0175d895b5ff807d0b7e5400fce494e615fbefe8cd10e",
+  "training": {
+    "registered_seeds": [101, 202, 303, 404, 505],
+    "completed_seeds": [101, 202, 303, 404, 505],
+    "epochs_per_seed": 40,
+    "all_checkpoint_reloads_exact": true,
+    "max_reload_absolute_error": 0.0,
+    "validation_gate_state_count_per_seed": 320,
+    "seed_report_sha256": {
+      "101": "f595fad87d7abb3f37af38fb82153a86076057cfbc892b171be93085d6e6265d",
+      "202": "60bd55773f9bb0aa21d0e937da4729796b49ff065d670b7ad140e65ba6d65737",
+      "303": "e46448fb08b52b01a2ffbae3ff942eed359351f1e91e7e27a5418156afd4b9a3",
+      "404": "e7ea56fd136f3cbb5f2862caddc841f33e80fc71e0a0c2a435480075b59555a1",
+      "505": "760005b7377e45246475e4550b4e573c45e9df64b944a685844652ca091ee478"
+    },
+    "checkpoint_manifest_sha256": {
+      "101": "66585c122d8ccd2279e559490d7abd2ed9456a7478ec657c507170911c33e7c3",
+      "202": "b7f271c36243499e1510a5db19156afb3f607c13abf059c4f8349d49d0efb48c",
+      "303": "5895e92f283e3cadf119177077dd872d236fd91e0f13efe57a93c3b3865f2db1",
+      "404": "fa29b03c2e12b8f6d1960405224e26d34f0658f2d718b93a355d8b32f894b6fc",
+      "505": "f33d145a8651e04e502039409d460d67dda4aca1415fcbc83554f6572546d76c"
+    }
+  },
+  "lineages": {
+    "registered_validation_gate_base_graphs": 30,
+    "base_graphs_with_at_least_one_valid_selected_state": 25,
+    "missing_base_graphs": [
+      "validation_iid--random_geometric--s201024",
+      "validation_iid--random_geometric--s201025",
+      "validation_iid--random_geometric--s201026",
+      "validation_iid--sparse_erdos_renyi--s201019",
+      "validation_iid--sparse_erdos_renyi--s201020"
+    ],
+    "missing_family_counts": {
+      "random_geometric": 3,
+      "sparse_erdos_renyi": 2
+    },
+    "missing_reason": "all observed teacher states for each listed graph fail child-validity; some also have fewer strong calls than candidates"
+  },
+  "formal_checks": {
+    "all_five_training_seeds_complete": true,
+    "checkpoint_reload_exact": true,
+    "required_30_lineage_matrix_complete": false,
+    "primary_bootstrap_ci": "NOT_EVALUATED",
+    "all_family_direction": "NOT_EVALUATED_ON_PREREGISTERED_30_LINEAGE_MATRIX",
+    "seed_regret_coefficient_of_variation": "NOT_EVALUATED_AS_FORMAL_GATE",
+    "full_s05_gate_pass": false
+  },
+  "non_gate_diagnostics_on_available_25_lineages": {
+    "warning": "These values are descriptive only and cannot replace the preregistered 30-lineage Gate.",
+    "seed_mean_regret": {
+      "101": 0.5644512685619163,
+      "202": 0.6738372765895738,
+      "303": 0.6610393451219976,
+      "404": 0.6344918577908308,
+      "505": 0.6136815883211354
+    },
+    "seed_mean_random_minus_model": {
+      "101": 0.18675902864218036,
+      "202": 0.07737302061452284,
+      "303": 0.0901709520820991,
+      "404": 0.11671843941326596,
+      "505": 0.13752870888296134
+    },
+    "family_mean_random_minus_model": {
+      "bridge_bottleneck": 0.10619146458887058,
+      "community_block": 0.2096272415720359,
+      "grid_with_holes": 0.14756973813117458,
+      "random_geometric": -0.04180517419981635,
+      "sparse_erdos_renyi": 0.09695890125552763
+    },
+    "seed_regret_cv": 0.06863525284654284,
+    "bootstrap_mean_effect": 0.12171002992700591,
+    "bootstrap_95_ci": [0.05627423, 0.19170749]
+  },
+  "failed_or_missing_evidence_retained": true,
+  "test_and_final_accessed": false,
+  "s05_gate": "FAIL",
+  "s06_authorized": false,
+  "next_action": "STOP_AND_REQUEST_AUDITED_PROTOCOL_REMEDIATION"
+}

@@ -1,4 +1,4 @@
-# S05 Audit Packet — deterministic pilot handoff
+# S05 Audit Packet — formal-v2 execution failure
 
 ## Identity and status
 
@@ -15,8 +15,9 @@
 - substantive range: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..7fa85ff7b0d37f14d4223d396a49fb96138eb8cd`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
-- S05 Gate: pilot-v3 pilot Gate PASS; full scientific Gate NOT_EVALUATED;
-  no S05 local-gate/audited tag permitted
+- S05 Gate: pilot-v3 pilot Gate PASS; formal-v1 teacher Gate FAIL; formal-v2
+  full scientific Gate FAIL at 25/30 validation lineages; no S05
+  local-gate/audited tag permitted
 - teacher attempt 1: FAILED and retained; fraction-semantics remediation tested
 - pilot-v1 retry: 10/10 completed, teacher-quality checks PASS, but only 53 valid
   train states; pilot-v2 capacity amendment preregistered before any GPU run
@@ -26,9 +27,9 @@
   aggregate primary regret improves through 64 states; formal protocol v1 is
   frozen for pre-audit but not authorized to run
 
-This packet supports the pilot PASS only, not a request to approve the full S05
-scientific Gate. S04 re-audit remains available at
-`docs/steiner/audits/S00_S04_GPT_REAUDIT_REQUEST.md`.
+This packet now records the full formal-v2 execution as a fail-closed S05
+result. The review request is
+`docs/steiner/audits/S05_FORMAL_V2_RESULT_GPT_AUDIT_REQUEST.md`.
 
 Formal protocol v1 has now been frozen for a separate pre-execution audit at
 `docs/steiner/audits/S05_FORMAL_PROTOCOL_GPT_AUDIT_REQUEST.md`. Its YAML keeps
@@ -79,6 +80,18 @@ remains unauthorized pending focused re-audit.
 | scheduler parallelism | seed-selecting foreground launcher + strict aggregator | disjoint/duplicate/missing matrix tests |
 | no premature formal run | required audited tag + CUDA checks | pilot artifacts say `formal_gate_evaluated=false` |
 
+## Formal-v2 evidence
+
+- execution/seal head: `da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7`
+- selection manifest SHA-256:
+  `35221abeeaae507623d0175d895b5ff807d0b7e5400fce494e615fbefe8cd10e`
+- five seeds: 5/5 complete, 40 epochs each, reload error 0.0
+- registered/observed valid Gate lineages: 30/25
+- missing: sparse 201019/201020; geometric 201024/201025/201026
+- machine summary: `S05_FORMAL_V2_GATE_SUMMARY.json`
+- test/final accessed: no
+- Gate: **FAIL**; S06 authorized: no
+
 ## Required future evidence
 
 Before S05 can be audited for full PASS, obtain protocol pre-audit PASS, run and
@@ -90,6 +103,7 @@ in denominators/manifests.
 
 ## Suggested current conclusion
 
-Remediation implementation **PASS** and pilot-v3 pilot Gate **PASS**. Full S05
-scientific Gate is **NOT_EVALUATED**. Do not create an S05 Gate tag or start S06;
-the next authorized activity is formal-protocol preregistration, not training.
+Remediation implementation **PASS** and pilot-v3 pilot Gate **PASS**. Formal-v2
+full S05 Gate is **FAIL**. Do not create an S05 Gate tag or start S06. The only
+permitted next scientific action is read-only audit and, if separately
+authorized, preregistration of a new remediation protocol.

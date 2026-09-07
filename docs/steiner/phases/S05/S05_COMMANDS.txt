@@ -29,6 +29,20 @@ scripts/steiner/run_with_scip804.sh --python scripts/steiner/collect_s05_teacher
 scripts/steiner/run_with_scip804.sh --python -m compileall -q python/steiner_branching scripts/steiner tests/steiner
 git diff --check
 
+# Formal-v2 audited execution (run head da5b5abd8220f8bdaa1a977455d25ef9aaaa84b7)
+scripts/steiner/run_s05_formal_v2_seed_tmux.sh steiner-s05-formal-v2-101 0 101
+scripts/steiner/run_s05_formal_v2_seed_tmux.sh steiner-s05-formal-v2-202 1 202
+scripts/steiner/run_s05_formal_v2_seed_tmux.sh steiner-s05-formal-v2-303 0 303
+scripts/steiner/run_s05_formal_v2_seed_tmux.sh steiner-s05-formal-v2-404 1 404
+scripts/steiner/run_s05_formal_v2_seed_batch.sh 505
+
+# All five seeds completed. This aggregation intentionally exited nonzero:
+PYTHONPATH=python CUBLAS_WORKSPACE_CONFIG=:4096:8 \
+  scripts/steiner/run_with_scip804.sh --python \
+  scripts/steiner/aggregate_s05_formal_training.py --formal-v2
+# ValueError: formal Gate must contain exactly 30 base graph lineages
+# Frozen selection had 25/30 lineages. No S06 command was run.
+
 # 2026-09-06 formal protocol v1 registration only. These validation commands
 # do not collect teacher states or train a model. Formal execution remains
 # blocked until the GPT pre-audit returns PASS.

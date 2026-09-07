@@ -1,4 +1,23 @@
-# S05 Test Report — implementation-only checkpoint
+# S05 Test Report — formal-v2 execution checkpoint
+
+## Formal-v2 final execution verification
+
+- Activation: external GPT `PASS`, B1 closed; frozen v2 YAML and explanation
+  hashes verified.
+- Reselection: all 3,431 source shard checksums verified; train 640/640,
+  family counts 128 each, validation selections unchanged at 160/320.
+- Post-implementation frozen-stack suite with deterministic CUDA environment:
+  **97 passed, 1 expected PACE skip**.
+- Formal seeds 101/202/303/404/505: **5/5 completed**, 40 epochs each,
+  independent one-V100 processes, five disjoint report/checkpoint roots.
+- Checkpoint verification: **5/5 bit-exact**, maximum reload inference error
+  **0.0**.
+- Aggregation negative path: fail-closed with
+  `formal Gate must contain exactly 30 base graph lineages`; observed valid
+  lineage count is 25. The exception occurred before a formal bootstrap result
+  was written.
+- Test/final access count: zero. No failed state, graph, seed or task was
+  removed or replaced.
 
 ## Formal-v1 failure and v2 preregistration checks
 
@@ -154,8 +173,7 @@ No Gate, data list, seed or threshold changed in response.
 
 ## Gate
 
-The remediation implementation tests **PASS**. Pilot-v3 teacher collection,
-three seed reports and strict 9-run aggregation also **PASS**, with max reload
-error 0. Full S05 scientific Gate remains **NOT_EVALUATED** until the formal
-state budget and five-seed protocol are frozen and executed. S06 remains
-blocked; the S04 re-audit prerequisite remains PASS.
+The remediation implementation tests **PASS** and pilot-v3 remains **PASS**.
+Formal-v2 execution completed, but its preregistered 30-lineage statistical
+matrix is incomplete at 25/30; therefore full S05 Gate is **FAIL** and S06
+remains blocked. The S04 re-audit prerequisite remains PASS.
