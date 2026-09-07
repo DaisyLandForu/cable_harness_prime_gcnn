@@ -192,6 +192,39 @@ def load_formal_v2_selection_seal(
     return raw
 
 
+def require_formal_v2_implementation_identity(expected_head: str) -> str:
+    """Allow metadata-only descendants while rejecting changes to executable inputs."""
+    current = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=REPO, text=True,
+        capture_output=True, check=True,
+    ).stdout.strip()
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", expected_head, current],
+        cwd=REPO, check=False,
+    ).returncode != 0:
+        raise StrictConfigError("formal-v2 implementation head is outside current history")
+    protected = [
+        "python/steiner_branching", "scripts/steiner",
+        "configs/steiner", "tests/steiner",
+    ]
+    if subprocess.run(
+        ["git", "diff", "--quiet", expected_head, current, "--", *protected],
+        cwd=REPO, check=False,
+    ).returncode != 0:
+        raise StrictConfigError("formal-v2 executable inputs changed after selection sealing")
+    if subprocess.run(
+        ["git", "diff", "--quiet", "--", *protected], cwd=REPO, check=False,
+    ).returncode != 0:
+        raise StrictConfigError("formal-v2 executable inputs have uncommitted changes")
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard", "--", *protected],
+        cwd=REPO, text=True, capture_output=True, check=True,
+    ).stdout.strip()
+    if untracked:
+        raise StrictConfigError("formal-v2 executable inputs include untracked files")
+    return current
+
+
 def load_formal_audit_record(path: Path | str = FORMAL_AUDIT_RECORD_PATH) -> dict[str, Any]:
     record_path = Path(path)
     try:

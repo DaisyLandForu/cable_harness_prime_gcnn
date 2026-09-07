@@ -31,6 +31,7 @@ from steiner_branching.learning.formal_protocol import (  # noqa: E402
     FORMAL_V2_SOURCE_MANIFEST_SHA256,
     formal_config_sha256,
     load_formal_v2_selection_seal,
+    require_formal_v2_implementation_identity,
     load_s05_formal_config,
     load_s05_formal_v2_config,
 )
@@ -188,6 +189,7 @@ def main() -> int:
     config_digest = formal_config_sha256(config)
     if args.formal_v2:
         seal = load_formal_v2_selection_seal()
+        require_formal_v2_implementation_identity(str(seal.get("implementation_run_head")))
         if (
             manifest.get("schema_version") != 1
             or manifest.get("experiment_id") != config["experiment_id"]
@@ -195,9 +197,8 @@ def main() -> int:
             or manifest.get("teacher_gate", {}).get("status") != "PASS"
             or manifest.get("formal_gate_evaluated") is not False
             or manifest.get("effective_config_sha256") != config_digest
-            or manifest.get("implementation_run_head") != git_commit
+            or manifest.get("implementation_run_head") != seal.get("implementation_run_head")
             or manifest.get("source_manifest_sha256") != FORMAL_V2_SOURCE_MANIFEST_SHA256
-            or seal.get("implementation_run_head") != git_commit
         ):
             raise ValueError("formal-v2 selection manifest identity/Gate is not eligible")
     else:

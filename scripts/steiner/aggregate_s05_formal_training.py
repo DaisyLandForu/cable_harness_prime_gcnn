@@ -28,6 +28,7 @@ from steiner_branching.learning.formal_protocol import (  # noqa: E402
     FORMAL_V2_SOURCE_MANIFEST_SHA256,
     formal_config_sha256,
     load_formal_v2_selection_seal,
+    require_formal_v2_implementation_identity,
     load_s05_formal_config,
     load_s05_formal_v2_config,
 )
@@ -234,15 +235,15 @@ def main() -> int:
     data_digest = file_sha256(data_manifest_path)
     if args.formal_v2:
         seal = load_formal_v2_selection_seal()
+        require_formal_v2_implementation_identity(str(seal.get("implementation_run_head")))
         if (
             teacher_manifest.get("schema_version") != 1
             or teacher_manifest.get("experiment_id") != config["experiment_id"]
             or teacher_manifest.get("status") != "completed"
             or teacher_manifest.get("effective_config_sha256") != config_digest
-            or teacher_manifest.get("implementation_run_head") != head
+            or teacher_manifest.get("implementation_run_head") != seal.get("implementation_run_head")
             or teacher_manifest.get("source_manifest_sha256") != FORMAL_V2_SOURCE_MANIFEST_SHA256
             or teacher_manifest.get("formal_gate_evaluated") is not False
-            or seal.get("implementation_run_head") != head
         ):
             raise ValueError("formal-v2 selection manifest identity/Gate changed")
     elif (
