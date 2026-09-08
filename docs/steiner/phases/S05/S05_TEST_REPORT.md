@@ -1,4 +1,4 @@
-# S05 Test Report — formal-v3 local Gate PASS
+# S05 Test Report — formal-v3 audited Gate PASS
 
 ## Formal-v3 execution verification
 
@@ -22,6 +22,9 @@
   complete frozen-stack suite: **103 passed, 1 expected PACE skip** in 79.14 s.
   The committed selection seal reloaded successfully against the raw selected
   manifest SHA-256.
+- Result-audit closeout was documentation-only. JSON parsing, audit/result/source
+  SHA cross-checks and `git diff --check` passed; no solver or training test was
+  rerun because the audited result content and its 103-pass suite were unchanged.
 - Teacher, selected, seal and aggregate hashes are listed in
   `S05_AUDIT_PACKET.md`; the byte-exact committed aggregate is
   `S05_FORMAL_V3_GATE_SUMMARY.json`.
@@ -254,6 +257,7 @@ No Gate, data list, seed or threshold changed in response.
 
 The remediation implementation tests **PASS** and pilot-v3 remains **PASS**.
 Formal-v1 and formal-v2 remain retained FAIL results. Formal-v3 completed its
-fresh exact 30-lineage matrix and the local S05 Gate is **PASS**. External
-result audit is pending; S06 remains blocked. The S04 prerequisite remains
-PASS.
+fresh exact 30-lineage matrix and the local S05 Gate is **PASS**. The external
+result audit returned **PASS with no blocking findings**. S05 is therefore PASS
+via formal-v3; S06 implementation/handoff is authorized after the audited tag,
+while test/final access remains prohibited. The S04 prerequisite remains PASS.

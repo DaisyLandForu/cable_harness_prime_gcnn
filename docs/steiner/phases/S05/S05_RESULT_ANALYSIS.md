@@ -1,4 +1,4 @@
-# S05 Result Analysis — formal-v3 local Gate PASS
+# S05 Result Analysis — formal-v3 audited Gate PASS
 
 ## Formal-v3 confirmatory result
 
@@ -54,10 +54,15 @@ does not establish online SCIP node count, solve time, production relpscost
 superiority, every-scale generalization, or final-test performance. Those
 claims remain outside S05.
 
-S05 is now **local Gate PASS / external result audit pending**. No S05 audited
-tag may be created and S06/test/final remain prohibited until an independent
-result audit accepts the evidence. The machine-readable committed summary is
-`S05_FORMAL_V3_GATE_SUMMARY.json`.
+The independent result audit returned **PASS with no blocking findings**. S05
+is therefore **PASS via formal-v3 confirmatory Gate** and may receive its
+audited tag. S06 implementation/handoff is authorized after the audit record is
+committed; frozen test/final access remains prohibited. The machine-readable
+committed summary is `S05_FORMAL_V3_GATE_SUMMARY.json`.
+
+The hash-bound field `all_five_training_seeds_complete` is retained for schema
+and audit stability. In formal-v3 it means that all five already-frozen model
+seeds completed confirmatory evaluation; v3 did not retrain any model.
 
 ## Formal-v2 outcome
 
@@ -127,7 +132,7 @@ be moved into train, and the 64-state curve cannot be lowered silently. Thus v1
 is capacity-insufficient for the complete learning curve despite sound teacher
 quality. No GPU/model run was attempted.
 
-## What is not established
+## Pre-formal-v3 historical assessment: what was not established
 
 - Formal five-seed stability and preregistered statistical significance have
   not been evaluated.

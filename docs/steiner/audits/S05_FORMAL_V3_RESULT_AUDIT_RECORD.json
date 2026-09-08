@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "stage": "S05",
+  "audit_kind": "formal_v3_confirmatory_scientific_gate_result_review",
+  "verdict": "PASS",
+  "verdict_meaning": "s05_pass_via_formal_v3_confirmatory_gate",
+  "verdict_source": "user_supplied_external_gpt_audit",
+  "source_text_sha256": "e3be1a0b0232aa33de1b0cc152210271de7e68cd23dcb527a26bfe131eac3b87",
+  "recorded_at_utc": "2026-09-08T01:14:32Z",
+  "audited_branch": "research/steiner-migration",
+  "audited_result_content_head": "6cf7acab57525a744233ed3fdfd463f00fcd470c",
+  "audit_request_head": "4c48352dc652925d8b4ff4d42b63ba89e675770a",
+  "protocol_content_head": "8d7accd2a948935174d3113f8787e58dae7936b3",
+  "activation_commit": "9122b123a2b036cc83a7b83e45a4ffbd1883842c",
+  "implementation_content_head": "42faf09560ecbfb782df7c89fa068e9f575c7e4b",
+  "selection_seal_commit": "fab9b720e513da66294e95dba0511a5bfa32b9a3",
+  "gate_summary_sha256": "4aa035ad7538219da72fa4a8028223cf340181d5d1495539a051acf7601f742d",
+  "formal_v1_result": "FAIL_RETAINED",
+  "formal_v2_result": "FAIL_RETAINED",
+  "formal_v3_result": "PASS",
+  "s05_scientific_status": "PASS_VIA_FORMAL_V3_CONFIRMATORY_GATE",
+  "blocking_findings": [],
+  "non_blocking_findings": [
+    {
+      "id": "N1",
+      "summary": "label stale result-analysis wording as a pre-formal-v3 historical assessment"
+    },
+    {
+      "id": "N2",
+      "summary": "retain the hash-bound all_five_training_seeds_complete field but clarify that v3 evaluated frozen models without retraining"
+    },
+    {
+      "id": "N3",
+      "summary": "treat the fixed Git result commit and committed evidence as authoritative over uploaded convenience copies"
+    }
+  ],
+  "s05_audited_tag_authorized": true,
+  "s06_implementation_and_handoff_authorized": true,
+  "s06_experiment_started": false,
+  "test_and_final_access_authorized": false
+}

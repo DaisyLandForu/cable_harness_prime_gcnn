@@ -1,7 +1,21 @@
-# S05 Changelog — formal-v3 local Gate PASS
+# S05 Changelog — formal-v3 audited Gate PASS
 
-Status: formal-v1/v2 FAIL retained; formal-v3 local Gate PASS; external result
-audit pending; S06 blocked
+Status: formal-v1/v2 FAIL retained; formal-v3 result audit PASS; S05 PASS via
+confirmatory Gate; S06 implementation/handoff authorized; test/final prohibited
+
+## Formal-v3 result audit and S05 completion
+
+- Recorded the user-supplied external GPT result audit as `PASS` with no
+  blocking findings, bound to result content head `6cf7acab...`, the committed
+  Gate summary and the supplied audit-text SHA-256.
+- Preserved formal-v1 and formal-v2 as immutable FAIL results; S05 passes only
+  through the fresh formal-v3 confirmatory Gate.
+- Labeled stale result-analysis wording as a pre-formal-v3 historical section.
+  Kept the audited `all_five_training_seeds_complete` JSON key unchanged and
+  documented that v3 evaluated five frozen models without retraining.
+- Authorized the S05 audited tag and S06 implementation/handoff. No test/final
+  access, S06 experiment, result value, executable protocol or Gate threshold
+  was changed by this metadata-only closeout.
 
 ## Formal-v3 execution result
 

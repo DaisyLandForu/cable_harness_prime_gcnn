@@ -1,7 +1,8 @@
 # S05 Plan — Strong-branch teacher and B0 imitation learning
 
 Status: S04 audit prerequisite PASS; pilot-v3 PASS; formal-v1/v2 FAIL retained;
-formal-v3 local Gate PASS and external result audit pending; S06 blocked
+formal-v3 result audit PASS; S05 PASS via confirmatory Gate; S06
+implementation/handoff authorized, test/final access prohibited
 
 ## Frozen start
 
@@ -140,5 +141,6 @@ model retraining. Its fresh teacher and exact 30-lineage validation barrier
 passed, all five frozen checkpoints reloaded exactly, and the local scientific
 Gate passed. See `S05_FORMAL_V3_GATE_SUMMARY.json` and
 `S05_RESULT_ANALYSIS.md`. This addendum records the outcome without changing the
-historical preregistration text above. External result audit remains mandatory
-before an S05 audited tag or S06 handoff.
+historical preregistration text above. The external result audit returned PASS
+with no blocking findings, authorizing the S05 audited tag and S06
+implementation/handoff while keeping test/final access prohibited.

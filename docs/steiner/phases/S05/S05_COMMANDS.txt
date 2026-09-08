@@ -227,3 +227,18 @@ scripts/steiner/run_with_scip804.sh --python -m pytest -q \
   tests/steiner/test_s05_teacher_il.py
 scripts/steiner/run_with_scip804.sh --python -m pytest -q tests/steiner
 git diff --check
+
+# 2026-09-08 S05 formal-v3 result-audit closeout (metadata only):
+sha256sum \
+  docs/steiner/phases/S05/S05_FORMAL_V3_GATE_SUMMARY.json \
+  /home/duweiyue25/.codex/attachments/f4e1d0fb-e1b7-4596-898b-2a90bb6232ee/pasted-text.txt
+python -m json.tool \
+  docs/steiner/audits/S05_FORMAL_V3_RESULT_AUDIT_RECORD.json >/dev/null
+git diff --check
+# After committing the result-audit record and phase metadata, the tag points to
+# the immutable audited result content head rather than the later audit record:
+# git tag -a steiner-s05-audited-v3 \
+#   6cf7acab57525a744233ed3fdfd463f00fcd470c -m '<audited identity>'
+# git push origin research/steiner-migration
+# git push origin steiner-s05-audited-v3
+# No S06 experiment or test/final access was performed by this closeout.

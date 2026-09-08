@@ -1,18 +1,18 @@
 # Steiner RL Branching 迁移状态
 
-更新时间：2026-09-07 UTC
+更新时间：2026-09-08 UTC
 
 ## 当前状态
 
-- 当前阶段：S05 formal-v2 五个 GPU seeds 均完成 40 epochs 且 reload error 0，
-  但冻结的 validation Gate 只覆盖 25/30 个注册 base-graph lineages，完整 S05
-  Gate **FAIL**。Formal-v3 已完成 fresh 240-task teacher、30-lineage barrier 和
-  五冻结模型评估，local scientific Gate **PASS**；等待外部结果审计。
+- 当前阶段：S05 formal-v3 confirmatory scientific Gate 和外部结果审计均
+  **PASS**，S05 可按 formal-v3 完成验收。Formal-v1 的 527/640 quota failure 和
+  formal-v2 的 25/30 lineage failure 均原样保留。
 - formal-v1 仍因 train bucket quota 527/640 为 FAIL；formal-v2 的 640-state
   same-family selection 经 GPT `PASS / B1=CLOSED` 后执行。未重跑 teacher、未换
   graph/seed、未降低 Gate、未访问 test/final。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；formal-v1/v2 FAIL retained；
-  S05 formal-v3 **LOCAL PASS / RESULT AUDIT PENDING**，S06 仍 blocked。
+  S05 formal-v3 **RESULT AUDIT PASS / BLOCKING FINDINGS NONE**。S06
+  implementation/handoff 已获授权，但尚未开始；test/final 仍禁止访问。
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
 - S04 content SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`。
 - S04 remediation v2 content SHA：
@@ -45,9 +45,9 @@
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：只读审计 formal-v3 的 committed Gate summary、selection seal、实现和
-  结果分析。只有结果审计 PASS 后才可创建 S05 audited tag 并放行 S06；final test
-  仍按后续阶段协议禁止访问。
+- 下一步：提交独立 formal-v3 result-audit PASS record 并创建 S05 audited tag，
+  随后可单独开始 S06 implementation/handoff。S06 仍须按阶段计划执行；冻结的
+  test/final 不因 S05 PASS 自动解封。
 
 ## 阶段登记表
 
@@ -60,8 +60,8 @@
 | S02 | 数据解析与 MCF correctness | PASS | NOT_RUN | `19c7f46b91a1d05c46dbdeeba00bf863b37a7f5a` | `25be2e18c4020bed4cb8563618687b148d1f405f` / `steiner-s02-local-gate-v1` |
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
-| S05 | Strong-branch teacher 与 IL | formal-v3 local PASS；v1/v2 FAIL retained | v3 pre-execution PASS；result audit pending | `6cf7acab57525a744233ed3fdfd463f00fcd470c` | selection seal `fab9b720e513da66294e95dba0511a5bfa32b9a3`；no tag |
-| S06 | IL solve evaluation | NOT_STARTED | NOT_RUN | — | — |
+| S05 | Strong-branch teacher 与 IL | formal-v3 PASS；v1/v2 FAIL retained | PASS；blocking findings NONE | `6cf7acab57525a744233ed3fdfd463f00fcd470c` | `6cf7acab57525a744233ed3fdfd463f00fcd470c` / `steiner-s05-audited-v3` |
+| S06 | IL solve evaluation | AUTHORIZED_NOT_STARTED | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |
 | S09 | Component 消融（可选） | NOT_STARTED | NOT_RUN | — | — |
@@ -96,7 +96,8 @@
 - Git 治理：`configs/steiner/git_governance_v1.yml`
 - 公共数据政策：`configs/steiner/data_provenance_v1.yml`
 - 旧航空 backlog：`docs/steiner/AVIATION_REGRESSION_BACKLOG.md`
-- 当前联合审计入口：`docs/steiner/phases/S04/S04_AUDIT_PACKET.md`
+- 当前 S05 审计入口：`docs/steiner/phases/S05/S05_AUDIT_PACKET.md`
+- S05 最终 GPT 审计：`docs/steiner/audits/S05_GPT_AUDIT.md`
 
 ## 已知风险与边界
 

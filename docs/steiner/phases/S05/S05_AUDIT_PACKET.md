@@ -1,18 +1,27 @@
-# S05 Audit Packet — formal-v3 local Gate PASS
+# S05 Audit Packet — formal-v3 result-audited PASS
 
 ## Identity and status
 
 - branch: `research/steiner-migration`
 - base SHA: `030199703c6e280533f1f1c7cfc8d00d7df0a6b0`
+- audited phase/result head: `6cf7acab57525a744233ed3fdfd463f00fcd470c`
+- substantive S05 range:
+  `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..6cf7acab57525a744233ed3fdfd463f00fcd470c`
 - immutable history: formal-v1 and formal-v2 **FAIL**, both retained
-- current result: formal-v3 local scientific Gate **PASS**; external result
-  audit pending; S06 remains blocked
+- current result: formal-v3 scientific Gate **PASS**; external result audit
+  **PASS with no blocking findings**; S05 completion and S06
+  implementation/handoff are authorized after this record is committed
 - formal-v3 status: external GPT pre-execution **PASS**; teacher, pre-model
   barrier and five-checkpoint confirmatory evaluation completed locally
 - formal-v3 preregistration content head:
   `8d7accd2a948935174d3113f8787e58dae7936b3`
 - formal-v3 result content head:
   `6cf7acab57525a744233ed3fdfd463f00fcd470c`
+- formal-v3 result audit record:
+  `docs/steiner/audits/S05_FORMAL_V3_RESULT_AUDIT_RECORD.json`
+  (`bcac5dd806aefcff0c3ca6fbc71c3173b3efa754d18d8933ee90cc84bb8010f3`)
+- supplied result-audit text SHA-256:
+  `e3be1a0b0232aa33de1b0cc152210271de7e68cd23dcb527a26bfe131eac3b87`
 - formal-v3 YAML:
   `configs/steiner/experiments/s05_teacher_il_formal_v3_confirmatory_gate.yml`
   (`99e75a4d4fa69f805232c637d4fc0ae750fcfccb57e9979b561f422591006242`)
@@ -31,13 +40,12 @@
   because train bucket quotas reached only 527/640; no formal training started
 - execution-only concurrency amendment A1: superseded before activation by the
   formal-v2 selection remediation, which incorporates five-job concurrency
-- substantive range:
-  `030199703c6e280533f1f1c7cfc8d00d7df0a6b0..5626517c3689a1e885a69ac7f111f587864f9924`
 - S04 audit: first result CONDITIONAL PASS; remediation re-audit PASS, B1 CLOSED
 - user authorization: S05 source/config/tests and scheduler-safe pilot job split
 - S05 Gate: pilot-v3 pilot Gate PASS; formal-v1 teacher Gate FAIL; formal-v2
   full scientific Gate FAIL at 25/30 validation lineages; formal-v3 local Gate
-  PASS; no audited tag or S06 permission before result audit
+  PASS; independent result audit PASS, so an S05 audited tag and S06
+  implementation/handoff are authorized
 - teacher attempt 1: FAILED and retained; fraction-semantics remediation tested
 - pilot-v1 retry: 10/10 completed, teacher-quality checks PASS, but only 53 valid
   train states; pilot-v2 capacity amendment preregistered before any GPU run
@@ -85,12 +93,13 @@ within-family fallback against the sealed failed manifest while preserving
 in five independent one-V100 jobs. No v2 selection or training is authorized
 before its own GPT PASS.
 
-The first v2 audit returned `CONDITIONAL PASS` with one blocker: the YAML named
+At that historical checkpoint, the first v2 audit returned `CONDITIONAL PASS`
+with one blocker: the YAML named
 an ordering key `canonical_instance_content_sha256` although the sealed record
 schema uses `graph_sha256`. The B1 remediation changes only that literal key in
 primary/fallback order, documents the no-alias rule, and adds schema,
-permutation, exact-composition and unknown-key fail-closed tests. Execution
-remains unauthorized pending focused re-audit.
+permutation, exact-composition and unknown-key fail-closed tests. The focused
+re-audit later returned PASS/B1 CLOSED before v2 execution.
 
 ## Review map
 
@@ -147,18 +156,28 @@ remains unauthorized pending focused re-audit.
 - every seed and every family aggregate direction: positive
 - test/final accessed: no; model retrained: no
 - machine summary: `S05_FORMAL_V3_GATE_SUMMARY.json`
-- local Gate: **PASS**; audited tag/S06 authorization: no, pending result audit
+- local Gate: **PASS**; result audit: **PASS**; audited tag and S06
+  implementation/handoff authorized; test/final access not authorized
 
-## Required future evidence
+The hash-bound Gate summary fields `s05_audited_tag_authorized=false` and
+`s06_authorized=false` correctly describe the state when the result content was
+committed, before external review. They are not rewritten after the fact; the
+later result-audit record is the authority for the new authorization state.
 
-Obtain an independent result audit of the committed protocol, implementation,
-selection seal, Gate summary and phase analysis. Only audit PASS may authorize
-the S05 tag and S06 handoff. Raw task/state/checkpoint artifacts remain outside
-Git and are bound by the hashes above.
+## External result audit and phase disposition
 
-## Suggested current conclusion
+The independent result audit accepted the committed protocol, implementation,
+selection seal, Gate summary and phase analysis with no blocking findings. Its
+machine record is `S05_FORMAL_V3_RESULT_AUDIT_RECORD.json` and its concise audit
+record is `docs/steiner/audits/S05_GPT_AUDIT.md`. Raw task/state/checkpoint
+artifacts remain outside Git and are bound by the hashes above. The fixed Git
+result commit is authoritative; uploaded copies are convenience material only.
+
+## Final conclusion
 
 Formal-v1 and formal-v2 remain **FAIL**. Formal-v3 completed with local Gate
 **PASS**, closing the missing-denominator issue using a new audited validation
-set without retraining. Result audit is pending. Do not create an S05 audited
-tag, start S06, or access test/final until that audit returns PASS.
+set without retraining. The result audit is **PASS**, so S05 is **PASS via
+formal-v3 confirmatory Gate**. Create the audited tag after committing this
+record; S06 implementation/handoff may then begin. Test/final access remains
+prohibited.
