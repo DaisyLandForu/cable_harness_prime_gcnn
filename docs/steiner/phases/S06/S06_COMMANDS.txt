@@ -1,0 +1,32 @@
+# S06 commands. Formal commands require external GPT PASS plus the committed
+# S06_PREEXECUTION_ACTIVATION_RECORD.json. Custom jobs must share the same
+# persistent repository/results mount and use identical 8-CPU/96-GiB/0-GPU forms.
+
+# Static preflight (safe before activation)
+scripts/steiner/run_with_scip804.sh --verify-only
+scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s06_online.py --validate-only
+
+# MAIN WAVE: submit as six simultaneous foreground custom jobs, one command/job.
+bash scripts/steiner/run_s06_online_shard.sh 0 main
+bash scripts/steiner/run_s06_online_shard.sh 1 main
+bash scripts/steiner/run_s06_online_shard.sh 2 main
+bash scripts/steiner/run_s06_online_shard.sh 3 main
+bash scripts/steiner/run_s06_online_shard.sh 4 main
+bash scripts/steiner/run_s06_online_shard.sh 5 main
+
+# TRACE WAVE: only after all six main manifests report completed. Submit the
+# following six jobs even when some will produce an explicit empty manifest.
+bash scripts/steiner/run_s06_online_shard.sh 0 trace
+bash scripts/steiner/run_s06_online_shard.sh 1 trace
+bash scripts/steiner/run_s06_online_shard.sh 2 trace
+bash scripts/steiner/run_s06_online_shard.sh 3 trace
+bash scripts/steiner/run_s06_online_shard.sh 4 trace
+bash scripts/steiner/run_s06_online_shard.sh 5 trace
+
+# FINALIZE: run once after all six trace jobs terminate.
+bash scripts/steiner/finalize_s06_online.sh
+
+# Interactive alternative for exactly one shard (never launch all six on the
+# current 128-GiB host).
+scripts/steiner/run_s06_online_tmux.sh 0 main
+tmux attach -t steiner-s06-main-shard-0
