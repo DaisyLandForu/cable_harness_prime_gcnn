@@ -1,7 +1,7 @@
 # S06 Test Report
 
-Status: remediated pre-execution implementation Gate PASS locally; focused
-external re-audit pending; scientific Gate NOT_EVALUATED.
+Status: second-remediation pre-execution implementation Gate PASS locally;
+focused B2/B3 external re-audit pending; scientific Gate NOT_EVALUATED.
 
 ## Environment
 
@@ -10,8 +10,9 @@ external re-audit pending; scientific Gate NOT_EVALUATED.
 - initial implementation content head:
   `9866a3743ff1c2d6ef580aedf1f91629db0c6049`
 - remediation base: `bcd9e33e9a09be856fc5f61078ccb4875ea325c1`
-- remediation fixed head: recorded by the focused re-audit request after this
-  evidence commit
+- first remediation head: `a8fbc0986068171344387ceb68e1ee5ab5bbefbc`
+- second remediation fixed head: recorded by the next focused re-audit request
+  after this evidence commit
 - stack: SCIP 8.0.4 / PySCIPOpt 4.3.0 / Ecole 0.8.1
 - Python: 3.11.15
 - local host seen during tests: 80 CPUs, 128 GiB RAM, 2 V100 32-GB GPUs
@@ -65,6 +66,9 @@ external re-audit pending; scientific Gate NOT_EVALUATED.
 - minimum CPU/RAM, zero-GPU, environment/runtime fingerprint, activation and
   audited-executable checks, including per-task runtime identity binding;
 - duplicate finalizer and pre-existing aggregate output refusal;
+- committed-byte activation verification, including an uncommitted fingerprint
+  mutation negative test;
+- Python-owned aggregate OS lock, including two direct Python lock contenders;
 - no aggregation before both six-shard phase barriers;
 - no formal run without an external PASS activation record.
 
@@ -79,7 +83,7 @@ external re-audit pending; scientific Gate NOT_EVALUATED.
 
 - protocol: `e7f7e9060c25fa038a2749ca43afe6a2769c3652e93697612b8804269750f827`
 - instance manifest: `b50f8048d8ab27a1fa2168e69ef179cbfc490116399180f2bb4a963bf04b292b`
-- protocol explanation: `6cbd5473115524813549b628369b1dbcc11e9f849762fafe2789bad384b0fb62`
+- protocol explanation: `23139ea8810c608a6e816a1a4fd51d13ff3f48ca3f78c52bd4941c555e16dd48`
 - environment lock: `f70afe548f2b640a3c1375686ad8c8ef4dced63d0229c9fa4eb36e62f6d7628e`
 - validate-only runtime fingerprint:
   `fe7a032641aba58090f59cfa9d5b088cf76da23b799f2099a34e8d99b17b5687`

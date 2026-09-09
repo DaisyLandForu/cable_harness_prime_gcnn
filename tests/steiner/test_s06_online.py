@@ -124,14 +124,6 @@ def test_s06_activation_is_separate_and_fail_closed(tmp_path, monkeypatch):
     head = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=REPO, text=True, capture_output=True, check=True
     ).stdout.strip()
-    real_run = subprocess.run
-
-    def repository_probe(command, *args, **kwargs):
-        if command[:3] == ["git", "diff", "--quiet"]:
-            return subprocess.CompletedProcess(command, 0)
-        return real_run(command, *args, **kwargs)
-
-    monkeypatch.setattr(s06_online_module.subprocess, "run", repository_probe)
     record = {
         "schema_version": 1,
         "stage": "S06",
@@ -152,11 +144,30 @@ def test_s06_activation_is_separate_and_fail_closed(tmp_path, monkeypatch):
         "s07_authorized": False,
         "test_and_final_access_authorized": False,
     }
-    path = tmp_path / "activation.json"
+    repository = tmp_path / "repo"
+    path = repository / "docs/steiner/audits/S06_PREEXECUTION_ACTIVATION_RECORD.json"
+    path.parent.mkdir(parents=True)
     path.write_text(json.dumps(record), encoding="utf-8")
+    committed = {"bytes": path.read_bytes()}
+
+    def repository_probe(command, *args, **kwargs):
+        if command[:2] == ["git", "show"]:
+            return subprocess.CompletedProcess(command, 0, stdout=committed["bytes"], stderr=b"")
+        if command[0] == "git":
+            return subprocess.CompletedProcess(command, 0)
+        raise AssertionError(f"unexpected subprocess call: {command}")
+
+    monkeypatch.setattr(s06_online_module, "REPO", repository)
+    monkeypatch.setattr(s06_online_module.subprocess, "run", repository_probe)
     assert load_s06_activation(path)["verdict"] == "PASS"
+    record["container_runtime_fingerprint"] = "b" * 64
+    path.write_text(json.dumps(record), encoding="utf-8")
+    with pytest.raises(StrictConfigError, match="differs from its committed bytes"):
+        load_s06_activation(path)
+
     record["test_and_final_access_authorized"] = True
     path.write_text(json.dumps(record), encoding="utf-8")
+    committed["bytes"] = path.read_bytes()
     with pytest.raises(StrictConfigError, match="test_and_final"):
         load_s06_activation(path)
 
@@ -475,7 +486,9 @@ def test_s06_foreground_launcher_rejects_duplicate_shard_job():
     assert "already running" in process.stderr
 
 
-def test_s06_finalizer_lock_and_existing_outputs_are_immutable(tmp_path):
+def test_s06_python_aggregate_lock_and_existing_outputs_are_immutable(
+    tmp_path, monkeypatch,
+):
     runner = _runner_module()
     summary = tmp_path / "summary.json"
     manifest = tmp_path / "manifest.json"
@@ -484,21 +497,11 @@ def test_s06_finalizer_lock_and_existing_outputs_are_immutable(tmp_path):
     with pytest.raises(RuntimeError, match="immutable and already exists"):
         runner.assert_new_aggregate_outputs(summary, manifest)
 
-    lock_path = (
-        REPO / "results/steiner/raw/s06/s06-il-online-v1/locks/aggregate.lock"
-    )
-    lock_path.parent.mkdir(parents=True, exist_ok=True)
-    with lock_path.open("a", encoding="utf-8") as stream:
-        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        process = subprocess.run(
-            ["bash", "scripts/steiner/finalize_s06_online.sh"],
-            cwd=REPO,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-    assert process.returncode == 75
-    assert "already running" in process.stderr
+    lock_path = tmp_path / "locks/aggregate.lock"
+    with runner.aggregate_lock(lock_path):
+        monkeypatch.setenv("S06_AGGREGATE_LOCK_HELD", "1")
+        with pytest.raises(RuntimeError, match="aggregate lock is already held"):
+            runner._aggregate(None, {}, (), (), (), tmp_path, {})
 
 
 def test_s06_real_frozen_stack_toy_solve_all_methods_agree():

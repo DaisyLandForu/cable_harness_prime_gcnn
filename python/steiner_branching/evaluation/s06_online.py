@@ -203,9 +203,26 @@ def _verify_s05_anchor(config: Mapping[str, Any]) -> None:
 
 
 def load_s06_activation(path: Path | str = S06_ACTIVATION_PATH) -> dict[str, Any]:
+    candidate = Path(path).resolve()
     try:
-        raw = json.loads(Path(path).read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
+        local_bytes = candidate.read_bytes()
+    except OSError as error:
+        raise StrictConfigError(f"S06 pre-execution activation is unavailable: {error}") from error
+    try:
+        relative = candidate.relative_to(REPO.resolve()).as_posix()
+    except ValueError as error:
+        raise StrictConfigError("S06 activation must be stored inside the repository") from error
+    committed = subprocess.run(
+        ["git", "show", f"HEAD:{relative}"], cwd=REPO,
+        capture_output=True, check=False,
+    )
+    if committed.returncode != 0:
+        raise StrictConfigError("S06 activation is not committed at HEAD")
+    if committed.stdout != local_bytes:
+        raise StrictConfigError("S06 activation differs from its committed bytes at HEAD")
+    try:
+        raw = json.loads(local_bytes)
+    except json.JSONDecodeError as error:
         raise StrictConfigError(f"S06 pre-execution activation is unavailable: {error}") from error
     if not isinstance(raw, dict):
         raise StrictConfigError("S06 pre-execution activation must be a mapping")

@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import contextmanager
 from datetime import datetime, timezone
+import fcntl
 import hashlib
 import json
 import os
@@ -346,6 +348,21 @@ def assert_new_aggregate_outputs(summary_path: Path, manifest_path: Path) -> Non
         )
 
 
+@contextmanager
+def aggregate_lock(path: Path):
+    """Let the evidence-writing Python process own the singleton OS lock."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as stream:
+        try:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise RuntimeError("S06 aggregate lock is already held") from error
+        try:
+            yield
+        finally:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+
+
 def _phase_tasks(
     phase: str,
     shard_index: int,
@@ -572,7 +589,7 @@ def _run_phase(
         raise
 
 
-def _aggregate(
+def _aggregate_under_lock(
     args: argparse.Namespace,
     config: Mapping[str, Any],
     instances: Sequence[Any],
@@ -581,8 +598,6 @@ def _aggregate(
     run_dir: Path,
     activation: Mapping[str, Any],
 ) -> int:
-    if os.environ.get("S06_AGGREGATE_LOCK_HELD") != "1":
-        raise RuntimeError("S06 aggregate must enter through finalize_s06_online.sh")
     summary_path = resolve_path(args.summary_output)
     manifest_path = run_dir / "manifest.json"
     assert_new_aggregate_outputs(summary_path, manifest_path)
@@ -641,6 +656,21 @@ def _aggregate(
     atomic_write_json(manifest_path, manifest)
     print(json.dumps(summary["gate"], sort_keys=True), flush=True)
     return 0 if summary["gate"]["overall_pass"] else 2
+
+
+def _aggregate(
+    args: argparse.Namespace,
+    config: Mapping[str, Any],
+    instances: Sequence[Any],
+    main_tasks: Sequence[S06Task],
+    strong_tasks: Sequence[S06Task],
+    run_dir: Path,
+    activation: Mapping[str, Any],
+) -> int:
+    with aggregate_lock(run_dir / "locks" / "aggregate.lock"):
+        return _aggregate_under_lock(
+            args, config, instances, main_tasks, strong_tasks, run_dir, activation
+        )
 
 
 def main() -> int:

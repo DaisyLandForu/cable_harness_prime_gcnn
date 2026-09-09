@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "stage": "S06",
+  "audit_kind": "online_preexecution_b1_b4_focused_remediation_review",
+  "verdict": "CONDITIONAL_PASS",
+  "execution_authorized": false,
+  "scientific_gate": "NOT_EVALUATED",
+  "verdict_source": "user_supplied_external_gpt_audit",
+  "recorded_at_utc": "2026-09-09T16:21:36Z",
+  "audited_branch": "research/steiner-migration",
+  "audited_content_head": "a8fbc0986068171344387ceb68e1ee5ab5bbefbc",
+  "audited_range": "bcd9e33e9a09be856fc5f61078ccb4875ea325c1..a8fbc0986068171344387ceb68e1ee5ab5bbefbc",
+  "audit_request_head": "98a535d19924c80df47fcb3f8153d7fdf89ccf86",
+  "source_text_sha256": "fa63f4cce005cccd78c872dad152680eaccec5ee521d6cc93ca7772b73eef611",
+  "findings": [
+    {
+      "id": "B1",
+      "status": "CLOSED",
+      "summary": "terminal failures retain PAR-2=1200 without inventing unavailable PDI"
+    },
+    {
+      "id": "B2",
+      "status": "OPEN_AT_AUDITED_HEAD",
+      "summary": "activation local bytes were not required to match committed HEAD bytes"
+    },
+    {
+      "id": "B3",
+      "status": "OPEN_AT_AUDITED_HEAD",
+      "summary": "the aggregate environment-variable guard did not prove OS lock ownership by the Python evidence writer"
+    },
+    {
+      "id": "B4",
+      "status": "CLOSED",
+      "summary": "the fixed remediation head contains S06_AUDIT_PACKET.md"
+    }
+  ],
+  "s06_audited_tag_authorized": false,
+  "s07_authorized": false,
+  "test_and_final_access_authorized": false
+}

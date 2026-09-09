@@ -1,7 +1,7 @@
 # S06 pre-execution protocol — IL online solve evaluation v1
 
-Status: remediated after external CONDITIONAL PASS; focused re-audit required;
-formal execution is not yet authorized.
+Status: second narrow remediation after focused CONDITIONAL PASS; B2/B3
+re-audit required; formal execution is not yet authorized.
 
 ## Scientific question
 
@@ -75,9 +75,11 @@ Formal execution has two waves:
 2. after the six-main barrier, six `trace` jobs deterministically reconstruct
    the trigger set and run their own disjoint trace subsets (including an
    explicit empty manifest when a shard has no trigger);
-3. a single finalizer acquires a non-blocking aggregate lock, verifies both
-   barriers and creates the Gate summary. It refuses to overwrite either an
-   existing formal summary or an existing run manifest.
+3. a single Python aggregation process acquires and holds a non-blocking OS
+   file lock while it verifies both barriers and creates the Gate summary. It
+   refuses to overwrite either an existing formal summary or an existing run
+   manifest. The shell finalizer is only a convenience entrypoint; calling the
+   Python entrypoint directly cannot bypass lock ownership.
 
 Custom jobs run in the foreground because the platform scheduler owns process
 lifetime. The tmux wrapper starts only one shard and is reserved for an
@@ -90,7 +92,9 @@ The committed YAML keeps `execution_authorized: false`. Formal tasks can load
 the seed-202 checkpoint only after a separate activation record states that an
 external audit returned PASS for the exact content head and both frozen input
 hashes. That activation must also bind the runtime fingerprint printed by
-validate-only. The loader rejects executable changes after the audited head and
+validate-only. The activation path must resolve inside the repository, exist in
+Git at `HEAD`, and have local bytes exactly equal to `git show HEAD:<path>`.
+The loader also rejects executable changes after the audited head and
 uncommitted changes under the protected source/config/script/test paths.
 
 The activation authorizes S06 formal execution only. It does not authorize

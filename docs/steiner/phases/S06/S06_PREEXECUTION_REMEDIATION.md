@@ -1,7 +1,9 @@
 # S06 pre-execution CONDITIONAL PASS remediation
 
-Status: implemented and locally verified; focused external re-audit required.
-Formal S06 execution remains unauthorized.
+Status: first remediation historical record. The focused external review
+closed B1/B4 but found residual B2/B3 immutability issues. Those residuals are
+handled by `S06_PREEXECUTION_REMEDIATION_V2.md`. Formal S06 execution remains
+unauthorized.
 
 ## Fixed audit object
 
@@ -75,6 +77,6 @@ no formal shard was executed and no test/final selector was accessed.
 - complete frozen-stack Steiner suite: `120 passed, 1 expected PACE skip`;
 - Python compilation, shell syntax and `git diff --check`: PASS.
 
-Local conclusion: B1--B4 are closed in the remediation implementation, but
-formal execution remains blocked until an external focused review returns
-`PASS` and a separate activation record is committed.
+Historical local conclusion at `a8fbc098...`: B1--B4 appeared closed. The
+subsequent focused review superseded that local assessment with B1/B4 CLOSED
+and B2/B3 OPEN; it is retained rather than rewritten as a PASS.

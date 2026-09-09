@@ -1,7 +1,7 @@
 # S06 Changelog
 
-Status: pre-execution remediation complete locally; focused external re-audit
-required; formal result not run.
+Status: second pre-execution remediation complete locally; focused B2/B3
+external re-audit required; formal result not run.
 
 ## Added
 
@@ -27,6 +27,12 @@ required; formal result not run.
 - Added an aggregate-level lock and immutable-output refusal for the formal
   summary and run manifest.
 - Recorded the external CONDITIONAL PASS without overwriting its four findings.
+- Required the activation file itself to be committed byte-exact at `HEAD`;
+  uncommitted activation edits are rejected before execution.
+- Moved aggregate OS-lock ownership into the Python process that writes formal
+  evidence, eliminating the spoofable shell environment-variable guard.
+- Recorded the first focused re-audit: B1/B4 closed, B2/B3 remained open at
+  `a8fbc0986068171344387ceb68e1ee5ab5bbefbc`.
 
 ## CONDITIONAL PASS remediation
 
@@ -39,6 +45,15 @@ required; formal result not run.
 - B3: only the locked finalizer may aggregate, and existing aggregate outputs
   are immutable.
 - B4: this updated audit packet is part of the new fixed remediation object.
+
+## Focused B2/B3 closure
+
+- B2: `load_s06_activation()` now reads the local bytes, requires the resolved
+  path to remain inside the repository, obtains `HEAD:<relative path>` through
+  Git and requires byte equality before parsing/accepting the record.
+- B3: `_aggregate()` itself opens `aggregate.lock` and obtains
+  `LOCK_EX|LOCK_NB`; the lock remains held across all validation and both
+  atomic writes. A forged environment variable has no effect.
 
 ## Protocol/API changes
 
@@ -62,6 +77,6 @@ required; formal result not run.
 
 ## Remaining
 
-- focused external re-audit and separate PASS activation;
+- focused B2/B3 external re-audit and separate committed PASS activation;
 - six main custom jobs, six conditional trace jobs and final aggregation;
 - scientific Gate decision, result documents, result audit and audited tag.
