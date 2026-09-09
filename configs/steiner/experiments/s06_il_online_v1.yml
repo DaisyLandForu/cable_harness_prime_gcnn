@@ -1,0 +1,198 @@
+schema_version: 1
+stage: S06
+experiment_id: s06-il-online-v1
+status: preregistered_pending_gpt_preexecution_audit
+execution_authorized: false
+
+upstream:
+  s05_audited_tag: steiner-s05-audited-v3
+  s05_audited_head: 6cf7acab57525a744233ed3fdfd463f00fcd470c
+  s05_result_audit_record: docs/steiner/audits/S05_FORMAL_V3_RESULT_AUDIT_RECORD.json
+  s05_result_audit_record_sha256: bcac5dd806aefcff0c3ca6fbc71c3173b3efa754d18d8933ee90cc84bb8010f3
+  formal_v1_result: FAIL_RETAINED
+  formal_v2_result: FAIL_RETAINED
+  formal_v3_result: PASS
+
+problem:
+  problem: SPG
+  formulation_id: rooted_mcf_v1
+  bipartite_schema_id: milp_bipartite_v1
+  model_id: b0_milp_gcnn_v1
+  solver_stack_id: scip804-ecole081-pyscipopt430
+
+validation:
+  split: validation_iid
+  instance_manifest: configs/steiner/experiments/s06_online_instances_v1.json
+  source_selection_must_precede_model_access: true
+  lineages: 30
+  lineages_per_family: 6
+  solver_seeds: [0, 1, 2, 3, 4]
+  pairing_unit: instance_solver_seed
+  test_or_final_instances_allowed: false
+
+methods:
+  main:
+    - b0_il
+    - random_candidate
+    - mostinf
+    - relpscost
+    - scip_default
+  weak_gate_baselines: [random_candidate, mostinf]
+  native_reference_methods: [mostinf, relpscost, scip_default]
+  learned_method: b0_il
+  strong_branching:
+    method: fullstrong
+    gate_relevant: false
+    solver_seeds: [0]
+    selection: first_registered_lineage_per_family
+    required_lineages: 5
+  main_tasks: 750
+  strong_diagnostic_tasks: 5
+
+profile:
+  protocol_id: P1
+  protocol_name: controlled-branching-v1
+  time_limit_seconds: 600
+  node_limit: 200000
+  memory_limit_mb: 8192
+  threads: 1
+  presolving_maxrounds: 0
+  separating_maxrounds: 0
+  separating_maxroundsroot: 0
+  heuristics: "off"
+  restart_limit: 0
+  node_selector: estimate
+  propagation: default
+
+checkpoint:
+  representative_training_seed: 202
+  manifest: checkpoints/steiner/s05/s05-teacher-il-formal-v2/seed-202/manifest.json
+  manifest_sha256: b7f271c36243499e1510a5db19156afb3f607c13abf059c4f8349d49d0efb48c
+  model_payload_sha256: 1b78d2b35a86829eb6afca801b86955a9e006ff678f224cb79fc400d1b42884f
+  normalization_sha256: b0dcdca751525d9144cdaa4009bb99f542820addfe47f1bd90c64b4bee96a5b6
+  model_config: configs/steiner/models/b0_milp_gcnn_v1.yml
+  model_config_sha256: 9360f5893103adcf3b12baa3f8b2d1d5e0549791c7da68060e43542257ed1fc2
+  selection_rule: preregistered_seed_202_not_s06_outcome_selection
+  retraining_allowed: false
+
+inference:
+  device: cpu
+  torch_threads: 1
+  deterministic_algorithms: true
+  logit_tie_break: minimum_probindex
+  random_policy_seed: 6001
+  random_key_fields: [random_policy_seed, graph_sha256, solver_seed, decision_index, candidate_probindex]
+  invalid_action_fallback: forbidden
+  no_legal_candidate: terminal_or_scip_didnotrun_only
+
+pdi:
+  clock: scip_process_time
+  initial_primal_bound: sum_of_all_positive_edge_costs
+  initial_dual_bound: 0.0
+  justification: all_edges_is_feasible_and_all_costs_are_nonnegative
+
+metrics:
+  primary_order: [solved_rate_maximize, PAR2_minimize, primal_dual_integral_minimize]
+  par2_unsolved_seconds: 1200
+  wall_time_shift_seconds: 1.0
+  diagnostics:
+    - final_gap
+    - nodes
+    - lp_iterations
+    - exact_time_to_first_incumbent
+    - root_lp_bound
+    - root_gap_to_final_primal
+    - branch_decisions
+    - feature_extraction_seconds
+    - normalization_seconds
+    - inference_seconds
+    - action_selection_seconds
+    - policy_callback_seconds
+    - invalid_action_count
+    - mapping_failure_count
+    - nan_score_count
+    - unexpected_fallback_count
+    - catastrophic_slowdown_rate_over_2x
+
+statistics:
+  bootstrap_unit: instance
+  solver_seeds_kept_together_within_instance: true
+  bootstrap_replicates: 10000
+  bootstrap_seed: 20260902
+  confidence_level: 0.95
+  interval: paired_percentile
+  percentile_method: numpy_linear
+  paired_effect_direction: baseline_minus_b0_il
+  paired_win_order: [solved, PAR2, primal_dual_integral]
+  supplemental_test: paired_wilcoxon_with_holm_correction
+
+trace:
+  gate_relevant: false
+  trigger: b0_il_pair_loss_or_over_2x_slowdown_against_weak_baseline
+  rerun_all_main_methods_for_triggered_instance_solver_seed: true
+  maximum_branch_records: 16
+  subtree_size: exact_processed_focused_nodes_descending_from_branch_node
+  raw_trace_commit_to_git: false
+
+parallelism:
+  execution_mode: six_independent_lineage_shards
+  shard_count: 6
+  shard_ids: [0, 1, 2, 3, 4, 5]
+  assignment_unit: base_graph_lineage
+  assignment_rule: instance_manifest_index_modulo_shard_count
+  lineages_per_shard: 5
+  families_per_shard: 5
+  main_tasks_per_shard: 125
+  workers_per_shard: 6
+  maximum_total_workers: 36
+  requested_resources_per_shard:
+    cpu_cores: 8
+    memory_gib: 96
+    gpu_cards: 0
+  one_scip_thread_per_worker: true
+  shared_artifact_root_required: true
+  identical_container_and_resource_request_required: true
+  gpu_required: false
+  estimated_single_shard_worst_case_hours: 4
+  estimated_matrix_worst_case_hours: 4
+
+gate:
+  require_complete_main_matrix: true
+  required_main_tasks: 750
+  required_lineages: 30
+  required_solver_seeds: 5
+  correctness:
+    max_invalid_actions: 0
+    max_mapping_failures: 0
+    max_nan_scores: 0
+    max_unexpected_fallbacks: 0
+    max_solver_errors: 0
+    max_solution_validation_failures: 0
+    require_finite_pdi: true
+    require_objective_agreement_when_any_method_solves: true
+    objective_tolerance: 1.0e-6
+  each_weak_baseline:
+    b0_solved_count_not_lower: true
+    mean_par2_effect_strictly_positive: true
+    par2_bootstrap_ci_lower_bound_min: 0.0
+    mean_pdi_effect_strictly_positive: true
+    pdi_bootstrap_ci_lower_bound_min: 0.0
+    paired_lexicographic_wins_exceed_losses: true
+    minimum_positive_family_par2_effects: 4
+  catastrophic_slowdown_threshold: 2.0
+  catastrophic_slowdown_gate_relevant: false
+
+failure_policy:
+  retain_timeout_node_limit_memory_out_solver_error_invalid_policy: true
+  failed_task_receives_par2_penalty: true
+  drop_or_replace_registered_pair: false
+  change_gate_after_outcomes: false
+  offline_good_online_bad_requires_objective_mismatch_analysis: true
+  on_gate_fail: stop_before_s07
+
+prohibitions:
+  model_retraining: true
+  checkpoint_reselection_from_s06: true
+  b1_or_rl_implementation: true
+  test_and_final_access: true
+  s07_before_s06_audit_pass: true

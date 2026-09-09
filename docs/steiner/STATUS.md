@@ -1,6 +1,6 @@
 # Steiner RL Branching 迁移状态
 
-更新时间：2026-09-08 UTC
+更新时间：2026-09-09 UTC
 
 ## 当前状态
 
@@ -11,8 +11,9 @@
   same-family selection 经 GPT `PASS / B1=CLOSED` 后执行。未重跑 teacher、未换
   graph/seed、未降低 Gate、未访问 test/final。
 - 阶段状态：S04 remediation **GPT PASS**，B1 CLOSED；formal-v1/v2 FAIL retained；
-  S05 formal-v3 **RESULT AUDIT PASS / BLOCKING FINDINGS NONE**。S06
-  implementation/handoff 已获授权，但尚未开始；test/final 仍禁止访问。
+  S05 formal-v3 **RESULT AUDIT PASS / BLOCKING FINDINGS NONE**。S06 online
+  runner、冻结协议和六分片 custom-job scaffold 已实现并通过本地测试，正在准备
+  pre-execution GPT 审计；formal solve 仍为 NOT_RUN，test/final 仍禁止访问。
 - S04 base SHA：`931c7ae05c299c54bbdf59ecd458b64c7ca42282`。
 - S04 content SHA：`d7a78a33151822f3a8a57fdc0224ede333583646`。
 - S04 remediation v2 content SHA：
@@ -45,9 +46,9 @@
   pilot-v2 已完成三次单卡 seed 作业。所有 SCIP solver workers 仍为单线程。
 - final test：selector 106 entries、content lock 338 members；S03 未读取/求解，
   learning runs = 0。
-- 下一步：提交独立 formal-v3 result-audit PASS record 并创建 S05 audited tag，
-  随后可单独开始 S06 implementation/handoff。S06 仍须按阶段计划执行；冻结的
-  test/final 不因 S05 PASS 自动解封。
+- 下一步：固定 S06 implementation content head 并完成 pre-execution GPT 审计；
+  只有 PASS 和独立 activation record 后，才可提交六个 main shard custom jobs。
+  冻结的 test/final 不因 S05 PASS 自动解封。
 
 ## 阶段登记表
 
@@ -61,7 +62,7 @@
 | S03 | Branchability 与资源审计 | PASS | NOT_RUN（waiver 至 S04 联合审计） | `495d699cceefd243d4ab4c510be051f9df94833a` | `bb6079b7844dcc42fed4976c812795c842d6411b` / `steiner-s03-local-gate-v1` |
 | S04 | B0 二部图与动作映射 | PASS（v2 remediation） | PASS；B1 CLOSED | `4ab54ffa2b80f06ac8a9ecfe662a04df7899b072` | `030199703c6e280533f1f1c7cfc8d00d7df0a6b0` / `steiner-s04-audited-v2` |
 | S05 | Strong-branch teacher 与 IL | formal-v3 PASS；v1/v2 FAIL retained | PASS；blocking findings NONE | `6cf7acab57525a744233ed3fdfd463f00fcd470c` | `6cf7acab57525a744233ed3fdfd463f00fcd470c` / `steiner-s05-audited-v3` |
-| S06 | IL solve evaluation | AUTHORIZED_NOT_STARTED | NOT_RUN | — | — |
+| S06 | IL solve evaluation | IMPLEMENTATION_READY / FORMAL_NOT_RUN | NOT_RUN | — | — |
 | S07 | BBMDP 语义与 RL | NOT_STARTED | NOT_RUN | — | — |
 | S08 | Dual-view | NOT_STARTED | NOT_RUN | — | — |
 | S09 | Component 消融（可选） | NOT_STARTED | NOT_RUN | — | — |
