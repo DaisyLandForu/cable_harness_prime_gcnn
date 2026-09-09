@@ -1,10 +1,9 @@
 # S06 Result Analysis
 
-Status: formal execution NOT_RUN; scientific Gate NOT_EVALUATED. The initial
-pre-execution review returned CONDITIONAL PASS. A first focused review closed
-B1/B4 but retained B2/B3; their committed-activation and Python-lock residuals
-are now remediated locally and still require a focused external PASS before
-activation.
+Status: formal execution NOT_RUN; scientific Gate NOT_EVALUATED. The final
+pre-execution audit returned PASS: B1--B4 are closed. This authorizes a separate
+committed activation and then the six formal main shards; it is not an S06
+scientific result.
 
 S06 asks whether the S05 B0 imitation model's offline ranking improvement
 becomes a real branch-and-bound improvement. No formal online outcomes existed

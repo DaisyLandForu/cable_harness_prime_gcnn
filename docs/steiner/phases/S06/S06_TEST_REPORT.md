@@ -1,7 +1,7 @@
 # S06 Test Report
 
-Status: second-remediation pre-execution implementation Gate PASS locally;
-focused B2/B3 external re-audit pending; scientific Gate NOT_EVALUATED.
+Status: pre-execution implementation/protocol audit PASS; B1--B4 closed;
+scientific Gate NOT_EVALUATED.
 
 ## Environment
 
@@ -11,8 +11,8 @@ focused B2/B3 external re-audit pending; scientific Gate NOT_EVALUATED.
   `9866a3743ff1c2d6ef580aedf1f91629db0c6049`
 - remediation base: `bcd9e33e9a09be856fc5f61078ccb4875ea325c1`
 - first remediation head: `a8fbc0986068171344387ceb68e1ee5ab5bbefbc`
-- second remediation fixed head: recorded by the next focused re-audit request
-  after this evidence commit
+- externally audited second remediation head:
+  `a29ef9eeb818c1694f78d2de1b29436f1861f8c3`
 - stack: SCIP 8.0.4 / PySCIPOpt 4.3.0 / Ecole 0.8.1
 - Python: 3.11.15
 - local host seen during tests: 80 CPUs, 128 GiB RAM, 2 V100 32-GB GPUs
@@ -79,7 +79,7 @@ focused B2/B3 external re-audit pending; scientific Gate NOT_EVALUATED.
 - Optional PACE development data was unavailable and is outside this S06
   validation-IID protocol.
 
-## Frozen input hashes
+## Hashes at externally audited remediation head
 
 - protocol: `e7f7e9060c25fa038a2749ca43afe6a2769c3652e93697612b8804269750f827`
 - instance manifest: `b50f8048d8ab27a1fa2168e69ef179cbfc490116399180f2bb4a963bf04b292b`

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "stage": "S06",
+  "audit_kind": "online_preexecution_b2_b3_second_focused_remediation_review",
+  "verdict": "PASS",
+  "verdict_meaning": "s06_formal_execution_activation_authorized",
+  "execution_authorized_after_committed_activation": true,
+  "scientific_gate": "NOT_EVALUATED",
+  "verdict_source": "user_supplied_external_gpt_audit",
+  "recorded_at_utc": "2026-09-09T16:32:52Z",
+  "audited_branch": "research/steiner-migration",
+  "audited_content_head": "a29ef9eeb818c1694f78d2de1b29436f1861f8c3",
+  "audited_range": "98a535d19924c80df47fcb3f8153d7fdf89ccf86..a29ef9eeb818c1694f78d2de1b29436f1861f8c3",
+  "audit_request_head": "cb78a9ea93a5bafdf18e8a585358d195b92be200",
+  "audit_request_sha256": "e8e30ff38f33f45ce1b19a3d4a431c1daaab9dfa9cafb8cb9c9beca3be69dfeb",
+  "source_text_sha256": "88476038c2fb1a2a3b9b1eade1e9dc9ae24a9d220b10005d6dfb7f929b39cf0e",
+  "protocol_yaml_sha256": "e7f7e9060c25fa038a2749ca43afe6a2769c3652e93697612b8804269750f827",
+  "instance_manifest_sha256": "b50f8048d8ab27a1fa2168e69ef179cbfc490116399180f2bb4a963bf04b292b",
+  "container_runtime_fingerprint": "fe7a032641aba58090f59cfa9d5b088cf76da23b799f2099a34e8d99b17b5687",
+  "findings": [
+    {
+      "id": "B1",
+      "status": "CLOSED_NO_REGRESSION"
+    },
+    {
+      "id": "B2",
+      "status": "CLOSED"
+    },
+    {
+      "id": "B3",
+      "status": "CLOSED"
+    },
+    {
+      "id": "B4",
+      "status": "CLOSED_NO_REGRESSION"
+    }
+  ],
+  "activation_must_be_separate_and_committed": true,
+  "formal_result": "NOT_RUN",
+  "s06_scientific_pass": false,
+  "s06_audited_tag_authorized": false,
+  "s07_authorized": false,
+  "test_and_final_access_authorized": false
+}

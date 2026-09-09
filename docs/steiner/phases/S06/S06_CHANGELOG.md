@@ -1,7 +1,7 @@
 # S06 Changelog
 
-Status: second pre-execution remediation complete locally; focused B2/B3
-external re-audit required; formal result not run.
+Status: external pre-execution audit PASS; separate committed activation is the
+remaining prerequisite for formal execution; formal result not run.
 
 ## Added
 
@@ -33,6 +33,8 @@ external re-audit required; formal result not run.
   evidence, eliminating the spoofable shell environment-variable guard.
 - Recorded the first focused re-audit: B1/B4 closed, B2/B3 remained open at
   `a8fbc0986068171344387ceb68e1ee5ab5bbefbc`.
+- Recorded the second focused re-audit PASS at the fixed B2/B3 remediation head
+  `a29ef9eeb818c1694f78d2de1b29436f1861f8c3`; all B1--B4 are closed.
 
 ## CONDITIONAL PASS remediation
 
@@ -77,6 +79,6 @@ external re-audit required; formal result not run.
 
 ## Remaining
 
-- focused B2/B3 external re-audit and separate committed PASS activation;
+- separate committed PASS activation;
 - six main custom jobs, six conditional trace jobs and final aggregation;
 - scientific Gate decision, result documents, result audit and audited tag.

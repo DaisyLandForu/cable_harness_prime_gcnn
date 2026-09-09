@@ -1,7 +1,8 @@
 # S06 pre-execution protocol — IL online solve evaluation v1
 
-Status: second narrow remediation after focused CONDITIONAL PASS; B2/B3
-re-audit required; formal execution is not yet authorized.
+Status: external pre-execution audit PASS with B1--B4 closed. Formal execution
+becomes authorized only after the separate activation record is committed and
+passes its byte-exact loader checks.
 
 ## Scientific question
 

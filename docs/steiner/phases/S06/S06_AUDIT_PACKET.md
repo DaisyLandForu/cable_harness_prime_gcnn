@@ -10,12 +10,15 @@
   `bcd9e33e9a09be856fc5f61078ccb4875ea325c1`;
 - first remediation head: `a8fbc0986068171344387ceb68e1ee5ab5bbefbc`;
 - first focused request head: `98a535d19924c80df47fcb3f8153d7fdf89ccf86`;
-- second remediation fixed head and range: bound by the next focused GPT
-  re-audit request created immediately after this evidence commit;
+- second remediation fixed head:
+  `a29ef9eeb818c1694f78d2de1b29436f1861f8c3`;
+- second focused request head:
+  `cb78a9ea93a5bafdf18e8a585358d195b92be200`;
 - S05 audited dependency: `steiner-s05-audited-v3` →
   `6cf7acab57525a744233ed3fdfd463f00fcd470c`;
 - initial external verdict: `CONDITIONAL_PASS`;
 - first focused verdict: `CONDITIONAL_PASS`, with B1/B4 closed and B2/B3 open;
+- second focused verdict: `PASS`, B1--B4 closed;
 - scientific status: `NOT_EVALUATED`;
 - formal artifacts at remediation head: none.
 
@@ -25,6 +28,8 @@
   `docs/steiner/audits/S06_PREEXECUTION_AUDIT_RECORD.json`;
 - first focused audit record:
   `docs/steiner/audits/S06_PREEXECUTION_REMEDIATION_AUDIT_RECORD.json`;
+- final pre-execution PASS record:
+  `docs/steiner/audits/S06_PREEXECUTION_B2_B3_AUDIT_RECORD.json`;
 - first remediation explanation:
   `docs/steiner/phases/S06/S06_PREEXECUTION_REMEDIATION.md`;
 - B2/B3 remediation explanation:
@@ -88,7 +93,7 @@
   and `git diff --check`: PASS;
 - no formal S06 shard exists; activation record does not yet exist.
 
-## Hashes
+## Hashes at externally audited remediation head
 
 - protocol YAML:
   `e7f7e9060c25fa038a2749ca43afe6a2769c3652e93697612b8804269750f827`;
@@ -121,15 +126,11 @@ Validate-only runtime fingerprint to bind in the post-PASS activation if the
 runtime remains unchanged:
 `fe7a032641aba58090f59cfa9d5b088cf76da23b799f2099a34e8d99b17b5687`.
 
-The next focused re-audit request separately binds hashes for this packet, both
-remediation explanations, audit records and protocol explanation after commit.
+The final focused audit PASS authorizes only a separate committed activation
+and subsequent formal execution. It does not mark the scientific Gate PASS.
 
 ## Required audit decision
 
-Please return PASS, CONDITIONAL PASS or FAIL and explicitly mark B1--B4
-CLOSED/OPEN. Only PASS permits a separate activation record and the six main
-custom jobs. This review is not an S06 result audit, cannot mark the scientific
-Gate PASS and cannot authorize S07 or test/final access.
-
-Suggested local conclusion: **B1--B4 CLOSED / implementation Gate PASS /
-formal scientific Gate NOT_EVALUATED**.
+Recorded decision: **PASS; B1--B4 CLOSED; separate committed activation and six
+main custom jobs authorized; scientific Gate NOT_EVALUATED; S07/test/final
+unauthorized**.
