@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "stage": "S06",
+  "audit_kind": "online_protocol_and_implementation_preexecution_review",
+  "verdict": "CONDITIONAL_PASS",
+  "execution_authorized": false,
+  "scientific_gate": "NOT_EVALUATED",
+  "verdict_source": "user_supplied_external_gpt_audit",
+  "recorded_at_utc": "2026-09-09T05:30:59Z",
+  "audited_branch": "research/steiner-migration",
+  "audited_content_head": "9866a3743ff1c2d6ef580aedf1f91629db0c6049",
+  "audited_range": "ed0db3ff53a73cbb71de10f35e3471a6c139f146..9866a3743ff1c2d6ef580aedf1f91629db0c6049",
+  "source_text_sha256": "7fd45e09a0218f6c3e983e07c2dd0968334a5cbd9257851f653d811c5e1eaf27",
+  "accepted_scientific_design": true,
+  "blocking_findings": [
+    {
+      "id": "B1",
+      "status": "OPEN_AT_AUDITED_HEAD",
+      "summary": "failed policy/runtime tasks lacked the registered PAR-2 result encoding and were omitted from paired statistics"
+    },
+    {
+      "id": "B2",
+      "status": "OPEN_AT_AUDITED_HEAD",
+      "summary": "shards were checked only for mutual runtime equality, not against registered CPU, RAM, GPU, container and executable requirements"
+    },
+    {
+      "id": "B3",
+      "status": "OPEN_AT_AUDITED_HEAD",
+      "summary": "the formal finalizer had no aggregate lock or existing-output refusal"
+    },
+    {
+      "id": "B4",
+      "status": "OPEN_AT_AUDITED_HEAD",
+      "summary": "S06_AUDIT_PACKET.md was not present at the originally fixed implementation head"
+    }
+  ],
+  "s06_audited_tag_authorized": false,
+  "s07_authorized": false,
+  "test_and_final_access_authorized": false
+}

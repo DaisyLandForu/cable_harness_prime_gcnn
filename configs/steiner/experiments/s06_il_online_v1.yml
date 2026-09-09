@@ -149,6 +149,14 @@ parallelism:
     cpu_cores: 8
     memory_gib: 96
     gpu_cards: 0
+  registered_runtime:
+    minimum_effective_cpu_cores: 8
+    minimum_memory_bytes: 103079215104
+    required_gpu_visible_count: 0
+    environment_lock: configs/steiner/environment.lock.yml
+    environment_lock_sha256: f70afe548f2b640a3c1375686ad8c8ef4dced63d0229c9fa4eb36e62f6d7628e
+    container_runtime_fingerprint_source: activation_record
+    audited_executable_content_head_source: activation_record
   one_scip_thread_per_worker: true
   shared_artifact_root_required: true
   identical_container_and_resource_request_required: true

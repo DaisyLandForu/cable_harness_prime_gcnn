@@ -1,7 +1,7 @@
 # S06 pre-execution protocol — IL online solve evaluation v1
 
-Status: frozen for external pre-execution audit; formal execution is not yet
-authorized.
+Status: remediated after external CONDITIONAL PASS; focused re-audit required;
+formal execution is not yet authorized.
 
 ## Scientific question
 
@@ -27,6 +27,10 @@ lineage of each family, giving five additional tasks.
 - B0 inference is CPU-only, one Torch thread and deterministic;
 - illegal/missing/misaligned actions, NaN logits and hidden fallback are errors;
 - timeout, node limit, memory limit and solver error remain in the denominator;
+- every policy/runtime exception is a terminal failed result with a stable
+  failure class, `solved=false` and the frozen PAR-2 penalty of 1,200 seconds;
+- PDI is explicitly unavailable for such a failed task rather than fabricated,
+  so the correctness/PDI Gate fails while the PAR-2 pair remains present;
 - no registered graph, solver seed or failed task may be dropped or replaced.
 
 The primary comparison order is solved rate, PAR-2, then primal-dual integral.
@@ -52,12 +56,17 @@ Every shard has exactly 125 main tasks; shard 0 additionally has the five
 fullstrong diagnostic tasks. Trace tasks inherit the originating lineage's
 shard.
 
-Each job requests 8 CPU cores, 96 GiB RAM and no GPU, runs six SCIP workers and
-uses the same container, repository commit, activation record and shared
-persistent artifact root. Each shard has a distinct lock, log and manifest.
-The final aggregator refuses to run unless all six main manifests and all six
-trace manifests have the exact expected task identities, terminal shard files
-and matching CPU/runtime resource identities. This prevents overlapping jobs,
+Each job requests at least 8 effective CPU cores, at least 96 GiB RAM and no
+visible GPU, runs six SCIP workers and uses the same frozen runtime,
+repository executable content, activation record and shared persistent
+artifact root. Before any task, the runner checks cgroup/affinity CPU capacity,
+cgroup/host memory, CUDA visibility, the frozen environment lock, SCIP stack,
+activation checksum, audited executable head and an activation-bound runtime
+fingerprint. The exact runtime identity is written into every task envelope and
+its shard manifest. Each shard has a distinct lock, log and manifest. The final
+aggregator refuses to run unless all six main manifests and all six trace
+manifests have the exact expected task identities, terminal shard files and
+identical registered runtime identities. This prevents overlapping jobs,
 missing pairs and accidental aggregation across incompatible environments.
 
 Formal execution has two waves:
@@ -66,7 +75,9 @@ Formal execution has two waves:
 2. after the six-main barrier, six `trace` jobs deterministically reconstruct
    the trigger set and run their own disjoint trace subsets (including an
    explicit empty manifest when a shard has no trigger);
-3. a single finalizer verifies both barriers and creates the Gate summary.
+3. a single finalizer acquires a non-blocking aggregate lock, verifies both
+   barriers and creates the Gate summary. It refuses to overwrite either an
+   existing formal summary or an existing run manifest.
 
 Custom jobs run in the foreground because the platform scheduler owns process
 lifetime. The tmux wrapper starts only one shard and is reserved for an
@@ -78,7 +89,8 @@ interactive host; it must never be used to start all 36 workers on the current
 The committed YAML keeps `execution_authorized: false`. Formal tasks can load
 the seed-202 checkpoint only after a separate activation record states that an
 external audit returned PASS for the exact content head and both frozen input
-hashes. The loader also rejects executable changes after that audited head and
+hashes. That activation must also bind the runtime fingerprint printed by
+validate-only. The loader rejects executable changes after the audited head and
 uncommitted changes under the protected source/config/script/test paths.
 
 The activation authorizes S06 formal execution only. It does not authorize
@@ -87,9 +99,11 @@ model retraining, B1/RL implementation, S07, or test/final access.
 ## Frozen identities
 
 - protocol YAML SHA-256:
-  `8d0daa708c5d2ace6bbd32da867dd978f730c97216df74277208e86012db50da`
+  `e7f7e9060c25fa038a2749ca43afe6a2769c3652e93697612b8804269750f827`
 - instance manifest SHA-256:
   `b50f8048d8ab27a1fa2168e69ef179cbfc490116399180f2bb4a963bf04b292b`
+- frozen environment lock SHA-256:
+  `f70afe548f2b640a3c1375686ad8c8ef4dced63d0229c9fa4eb36e62f6d7628e`
 - seed-202 manifest SHA-256:
   `b7f271c36243499e1510a5db19156afb3f607c13abf059c4f8349d49d0efb48c`
 - seed-202 model SHA-256:

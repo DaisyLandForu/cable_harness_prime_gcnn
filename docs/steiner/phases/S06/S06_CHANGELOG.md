@@ -1,6 +1,7 @@
 # S06 Changelog
 
-Status: pre-execution implementation complete; formal result not run.
+Status: pre-execution remediation complete locally; focused external re-audit
+required; formal result not run.
 
 ## Added
 
@@ -19,6 +20,25 @@ Status: pre-execution implementation complete; formal result not run.
   matching, duplicate-shard locks and a single final aggregator.
 - Added foreground custom-job, one-shard tmux and finalization launchers.
 - Added unit, negative, aggregation and real frozen-SCIP integration tests.
+- Added fail-closed exception evidence: stable failure classes, retained PAR-2
+  penalty and explicitly unavailable PDI.
+- Added registered-resource and runtime validation before tasks, with the exact
+  runtime identity persisted in every task and shard manifest.
+- Added an aggregate-level lock and immutable-output refusal for the formal
+  summary and run manifest.
+- Recorded the external CONDITIONAL PASS without overwriting its four findings.
+
+## CONDITIONAL PASS remediation
+
+- B1: failed policy/runtime tasks now remain in all applicable PAR-2 pairs with
+  `par2_seconds=1200`; unavailable PDI is not invented and therefore prevents a
+  Gate PASS.
+- B2: six jobs must each satisfy at least 8 effective CPUs, at least 96 GiB,
+  zero visible GPUs, the frozen SCIP/environment identity and the same
+  activation-bound runtime fingerprint and executable content.
+- B3: only the locked finalizer may aggregate, and existing aggregate outputs
+  are immutable.
+- B4: this updated audit packet is part of the new fixed remediation object.
 
 ## Protocol/API changes
 
@@ -42,6 +62,6 @@ Status: pre-execution implementation complete; formal result not run.
 
 ## Remaining
 
-- external pre-execution audit and separate PASS activation;
+- focused external re-audit and separate PASS activation;
 - six main custom jobs, six conditional trace jobs and final aggregation;
 - scientific Gate decision, result documents, result audit and audited tag.

@@ -6,6 +6,11 @@
 scripts/steiner/run_with_scip804.sh --verify-only
 scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s06_online.py --validate-only
 
+# The validate-only output contains the frozen runtime fingerprint. After a
+# focused external PASS it must be copied byte-exactly into the separate
+# activation record. Formal jobs fail before task execution unless each has at
+# least 8 effective CPUs, at least 96 GiB RAM and zero visible GPUs.
+
 # MAIN WAVE: submit as six simultaneous foreground custom jobs, one command/job.
 bash scripts/steiner/run_s06_online_shard.sh 0 main
 bash scripts/steiner/run_s06_online_shard.sh 1 main
@@ -23,7 +28,8 @@ bash scripts/steiner/run_s06_online_shard.sh 3 trace
 bash scripts/steiner/run_s06_online_shard.sh 4 trace
 bash scripts/steiner/run_s06_online_shard.sh 5 trace
 
-# FINALIZE: run once after all six trace jobs terminate.
+# FINALIZE: run exactly once after all six trace jobs terminate. A second
+# finalizer or any pre-existing formal summary/manifest is rejected.
 bash scripts/steiner/finalize_s06_online.sh
 
 # Interactive alternative for exactly one shard (never launch all six on the

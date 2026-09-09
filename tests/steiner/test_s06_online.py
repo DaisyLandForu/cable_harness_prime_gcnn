@@ -10,6 +10,7 @@ import subprocess
 import numpy as np
 import pytest
 
+import steiner_branching.evaluation.s06_online as s06_online_module
 from steiner_branching.config import StrictConfigError, load_yaml_mapping
 from steiner_branching.data.generate import GeneratorConfig, SYNTHETIC_FAMILIES, generate_graph
 from steiner_branching.evaluation.s06_online import (
@@ -20,13 +21,16 @@ from steiner_branching.evaluation.s06_online import (
     S06_CONFIG_PATH,
     S06_INSTANCES_FILE_SHA256,
     S06_INSTANCES_PATH,
+    S06_PAR2_PENALTY_SECONDS,
     S06_SHARD_COUNT,
+    S06PolicyFailure,
     S06Instance,
     S06Task,
     aggregate_s06,
     deterministic_argmax,
     deterministic_random_action,
     expand_s06_tasks,
+    failed_task_result,
     lineage_shard_assignments,
     load_s06_activation,
     load_s06_config,
@@ -114,12 +118,20 @@ def test_s06_six_way_sharding_keeps_complete_lineages_and_is_disjoint():
         tasks_for_lineage_shard(main, instances, S06_SHARD_COUNT)
 
 
-def test_s06_activation_is_separate_and_fail_closed(tmp_path):
+def test_s06_activation_is_separate_and_fail_closed(tmp_path, monkeypatch):
     with pytest.raises(StrictConfigError, match="activation is unavailable"):
         load_s06_activation(tmp_path / "missing.json")
     head = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=REPO, text=True, capture_output=True, check=True
     ).stdout.strip()
+    real_run = subprocess.run
+
+    def repository_probe(command, *args, **kwargs):
+        if command[:3] == ["git", "diff", "--quiet"]:
+            return subprocess.CompletedProcess(command, 0)
+        return real_run(command, *args, **kwargs)
+
+    monkeypatch.setattr(s06_online_module.subprocess, "run", repository_probe)
     record = {
         "schema_version": 1,
         "stage": "S06",
@@ -135,6 +147,7 @@ def test_s06_activation_is_separate_and_fail_closed(tmp_path):
         "instance_manifest_sha256": S06_INSTANCES_FILE_SHA256,
         "s05_audited_head": S05_AUDITED_HEAD,
         "s05_audited_tag": S05_AUDITED_TAG,
+        "container_runtime_fingerprint": "a" * 64,
         "formal_results_at_activation": "NOT_RUN",
         "s07_authorized": False,
         "test_and_final_access_authorized": False,
@@ -245,6 +258,51 @@ def test_s06_aggregation_uses_complete_paired_instance_bootstrap(tmp_path):
     assert failed["gate"]["overall_pass"] is False
 
 
+@pytest.mark.parametrize(
+    ("error", "failure_class", "correctness_key"),
+    [
+        (S06PolicyFailure("invalid_action", "bad action"), "invalid_action", "invalid_action_count"),
+        (S06PolicyFailure("mapping_failure", "bad mapping"), "mapping_failure", "mapping_failure_count"),
+        (S06PolicyFailure("nan_score", "bad score"), "nan_score", "nan_score_count"),
+        (RuntimeError("synthetic solver failure"), "solver_or_runtime_error", None),
+    ],
+)
+def test_s06_failed_task_schema_retains_par2_without_inventing_pdi(
+    error, failure_class, correctness_key,
+):
+    config = load_s06_config(require_activation=False)
+    task = expand_s06_tasks(config, load_s06_instances())[0][0]
+    result = failed_task_result(task, error)
+    assert result["solved"] is False
+    assert result["failure"]["failure_class"] == failure_class
+    assert result["metrics"]["par2_seconds"] == S06_PAR2_PENALTY_SECONDS
+    assert result["metrics"]["primal_dual_integral"] is None
+    assert result["failure"]["pdi_available"] is False
+    if correctness_key is not None:
+        assert result["correctness"][correctness_key] == 1
+
+
+def test_s06_failed_task_par2_remains_in_pairs_and_forces_gate_fail(tmp_path):
+    config, main, strong = _write_matrix(tmp_path)
+    task = main[0]
+    path = tmp_path / f"{task.task_id}.json"
+    envelope = json.loads(path.read_text(encoding="utf-8"))
+    envelope["execution_status"] = "solver_error"
+    envelope["result"] = failed_task_result(
+        task, S06PolicyFailure("invalid_action", "synthetic invalid action")
+    )
+    atomic_write_json(path, envelope)
+    summary = aggregate_s06(config, main, strong, tmp_path)
+    random_comparison = summary["comparisons"]["random_candidate"]
+    assert random_comparison["pairs"] == 150
+    assert random_comparison["pdi_pairs"] == 149
+    assert summary["completion"]["observed_terminal_main_results"] == 750
+    assert summary["completion"]["observed_completed_main_tasks"] == 749
+    assert summary["completion"]["solver_errors"] == 1
+    assert summary["gate"]["correctness"]["zero_invalid_actions"] is False
+    assert summary["gate"]["overall_pass"] is False
+
+
 def test_s06_trace_trigger_is_diagnostic_and_deterministic(tmp_path):
     config, main, strong = _write_matrix(tmp_path, bad_il=True)
     del strong
@@ -267,6 +325,26 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
     shard_dir = tmp_path / "shards"
     run_dir = tmp_path / "run"
     assignments = lineage_shard_assignments(instances)
+    activation = {
+        "container_runtime_fingerprint": "b" * 64,
+        "audited_content_head": "c" * 40,
+    }
+    runtime = {
+        "hostname": "ignored-between-hosts",
+        "cpu_model": "registered-cpu",
+        "cpu_affinity_count": 8,
+        "cpu_quota_cores": 8.0,
+        "effective_cpu_cores": 8.0,
+        "memory_limit_bytes": 96 * 1024 ** 3,
+        "gpu_visible_count": 0,
+        "python_version": "3.11.15",
+        "solver_stack_id": "scip804-ecole081-pyscipopt430",
+        "environment_lock_sha256": runner.ENVIRONMENT_LOCK_SHA256,
+        "container_runtime_fingerprint": "b" * 64,
+        "activation_record_sha256": "d" * 64,
+        "audited_executable_content_head": "c" * 40,
+        "git_head": "e" * 40,
+    }
     for task in all_tasks:
         shard_index = assignments[task.instance.graph_sha256]
         atomic_write_json(shard_dir / f"{task.task_id}.json", {
@@ -278,6 +356,7 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
                 "shard_index": shard_index,
                 "shard_count": S06_SHARD_COUNT,
             },
+            "runtime_identity": runtime,
             "result": _result(task.method),
         })
     for shard_index in range(S06_SHARD_COUNT):
@@ -290,6 +369,7 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
             instances=instances,
             assigned_tasks=assigned,
             started_at="2026-09-09T00:00:00Z",
+            runtime_identity_value=runtime,
         )
     assert len(runner._load_phase_barrier(
         run_dir,
@@ -297,6 +377,7 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
         all_tasks=all_tasks,
         instances=instances,
         shard_dir=shard_dir,
+        activation=activation,
     )) == S06_SHARD_COUNT
 
     first = main[0]
@@ -311,9 +392,24 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
             all_tasks=all_tasks,
             instances=instances,
             shard_dir=shard_dir,
+            activation=activation,
         )
 
     envelope["distributed_execution"]["shard_index"] = 0
+    atomic_write_json(first_path, envelope)
+    envelope["runtime_identity"] = dict(runtime, memory_limit_bytes=128 * 1024 ** 3)
+    atomic_write_json(first_path, envelope)
+    with pytest.raises(RuntimeError, match="different runtime"):
+        runner._load_phase_barrier(
+            run_dir,
+            phase="main",
+            all_tasks=all_tasks,
+            instances=instances,
+            shard_dir=shard_dir,
+            activation=activation,
+        )
+
+    envelope["runtime_identity"] = runtime
     atomic_write_json(first_path, envelope)
     runner._phase_manifest_path(run_dir, "main", 5).unlink()
     with pytest.raises(RuntimeError, match="missing shard 5"):
@@ -323,7 +419,42 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
             all_tasks=all_tasks,
             instances=instances,
             shard_dir=shard_dir,
+            activation=activation,
         )
+
+
+def test_s06_registered_resource_preflight_is_fail_closed():
+    runner = _runner_module()
+    activation = {
+        "container_runtime_fingerprint": "1" * 64,
+        "audited_content_head": "2" * 40,
+    }
+    identity = {
+        "effective_cpu_cores": 8.0,
+        "memory_limit_bytes": 96 * 1024 ** 3,
+        "gpu_visible_count": 0,
+        "solver_stack_id": "scip804-ecole081-pyscipopt430",
+        "environment_lock_sha256": runner.ENVIRONMENT_LOCK_SHA256,
+        "container_runtime_fingerprint": "1" * 64,
+        "activation_record_sha256": "3" * 64,
+        "audited_executable_content_head": "2" * 40,
+    }
+    runner.validate_registered_resources(identity, activation)
+    changes = [
+        ("effective_cpu_cores", 7.99, "8 effective CPU"),
+        ("memory_limit_bytes", 96 * 1024 ** 3 - 1, "96 GiB"),
+        ("gpu_visible_count", 1, "zero visible GPUs"),
+        ("solver_stack_id", "system-scip", "solver stack"),
+        ("environment_lock_sha256", "0" * 64, "environment lock"),
+        ("container_runtime_fingerprint", "4" * 64, "fingerprint"),
+        ("activation_record_sha256", None, "activation record checksum"),
+        ("audited_executable_content_head", "5" * 40, "content head"),
+    ]
+    for key, value, message in changes:
+        changed = dict(identity)
+        changed[key] = value
+        with pytest.raises(RuntimeError, match=message):
+            runner.validate_registered_resources(changed, activation)
 
 
 def test_s06_foreground_launcher_rejects_duplicate_shard_job():
@@ -335,6 +466,32 @@ def test_s06_foreground_launcher_rejects_duplicate_shard_job():
         fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         process = subprocess.run(
             ["bash", "scripts/steiner/run_s06_online_shard.sh", "0", "main"],
+            cwd=REPO,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    assert process.returncode == 75
+    assert "already running" in process.stderr
+
+
+def test_s06_finalizer_lock_and_existing_outputs_are_immutable(tmp_path):
+    runner = _runner_module()
+    summary = tmp_path / "summary.json"
+    manifest = tmp_path / "manifest.json"
+    runner.assert_new_aggregate_outputs(summary, manifest)
+    summary.write_text("{}\n", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="immutable and already exists"):
+        runner.assert_new_aggregate_outputs(summary, manifest)
+
+    lock_path = (
+        REPO / "results/steiner/raw/s06/s06-il-online-v1/locks/aggregate.lock"
+    )
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a", encoding="utf-8") as stream:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        process = subprocess.run(
+            ["bash", "scripts/steiner/finalize_s06_online.sh"],
             cwd=REPO,
             text=True,
             capture_output=True,

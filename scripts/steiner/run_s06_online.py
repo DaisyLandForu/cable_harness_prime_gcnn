@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -13,6 +14,8 @@ import platform
 import subprocess
 import sys
 from typing import Any, Mapping, Sequence
+
+import torch
 
 
 REPO = Path(__file__).resolve().parents[2]
@@ -31,7 +34,9 @@ from steiner_branching.evaluation.s06_online import (  # noqa: E402
     S06Task,
     aggregate_s06,
     expand_s06_tasks,
+    failed_task_result,
     lineage_shard_assignments,
+    load_s06_activation,
     load_s06_config,
     load_s06_instances,
     load_valid_shard,
@@ -40,11 +45,15 @@ from steiner_branching.evaluation.s06_online import (  # noqa: E402
     tasks_for_lineage_shard,
     trace_replay_tasks,
 )
+from steiner_branching.contracts import canonical_json  # noqa: E402
 from steiner_branching.learning.imitation import atomic_write_json  # noqa: E402
+from steiner_branching.learning.teacher_data import file_sha256  # noqa: E402
 
 
 DEFAULT_ARTIFACT_ROOT = REPO / "results/steiner/raw/s06"
 DEFAULT_SUMMARY = REPO / "docs/steiner/phases/S06/S06_GATE_SUMMARY.json"
+ENVIRONMENT_LOCK = REPO / "configs/steiner/environment.lock.yml"
+ENVIRONMENT_LOCK_SHA256 = "f70afe548f2b640a3c1375686ad8c8ef4dced63d0229c9fa4eb36e62f6d7628e"
 
 
 def utc_now() -> str:
@@ -96,6 +105,23 @@ def _memory_limit_bytes() -> int:
     return -1
 
 
+def _cpu_quota_cores() -> float | None:
+    try:
+        quota, period = Path("/sys/fs/cgroup/cpu.max").read_text(encoding="utf-8").split()
+        if quota != "max":
+            return float(quota) / float(period)
+    except (OSError, ValueError):
+        pass
+    try:
+        quota = int(Path("/sys/fs/cgroup/cpu/cpu.cfs_quota_us").read_text(encoding="utf-8"))
+        period = int(Path("/sys/fs/cgroup/cpu/cpu.cfs_period_us").read_text(encoding="utf-8"))
+        if quota > 0 and period > 0:
+            return quota / period
+    except (OSError, ValueError):
+        pass
+    return None
+
+
 def _cpu_model() -> str:
     try:
         for line in Path("/proc/cpuinfo").read_text(encoding="utf-8").splitlines():
@@ -106,19 +132,84 @@ def _cpu_model() -> str:
     return platform.processor() or "unknown"
 
 
-def runtime_identity() -> dict[str, Any]:
+def container_runtime_fingerprint() -> str:
+    if file_sha256(ENVIRONMENT_LOCK) != ENVIRONMENT_LOCK_SHA256:
+        raise RuntimeError("frozen environment lock checksum changed")
+    import ecole
+    import numpy
+    import pyscipopt
+    import yaml
+
+    payload = {
+        "environment_lock_sha256": ENVIRONMENT_LOCK_SHA256,
+        "python_executable_sha256": file_sha256(Path(sys.executable).resolve()),
+        "python_version": platform.python_version(),
+        "numpy_version": numpy.__version__,
+        "pyyaml_version": yaml.__version__,
+        "torch_version": torch.__version__,
+        "ecole_version": ecole.__version__,
+        "pyscipopt_version": pyscipopt.__version__,
+        "solver_stack_id": os.environ.get("STEINER_SOLVER_STACK_ID"),
+    }
+    return hashlib.sha256(canonical_json(payload).encode("utf-8")).hexdigest()
+
+
+def runtime_identity(activation: Mapping[str, Any] | None = None) -> dict[str, Any]:
     try:
         affinity_cpus = len(os.sched_getaffinity(0))
     except AttributeError:
         affinity_cpus = os.cpu_count() or -1
+    quota_cores = _cpu_quota_cores()
+    effective_cpu_cores = min(affinity_cpus, quota_cores) if quota_cores is not None else float(affinity_cpus)
     return {
         "hostname": platform.node(),
         "cpu_model": _cpu_model(),
         "cpu_affinity_count": affinity_cpus,
+        "cpu_quota_cores": quota_cores,
+        "effective_cpu_cores": effective_cpu_cores,
         "memory_limit_bytes": _memory_limit_bytes(),
+        "gpu_visible_count": torch.cuda.device_count(),
         "python_version": platform.python_version(),
         "solver_stack_id": os.environ.get("STEINER_SOLVER_STACK_ID"),
+        "environment_lock_sha256": file_sha256(ENVIRONMENT_LOCK),
+        "container_runtime_fingerprint": container_runtime_fingerprint(),
+        "activation_record_sha256": (
+            file_sha256(REPO / "docs/steiner/audits/S06_PREEXECUTION_ACTIVATION_RECORD.json")
+            if activation is not None else None
+        ),
+        "audited_executable_content_head": (
+            activation.get("audited_content_head") if activation is not None else None
+        ),
+        "git_head": subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, text=True,
+            capture_output=True, check=True,
+        ).stdout.strip(),
     }
+
+
+def validate_registered_resources(
+    identity: Mapping[str, Any], activation: Mapping[str, Any]
+) -> None:
+    if float(identity.get("effective_cpu_cores", -1)) < 8.0:
+        raise RuntimeError("S06 shard has fewer than the registered 8 effective CPU cores")
+    if int(identity.get("memory_limit_bytes", -1)) < 96 * 1024 ** 3:
+        raise RuntimeError("S06 shard has less than the registered 96 GiB memory")
+    if identity.get("gpu_visible_count") != 0:
+        raise RuntimeError("S06 shard must have zero visible GPUs")
+    if identity.get("solver_stack_id") != EXPECTED_STACK_ID:
+        raise RuntimeError("S06 shard solver stack differs from the frozen stack")
+    if identity.get("environment_lock_sha256") != ENVIRONMENT_LOCK_SHA256:
+        raise RuntimeError("S06 shard environment lock differs from the frozen lock")
+    if identity.get("container_runtime_fingerprint") != activation.get("container_runtime_fingerprint"):
+        raise RuntimeError("S06 shard container runtime fingerprint differs from activation")
+    if identity.get("audited_executable_content_head") != activation.get("audited_content_head"):
+        raise RuntimeError("S06 executable content head differs from activation")
+    activation_sha = identity.get("activation_record_sha256")
+    if (
+        not isinstance(activation_sha, str) or len(activation_sha) != 64
+        or any(char not in "0123456789abcdef" for char in activation_sha)
+    ):
+        raise RuntimeError("S06 activation record checksum is missing")
 
 
 def _write_one(task: S06Task, shard_dir: Path) -> int:
@@ -126,6 +217,12 @@ def _write_one(task: S06Task, shard_dir: Path) -> int:
     if load_valid_shard(output, task) is not None:
         print(f"S06 SKIP valid-shard {task.task_id}", flush=True)
         return 0
+    try:
+        task_runtime_identity = json.loads(os.environ["S06_RUNTIME_IDENTITY_JSON"])
+    except (KeyError, json.JSONDecodeError) as error:
+        raise RuntimeError("S06 task runtime identity is unavailable") from error
+    activation = load_s06_activation()
+    validate_registered_resources(task_runtime_identity, activation)
     envelope: dict[str, Any] = {
         "schema_version": 1,
         "stage": "S06",
@@ -137,6 +234,7 @@ def _write_one(task: S06Task, shard_dir: Path) -> int:
             "shard_index": int(os.environ["S06_DISTRIBUTED_SHARD_INDEX"]),
             "shard_count": int(os.environ["S06_DISTRIBUTED_SHARD_COUNT"]),
         },
+        "runtime_identity": task_runtime_identity,
         "started_at_utc": utc_now(),
     }
     try:
@@ -147,6 +245,7 @@ def _write_one(task: S06Task, shard_dir: Path) -> int:
         envelope.update({
             "execution_status": "solver_error",
             "error": f"{type(error).__name__}: {error}",
+            "result": failed_task_result(task, error),
         })
     envelope["finished_at_utc"] = utc_now()
     atomic_write_json(output, envelope)
@@ -157,6 +256,7 @@ def _write_one(task: S06Task, shard_dir: Path) -> int:
 def _launch(
     tasks: Sequence[S06Task], *, workers: int, script_args: argparse.Namespace,
     shard_dir: Path, phase: str, shard_index: int,
+    runtime_identity_value: Mapping[str, Any],
 ) -> None:
     pending = [
         task for task in tasks
@@ -184,6 +284,7 @@ def _launch(
         "S06_DISTRIBUTED_PHASE": phase,
         "S06_DISTRIBUTED_SHARD_INDEX": str(shard_index),
         "S06_DISTRIBUTED_SHARD_COUNT": str(S06_SHARD_COUNT),
+        "S06_RUNTIME_IDENTITY_JSON": canonical_json(dict(runtime_identity_value)),
     })
 
     def invoke(task: S06Task) -> tuple[str, int, str]:
@@ -237,6 +338,14 @@ def _phase_manifest_path(run_dir: Path, phase: str, shard_index: int) -> Path:
     return run_dir / "shard_manifests" / f"{phase}-shard-{shard_index}.json"
 
 
+def assert_new_aggregate_outputs(summary_path: Path, manifest_path: Path) -> None:
+    existing = [str(path) for path in (summary_path, manifest_path) if path.exists()]
+    if existing:
+        raise RuntimeError(
+            f"S06 formal aggregate evidence is immutable and already exists: {existing}"
+        )
+
+
 def _phase_tasks(
     phase: str,
     shard_index: int,
@@ -258,6 +367,7 @@ def _write_phase_manifest(
     instances: Sequence[Any],
     assigned_tasks: Sequence[S06Task],
     started_at: str,
+    runtime_identity_value: Mapping[str, Any] | None = None,
     error: str | None = None,
 ) -> None:
     value: dict[str, Any] = {
@@ -275,7 +385,7 @@ def _write_phase_manifest(
         "status": status,
         "started_at_utc": started_at,
         "finished_at_utc": utc_now() if status != "running" else None,
-        "runtime_identity": runtime_identity(),
+        "runtime_identity": dict(runtime_identity_value or runtime_identity()),
         "test_and_final_accessed": False,
     }
     if error is not None:
@@ -290,6 +400,7 @@ def _load_phase_barrier(
     all_tasks: Sequence[S06Task],
     instances: Sequence[Any],
     shard_dir: Path,
+    activation: Mapping[str, Any],
 ) -> list[dict[str, Any]]:
     manifests: list[dict[str, Any]] = []
     compatibility: set[tuple[Any, ...]] = set()
@@ -327,12 +438,21 @@ def _load_phase_barrier(
             raise RuntimeError(
                 f"S06 {phase} shard {shard_index} runtime identity is missing"
             )
+        validate_registered_resources(identity, activation)
         compatibility.add(tuple(identity.get(key) for key in (
             "cpu_model",
             "cpu_affinity_count",
+            "cpu_quota_cores",
+            "effective_cpu_cores",
             "memory_limit_bytes",
+            "gpu_visible_count",
             "python_version",
             "solver_stack_id",
+            "environment_lock_sha256",
+            "container_runtime_fingerprint",
+            "activation_record_sha256",
+            "audited_executable_content_head",
+            "git_head",
         )))
         for task in expected_tasks:
             envelope = load_valid_shard(_shard_path(shard_dir, task), task)
@@ -347,6 +467,11 @@ def _load_phase_barrier(
             }:
                 raise RuntimeError(
                     f"S06 {phase} task was produced by the wrong shard: {task.task_id}"
+                )
+            if envelope.get("runtime_identity") != identity:
+                raise RuntimeError(
+                    f"S06 {phase} task used a different runtime than its shard manifest: "
+                    f"{task.task_id}"
                 )
         manifests.append(value)
     if len(compatibility) != 1:
@@ -364,6 +489,7 @@ def _run_phase(
     main_tasks: Sequence[S06Task],
     strong_tasks: Sequence[S06Task],
     run_dir: Path,
+    activation: Mapping[str, Any],
 ) -> int:
     if args.shard_index is None or args.phase is None:
         raise SystemExit("formal shard execution requires --shard-index and --phase")
@@ -374,6 +500,8 @@ def _run_phase(
     shard_dir = run_dir / "shards"
     trace_dir = run_dir / "trace_shards"
     trace_tasks: tuple[S06Task, ...] = ()
+    identity = runtime_identity(activation)
+    validate_registered_resources(identity, activation)
     if args.phase == "trace":
         _load_phase_barrier(
             run_dir,
@@ -381,6 +509,7 @@ def _run_phase(
             all_tasks=tuple(main_tasks) + tuple(strong_tasks),
             instances=instances,
             shard_dir=shard_dir,
+            activation=activation,
         )
         trace_tasks = trace_replay_tasks(
             main_tasks, _read_shards(main_tasks, shard_dir), config
@@ -405,6 +534,7 @@ def _run_phase(
         instances=instances,
         assigned_tasks=assigned,
         started_at=started_at,
+        runtime_identity_value=identity,
     )
     try:
         _launch(
@@ -414,6 +544,7 @@ def _run_phase(
             shard_dir=target_dir,
             phase=args.phase,
             shard_index=args.shard_index,
+            runtime_identity_value=identity,
         )
         _write_phase_manifest(
             manifest_path,
@@ -423,6 +554,7 @@ def _run_phase(
             instances=instances,
             assigned_tasks=assigned,
             started_at=started_at,
+            runtime_identity_value=identity,
         )
         return 0
     except BaseException as error:
@@ -434,6 +566,7 @@ def _run_phase(
             instances=instances,
             assigned_tasks=assigned,
             started_at=started_at,
+            runtime_identity_value=identity,
             error=f"{type(error).__name__}: {error}",
         )
         raise
@@ -446,7 +579,13 @@ def _aggregate(
     main_tasks: Sequence[S06Task],
     strong_tasks: Sequence[S06Task],
     run_dir: Path,
+    activation: Mapping[str, Any],
 ) -> int:
+    if os.environ.get("S06_AGGREGATE_LOCK_HELD") != "1":
+        raise RuntimeError("S06 aggregate must enter through finalize_s06_online.sh")
+    summary_path = resolve_path(args.summary_output)
+    manifest_path = run_dir / "manifest.json"
+    assert_new_aggregate_outputs(summary_path, manifest_path)
     shard_dir = run_dir / "shards"
     trace_dir = run_dir / "trace_shards"
     main_manifests = _load_phase_barrier(
@@ -455,6 +594,7 @@ def _aggregate(
         all_tasks=tuple(main_tasks) + tuple(strong_tasks),
         instances=instances,
         shard_dir=shard_dir,
+        activation=activation,
     )
     summary = aggregate_s06(config, main_tasks, strong_tasks, shard_dir)
     trace_tasks = trace_replay_tasks(
@@ -466,6 +606,7 @@ def _aggregate(
         all_tasks=trace_tasks,
         instances=instances,
         shard_dir=trace_dir,
+        activation=activation,
     )
     summary["distributed_execution"] = {
         "shard_count": S06_SHARD_COUNT,
@@ -480,7 +621,7 @@ def _aggregate(
         "observed_shards": len(_read_shards(trace_tasks, trace_dir)),
         "gate_relevant": False,
     }
-    atomic_write_json(resolve_path(args.summary_output), summary)
+    atomic_write_json(summary_path, summary)
     manifest = {
         "schema_version": 1,
         "stage": "S06",
@@ -489,7 +630,7 @@ def _aggregate(
         "instance_manifest_sha256": S06_INSTANCES_FILE_SHA256,
         "status": "completed",
         "finished_at_utc": utc_now(),
-        "summary_output": str(resolve_path(args.summary_output).relative_to(REPO)),
+        "summary_output": str(summary_path.relative_to(REPO)),
         "scientific_gate_pass": summary["gate"]["overall_pass"],
         "main_task_ids": [task.task_id for task in main_tasks],
         "strong_diagnostic_task_ids": [task.task_id for task in strong_tasks],
@@ -497,7 +638,7 @@ def _aggregate(
         "failed_or_skipped_tasks_must_remain": True,
         "test_and_final_accessed": False,
     }
-    atomic_write_json(run_dir / "manifest.json", manifest)
+    atomic_write_json(manifest_path, manifest)
     print(json.dumps(summary["gate"], sort_keys=True), flush=True)
     return 0 if summary["gate"]["overall_pass"] else 2
 
@@ -516,6 +657,7 @@ def main() -> int:
             "main_tasks": len(main_tasks),
             "strong_diagnostic_tasks": len(strong_tasks),
             "formal_execution_authorized": False,
+            "container_runtime_fingerprint": container_runtime_fingerprint(),
             "distributed_execution": {
                 "shard_count": S06_SHARD_COUNT,
                 "workers_per_shard": S06_WORKERS_PER_SHARD,
@@ -533,6 +675,7 @@ def main() -> int:
     if os.environ.get("STEINER_SOLVER_STACK_ID") != EXPECTED_STACK_ID:
         raise SystemExit("run through scripts/steiner/run_with_scip804.sh --python")
     config = load_s06_config(resolve_path(args.config), require_activation=True)
+    activation = load_s06_activation()
     instances = load_s06_instances()
     main_tasks, strong_tasks = expand_s06_tasks(config, instances)
     all_tasks = {task.task_id: task for task in main_tasks + strong_tasks}
@@ -580,8 +723,12 @@ def main() -> int:
     if args.aggregate_only:
         if args.shard_index is not None or args.phase is not None:
             raise SystemExit("--aggregate-only cannot be combined with shard execution")
-        return _aggregate(args, config, instances, main_tasks, strong_tasks, run_dir)
-    return _run_phase(args, config, instances, main_tasks, strong_tasks, run_dir)
+        return _aggregate(
+            args, config, instances, main_tasks, strong_tasks, run_dir, activation
+        )
+    return _run_phase(
+        args, config, instances, main_tasks, strong_tasks, run_dir, activation
+    )
 
 
 if __name__ == "__main__":

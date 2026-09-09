@@ -1,6 +1,9 @@
 # S06 Result Analysis
 
-Status: formal execution NOT_RUN; scientific Gate NOT_EVALUATED.
+Status: formal execution NOT_RUN; scientific Gate NOT_EVALUATED. The initial
+pre-execution review returned CONDITIONAL PASS; its four implementation and
+evidence-packaging findings have been remediated locally but still require a
+focused external PASS before activation.
 
 S06 asks whether the S05 B0 imitation model's offline ranking improvement
 becomes a real branch-and-bound improvement. No formal online outcomes existed
@@ -13,6 +16,9 @@ five solver seeds and five main methods. Failed, timed-out, node-limited,
 memory-limited and invalid-policy tasks remain in the denominator. The two
 Gate baselines are deterministic random candidate and most-infeasible. Native
 relpscost/default and the five fullstrong tasks are contextual comparisons.
+An exception receives PAR-2=1,200 and remains paired wherever both task
+envelopes exist; its unavailable PDI is not fabricated, and completeness,
+correctness and PDI Gates consequently fail.
 
 The eventual result may support only a P1 controlled-profile online branching
 claim inside the registered synthetic small/medium envelope. It cannot by

@@ -36,7 +36,7 @@ REPO = Path(__file__).resolve().parents[3]
 S06_CONFIG_PATH = REPO / "configs/steiner/experiments/s06_il_online_v1.yml"
 S06_INSTANCES_PATH = REPO / "configs/steiner/experiments/s06_online_instances_v1.json"
 S06_ACTIVATION_PATH = REPO / "docs/steiner/audits/S06_PREEXECUTION_ACTIVATION_RECORD.json"
-S06_CONFIG_FILE_SHA256 = "8d0daa708c5d2ace6bbd32da867dd978f730c97216df74277208e86012db50da"
+S06_CONFIG_FILE_SHA256 = "e7f7e9060c25fa038a2749ca43afe6a2769c3652e93697612b8804269750f827"
 S06_INSTANCES_FILE_SHA256 = "b50f8048d8ab27a1fa2168e69ef179cbfc490116399180f2bb4a963bf04b292b"
 S05_AUDITED_TAG = "steiner-s05-audited-v3"
 S05_AUDITED_HEAD = "6cf7acab57525a744233ed3fdfd463f00fcd470c"
@@ -47,6 +47,15 @@ SOLVER_SEEDS = (0, 1, 2, 3, 4)
 FULLSTRONG = "fullstrong"
 S06_SHARD_COUNT = 6
 S06_WORKERS_PER_SHARD = 6
+S06_PAR2_PENALTY_SECONDS = 1200.0
+
+
+class S06PolicyFailure(RuntimeError):
+    """A fail-closed learned/random policy error with a stable evidence class."""
+
+    def __init__(self, failure_class: str, message: str) -> None:
+        super().__init__(message)
+        self.failure_class = failure_class
 
 
 def _require_keys(raw: Mapping[str, Any], expected: set[str], label: str) -> None:
@@ -205,6 +214,7 @@ def load_s06_activation(path: Path | str = S06_ACTIVATION_PATH) -> dict[str, Any
         "execution_authorized", "verdict_source", "recorded_at_utc",
         "audited_branch", "audited_content_head", "protocol_yaml_sha256",
         "instance_manifest_sha256", "s05_audited_head", "s05_audited_tag",
+        "container_runtime_fingerprint",
         "formal_results_at_activation", "s07_authorized", "test_and_final_access_authorized",
     }
     _require_keys(raw, expected_fields, "S06 pre-execution activation")
@@ -234,6 +244,12 @@ def load_s06_activation(path: Path | str = S06_ACTIVATION_PATH) -> dict[str, Any
         raise StrictConfigError("S06 activation timestamp is invalid")
     if len(head) != 40 or any(char not in "0123456789abcdef" for char in head):
         raise StrictConfigError("S06 activation audited_content_head is invalid")
+    runtime_fingerprint = raw.get("container_runtime_fingerprint")
+    if (
+        not isinstance(runtime_fingerprint, str) or len(runtime_fingerprint) != 64
+        or any(char not in "0123456789abcdef" for char in runtime_fingerprint)
+    ):
+        raise StrictConfigError("S06 activation container runtime fingerprint is invalid")
     if subprocess.run(
         ["git", "merge-base", "--is-ancestor", head, "HEAD"], cwd=REPO, check=False,
     ).returncode != 0:
@@ -376,6 +392,15 @@ def load_s06_config(
         "maximum_total_workers": 36,
         "requested_resources_per_shard": {
             "cpu_cores": 8, "memory_gib": 96, "gpu_cards": 0,
+        },
+        "registered_runtime": {
+            "minimum_effective_cpu_cores": 8,
+            "minimum_memory_bytes": 103079215104,
+            "required_gpu_visible_count": 0,
+            "environment_lock": "configs/steiner/environment.lock.yml",
+            "environment_lock_sha256": "f70afe548f2b640a3c1375686ad8c8ef4dced63d0229c9fa4eb36e62f6d7628e",
+            "container_runtime_fingerprint_source": "activation_record",
+            "audited_executable_content_head_source": "activation_record",
         },
         "one_scip_thread_per_worker": True,
         "shared_artifact_root_required": True,
@@ -760,6 +785,56 @@ def _reward_value(value: Any) -> float:
     return number
 
 
+def failed_task_result(task: S06Task, error: BaseException) -> dict[str, Any]:
+    """Encode a terminal exception without inventing unavailable solve metrics."""
+    failure_class = (
+        error.failure_class if isinstance(error, S06PolicyFailure) else "solver_or_runtime_error"
+    )
+    correctness = {
+        "invalid_action_count": int(failure_class == "invalid_action"),
+        "mapping_failure_count": int(failure_class == "mapping_failure"),
+        "nan_score_count": int(failure_class == "nan_score"),
+        "unexpected_fallback_count": 0,
+        "solution_validation_failure_count": 0,
+    }
+    return {
+        "schema_version": 1,
+        "task": task.to_dict(),
+        "status": "solver_error",
+        "solved": False,
+        "classification": failure_class,
+        "failure": {
+            "failure_class": failure_class,
+            "exception_type": type(error).__name__,
+            "message": str(error),
+            "par2_penalty_applied": True,
+            "pdi_available": False,
+        },
+        "metrics": {
+            "solve_wall_seconds": None,
+            "scip_solve_seconds": None,
+            "par2_seconds": S06_PAR2_PENALTY_SECONDS,
+            "primal_dual_integral": None,
+            "primal_bound": None,
+            "dual_bound": None,
+            "final_gap": None,
+            "nodes": None,
+            "lp_iterations": None,
+            "exact_time_to_first_incumbent": None,
+            "root_lp_bound": None,
+            "root_gap_to_final_primal": None,
+            "branch_decisions": None,
+            "maximum_depth": None,
+        },
+        "overhead": None,
+        "correctness": correctness,
+        "solution_validation": None,
+        "trace": {"enabled": task.trace, "unavailable_due_to_failure": True},
+        "resources": {"peak_rss_mb": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0},
+        "effective_parameters": None,
+    }
+
+
 def run_s06_task(task: S06Task, config: Mapping[str, Any]) -> dict[str, Any]:
     """Run one isolated task. Caller owns exception-to-failure shard conversion."""
     if os.environ.get("STEINER_SOLVER_STACK_ID") != EXPECTED_STACK_ID:
@@ -815,12 +890,15 @@ def run_s06_task(task: S06Task, config: Mapping[str, Any]) -> dict[str, Any]:
             extraction_seconds += float(elapsed)
             try:
                 state = with_legal_edge_actions(state, action_set, build.metadata)
-            except Exception:
+            except Exception as error:
                 mapping_failure_count += 1
-                raise
+                raise S06PolicyFailure("mapping_failure", str(error)) from error
             if state.candidate_count == 0:
                 invalid_action_count += 1
-                raise RuntimeError("Ecole requested an S06 decision without legal edge candidates")
+                raise S06PolicyFailure(
+                    "invalid_action",
+                    "Ecole requested an S06 decision without legal edge candidates",
+                )
             if task.method == "b0_il":
                 if model is None or stats is None:
                     raise RuntimeError("S06 learned checkpoint was not loaded")
@@ -833,7 +911,9 @@ def run_s06_task(task: S06Task, config: Mapping[str, Any]) -> dict[str, Any]:
                 inference_seconds += time.perf_counter() - started
                 if not np.isfinite(logits).all():
                     nan_score_count += 1
-                    raise FloatingPointError("S06 learned policy emitted NaN or Inf")
+                    raise S06PolicyFailure(
+                        "nan_score", "S06 learned policy emitted NaN or Inf"
+                    )
                 started = time.perf_counter()
                 action = deterministic_argmax(logits, state.candidate_indices)
                 selection_seconds += time.perf_counter() - started
@@ -848,7 +928,10 @@ def run_s06_task(task: S06Task, config: Mapping[str, Any]) -> dict[str, Any]:
                 selection_seconds += time.perf_counter() - started
             if action not in set(map(int, state.candidate_indices)):
                 invalid_action_count += 1
-                raise RuntimeError("S06 policy selected an action outside SCIP's action set")
+                raise S06PolicyFailure(
+                    "invalid_action",
+                    "S06 policy selected an action outside SCIP's action set",
+                )
             if task.trace:
                 action_position = int(np.flatnonzero(state.candidate_indices == action)[0])
                 policy_trace.append({
@@ -992,10 +1075,11 @@ def load_valid_shard(path: Path, task: S06Task) -> dict[str, Any] | None:
 
 def _pair_order(result: Mapping[str, Any]) -> tuple[int, float, float]:
     metrics = result["metrics"]
+    pdi = metrics.get("primal_dual_integral")
     return (
         1 if result["solved"] else 0,
         -float(metrics["par2_seconds"]),
-        -float(metrics["primal_dual_integral"]),
+        -float(pdi) if pdi is not None and math.isfinite(float(pdi)) else -math.inf,
     )
 
 
@@ -1020,16 +1104,21 @@ def aggregate_s06(
     main_ids = {task.task_id for task in main_tasks}
     missing_main = [task_id for task_id in missing if task_id in main_ids]
     results: dict[tuple[str, int, str], Mapping[str, Any]] = {}
+    completed_results: dict[tuple[str, int, str], Mapping[str, Any]] = {}
     solver_errors = 0
     correctness_totals = Counter()
     for task in main_tasks:
         shard = shards.get(task.task_id)
-        if shard is None or shard.get("execution_status") != "completed" or "result" not in shard:
+        if shard is None or "result" not in shard:
             solver_errors += 1
             continue
         result = shard["result"]
         results[(task.instance.graph_sha256, task.solver_seed, task.method)] = result
         correctness_totals.update(result["correctness"])
+        if shard.get("execution_status") == "completed":
+            completed_results[(task.instance.graph_sha256, task.solver_seed, task.method)] = result
+        else:
+            solver_errors += 1
     expected_pairs = 30 * len(SOLVER_SEEDS)
     rng = np.random.default_rng(int(config["statistics"]["bootstrap_seed"]))
     bootstrap_indices = rng.integers(0, 30, size=(int(config["statistics"]["bootstrap_replicates"]), 30))
@@ -1046,11 +1135,19 @@ def aggregate_s06(
             base = results.get((*key, baseline))
             if il is None or base is None:
                 continue
+            il_pdi = il["metrics"].get("primal_dual_integral")
+            base_pdi = base["metrics"].get("primal_dual_integral")
+            pdi_effect = (
+                float(base_pdi) - float(il_pdi)
+                if il_pdi is not None and base_pdi is not None
+                and math.isfinite(float(il_pdi)) and math.isfinite(float(base_pdi))
+                else None
+            )
             row = {
                 "graph_sha256": key[0], "family": task.instance.family,
                 "solver_seed": key[1],
                 "par2_effect": float(base["metrics"]["par2_seconds"]) - float(il["metrics"]["par2_seconds"]),
-                "pdi_effect": float(base["metrics"]["primal_dual_integral"]) - float(il["metrics"]["primal_dual_integral"]),
+                "pdi_effect": pdi_effect,
                 "il_solved": bool(il["solved"]), "baseline_solved": bool(base["solved"]),
                 "order": 1 if _pair_order(il) > _pair_order(base) else -1 if _pair_order(il) < _pair_order(base) else 0,
                 "catastrophic": bool(base["solved"] and (
@@ -1064,16 +1161,23 @@ def aggregate_s06(
         graph_par2 = np.array([
             np.mean([row["par2_effect"] for row in by_graph[graph]]) for graph in graph_order
         ]) if len(by_graph) == 30 and all(len(by_graph[g]) == 5 for g in graph_order) else np.array([])
+        pdi_complete = bool(
+            graph_par2.size
+            and all(row["pdi_effect"] is not None for row in pair_rows)
+        )
         graph_pdi = np.array([
             np.mean([row["pdi_effect"] for row in by_graph[graph]]) for graph in graph_order
-        ]) if graph_par2.size else np.array([])
+        ]) if pdi_complete else np.array([])
         if graph_par2.size:
             par2_bootstrap = graph_par2[bootstrap_indices].mean(axis=1)
-            pdi_bootstrap = graph_pdi[bootstrap_indices].mean(axis=1)
             par2_ci = _percentile_interval(par2_bootstrap, float(config["statistics"]["confidence_level"]))
+        else:
+            par2_ci = [None, None]
+        if graph_pdi.size:
+            pdi_bootstrap = graph_pdi[bootstrap_indices].mean(axis=1)
             pdi_ci = _percentile_interval(pdi_bootstrap, float(config["statistics"]["confidence_level"]))
         else:
-            par2_ci = pdi_ci = [None, None]
+            pdi_ci = [None, None]
         family_effects = {
             family: float(np.mean([row["par2_effect"] for row in pair_rows if row["family"] == family]))
             for family in SYNTHETIC_FAMILIES if any(row["family"] == family for row in pair_rows)
@@ -1083,7 +1187,8 @@ def aggregate_s06(
         il_solved = sum(row["il_solved"] for row in pair_rows)
         baseline_solved = sum(row["baseline_solved"] for row in pair_rows)
         mean_par2 = float(np.mean([row["par2_effect"] for row in pair_rows])) if pair_rows else None
-        mean_pdi = float(np.mean([row["pdi_effect"] for row in pair_rows])) if pair_rows else None
+        pdi_values = [row["pdi_effect"] for row in pair_rows if row["pdi_effect"] is not None]
+        mean_pdi = float(np.mean(pdi_values)) if len(pdi_values) == expected_pairs else None
         positive_families = sum(value > 0.0 for value in family_effects.values())
         gate_values = {
             "complete_150_pairs": len(pair_rows) == expected_pairs,
@@ -1096,7 +1201,8 @@ def aggregate_s06(
             "minimum_positive_family_par2_effects": positive_families >= int(config["gate"]["each_weak_baseline"]["minimum_positive_family_par2_effects"]),
         }
         comparisons[baseline] = {
-            "pairs": len(pair_rows), "b0_solved": il_solved, "baseline_solved": baseline_solved,
+            "pairs": len(pair_rows), "pdi_pairs": len(pdi_values),
+            "b0_solved": il_solved, "baseline_solved": baseline_solved,
             "mean_par2_effect_seconds": mean_par2, "par2_effect_ci95": par2_ci,
             "mean_pdi_effect": mean_pdi, "pdi_effect_ci95": pdi_ci,
             "lexicographic_wins": wins, "ties": len(pair_rows) - wins - losses,
@@ -1124,7 +1230,7 @@ def aggregate_s06(
                 objective_ok = False
                 objective_disagreements.append({"graph_sha256": graph, "solver_seed": seed, "values": finite})
     correctness_gate = {
-        "complete_main_matrix": not missing_main and len(results) == 750,
+        "complete_main_matrix": not missing_main and len(completed_results) == 750,
         "complete_strong_diagnostic_subset": all(
             task.task_id in shards for task in strong_tasks
         ),
@@ -1134,8 +1240,10 @@ def aggregate_s06(
         "zero_nan_scores": correctness_totals["nan_score_count"] == 0,
         "zero_unexpected_fallbacks": correctness_totals["unexpected_fallback_count"] == 0,
         "zero_solution_validation_failures": correctness_totals["solution_validation_failure_count"] == 0,
-        "finite_pdi": len(results) == 750 and all(
-            math.isfinite(float(result["metrics"]["primal_dual_integral"])) for result in results.values()
+        "finite_pdi": len(completed_results) == 750 and all(
+            result["metrics"].get("primal_dual_integral") is not None
+            and math.isfinite(float(result["metrics"]["primal_dual_integral"]))
+            for result in completed_results.values()
         ),
         "objective_agreement": objective_ok,
     }
@@ -1145,7 +1253,9 @@ def aggregate_s06(
         "protocol_file_sha256": S06_CONFIG_FILE_SHA256,
         "instance_manifest_sha256": S06_INSTANCES_FILE_SHA256,
         "completion": {
-            "expected_main_tasks": 750, "observed_completed_main_tasks": len(results),
+            "expected_main_tasks": 750,
+            "observed_terminal_main_results": len(results),
+            "observed_completed_main_tasks": len(completed_results),
             "expected_strong_diagnostic_tasks": 5,
             "observed_strong_shards": sum(task.task_id in shards for task in strong_tasks),
             "missing_main_tasks": missing_main,
@@ -1169,7 +1279,7 @@ def trace_replay_tasks(
     result_by_key = {
         (task.instance.graph_sha256, task.solver_seed, task.method): shards[task.task_id]["result"]
         for task in main_tasks
-        if task.task_id in shards and shards[task.task_id].get("execution_status") == "completed"
+        if task.task_id in shards and "result" in shards[task.task_id]
     }
     triggered: set[tuple[str, int]] = set()
     threshold = float(config["gate"]["catastrophic_slowdown_threshold"])
