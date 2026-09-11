@@ -1,4 +1,4 @@
-# S06 Audit Packet — second focused pre-execution remediation review
+# S06 Audit Packet — main-wave seal and execution amendment A1
 
 ## Audit object
 
@@ -19,8 +19,15 @@
 - initial external verdict: `CONDITIONAL_PASS`;
 - first focused verdict: `CONDITIONAL_PASS`, with B1/B4 closed and B2/B3 open;
 - second focused verdict: `PASS`, B1--B4 closed;
+- base activation/execution head:
+  `a80d7459b9b1d4d5bff9743711984cd5a649ef97`;
+- formal main wave: 755/755 terminal envelopes and 6/6 completed manifests;
+- post-main barrier status:
+  `FAILED_ON_UNREGISTERED_PHYSICAL_HOST_EQUALITY`;
+- amendment A1 fixed head: pending this packet's substantive commit;
+- amendment A1 audit/activation: pending;
 - scientific status: `NOT_EVALUATED`;
-- formal artifacts at remediation head: none.
+- trace tasks and aggregate artifacts: none.
 
 ## Primary review entries
 
@@ -43,6 +50,30 @@
 - locked finalizer: `scripts/steiner/finalize_s06_online.sh`;
 - custom-job entrypoint: `scripts/steiner/run_s06_online_shard.sh`;
 - tests: `tests/steiner/test_s06_online.py`.
+- main-wave seal:
+  `docs/steiner/phases/S06/S06_MAIN_WAVE_V1_SEAL.json`;
+- barrier-failure explanation:
+  `docs/steiner/phases/S06/S06_MAIN_WAVE_BARRIER_FAILURE.md`;
+- execution amendment:
+  `configs/steiner/experiments/s06_execution_amendment_a1.yml`.
+
+## Main-wave evidence and barrier finding
+
+- 750/750 Gate main tasks plus 5/5 diagnostics have terminal envelopes;
+- solver status only: 399 optimal, 356 timelimit, zero solver errors;
+- no method effect, trace trigger or Gate aggregate was computed;
+- exact sealed membership: 755 task JSON + six main manifests;
+- evidence-tree SHA-256:
+  `671cb10a78a30e9f227e6b8b86a62d3ba4437a013ba9350850bb2ef1b1fb8964`;
+- all six jobs had effective CPU 8.01, memory 103080263680 bytes, zero
+  GPUs and identical software/activation/code identities;
+- scheduler metadata differed only in hostname, physical CPU model and
+  host-affinity count (24/48/320), which the original implementation had not
+  registered as a cross-job equality requirement.
+
+Amendment A1 preserves all scientific inputs and only corrects this
+orchestration overconstraint. Main evidence must be reused byte-exactly and
+main reruns are forbidden.
 
 ## Blocking-finding closure map
 
@@ -68,6 +99,9 @@
 | immutable aggregate | Python-owned OS lock plus pre-write output refusal | direct Python lock contention and existing-output negatives |
 | no premature execution | external committed activation loader and clean-input checks | missing/uncommitted/invalid activation tests |
 | no final leakage | validation source/hash/split guards | config/manifest reconstruction tests |
+| sealed main reuse | deterministic 761-file membership/tree verification and base-activation identity | byte-mutation and real evidence-tree replay tests |
+| scheduler portability | normalized effective-resource/runtime compatibility; physical host metadata still recorded | three simulated/three real CPU-model variants; normalized mismatch rejection |
+| no retry bias | parent/internal main entrypoints refuse amendment-era main execution | explicit main-rerun negative test |
 
 ## Six-shard invariants
 
@@ -80,18 +114,38 @@
 - both waves require six exact terminal manifests;
 - aggregation rejects wrong-shard evidence or task/manifest runtime mismatch;
 - every shard independently satisfies registered resources and all six share
-  the same activation-bound runtime identity;
+  the same effective-resource/software/activation/code identity;
+- physical hostname, CPU model and affinity remain recorded but are not
+  required to match across scheduler hosts;
 - all jobs share one persistent artifact root but write unique task paths;
 - the Python evidence writer is singleton and aggregate evidence cannot be
   overwritten, regardless of shell or direct Python entrypoint.
 
-## Local evidence
+## Amendment A1 local evidence
 
-- targeted S06: `17 passed`;
-- complete Steiner suite: `120 passed, 1 expected PACE skip`;
+- targeted S06: `21 passed`;
+- complete Steiner suite: `123 passed, 2 skips` (existing optional PACE data
+  unavailable; existing real-CUDA test skipped because this CPU host exposes
+  no CUDA device);
 - Python compilation, SCIP wrapper verification, validate-only, shell syntax
   and `git diff --check`: PASS;
-- no formal S06 shard exists; activation record does not yet exist.
+- read-only real main seal/barrier replay: PASS, 761/761 files and 6/6
+  manifests;
+- base activation exists; amendment activation does not;
+- no main rerun, trace execution, Gate aggregation or test/final access.
+
+## Amendment A1 hashes
+
+- amendment YAML:
+  `b862f81893fb5dd46635dfc55366b5961268de41d74dd2f6cf89f11705690abe`;
+- main-wave seal:
+  `11925fc0e5c6169a0fbdb7c1770ebb0709cefe599f6c0018f07d875595a81603`;
+- main evidence tree:
+  `671cb10a78a30e9f227e6b8b86a62d3ba4437a013ba9350850bb2ef1b1fb8964`;
+- runner:
+  `f506f009e2c18a6d41c5b4d932b4901cbe0c6b79146f28d001d796398e8b5273`;
+- tests:
+  `0cb01ab3e829899e8ff88ea52d902a2acd08ec4a8f27cfbb44fbf31e57e27509`.
 
 ## Hashes at externally audited remediation head
 
@@ -129,8 +183,9 @@ runtime remains unchanged:
 The final focused audit PASS authorizes only a separate committed activation
 and subsequent formal execution. It does not mark the scientific Gate PASS.
 
-## Required audit decision
+## Required amendment decision
 
-Recorded decision: **PASS; B1--B4 CLOSED; separate committed activation and six
-main custom jobs authorized; scientific Gate NOT_EVALUATED; S07/test/final
-unauthorized**.
+Please return PASS, CONDITIONAL PASS or FAIL on amendment A1. Only PASS permits
+a separate committed amendment activation, byte-exact sealed-main reuse and
+six trace jobs. It does not decide the S06 scientific Gate, create an S06 tag,
+authorize S07 or permit test/final access.

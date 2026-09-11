@@ -341,9 +341,9 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
         "audited_content_head": "c" * 40,
     }
     runtime = {
-        "hostname": "ignored-between-hosts",
-        "cpu_model": "registered-cpu",
-        "cpu_affinity_count": 8,
+        "hostname": "host-0",
+        "cpu_model": "physical-cpu-0",
+        "cpu_affinity_count": 24,
         "cpu_quota_cores": 8.0,
         "effective_cpu_cores": 8.0,
         "memory_limit_bytes": 96 * 1024 ** 3,
@@ -356,6 +356,15 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
         "audited_executable_content_head": "c" * 40,
         "git_head": "e" * 40,
     }
+    runtimes = {
+        shard_index: dict(
+            runtime,
+            hostname=f"host-{shard_index}",
+            cpu_model=f"physical-cpu-{shard_index // 2}",
+            cpu_affinity_count=(24, 24, 48, 48, 48, 320)[shard_index],
+        )
+        for shard_index in range(S06_SHARD_COUNT)
+    }
     for task in all_tasks:
         shard_index = assignments[task.instance.graph_sha256]
         atomic_write_json(shard_dir / f"{task.task_id}.json", {
@@ -367,7 +376,7 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
                 "shard_index": shard_index,
                 "shard_count": S06_SHARD_COUNT,
             },
-            "runtime_identity": runtime,
+            "runtime_identity": runtimes[shard_index],
             "result": _result(task.method),
         })
     for shard_index in range(S06_SHARD_COUNT):
@@ -380,7 +389,7 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
             instances=instances,
             assigned_tasks=assigned,
             started_at="2026-09-09T00:00:00Z",
-            runtime_identity_value=runtime,
+            runtime_identity_value=runtimes[shard_index],
         )
     assert len(runner._load_phase_barrier(
         run_dir,
@@ -408,7 +417,9 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
 
     envelope["distributed_execution"]["shard_index"] = 0
     atomic_write_json(first_path, envelope)
-    envelope["runtime_identity"] = dict(runtime, memory_limit_bytes=128 * 1024 ** 3)
+    envelope["runtime_identity"] = dict(
+        runtimes[0], memory_limit_bytes=128 * 1024 ** 3
+    )
     atomic_write_json(first_path, envelope)
     with pytest.raises(RuntimeError, match="different runtime"):
         runner._load_phase_barrier(
@@ -420,8 +431,46 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
             activation=activation,
         )
 
-    envelope["runtime_identity"] = runtime
+    envelope["runtime_identity"] = runtimes[0]
     atomic_write_json(first_path, envelope)
+
+    incompatible_index = 4
+    incompatible_manifest_path = runner._phase_manifest_path(
+        run_dir, "main", incompatible_index
+    )
+    incompatible_manifest = json.loads(
+        incompatible_manifest_path.read_text(encoding="utf-8")
+    )
+    incompatible_runtime = dict(
+        runtimes[incompatible_index], python_version="3.11.14"
+    )
+    incompatible_manifest["runtime_identity"] = incompatible_runtime
+    atomic_write_json(incompatible_manifest_path, incompatible_manifest)
+    incompatible_tasks = tasks_for_lineage_shard(
+        all_tasks, instances, incompatible_index
+    )
+    for task in incompatible_tasks:
+        path = shard_dir / f"{task.task_id}.json"
+        value = json.loads(path.read_text(encoding="utf-8"))
+        value["runtime_identity"] = incompatible_runtime
+        atomic_write_json(path, value)
+    with pytest.raises(RuntimeError, match="non-identical resource/runtime"):
+        runner._load_phase_barrier(
+            run_dir,
+            phase="main",
+            all_tasks=all_tasks,
+            instances=instances,
+            shard_dir=shard_dir,
+            activation=activation,
+        )
+    incompatible_manifest["runtime_identity"] = runtimes[incompatible_index]
+    atomic_write_json(incompatible_manifest_path, incompatible_manifest)
+    for task in incompatible_tasks:
+        path = shard_dir / f"{task.task_id}.json"
+        value = json.loads(path.read_text(encoding="utf-8"))
+        value["runtime_identity"] = runtimes[incompatible_index]
+        atomic_write_json(path, value)
+
     runner._phase_manifest_path(run_dir, "main", 5).unlink()
     with pytest.raises(RuntimeError, match="missing shard 5"):
         runner._load_phase_barrier(
@@ -431,6 +480,111 @@ def test_s06_distributed_barrier_rejects_missing_and_wrong_shards(tmp_path):
             instances=instances,
             shard_dir=shard_dir,
             activation=activation,
+        )
+
+
+def test_s06_execution_amendment_and_main_wave_seal_are_frozen():
+    runner = _runner_module()
+    assert file_sha256(runner.AMENDMENT_PATH) == runner.AMENDMENT_SHA256
+    assert file_sha256(runner.MAIN_WAVE_SEAL_PATH) == runner.MAIN_WAVE_SEAL_SHA256
+    amendment = runner.load_execution_amendment()
+    seal = runner.load_main_wave_seal()
+    assert amendment["execution_authorized"] is False
+    assert amendment["post_amendment_execution"]["main_phase_rerun_forbidden"] is True
+    assert seal["evidence_tree_sha256"] == amendment["sealed_main_wave"]["evidence_tree_sha256"]
+    assert seal["model_or_baseline_effects_aggregated"] is False
+    assert seal["trace_wave_started"] is False
+
+
+def test_s06_main_wave_tree_seal_detects_byte_mutation(tmp_path, monkeypatch):
+    runner = _runner_module()
+    config = load_s06_config(require_activation=False)
+    task = expand_s06_tasks(config, load_s06_instances())[0][0]
+    run_dir = tmp_path / "run"
+    task_path = run_dir / "shards" / f"{task.task_id}.json"
+    task_path.parent.mkdir(parents=True)
+    task_path.write_text('{"terminal":true}\n', encoding="utf-8")
+    for shard_index in range(S06_SHARD_COUNT):
+        manifest_path = runner._phase_manifest_path(run_dir, "main", shard_index)
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(
+            json.dumps({"shard_index": shard_index}) + "\n", encoding="utf-8"
+        )
+    records = runner._main_wave_evidence_records(run_dir, (task,))
+    tree = runner.hashlib.sha256(
+        runner.canonical_json(records).encode("utf-8")
+    ).hexdigest()
+    monkeypatch.setattr(
+        runner,
+        "load_main_wave_seal",
+        lambda: {"sealed_files": 7, "evidence_tree_sha256": tree},
+    )
+    assert runner.verify_main_wave_seal(run_dir, (task,))["evidence_tree_sha256"] == tree
+    unexpected = run_dir / "shards" / "unexpected.json"
+    unexpected.write_text("{}\n", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="task-file membership changed"):
+        runner.verify_main_wave_seal(run_dir, (task,))
+    unexpected.unlink()
+    task_path.write_text('{"terminal":false}\n', encoding="utf-8")
+    with pytest.raises(RuntimeError, match="evidence tree checksum changed"):
+        runner.verify_main_wave_seal(run_dir, (task,))
+
+
+def test_s06_amendment_forbids_main_wave_rerun():
+    runner = _runner_module()
+    with pytest.raises(SystemExit, match="forbids rerunning main tasks"):
+        runner.assert_amendment_phase_authorized("main")
+    runner.assert_amendment_phase_authorized("trace")
+
+
+def test_s06_sealed_main_resource_identity_ignores_only_physical_host_fields():
+    runner = _runner_module()
+    identity = {
+        "hostname": "scheduler-host-a",
+        "cpu_model": "physical-cpu-a",
+        "cpu_affinity_count": 320,
+        "cpu_quota_cores": 8.01,
+        "effective_cpu_cores": 8.01,
+        "memory_limit_bytes": 103080263680,
+        "gpu_visible_count": 0,
+        "python_version": "3.11.15",
+        "solver_stack_id": "scip804-ecole081-pyscipopt430",
+        "environment_lock_sha256": runner.ENVIRONMENT_LOCK_SHA256,
+        "container_runtime_fingerprint": "1" * 64,
+        "activation_record_sha256": "2" * 64,
+        "audited_executable_content_head": "3" * 40,
+        "git_head": "4" * 40,
+    }
+    seal = {
+        "registered_runtime_identity": {
+            key: identity[key]
+            for key in (
+                "cpu_quota_cores", "effective_cpu_cores", "memory_limit_bytes",
+                "gpu_visible_count", "python_version", "solver_stack_id",
+                "environment_lock_sha256", "container_runtime_fingerprint",
+            )
+        },
+        "base_activation_record_sha256": "2" * 64,
+        "base_activation_audited_content_head": "3" * 40,
+        "execution_git_head": "4" * 40,
+    }
+    runner.validate_sealed_main_resources(identity, seal)
+    runner.validate_sealed_main_resources(
+        dict(
+            identity,
+            hostname="scheduler-host-b",
+            cpu_model="physical-cpu-b",
+            cpu_affinity_count=24,
+        ),
+        seal,
+    )
+    with pytest.raises(RuntimeError, match="effective_cpu_cores mismatch"):
+        runner.validate_sealed_main_resources(
+            dict(identity, effective_cpu_cores=9.0), seal
+        )
+    with pytest.raises(RuntimeError, match="activation_record_sha256 mismatch"):
+        runner.validate_sealed_main_resources(
+            dict(identity, activation_record_sha256="5" * 64), seal
         )
 
 
@@ -466,6 +620,9 @@ def test_s06_registered_resource_preflight_is_fail_closed():
         changed[key] = value
         with pytest.raises(RuntimeError, match=message):
             runner.validate_registered_resources(changed, activation)
+    bound_activation = dict(activation, _record_sha256="4" * 64)
+    with pytest.raises(RuntimeError, match="checksum differs from runtime"):
+        runner.validate_registered_resources(identity, bound_activation)
 
 
 def test_s06_foreground_launcher_rejects_duplicate_shard_job():

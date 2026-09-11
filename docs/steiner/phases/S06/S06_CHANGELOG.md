@@ -1,7 +1,8 @@
 # S06 Changelog
 
-Status: external pre-execution audit PASS; separate committed activation is the
-remaining prerequisite for formal execution; formal result not run.
+Status: pre-execution audit/activation PASS and six-shard main wave complete;
+main evidence sealed after a runtime-compatibility barrier failure. Amendment
+A1 is preregistered but not execution-authorized; scientific Gate NOT_EVALUATED.
 
 ## Added
 
@@ -35,6 +36,21 @@ remaining prerequisite for formal execution; formal result not run.
   `a8fbc0986068171344387ceb68e1ee5ab5bbefbc`.
 - Recorded the second focused re-audit PASS at the fixed B2/B3 remediation head
   `a29ef9eeb818c1694f78d2de1b29436f1861f8c3`; all B1--B4 are closed.
+- Recorded the base activation and completed all 755 registered main/diagnostic
+  task envelopes in six custom jobs: 399 optimal, 356 timelimit, zero solver
+  errors.
+- Sealed the 755 task envelopes and six main manifests under the 761-file
+  evidence-tree root
+  `671cb10a78a30e9f227e6b8b86a62d3ba4437a013ba9350850bb2ef1b1fb8964`.
+- Added execution amendment A1 after the barrier rejected three scheduler host
+  CPU models despite identical registered cgroup resources and runtime.
+- Kept hostname, physical CPU model and host affinity as recorded metadata but
+  removed them from cross-shard equality; effective CPU quota, memory, GPU,
+  stack, environment, activation and code identities remain equality keys.
+- Made sealed-main verification byte-exact, prohibited main reruns, and bound
+  future trace execution to a new independently audited activation.
+- Reordered finalization so both main and trace barriers pass before scientific
+  aggregation is computed.
 
 ## CONDITIONAL PASS remediation
 
@@ -73,12 +89,13 @@ remaining prerequisite for formal execution; formal result not run.
 - No S05 checkpoint, training data or normalization changed.
 - No model retraining/reselection, B1 or RL implementation was performed.
 - No test/final selector was read or solved.
-- No formal S06 solve result exists at this content head.
+- The main solve wave exists, but no paired effect, trace trigger or S06 Gate
+  result has been computed.
 - Unrelated aviation, build and local SCIP-prefix worktree changes were not
   staged or modified.
 
 ## Remaining
 
-- separate committed PASS activation;
-- six main custom jobs, six conditional trace jobs and final aggregation;
+- external PASS on amendment A1 and a separate committed amendment activation;
+- six conditional trace jobs and final aggregation;
 - scientific Gate decision, result documents, result audit and audited tag.

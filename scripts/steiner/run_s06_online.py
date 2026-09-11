@@ -38,7 +38,6 @@ from steiner_branching.evaluation.s06_online import (  # noqa: E402
     expand_s06_tasks,
     failed_task_result,
     lineage_shard_assignments,
-    load_s06_activation,
     load_s06_config,
     load_s06_instances,
     load_valid_shard,
@@ -47,6 +46,7 @@ from steiner_branching.evaluation.s06_online import (  # noqa: E402
     tasks_for_lineage_shard,
     trace_replay_tasks,
 )
+from steiner_branching.config import StrictConfigError, load_yaml_mapping  # noqa: E402
 from steiner_branching.contracts import canonical_json  # noqa: E402
 from steiner_branching.learning.imitation import atomic_write_json  # noqa: E402
 from steiner_branching.learning.teacher_data import file_sha256  # noqa: E402
@@ -56,6 +56,21 @@ DEFAULT_ARTIFACT_ROOT = REPO / "results/steiner/raw/s06"
 DEFAULT_SUMMARY = REPO / "docs/steiner/phases/S06/S06_GATE_SUMMARY.json"
 ENVIRONMENT_LOCK = REPO / "configs/steiner/environment.lock.yml"
 ENVIRONMENT_LOCK_SHA256 = "f70afe548f2b640a3c1375686ad8c8ef4dced63d0229c9fa4eb36e62f6d7628e"
+BASE_ACTIVATION_PATH = REPO / "docs/steiner/audits/S06_PREEXECUTION_ACTIVATION_RECORD.json"
+BASE_ACTIVATION_SHA256 = "2e8d30c47bf746762b8cdf2b9c605c16e45ab57c68d73d7d11a0f8e87b8a21fd"
+AMENDMENT_PATH = REPO / "configs/steiner/experiments/s06_execution_amendment_a1.yml"
+AMENDMENT_SHA256 = "b862f81893fb5dd46635dfc55366b5961268de41d74dd2f6cf89f11705690abe"
+MAIN_WAVE_SEAL_PATH = REPO / "docs/steiner/phases/S06/S06_MAIN_WAVE_V1_SEAL.json"
+MAIN_WAVE_SEAL_SHA256 = "11925fc0e5c6169a0fbdb7c1770ebb0709cefe599f6c0018f07d875595a81603"
+AMENDMENT_ACTIVATION_PATH = (
+    REPO / "docs/steiner/audits/S06_EXECUTION_AMENDMENT_A1_ACTIVATION_RECORD.json"
+)
+NORMALIZED_COMPATIBILITY_KEYS = (
+    "cpu_quota_cores", "effective_cpu_cores", "memory_limit_bytes",
+    "gpu_visible_count", "python_version", "solver_stack_id",
+    "environment_lock_sha256", "container_runtime_fingerprint",
+    "activation_record_sha256", "audited_executable_content_head", "git_head",
+)
 
 
 def utc_now() -> str:
@@ -65,6 +80,160 @@ def utc_now() -> str:
 def resolve_path(value: str | Path) -> Path:
     path = Path(value)
     return path if path.is_absolute() else REPO / path
+
+
+def _committed_bytes(path: Path, label: str) -> bytes:
+    candidate = path.resolve()
+    try:
+        local = candidate.read_bytes()
+        relative = candidate.relative_to(REPO.resolve()).as_posix()
+    except (OSError, ValueError) as error:
+        raise StrictConfigError(f"{label} must be readable inside the repository") from error
+    committed = subprocess.run(
+        ["git", "show", f"HEAD:{relative}"], cwd=REPO,
+        capture_output=True, check=False,
+    )
+    if committed.returncode != 0 or committed.stdout != local:
+        raise StrictConfigError(f"{label} must equal its committed bytes at HEAD")
+    return local
+
+
+def _committed_json(path: Path, label: str) -> dict[str, Any]:
+    try:
+        value = json.loads(_committed_bytes(path, label))
+    except json.JSONDecodeError as error:
+        raise StrictConfigError(f"{label} is not valid JSON") from error
+    if not isinstance(value, dict):
+        raise StrictConfigError(f"{label} must be a mapping")
+    return value
+
+
+def load_execution_amendment() -> dict[str, Any]:
+    if file_sha256(AMENDMENT_PATH) != AMENDMENT_SHA256:
+        raise StrictConfigError("S06 execution amendment checksum changed")
+    value = load_yaml_mapping(AMENDMENT_PATH)
+    if (
+        value.get("schema_version") != 1
+        or value.get("stage") != "S06"
+        or value.get("amendment_id") != "s06-main-runtime-compatibility-a1"
+        or value.get("execution_authorized") is not False
+        or value.get("sealed_main_wave", {}).get("evidence_tree_sha256")
+        != "671cb10a78a30e9f227e6b8b86a62d3ba4437a013ba9350850bb2ef1b1fb8964"
+        or tuple(value.get("compatibility_identity", {}).get("equal_across_shards", ()))
+        != NORMALIZED_COMPATIBILITY_KEYS
+        or value.get("post_amendment_execution", {}).get("main_phase_rerun_forbidden")
+        is not True
+    ):
+        raise StrictConfigError("S06 execution amendment contract changed")
+    return value
+
+
+def load_main_wave_seal() -> dict[str, Any]:
+    if file_sha256(MAIN_WAVE_SEAL_PATH) != MAIN_WAVE_SEAL_SHA256:
+        raise StrictConfigError("S06 main-wave seal checksum changed")
+    value = json.loads(MAIN_WAVE_SEAL_PATH.read_text(encoding="utf-8"))
+    expected = {
+        "schema_version": 1,
+        "stage": "S06",
+        "experiment_id": "s06-il-online-v1",
+        "task_files": 755,
+        "main_shard_manifests": 6,
+        "sealed_files": 761,
+        "all_task_envelopes_terminal": True,
+        "solver_error_envelopes": 0,
+        "evidence_tree_sha256": "671cb10a78a30e9f227e6b8b86a62d3ba4437a013ba9350850bb2ef1b1fb8964",
+        "base_activation_record_sha256": BASE_ACTIVATION_SHA256,
+        "base_activation_audited_content_head": "a29ef9eeb818c1694f78d2de1b29436f1861f8c3",
+        "execution_git_head": "a80d7459b9b1d4d5bff9743711984cd5a649ef97",
+        "model_or_baseline_effects_aggregated": False,
+        "trace_wave_started": False,
+        "gate_summary_created": False,
+        "test_and_final_accessed": False,
+        "rerun_or_mutation_authorized": False,
+    }
+    for key, expected_value in expected.items():
+        if value.get(key) != expected_value:
+            raise StrictConfigError(f"S06 main-wave seal {key} changed")
+    return value
+
+
+def load_amendment_activation() -> dict[str, Any]:
+    load_execution_amendment()
+    seal = load_main_wave_seal()
+    if file_sha256(BASE_ACTIVATION_PATH) != BASE_ACTIVATION_SHA256:
+        raise StrictConfigError("S06 base activation checksum changed")
+    _committed_bytes(BASE_ACTIVATION_PATH, "S06 base activation")
+    value = _committed_json(AMENDMENT_ACTIVATION_PATH, "S06 amendment activation")
+    expected = {
+        "schema_version": 1,
+        "stage": "S06",
+        "audit_kind": "s06_execution_amendment_a1_pretrace_review",
+        "verdict": "PASS",
+        "blocking_findings": [],
+        "execution_authorized": True,
+        "verdict_source": "user_supplied_external_gpt_audit",
+        "audited_branch": "research/steiner-migration",
+        "protocol_yaml_sha256": S06_CONFIG_FILE_SHA256,
+        "instance_manifest_sha256": S06_INSTANCES_FILE_SHA256,
+        "execution_amendment_sha256": AMENDMENT_SHA256,
+        "main_wave_seal_sha256": MAIN_WAVE_SEAL_SHA256,
+        "main_wave_evidence_tree_sha256": seal["evidence_tree_sha256"],
+        "base_activation_record_sha256": BASE_ACTIVATION_SHA256,
+        "container_runtime_fingerprint": seal["registered_runtime_identity"]["container_runtime_fingerprint"],
+        "formal_main_wave_at_activation": "SEALED_NO_RERUN",
+        "trace_execution_authorized": True,
+        "scientific_gate_at_activation": "NOT_EVALUATED",
+        "s07_authorized": False,
+        "test_and_final_access_authorized": False,
+    }
+    for key, expected_value in expected.items():
+        if value.get(key) != expected_value:
+            raise StrictConfigError(f"S06 amendment activation {key} is not authorized")
+    for key in ("recorded_at_utc", "audited_content_head", "audit_record", "audit_record_sha256"):
+        if key not in value:
+            raise StrictConfigError(f"S06 amendment activation {key} is missing")
+    if not str(value["recorded_at_utc"]).endswith("Z"):
+        raise StrictConfigError("S06 amendment activation timestamp is invalid")
+    head = str(value["audited_content_head"])
+    if len(head) != 40 or any(char not in "0123456789abcdef" for char in head):
+        raise StrictConfigError("S06 amendment activation audited head is invalid")
+    audit_path = resolve_path(str(value["audit_record"]))
+    if file_sha256(audit_path) != value["audit_record_sha256"]:
+        raise StrictConfigError("S06 amendment PASS audit record checksum changed")
+    audit = _committed_json(audit_path, "S06 amendment PASS audit record")
+    if (
+        audit.get("audit_kind") != "s06_execution_amendment_a1_pretrace_review"
+        or audit.get("verdict") != "PASS"
+        or audit.get("blocking_findings") != []
+        or audit.get("audited_content_head") != head
+        or audit.get("protocol_yaml_sha256") != S06_CONFIG_FILE_SHA256
+        or audit.get("instance_manifest_sha256") != S06_INSTANCES_FILE_SHA256
+        or audit.get("execution_amendment_sha256") != AMENDMENT_SHA256
+        or audit.get("main_wave_seal_sha256") != MAIN_WAVE_SEAL_SHA256
+        or audit.get("main_wave_evidence_tree_sha256")
+        != seal["evidence_tree_sha256"]
+        or audit.get("base_activation_record_sha256") != BASE_ACTIVATION_SHA256
+        or audit.get("trace_execution_authorized") is not True
+        or audit.get("scientific_gate_at_audit") != "NOT_EVALUATED"
+        or audit.get("s07_authorized") is not False
+        or audit.get("test_and_final_access_authorized") is not False
+    ):
+        raise StrictConfigError("S06 amendment audit record does not authorize trace")
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", head, "HEAD"], cwd=REPO, check=False,
+    ).returncode != 0:
+        raise StrictConfigError("S06 amendment audited head is outside current history")
+    protected = ["python/steiner_branching", "scripts/steiner", "configs/steiner", "tests/steiner"]
+    if subprocess.run(
+        ["git", "diff", "--quiet", head, "HEAD", "--", *protected], cwd=REPO, check=False,
+    ).returncode != 0:
+        raise StrictConfigError("S06 executable inputs changed after amendment audit")
+    if subprocess.run(
+        ["git", "diff", "--quiet", "HEAD", "--", *protected], cwd=REPO, check=False,
+    ).returncode != 0:
+        raise StrictConfigError("S06 executable inputs have uncommitted changes")
+    value["_record_sha256"] = file_sha256(AMENDMENT_ACTIVATION_PATH)
+    return value
 
 
 def parse_args() -> argparse.Namespace:
@@ -156,7 +325,11 @@ def container_runtime_fingerprint() -> str:
     return hashlib.sha256(canonical_json(payload).encode("utf-8")).hexdigest()
 
 
-def runtime_identity(activation: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def runtime_identity(
+    activation: Mapping[str, Any] | None = None,
+    *,
+    activation_record_path: Path = AMENDMENT_ACTIVATION_PATH,
+) -> dict[str, Any]:
     try:
         affinity_cpus = len(os.sched_getaffinity(0))
     except AttributeError:
@@ -176,7 +349,7 @@ def runtime_identity(activation: Mapping[str, Any] | None = None) -> dict[str, A
         "environment_lock_sha256": file_sha256(ENVIRONMENT_LOCK),
         "container_runtime_fingerprint": container_runtime_fingerprint(),
         "activation_record_sha256": (
-            file_sha256(REPO / "docs/steiner/audits/S06_PREEXECUTION_ACTIVATION_RECORD.json")
+            file_sha256(activation_record_path)
             if activation is not None else None
         ),
         "audited_executable_content_head": (
@@ -212,6 +385,89 @@ def validate_registered_resources(
         or any(char not in "0123456789abcdef" for char in activation_sha)
     ):
         raise RuntimeError("S06 activation record checksum is missing")
+    expected_activation_sha = activation.get("_record_sha256")
+    if expected_activation_sha is not None and activation_sha != expected_activation_sha:
+        raise RuntimeError("S06 activation record checksum differs from runtime")
+
+
+def validate_sealed_main_resources(
+    identity: Mapping[str, Any], seal: Mapping[str, Any]
+) -> None:
+    """Validate legacy main evidence without pretending it used the amendment."""
+    registered = seal.get("registered_runtime_identity")
+    if not isinstance(registered, dict):
+        raise RuntimeError("S06 sealed main runtime identity is missing")
+    for key, expected in registered.items():
+        if identity.get(key) != expected:
+            raise RuntimeError(f"S06 sealed main runtime identity {key} mismatch")
+    expected_legacy = {
+        "activation_record_sha256": seal.get("base_activation_record_sha256"),
+        "audited_executable_content_head": seal.get(
+            "base_activation_audited_content_head"
+        ),
+        "git_head": seal.get("execution_git_head"),
+    }
+    for key, expected in expected_legacy.items():
+        if identity.get(key) != expected:
+            raise RuntimeError(f"S06 sealed main runtime identity {key} mismatch")
+    if float(identity.get("effective_cpu_cores", -1)) < 8.0:
+        raise RuntimeError("S06 sealed main shard had fewer than 8 effective CPU cores")
+    if int(identity.get("memory_limit_bytes", -1)) < 96 * 1024 ** 3:
+        raise RuntimeError("S06 sealed main shard had less than 96 GiB memory")
+    if identity.get("gpu_visible_count") != 0:
+        raise RuntimeError("S06 sealed main shard exposed a GPU")
+
+
+def _main_wave_evidence_records(
+    run_dir: Path, all_tasks: Sequence[S06Task]
+) -> list[dict[str, str]]:
+    expected_task_paths = {
+        run_dir / "shards" / f"{task.task_id}.json" for task in all_tasks
+    }
+    actual_task_paths = set((run_dir / "shards").glob("*.json"))
+    if actual_task_paths != expected_task_paths:
+        raise RuntimeError("S06 sealed main task-file membership changed")
+    expected_manifest_paths = {
+        _phase_manifest_path(run_dir, "main", shard_index)
+        for shard_index in range(S06_SHARD_COUNT)
+    }
+    actual_manifest_paths = set(
+        (run_dir / "shard_manifests").glob("main-shard-*.json")
+    )
+    if actual_manifest_paths != expected_manifest_paths:
+        raise RuntimeError("S06 sealed main-manifest membership changed")
+    paths = list(expected_task_paths | expected_manifest_paths)
+    records: list[dict[str, str]] = []
+    for path in sorted(paths):
+        if not path.is_file():
+            raise RuntimeError(f"S06 sealed main evidence is missing: {path}")
+        records.append({
+            "path": path.relative_to(run_dir).as_posix(),
+            "sha256": file_sha256(path),
+        })
+    return records
+
+
+def verify_main_wave_seal(
+    run_dir: Path, all_tasks: Sequence[S06Task]
+) -> dict[str, Any]:
+    seal = load_main_wave_seal()
+    records = _main_wave_evidence_records(run_dir, all_tasks)
+    if len(records) != seal["sealed_files"]:
+        raise RuntimeError("S06 sealed main evidence file count changed")
+    evidence_tree_sha256 = hashlib.sha256(
+        canonical_json(records).encode("utf-8")
+    ).hexdigest()
+    if evidence_tree_sha256 != seal["evidence_tree_sha256"]:
+        raise RuntimeError("S06 sealed main evidence tree checksum changed")
+    return seal
+
+
+def assert_amendment_phase_authorized(phase: str) -> None:
+    if phase == "main":
+        raise SystemExit(
+            "S06 formal main wave is sealed; amendment A1 forbids rerunning main tasks"
+        )
 
 
 def _write_one(task: S06Task, shard_dir: Path) -> int:
@@ -223,7 +479,7 @@ def _write_one(task: S06Task, shard_dir: Path) -> int:
         task_runtime_identity = json.loads(os.environ["S06_RUNTIME_IDENTITY_JSON"])
     except (KeyError, json.JSONDecodeError) as error:
         raise RuntimeError("S06 task runtime identity is unavailable") from error
-    activation = load_s06_activation()
+    activation = load_amendment_activation()
     validate_registered_resources(task_runtime_identity, activation)
     envelope: dict[str, Any] = {
         "schema_version": 1,
@@ -240,7 +496,7 @@ def _write_one(task: S06Task, shard_dir: Path) -> int:
         "started_at_utc": utc_now(),
     }
     try:
-        config = load_s06_config(require_activation=True)
+        config = load_s06_config(require_activation=False)
         envelope["result"] = run_s06_task(task, config)
         envelope["execution_status"] = "completed"
     except BaseException as error:
@@ -418,6 +674,7 @@ def _load_phase_barrier(
     instances: Sequence[Any],
     shard_dir: Path,
     activation: Mapping[str, Any],
+    sealed_main: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     manifests: list[dict[str, Any]] = []
     compatibility: set[tuple[Any, ...]] = set()
@@ -455,22 +712,15 @@ def _load_phase_barrier(
             raise RuntimeError(
                 f"S06 {phase} shard {shard_index} runtime identity is missing"
             )
-        validate_registered_resources(identity, activation)
-        compatibility.add(tuple(identity.get(key) for key in (
-            "cpu_model",
-            "cpu_affinity_count",
-            "cpu_quota_cores",
-            "effective_cpu_cores",
-            "memory_limit_bytes",
-            "gpu_visible_count",
-            "python_version",
-            "solver_stack_id",
-            "environment_lock_sha256",
-            "container_runtime_fingerprint",
-            "activation_record_sha256",
-            "audited_executable_content_head",
-            "git_head",
-        )))
+        if sealed_main is None:
+            validate_registered_resources(identity, activation)
+        else:
+            if phase != "main":
+                raise RuntimeError("S06 legacy evidence seal is valid only for main phase")
+            validate_sealed_main_resources(identity, sealed_main)
+        compatibility.add(tuple(
+            identity.get(key) for key in NORMALIZED_COMPATIBILITY_KEYS
+        ))
         for task in expected_tasks:
             envelope = load_valid_shard(_shard_path(shard_dir, task), task)
             if envelope is None:
@@ -514,12 +764,16 @@ def _run_phase(
         raise SystemExit(f"--shard-count must remain {S06_SHARD_COUNT}")
     if not 0 <= args.shard_index < S06_SHARD_COUNT:
         raise SystemExit(f"--shard-index must be in [0, {S06_SHARD_COUNT})")
+    assert_amendment_phase_authorized(args.phase)
     shard_dir = run_dir / "shards"
     trace_dir = run_dir / "trace_shards"
     trace_tasks: tuple[S06Task, ...] = ()
     identity = runtime_identity(activation)
     validate_registered_resources(identity, activation)
     if args.phase == "trace":
+        sealed_main = verify_main_wave_seal(
+            run_dir, tuple(main_tasks) + tuple(strong_tasks)
+        )
         _load_phase_barrier(
             run_dir,
             phase="main",
@@ -527,6 +781,7 @@ def _run_phase(
             instances=instances,
             shard_dir=shard_dir,
             activation=activation,
+            sealed_main=sealed_main,
         )
         trace_tasks = trace_replay_tasks(
             main_tasks, _read_shards(main_tasks, shard_dir), config
@@ -603,6 +858,9 @@ def _aggregate_under_lock(
     assert_new_aggregate_outputs(summary_path, manifest_path)
     shard_dir = run_dir / "shards"
     trace_dir = run_dir / "trace_shards"
+    sealed_main = verify_main_wave_seal(
+        run_dir, tuple(main_tasks) + tuple(strong_tasks)
+    )
     main_manifests = _load_phase_barrier(
         run_dir,
         phase="main",
@@ -610,8 +868,8 @@ def _aggregate_under_lock(
         instances=instances,
         shard_dir=shard_dir,
         activation=activation,
+        sealed_main=sealed_main,
     )
-    summary = aggregate_s06(config, main_tasks, strong_tasks, shard_dir)
     trace_tasks = trace_replay_tasks(
         main_tasks, _read_shards(main_tasks, shard_dir), config
     )
@@ -623,12 +881,19 @@ def _aggregate_under_lock(
         shard_dir=trace_dir,
         activation=activation,
     )
+    summary = aggregate_s06(config, main_tasks, strong_tasks, shard_dir)
     summary["distributed_execution"] = {
         "shard_count": S06_SHARD_COUNT,
         "assignment_unit": "base_graph_lineage",
         "main_shard_manifest_count": len(main_manifests),
         "trace_shard_manifest_count": len(trace_manifests),
         "resource_runtime_identity_match": True,
+        "main_wave_seal_sha256": MAIN_WAVE_SEAL_SHA256,
+        "main_wave_evidence_tree_sha256": sealed_main["evidence_tree_sha256"],
+        "execution_amendment_sha256": AMENDMENT_SHA256,
+        "amendment_activation_record_sha256": file_sha256(
+            AMENDMENT_ACTIVATION_PATH
+        ),
     }
     summary["trace_replays"] = {
         "triggered_instance_solver_pairs": len(trace_tasks) // len(MAIN_METHODS),
@@ -643,6 +908,12 @@ def _aggregate_under_lock(
         "experiment_id": config["experiment_id"],
         "protocol_file_sha256": S06_CONFIG_FILE_SHA256,
         "instance_manifest_sha256": S06_INSTANCES_FILE_SHA256,
+        "execution_amendment_sha256": AMENDMENT_SHA256,
+        "main_wave_seal_sha256": MAIN_WAVE_SEAL_SHA256,
+        "main_wave_evidence_tree_sha256": sealed_main["evidence_tree_sha256"],
+        "amendment_activation_record_sha256": file_sha256(
+            AMENDMENT_ACTIVATION_PATH
+        ),
         "status": "completed",
         "finished_at_utc": utc_now(),
         "summary_output": str(summary_path.relative_to(REPO)),
@@ -679,14 +950,20 @@ def main() -> int:
         raise SystemExit(f"--max-workers must remain {S06_WORKERS_PER_SHARD}")
     if args.validate_only:
         config = load_s06_config(resolve_path(args.config), require_activation=False)
+        amendment = load_execution_amendment()
+        seal = load_main_wave_seal()
         instances = load_s06_instances()
         main_tasks, strong_tasks = expand_s06_tasks(config, instances)
         print(json.dumps({
             "protocol_file_sha256": S06_CONFIG_FILE_SHA256,
+            "execution_amendment_sha256": AMENDMENT_SHA256,
+            "main_wave_seal_sha256": MAIN_WAVE_SEAL_SHA256,
+            "main_wave_evidence_tree_sha256": seal["evidence_tree_sha256"],
             "instances": len(instances),
             "main_tasks": len(main_tasks),
             "strong_diagnostic_tasks": len(strong_tasks),
             "formal_execution_authorized": False,
+            "amendment_execution_authorized": amendment["execution_authorized"],
             "container_runtime_fingerprint": container_runtime_fingerprint(),
             "distributed_execution": {
                 "shard_count": S06_SHARD_COUNT,
@@ -704,8 +981,8 @@ def main() -> int:
         return 0
     if os.environ.get("STEINER_SOLVER_STACK_ID") != EXPECTED_STACK_ID:
         raise SystemExit("run through scripts/steiner/run_with_scip804.sh --python")
-    config = load_s06_config(resolve_path(args.config), require_activation=True)
-    activation = load_s06_activation()
+    config = load_s06_config(resolve_path(args.config), require_activation=False)
+    activation = load_amendment_activation()
     instances = load_s06_instances()
     main_tasks, strong_tasks = expand_s06_tasks(config, instances)
     all_tasks = {task.task_id: task for task in main_tasks + strong_tasks}
@@ -738,6 +1015,7 @@ def main() -> int:
         distributed_count = int(os.environ["S06_DISTRIBUTED_SHARD_COUNT"])
         if distributed_phase not in {"main", "trace"}:
             raise SystemExit("invalid distributed phase")
+        assert_amendment_phase_authorized(distributed_phase)
         if distributed_count != S06_SHARD_COUNT:
             raise SystemExit("invalid distributed shard count")
         if task.trace != (distributed_phase == "trace"):

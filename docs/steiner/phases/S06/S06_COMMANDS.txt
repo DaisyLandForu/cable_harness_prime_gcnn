@@ -1,27 +1,22 @@
-# S06 commands. Formal commands require external GPT PASS plus the committed
-# S06_PREEXECUTION_ACTIVATION_RECORD.json. Custom jobs must share the same
-# persistent repository/results mount and use identical 8-CPU/96-GiB/0-GPU forms.
+# S06 commands after main-wave seal. The six main jobs are complete and MUST
+# NOT be rerun. Trace/finalize require external amendment-A1 PASS plus a
+# separately committed S06_EXECUTION_AMENDMENT_A1_ACTIVATION_RECORD.json.
+# Custom jobs share the persistent repository/results mount and request
+# identical 8-CPU/96-GiB/0-GPU resources; scheduler host CPU models may differ.
 
 # Static preflight (safe before activation)
 scripts/steiner/run_with_scip804.sh --verify-only
 scripts/steiner/run_with_scip804.sh --python scripts/steiner/run_s06_online.py --validate-only
 
-# The validate-only output contains the frozen runtime fingerprint. After a
-# focused external PASS it must be copied byte-exactly into the separate
-# activation record, which must itself be committed byte-exact at HEAD. Formal
-# jobs fail before task execution unless each has at least 8 effective CPUs, at
-# least 96 GiB RAM and zero visible GPUs.
+# Validate-only reports amendment_execution_authorized=false until the focused
+# audit PASS is recorded and a separate activation is committed byte-exact at
+# HEAD. Trace jobs fail before task execution unless each has at least 8
+# effective CPUs, at least 96 GiB RAM and zero visible GPUs.
 
-# MAIN WAVE: submit as six simultaneous foreground custom jobs, one command/job.
-bash scripts/steiner/run_s06_online_shard.sh 0 main
-bash scripts/steiner/run_s06_online_shard.sh 1 main
-bash scripts/steiner/run_s06_online_shard.sh 2 main
-bash scripts/steiner/run_s06_online_shard.sh 3 main
-bash scripts/steiner/run_s06_online_shard.sh 4 main
-bash scripts/steiner/run_s06_online_shard.sh 5 main
+# MAIN WAVE: SEALED. Every parent/internal main command now fails closed.
 
-# TRACE WAVE: only after all six main manifests report completed. Submit the
-# following six jobs even when some will produce an explicit empty manifest.
+# TRACE WAVE: only after amendment-A1 external PASS and committed activation.
+# Submit all six jobs even when some produce an explicit empty manifest.
 bash scripts/steiner/run_s06_online_shard.sh 0 trace
 bash scripts/steiner/run_s06_online_shard.sh 1 trace
 bash scripts/steiner/run_s06_online_shard.sh 2 trace
@@ -34,7 +29,7 @@ bash scripts/steiner/run_s06_online_shard.sh 5 trace
 # finalizer, or any pre-existing formal summary/manifest, is rejected.
 bash scripts/steiner/finalize_s06_online.sh
 
-# Interactive alternative for exactly one shard (never launch all six on the
-# current 128-GiB host).
-scripts/steiner/run_s06_online_tmux.sh 0 main
-tmux attach -t steiner-s06-main-shard-0
+# Interactive alternative for exactly one trace shard (never launch all six on
+# one 128-GiB host).
+scripts/steiner/run_s06_online_tmux.sh 0 trace
+tmux attach -t steiner-s06-trace-shard-0

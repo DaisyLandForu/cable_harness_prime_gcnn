@@ -1,0 +1,64 @@
+schema_version: 1
+stage: S06
+amendment_id: s06-main-runtime-compatibility-a1
+status: preregistered_after_main_barrier_failure
+execution_authorized: false
+
+trigger:
+  main_tasks_terminal: 755
+  solver_error_envelopes: 0
+  barrier_failure: cross_shard_physical_cpu_model_and_host_affinity_mismatch
+  model_or_baseline_effects_aggregated: false
+  trace_wave_started: false
+  gate_summary_created: false
+
+sealed_main_wave:
+  seal: docs/steiner/phases/S06/S06_MAIN_WAVE_V1_SEAL.json
+  evidence_tree_sha256: 671cb10a78a30e9f227e6b8b86a62d3ba4437a013ba9350850bb2ef1b1fb8964
+  reuse_only_if_byte_exact: true
+  rerun_or_task_replacement_allowed: false
+
+compatibility_identity:
+  equal_across_shards:
+    - cpu_quota_cores
+    - effective_cpu_cores
+    - memory_limit_bytes
+    - gpu_visible_count
+    - python_version
+    - solver_stack_id
+    - environment_lock_sha256
+    - container_runtime_fingerprint
+    - activation_record_sha256
+    - audited_executable_content_head
+    - git_head
+  recorded_but_not_cross_shard_equality_keys:
+    - hostname
+    - cpu_model
+    - cpu_affinity_count
+  rationale: registered_effective_resources_and_runtime_are_equal_while_scheduler_physical_hosts_may_differ
+  paired_methods_for_each_graph_must_share_exact_task_and_shard_runtime_identity: true
+
+post_amendment_execution:
+  separate_external_audit_pass_required: true
+  separate_committed_activation_required: true
+  main_phase_rerun_forbidden: true
+  trace_phase_uses_amendment_activation: true
+  final_aggregation_requires_sealed_main_and_complete_trace_barriers: true
+
+unchanged_scientific_contract:
+  checkpoint: true
+  instances: true
+  solver_seeds: true
+  methods: true
+  p1_limits: true
+  task_matrix: true
+  trace_policy: true
+  bootstrap: true
+  gate_thresholds: true
+  claim_boundary: true
+
+prohibitions:
+  inspect_or_select_by_model_effect_before_amendment: true
+  modify_or_replace_sealed_main_task: true
+  test_and_final_access: true
+  s07_before_s06_result_audit_pass: true

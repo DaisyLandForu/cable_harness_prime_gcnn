@@ -1,28 +1,58 @@
 # S06 Result Analysis
 
-Status: formal execution NOT_RUN; scientific Gate NOT_EVALUATED. The final
-pre-execution audit returned PASS: B1--B4 are closed. This authorizes a separate
-committed activation and then the six formal main shards; it is not an S06
-scientific result.
+Status: formal main wave terminal and sealed; trace NOT_RUN; scientific Gate
+NOT_EVALUATED. S07 remains prohibited.
 
 S06 asks whether the S05 B0 imitation model's offline ranking improvement
-becomes a real branch-and-bound improvement. No formal online outcomes existed
-when the pre-execution content head was frozen, so there is currently no
-solved-rate, PAR-2, PDI, node, overhead, confidence-interval or trace result to
-interpret.
+becomes a real branch-and-bound improvement. The registered six-job main wave
+has now produced all 750 Gate-relevant task envelopes plus five fullstrong
+diagnostics. At the solver-status level there are 399 optimal and 356 timelimit
+outcomes, with zero solver-error envelopes.
 
-The registered evidence will consist of 30 validation-IID graph lineages,
-five solver seeds and five main methods. Failed, timed-out, node-limited,
-memory-limited and invalid-policy tasks remain in the denominator. The two
-Gate baselines are deterministic random candidate and most-infeasible. Native
-relpscost/default and the five fullstrong tasks are contextual comparisons.
-An exception receives PAR-2=1,200 and remains paired wherever both task
-envelopes exist; its unavailable PDI is not fabricated, and completeness,
-correctness and PDI Gates consequently fail.
+Those counts are not a learned-policy result. They do not say whether B0-IL is
+better or worse than random/mostinf, because the fail-closed barrier stopped
+before paired effects, confidence intervals, the trace-trigger set or the
+scientific Gate were calculated.
+
+## Barrier finding
+
+All six jobs used the same registered effective resources and frozen runtime,
+but the scheduler placed them on three Xeon host models with affinity masks of
+24, 48 and 320 CPUs. The original barrier incorrectly demanded that physical
+CPU model and host affinity be identical across independent jobs. Each cgroup
+actually provided the same 8.01 effective CPU quota and the same memory, GPU,
+software, activation and code identities.
+
+This did not break the registered paired design: every graph lineage's five
+methods and five solver seeds stayed together on one shard. It did expose an
+implementation overconstraint that must be audited before the evidence can be
+used downstream.
+
+## Evidence-preserving response
+
+The existing 755 task envelopes and six main manifests are immutable under the
+761-file tree root:
+
+```text
+671cb10a78a30e9f227e6b8b86a62d3ba4437a013ba9350850bb2ef1b1fb8964
+```
+
+Amendment A1 does not retry hard instances or change the solver/model/Gate. It
+only defines the correct cross-shard identity: effective registered resources
+and frozen runtime/code must match, while hostname, physical CPU model and host
+affinity remain recorded but need not be equal. The implementation refuses to
+rerun main and verifies every sealed byte before deriving trace tasks.
+
+## What remains unknown
+
+Until amendment A1 receives an external PASS, a separate activation is
+committed, all six diagnostic trace manifests terminate, and the singleton
+aggregator runs, there is no valid S06 solved-rate, PAR-2, PDI, node, overhead,
+confidence-interval or Gate conclusion.
 
 The eventual result may support only a P1 controlled-profile online branching
 claim inside the registered synthetic small/medium envelope. It cannot by
 itself establish production SCIP speedup, large-scale/OOD generalization,
 SCIP-Jack superiority, RL benefit or final-test performance.
 
-Current Gate: **NOT_EVALUATED**. S07 remains prohibited.
+Current Gate: **NOT_EVALUATED**.
